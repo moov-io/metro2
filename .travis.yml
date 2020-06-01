@@ -6,7 +6,6 @@ services:
 
 matrix:
   allow_failures:
-    - os: windows
     - go: master
   include:
     # Linux
