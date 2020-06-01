@@ -1,0 +1,71 @@
+language: go
+sudo: true
+
+services:
+  - docker
+
+matrix:
+  allow_failures:
+    - os: windows
+    - go: master
+  include:
+    # Linux
+    - os: linux
+      go: 1.14.x
+      cmetro2e:
+        directories: ["$HOME/.cmetro2e/go-build", "$GOPATH/pkg/mod"]
+    - os: linux
+      go: master
+    # macOS
+    - os: osx
+      go: 1.14.x
+      cmetro2e:
+        directories: ["$HOME/Library/Cmetro2es/go-build", "$GOPATH/pkg/mod"]
+    # Windows
+    - os: windows
+      go: 1.14.x
+      cmetro2e:
+        directories: ["C:\\Users\\travis\\AppData\\Local\\go-build"]
+
+before_install:
+  # Setup directory for binaries
+  - mkdir ./bin
+  - export PATH=$PATH:$PWD/bin
+  # Install 'make' and dependencies on Windows
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install -y make; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install -y mingw; export PATH=/c/tools/mingw64/bin:"$PATH";fi
+
+before_script:
+  - GOFILES=$(find . -type f -name '*.go' | grep -v vendor)
+  - go mod graph
+
+script:
+  - make check
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  # - make docker
+
+before_deploy:
+  # - make dist
+
+deploy:
+  provider: releases
+  api_key:
+    secure:
+  file_glob: true
+  file:
+    - bin/metro2*
+  on:
+    tags: true
+    repo: moov-io/metro2
+    go: 1.14.x
+  skip_cleanup: true
+
+after_deploy:
+  # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  # - make release-push
+
+notifications:
+  slack:
+    secure:
