@@ -45,5 +45,7 @@ func (s *S) TestBaseSegment(c *check.C) {
 	base := BaseSegment{}
 	err := base.Parse(s.sampleBaseSegment)
 	c.Assert(err, check.IsNil)
+	err = base.Validate()
+	c.Assert(err, check.IsNil)
 	c.Assert(base.String(), check.Equals, s.sampleBaseSegment)
 }

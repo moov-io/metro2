@@ -12,35 +12,39 @@ import (
 	"strings"
 )
 
-// converters handles golang to ACH type Converters
-type converters struct{}
+const (
+	zeroString  = "0"
+	blankString = " "
+	nineString  = "9"
+)
 
-func (c *converters) parseValue(field Field, data string) interface{} {
+type converter struct{}
+
+func (c *converter) parseValue(field Field, data string) (reflect.Value, error) {
 	if field.Type&Numeric > 0 {
-		value64, err := strconv.ParseInt(data, 10, 64)
+		value, err := strconv.ParseInt(data, 10, 64)
 		if err != nil {
-			return nil
+			return reflect.Value{}, err
 		}
-		return value64
+		return  reflect.ValueOf(value), nil
 	} else if field.Type&Alphanumeric > 0 {
-		var value = data
-		return value
+		return  reflect.ValueOf(data), nil
 	} else if field.Type&Alpha > 0 {
-		var value = strings.ToUpper(data)
-		return value
+		upperString := strings.ToUpper(data)
+		return  reflect.ValueOf(upperString), nil
 	}
 
-	return nil
+	return reflect.Value{}, ErrSegmentParseType
 }
 
-func (c *converters) fillString(field Field) string {
+func (c *converter) fillString(field Field) string {
 	if field.Type&ZeroFill > 0 {
-		return strings.Repeat("0", field.Length)
+		return strings.Repeat(zeroString, field.Length)
 	}
-	return strings.Repeat(" ", field.Length)
+	return strings.Repeat(blankString, field.Length)
 }
 
-func (c *converters) toString(field Field, data reflect.Value) string {
+func (c *converter) toString(field Field, data reflect.Value) string {
 	if !data.IsValid() {
 		return c.fillString(field)
 	}
@@ -58,7 +62,7 @@ func (c *converters) toString(field Field, data reflect.Value) string {
 	return c.fillString(field)
 }
 
-func (c *converters) toSpecifications(fieldsFormat map[string]Field) []Specification {
+func (c *converter) toSpecifications(fieldsFormat map[string]Field) []Specification {
 	var specifications []Specification
 	for key, field := range fieldsFormat {
 		specifications = append(specifications, Specification{field.Start, key, field})
