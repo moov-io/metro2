@@ -559,13 +559,13 @@ func (s *BaseSegment) Parse(record string) error {
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		// skip local variable
-		if unicode.IsUpper([]rune(fieldName)[0]) == false {
+		if !unicode.IsUpper([]rune(fieldName)[0]) {
 			continue
 		}
 
 		field := fields.FieldByName(fieldName)
 		spec, ok := BaseSegmentCharacterFormat[fieldName]
-		if ok == false || !field.IsValid() {
+		if !ok || !field.IsValid() {
 			return ErrSegmentInvalidType
 		}
 
@@ -619,7 +619,7 @@ func (s *BaseSegment) Validate() error {
 			return ErrSegmentParse
 		}
 
-		if spec, ok := BaseSegmentCharacterFormat[fieldName]; ok == true {
+		if spec, ok := BaseSegmentCharacterFormat[fieldName]; ok {
 			if spec.Required == Required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
@@ -720,7 +720,7 @@ func (s *BaseSegment) ValidatePaymentRating() error {
 
 func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
 	if len(s.PaymentHistoryProfile) != 24 {
-		errors.New("invalid value of payment history profile ")
+		return errors.New("invalid value of payment history profile ")
 	}
 	for i := 0; i < len(s.PaymentHistoryProfile); i++ {
 		switch s.PaymentHistoryProfile[i] {
@@ -731,7 +731,7 @@ func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
 			PaymentHistoryChargeOff:
 			continue
 		}
-		errors.New("invalid value of payment history profile ")
+		return errors.New("invalid value of payment history profile ")
 	}
 	return nil
 }
