@@ -22,7 +22,7 @@ type S struct {
 var _ = check.Suite(&S{})
 
 func (s *S) SetUpSuite(c *check.C) {
-	f, err := os.Open(filepath.Join("../testdata", "base_segment.dat"))
+	f, err := os.Open(filepath.Join("..", "testdata", "base_segment.dat"))
 	c.Assert(err, check.IsNil)
 
 	scanner := bufio.NewScanner(f)
@@ -42,10 +42,28 @@ func (s *S) SetUpTest(c *check.C) {}
 func (s *S) TearDownTest(c *check.C) {}
 
 func (s *S) TestBaseSegment(c *check.C) {
-	base := BaseSegment{}
+	base := NewBaseSegment()
 	err := base.Parse(s.sampleBaseSegment)
 	c.Assert(err, check.IsNil)
 	err = base.Validate()
 	c.Assert(err, check.IsNil)
 	c.Assert(base.String(), check.Equals, s.sampleBaseSegment)
+	c.Assert(base.Description(), check.Equals, BaseSegmentDescription)
+}
+
+func (s *S) TestBaseSegmentWithInvalidData(c *check.C) {
+	base := NewBaseSegment()
+	err := base.Parse(s.sampleBaseSegment + "ERROR")
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err, check.DeepEquals, ErrSegmentInvalidLength)
+}
+
+func (s *S) TestBaseSegmentWithInvalidField(c *check.C) {
+	base := &BaseSegment{}
+	err := base.Parse(s.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	base.DateClosed = 0
+	err = base.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err, check.DeepEquals, ErrDate)
 }

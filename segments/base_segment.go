@@ -489,12 +489,73 @@ type BaseSegment struct {
 	validator
 }
 
+const (
+	PortfolioTypeCredit                = "C"
+	PortfolioTypeInstallment           = "I"
+	PortfolioTypeMortgage              = "M"
+	PortfolioTypeOpen                  = "O"
+	PortfolioTypeRevolving             = "R"
+	TermsDurationCredit                = "LOC"
+	TermsDurationOpen                  = "001"
+	TermsDurationRevolving             = "REV"
+	TermsFrequencyDeferred             = "D"
+	TermsFrequencyPayment              = "P"
+	TermsFrequencyWeekly               = "W"
+	TermsFrequencyBiweekly             = "B"
+	TermsFrequencySemimonthly          = "E"
+	TermsFrequencyMonthly              = "M"
+	TermsFrequencyBimonthly            = "L"
+	TermsFrequencyQuarterly            = "Q"
+	TermsFrequencyTriAnnually          = "T"
+	TermsFrequencySemiannually         = "S"
+	TermsFrequencyAnnually             = "Y"
+	PaymentRatingCurrent               = "0"
+	PaymentRatingPast30                = "1"
+	PaymentRatingPast60                = "2"
+	PaymentRatingPast90                = "3"
+	PaymentRatingPast120               = "4"
+	PaymentRatingPast150               = "5"
+	PaymentRatingPast180               = "6"
+	PaymentRatingCollection            = "G"
+	PaymentRatingChargeOff             = "L"
+	PaymentHistoryPast0                = '0'
+	PaymentHistoryPast30               = '1'
+	PaymentHistoryPast60               = '2'
+	PaymentHistoryPast90               = '3'
+	PaymentHistoryPast120              = '4'
+	PaymentHistoryPast150              = '5'
+	PaymentHistoryPast180              = '6'
+	PaymentHistoryNoPayment            = 'B'
+	PaymentHistoryNoPaymentMonth       = 'D'
+	PaymentHistoryZero                 = 'E'
+	PaymentHistoryCollection           = 'G'
+	PaymentHistoryForeclosureCompleted = 'H'
+	PaymentHistoryVoluntarySurrender   = 'J'
+	PaymentHistoryRepossession         = 'K'
+	PaymentHistoryChargeOff            = 'L'
+	AccountStatus05                    = "05"
+	AccountStatus13                    = "13"
+	AccountStatus65                    = "65"
+	AccountStatus88                    = "88"
+	AccountStatus89                    = "89"
+	AccountStatus94                    = "94"
+	AccountStatus95                    = "95"
+)
+
+func (s *BaseSegment) Description() string {
+	return BaseSegmentDescription
+}
+
 func (s *BaseSegment) Parse(record string) error {
 	if utf8.RuneCountInString(record) != BaseSegmentLength {
 		return ErrSegmentInvalidLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
+	if !fields.IsValid() {
+		return ErrSegmentParse
+	}
+
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		// skip local variable
@@ -504,7 +565,7 @@ func (s *BaseSegment) Parse(record string) error {
 
 		field := fields.FieldByName(fieldName)
 		spec, ok := BaseSegmentCharacterFormat[fieldName]
-		if ok == false {
+		if ok == false || !field.IsValid() {
 			return ErrSegmentInvalidType
 		}
 
@@ -519,13 +580,13 @@ func (s *BaseSegment) Parse(record string) error {
 		}
 
 		// set value
-		if value.IsValid() {
+		if value.IsValid() && field.CanSet() {
 			switch value.Interface().(type) {
 			case int, int64:
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-			
+
 			}
 		}
 	}
@@ -537,6 +598,9 @@ func (s *BaseSegment) String() string {
 	var buf strings.Builder
 	specifications := s.toSpecifications(BaseSegmentCharacterFormat)
 	fields := reflect.ValueOf(s).Elem()
+	if !fields.IsValid() {
+		return ""
+	}
 
 	buf.Grow(BaseSegmentLength)
 	for _, spec := range specifications {
@@ -551,6 +615,10 @@ func (s *BaseSegment) Validate() error {
 	fields := reflect.ValueOf(s).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
+		if !fields.IsValid() {
+			return ErrSegmentParse
+		}
+
 		if spec, ok := BaseSegmentCharacterFormat[fieldName]; ok == true {
 			if spec.Required == Required {
 				fieldValue := fields.FieldByName(fieldName)
@@ -563,6 +631,11 @@ func (s *BaseSegment) Validate() error {
 		funcName := s.validateFuncName(fieldName)
 		method := reflect.ValueOf(s).MethodByName(funcName)
 		if method.IsValid() {
+			response := method.Call(nil)
+			if len(response) == 0 {
+				continue
+			}
+
 			err := method.Call(nil)[0]
 			if !err.IsNil() {
 				return err.Interface().(error)
@@ -593,7 +666,7 @@ func (s *BaseSegment) ValidateIdentificationNumber() error {
 
 func (s *BaseSegment) ValidatePortfolioType() error {
 	switch s.PortfolioType {
-	case "C", "I", "M", "O", "R":
+	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
 		return nil
 	}
 	return errors.New("invalid value of portfolio type")
@@ -608,7 +681,7 @@ func (s *BaseSegment) ValidateDateOpened() error {
 
 func (s *BaseSegment) ValidateTermsDuration() error {
 	switch s.TermsDuration {
-	case "LOC", "001", "REV":
+	case TermsDurationCredit, TermsDurationOpen, TermsDurationRevolving:
 		return nil
 	}
 	_, err := strconv.Atoi(s.TermsDuration)
@@ -620,7 +693,9 @@ func (s *BaseSegment) ValidateTermsDuration() error {
 
 func (s *BaseSegment) ValidateTermsFrequency() error {
 	switch s.TermsFrequency {
-	case "D", "P", "W", "B", "E", "M", "L", "Q", "T", "S", "Y", blankString:
+	case TermsFrequencyDeferred, TermsFrequencyPayment, TermsFrequencyWeekly, TermsFrequencyBiweekly,
+		TermsFrequencySemimonthly, TermsFrequencyMonthly, TermsFrequencyBimonthly, TermsFrequencyQuarterly,
+		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, blankString:
 		return nil
 	}
 	return errors.New("invalid value of terms frequency")
@@ -628,9 +703,10 @@ func (s *BaseSegment) ValidateTermsFrequency() error {
 
 func (s *BaseSegment) ValidatePaymentRating() error {
 	switch s.AccountStatus {
-	case "05", "13", "65", "88", "89", "94", "95":
+	case AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88, AccountStatus89, AccountStatus94, AccountStatus95:
 		switch s.PaymentRating {
-		case "1", "2", "3", "4", "5", "6", "G", "L":
+		case PaymentRatingCurrent, PaymentRatingPast30, PaymentRatingPast60, PaymentRatingPast90,
+			PaymentRatingPast120, PaymentRatingPast150, PaymentRatingPast180, PaymentRatingCollection, PaymentRatingChargeOff:
 			return nil
 		}
 		return errors.New("invalid value of payment rating")
@@ -648,7 +724,11 @@ func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
 	}
 	for i := 0; i < len(s.PaymentHistoryProfile); i++ {
 		switch s.PaymentHistoryProfile[i] {
-		case '0', '1', '2', '3', '4', '5', '6', 'B', 'D', 'E', 'G', 'H', 'J', 'K', 'L':
+		case PaymentHistoryPast0, PaymentHistoryPast30, PaymentHistoryPast60, PaymentHistoryPast90,
+			PaymentHistoryPast120, PaymentHistoryPast150, PaymentHistoryPast180, PaymentHistoryNoPayment,
+			PaymentHistoryNoPaymentMonth, PaymentHistoryZero, PaymentHistoryCollection,
+			PaymentHistoryForeclosureCompleted, PaymentHistoryVoluntarySurrender, PaymentHistoryRepossession,
+			PaymentHistoryChargeOff:
 			continue
 		}
 		errors.New("invalid value of payment history profile ")

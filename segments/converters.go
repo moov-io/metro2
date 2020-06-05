@@ -26,12 +26,12 @@ func (c *converter) parseValue(field Field, data string) (reflect.Value, error) 
 		if err != nil {
 			return reflect.Value{}, err
 		}
-		return  reflect.ValueOf(value), nil
+		return reflect.ValueOf(value), nil
 	} else if field.Type&Alphanumeric > 0 {
-		return  reflect.ValueOf(data), nil
+		return reflect.ValueOf(data), nil
 	} else if field.Type&Alpha > 0 {
 		upperString := strings.ToUpper(data)
-		return  reflect.ValueOf(upperString), nil
+		return reflect.ValueOf(upperString), nil
 	}
 
 	return reflect.Value{}, ErrSegmentParseType

@@ -80,7 +80,7 @@ func (v *validator) isValidType(field Field, data string) error {
 			if val == 0 {
 				return ErrRequired
 			}
-		} else if field.Type&Alphanumeric > 0 || field.Type&Alpha > 0{
+		} else if field.Type&Alphanumeric > 0 || field.Type&Alpha > 0 {
 			if len(data) == 0 {
 				return ErrRequired
 			}
