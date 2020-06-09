@@ -489,6 +489,8 @@ type BaseSegment struct {
 	validator
 }
 
+type PackedBaseSegment BaseSegment
+
 const (
 	PortfolioTypeCredit                = "C"
 	PortfolioTypeInstallment           = "I"
@@ -564,7 +566,7 @@ func (s *BaseSegment) Parse(record string) error {
 		}
 
 		field := fields.FieldByName(fieldName)
-		spec, ok := BaseSegmentCharacterFormat[fieldName]
+		spec, ok := baseSegmentCharacterFormat[fieldName]
 		if !ok || !field.IsValid() {
 			return ErrSegmentInvalidType
 		}
@@ -596,7 +598,7 @@ func (s *BaseSegment) Parse(record string) error {
 
 func (s *BaseSegment) String() string {
 	var buf strings.Builder
-	specifications := s.toSpecifications(BaseSegmentCharacterFormat)
+	specifications := s.toSpecifications(baseSegmentCharacterFormat)
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
 		return ""
@@ -619,8 +621,8 @@ func (s *BaseSegment) Validate() error {
 			return ErrSegmentParse
 		}
 
-		if spec, ok := BaseSegmentCharacterFormat[fieldName]; ok {
-			if spec.Required == Required {
+		if spec, ok := baseSegmentCharacterFormat[fieldName]; ok {
+			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
 					return ErrRequired
@@ -658,8 +660,7 @@ func (s *BaseSegment) ValidateTimeStamp() error {
 
 func (s *BaseSegment) ValidateIdentificationNumber() error {
 	if filled, err := s.filledString(s.IdentificationNumber); err == nil {
-		msg := fmt.Sprintf("the field filled by %s", filled)
-		return errors.New(msg)
+		return fmt.Errorf("the field filled by %s", filled)
 	}
 	return nil
 }
@@ -720,7 +721,7 @@ func (s *BaseSegment) ValidatePaymentRating() error {
 
 func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
 	if len(s.PaymentHistoryProfile) != 24 {
-		return errors.New("invalid value of payment history profile ")
+		return errors.New("invalid value of payment history profile")
 	}
 	for i := 0; i < len(s.PaymentHistoryProfile); i++ {
 		switch s.PaymentHistoryProfile[i] {
@@ -731,7 +732,7 @@ func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
 			PaymentHistoryChargeOff:
 			continue
 		}
-		return errors.New("invalid value of payment history profile ")
+		return errors.New("invalid value of payment history profile")
 	}
 	return nil
 }
@@ -762,7 +763,7 @@ func (s *BaseSegment) ValidateInterestTypeIndicator() error {
 	case "F", "V", blankString:
 		return nil
 	}
-	return errors.New("invalid value of interest type indicator ")
+	return errors.New("invalid value of interest type indicator")
 }
 
 func (s *BaseSegment) ValidateDateBirth() error {
@@ -773,6 +774,242 @@ func (s *BaseSegment) ValidateDateBirth() error {
 }
 
 func (s *BaseSegment) ValidateTelephoneNumber() error {
+	if err := s.isPhoneNumber(s.TelephoneNumber); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *PackedBaseSegment) Description() string {
+	return PackedBaseSegmentDescription
+}
+
+func (s *PackedBaseSegment) Parse(record string) error {
+	if utf8.RuneCountInString(record) != PackedBaseSegmentLength {
+		return ErrSegmentInvalidLength
+	}
+
+	fields := reflect.ValueOf(s).Elem()
+	if !fields.IsValid() {
+		return ErrSegmentParse
+	}
+
+	for i := 0; i < fields.NumField(); i++ {
+		fieldName := fields.Type().Field(i).Name
+		// skip local variable
+		if !unicode.IsUpper([]rune(fieldName)[0]) {
+			continue
+		}
+
+		field := fields.FieldByName(fieldName)
+		spec, ok := baseSegmentPackedFormat[fieldName]
+		if !ok || !field.IsValid() {
+			return ErrSegmentInvalidType
+		}
+
+		data := record[spec.Start : spec.Start+spec.Length]
+		if err := s.isValidType(spec, data); err != nil {
+			return err
+		}
+
+		value, err := s.parseValue(spec, data)
+		if err != nil {
+			return err
+		}
+
+		// set value
+		if value.IsValid() && field.CanSet() {
+			switch value.Interface().(type) {
+			case int, int64:
+				field.SetInt(value.Interface().(int64))
+			case string:
+				field.SetString(value.Interface().(string))
+
+			}
+		}
+	}
+
+	return nil
+}
+
+func (s *PackedBaseSegment) String() string {
+	var buf strings.Builder
+	specifications := s.toSpecifications(baseSegmentPackedFormat)
+	fields := reflect.ValueOf(s).Elem()
+	if !fields.IsValid() {
+		return ""
+	}
+
+	buf.Grow(BaseSegmentLength)
+	for _, spec := range specifications {
+		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
+		buf.WriteString(value)
+	}
+
+	return buf.String()
+}
+
+func (s *PackedBaseSegment) Validate() error {
+	fields := reflect.ValueOf(s).Elem()
+	for i := 0; i < fields.NumField(); i++ {
+		fieldName := fields.Type().Field(i).Name
+		if !fields.IsValid() {
+			return ErrSegmentParse
+		}
+
+		if spec, ok := baseSegmentPackedFormat[fieldName]; ok {
+			if spec.Required == required {
+				fieldValue := fields.FieldByName(fieldName)
+				if fieldValue.IsZero() {
+					return ErrRequired
+				}
+			}
+		}
+
+		funcName := s.validateFuncName(fieldName)
+		method := reflect.ValueOf(s).MethodByName(funcName)
+		if method.IsValid() {
+			response := method.Call(nil)
+			if len(response) == 0 {
+				continue
+			}
+
+			err := method.Call(nil)[0]
+			if !err.IsNil() {
+				return err.Interface().(error)
+			}
+		}
+	}
+
+	return nil
+}
+
+// customized field validation functions
+// function name should be "Validate" + field name
+
+func (s *PackedBaseSegment) ValidateTimeStamp() error {
+	if err := s.isTimestamp(s.TimeStamp); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *PackedBaseSegment) ValidateIdentificationNumber() error {
+	if filled, err := s.filledString(s.IdentificationNumber); err == nil {
+		return fmt.Errorf("the field filled by %s", filled)
+	}
+	return nil
+}
+
+func (s *PackedBaseSegment) ValidatePortfolioType() error {
+	switch s.PortfolioType {
+	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
+		return nil
+	}
+	return errors.New("invalid value of portfolio type")
+}
+
+func (s *PackedBaseSegment) ValidateDateOpened() error {
+	if err := s.isDate(s.DateOpened); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *PackedBaseSegment) ValidateTermsDuration() error {
+	switch s.TermsDuration {
+	case TermsDurationCredit, TermsDurationOpen, TermsDurationRevolving:
+		return nil
+	}
+	_, err := strconv.Atoi(s.TermsDuration)
+	if err != nil {
+		return errors.New("invalid value of terms duration")
+	}
+	return nil
+}
+
+func (s *PackedBaseSegment) ValidateTermsFrequency() error {
+	switch s.TermsFrequency {
+	case TermsFrequencyDeferred, TermsFrequencyPayment, TermsFrequencyWeekly, TermsFrequencyBiweekly,
+		TermsFrequencySemimonthly, TermsFrequencyMonthly, TermsFrequencyBimonthly, TermsFrequencyQuarterly,
+		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, blankString:
+		return nil
+	}
+	return errors.New("invalid value of terms frequency")
+}
+
+func (s *PackedBaseSegment) ValidatePaymentRating() error {
+	switch s.AccountStatus {
+	case AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88, AccountStatus89, AccountStatus94, AccountStatus95:
+		switch s.PaymentRating {
+		case PaymentRatingCurrent, PaymentRatingPast30, PaymentRatingPast60, PaymentRatingPast90,
+			PaymentRatingPast120, PaymentRatingPast150, PaymentRatingPast180, PaymentRatingCollection, PaymentRatingChargeOff:
+			return nil
+		}
+		return errors.New("invalid value of payment rating")
+	}
+
+	if s.PaymentRating == blankString {
+		return nil
+	}
+	return errors.New("invalid value of payment rating")
+}
+
+func (s *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
+	if len(s.PaymentHistoryProfile) != 24 {
+		return errors.New("invalid value of payment history profile")
+	}
+	for i := 0; i < len(s.PaymentHistoryProfile); i++ {
+		switch s.PaymentHistoryProfile[i] {
+		case PaymentHistoryPast0, PaymentHistoryPast30, PaymentHistoryPast60, PaymentHistoryPast90,
+			PaymentHistoryPast120, PaymentHistoryPast150, PaymentHistoryPast180, PaymentHistoryNoPayment,
+			PaymentHistoryNoPaymentMonth, PaymentHistoryZero, PaymentHistoryCollection,
+			PaymentHistoryForeclosureCompleted, PaymentHistoryVoluntarySurrender, PaymentHistoryRepossession,
+			PaymentHistoryChargeOff:
+			continue
+		}
+		return errors.New("invalid value of payment history profile")
+	}
+	return nil
+}
+
+func (s *PackedBaseSegment) ValidateDateFirstDelinquency() error {
+	if err := s.isDate(s.DateFirstDelinquency); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *PackedBaseSegment) ValidateDateClosed() error {
+	if err := s.isDate(s.DateClosed); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *PackedBaseSegment) ValidateDateLastPayment() error {
+	if err := s.isDate(s.DateLastPayment); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *PackedBaseSegment) ValidateInterestTypeIndicator() error {
+	switch s.InterestTypeIndicator {
+	case "F", "V", blankString:
+		return nil
+	}
+	return errors.New("invalid value of interest type indicator")
+}
+
+func (s *PackedBaseSegment) ValidateDateBirth() error {
+	if err := s.isDate(s.DateBirth); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *PackedBaseSegment) ValidateTelephoneNumber() error {
 	if err := s.isPhoneNumber(s.TelephoneNumber); err != nil {
 		return err
 	}

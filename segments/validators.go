@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	upperAlphanumericRegex = regexp.MustCompile(`[^ A-Z0-9!"#$%&'()*+,-.\\/:;<>=?@\[\]^_{}|~]+`)
+	upperalphanumericRegex = regexp.MustCompile(`[^ A-Z0-9!"#$%&'()*+,-.\\/:;<>=?@\[\]^_{}|~]+`)
 	alphanumericRegex      = regexp.MustCompile(`[^ \w!"#$%&'()*+,-.\\/:;<>=?@\[\]^_{}|~]+`)
 	phoneRegex             = regexp.MustCompile(`^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$`)
 	numericRegex           = regexp.MustCompile(`[0-9a-fA-F]`)
@@ -23,21 +23,21 @@ var (
 
 type validator struct{}
 
-func (v *validator) isUpperAlphanumeric(s string) error {
-	if upperAlphanumericRegex.MatchString(s) {
+func (v *validator) isUpperalphanumeric(s string) error {
+	if upperalphanumericRegex.MatchString(s) {
 		return ErrUpperAlpha
 	}
 	return nil
 }
 
-func (v *validator) isAlphanumeric(s string) error {
+func (v *validator) isalphanumeric(s string) error {
 	if alphanumericRegex.MatchString(s) {
 		return ErrAlphanumeric
 	}
 	return nil
 }
 
-func (v *validator) isNumeric(s string) error {
+func (v *validator) isnumeric(s string) error {
 	if !numericRegex.MatchString(s) {
 		return ErrNumeric
 	}
@@ -65,27 +65,31 @@ func (v *validator) filledString(s string) (string, error) {
 	return "", errors.New("not filled")
 }
 
-func (v *validator) isValidType(field Field, data string) error {
-	if field.Type&Numeric > 0 {
-		return v.isNumeric(data)
-	} else if field.Type&Alphanumeric > 0 {
-		return v.isAlphanumeric(data)
-	} else if field.Type&Alpha > 0 {
-		return v.isUpperAlphanumeric(data)
-	}
-
-	if field.Required == Required {
-		if field.Type&Numeric > 0 {
+func (v *validator) isValidType(elm field, data string) error {
+	if elm.Required == required {
+		if elm.Type&numeric > 0 {
 			val, _ := strconv.Atoi(data)
 			if val == 0 {
 				return ErrRequired
 			}
-		} else if field.Type&Alphanumeric > 0 || field.Type&Alpha > 0 {
+		} else if elm.Type&alphanumeric > 0 || elm.Type&alpha > 0 || elm.Type&binaryDescriptor > 0 {
 			if len(data) == 0 {
 				return ErrRequired
 			}
 		}
 	}
+
+	if elm.Type&numeric > 0 {
+		return v.isnumeric(data)
+	} else if elm.Type&alphanumeric > 0 {
+		return v.isalphanumeric(data)
+	} else if elm.Type&alpha > 0 {
+		return v.isUpperalphanumeric(data)
+	} else if elm.Type&binaryDescriptor > 0 || elm.Type&packedDate > 0 ||
+		elm.Type&packedNumber > 0 || elm.Type&packedDateLong > 0 {
+		return nil
+	}
+
 	return ErrSegmentInvalidType
 }
 

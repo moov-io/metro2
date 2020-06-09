@@ -59,3 +59,15 @@ var (
 func NewBaseSegment() Segment {
 	return &BaseSegment{}
 }
+
+func NewPackedBaseSegment() Segment {
+	return &PackedBaseSegment{}
+}
+
+func NewHeaderRecord() Segment {
+	return &HeaderRecord{}
+}
+
+func NewPackedHeaderRecord() Segment {
+	return &PackedHeaderRecord{}
+}

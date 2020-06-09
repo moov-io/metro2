@@ -4,84 +4,181 @@
 
 package segments
 
-type Field struct {
+type field struct {
 	Start    int
 	Length   int
 	Type     int
 	Required string
 }
 
-type Specification struct {
+type specification struct {
 	Key   int
 	Name  string
-	Field Field
+	Field field
 }
 
 const (
-	NonRequired = "N"
-	Required    = "Y"
-	Applicable  = "A"
+	nonrequired        = "N"
+	required           = "Y"
+	applicable         = "A"
+	packedDateLongSize = 8
+	packedDateSize     = 5
+	int64Size          = 8
 )
 
 const (
-	Alphanumeric = 1 << iota
-	Alpha
-	Numeric
-	Binary
-	Packed
-	ZeroFill
-	Omitted
+	alphanumeric = 1 << iota
+	alpha
+	numeric
+	binaryDescriptor
+	packedDateLong
+	packedDate
+	packedNumber
+	zeroFill
+	omitted
 )
 
 var (
-	BaseSegmentCharacterFormat = map[string]Field{
-		"BlockDescriptorWord":           {0, 4, Numeric | Omitted, Applicable},
-		"RecordDescriptorWord":          {0, 4, Numeric, Required},
-		"ProcessingIndicator":           {4, 1, Numeric, NonRequired},
-		"TimeStamp":                     {5, 14, Numeric, NonRequired},
-		"Reserved1":                     {19, 1, Alphanumeric | ZeroFill, NonRequired},
-		"IdentificationNumber":          {20, 20, Alphanumeric, Required},
-		"CycleIdentifier":               {40, 2, Alphanumeric, Applicable},
-		"ConsumerAccountNumber":         {42, 30, Alphanumeric, Required},
-		"PortfolioType":                 {72, 1, Alphanumeric, Required},
-		"AccountType":                   {73, 2, Alphanumeric, Required},
-		"DateOpened":                    {75, 8, Numeric, Required},
-		"CreditLimit":                   {83, 9, Numeric | ZeroFill, Applicable},
-		"HighestCredit":                 {92, 9, Numeric, Required},
-		"TermsDuration":                 {101, 3, Alphanumeric, Required},
-		"TermsFrequency":                {104, 1, Alphanumeric, Applicable},
-		"ScheduledMonthlyPaymentAmount": {105, 9, Numeric, Applicable},
-		"ActualPaymentAmount":           {114, 9, Numeric, Applicable},
-		"AccountStatus":                 {123, 2, Alphanumeric, Required},
-		"PaymentRating":                 {125, 1, Alphanumeric, Applicable},
-		"PaymentHistoryProfile":         {126, 24, Alphanumeric, Required},
-		"SpecialComment":                {150, 2, Alphanumeric, Applicable},
-		"ComplianceConditionCode":       {152, 2, Alphanumeric, Applicable},
-		"CurrentBalance":                {154, 9, Numeric, Required},
-		"AmountPastDue":                 {163, 9, Numeric, Applicable},
-		"OriginalChargeOffAmount":       {172, 9, Numeric, Applicable},
-		"DateAccountInformation":        {181, 8, Numeric, Required},
-		"DateFirstDelinquency":          {189, 8, Numeric, Applicable},
-		"DateClosed":                    {197, 8, Numeric | ZeroFill, Applicable},
-		"DateLastPayment":               {205, 8, Numeric, Applicable},
-		"InterestTypeIndicator":         {213, 1, Alphanumeric, NonRequired},
-		"Reserved2":                     {214, 17, Alphanumeric, NonRequired},
-		"Surname":                       {231, 25, Alphanumeric, Required},
-		"FirstName":                     {256, 20, Alphanumeric, Required},
-		"MiddleName":                    {276, 20, Alphanumeric, Applicable},
-		"GenerationCode":                {296, 1, Alphanumeric, Applicable},
-		"SocialSecurityNumber":          {297, 9, Numeric, Required},
-		"DateBirth":                     {306, 8, Numeric, Required},
-		"TelephoneNumber":               {314, 10, Numeric, NonRequired},
-		"ECOACode":                      {324, 1, Alphanumeric, Required},
-		"ConsumerInformationIndicator":  {325, 2, Alphanumeric, Applicable},
-		"CountryCode":                   {327, 2, Alphanumeric, NonRequired},
-		"FirstLineAddress":              {329, 32, Alphanumeric, Required},
-		"SecondLineAddress":             {361, 32, Alphanumeric, Applicable},
-		"City":                          {393, 20, Alphanumeric, Required},
-		"State":                         {413, 2, Alphanumeric, Required},
-		"ZipCode":                       {415, 9, Alphanumeric, Required},
-		"AddressIndicator":              {424, 1, Alphanumeric, NonRequired},
-		"ResidenceCode":                 {425, 1, Alphanumeric, NonRequired},
+	baseSegmentCharacterFormat = map[string]field{
+		"BlockDescriptorWord":           {0, 4, numeric | omitted, applicable},
+		"RecordDescriptorWord":          {0, 4, numeric, required},
+		"ProcessingIndicator":           {4, 1, numeric, nonrequired},
+		"TimeStamp":                     {5, 14, numeric, nonrequired},
+		"Reserved1":                     {19, 1, alphanumeric | zeroFill, nonrequired},
+		"IdentificationNumber":          {20, 20, alphanumeric, required},
+		"CycleIdentifier":               {40, 2, alphanumeric, applicable},
+		"ConsumerAccountNumber":         {42, 30, alphanumeric, required},
+		"PortfolioType":                 {72, 1, alphanumeric, required},
+		"AccountType":                   {73, 2, alphanumeric, required},
+		"DateOpened":                    {75, 8, numeric, required},
+		"CreditLimit":                   {83, 9, numeric | zeroFill, applicable},
+		"HighestCredit":                 {92, 9, numeric, required},
+		"TermsDuration":                 {101, 3, alphanumeric, required},
+		"TermsFrequency":                {104, 1, alphanumeric, applicable},
+		"ScheduledMonthlyPaymentAmount": {105, 9, numeric, applicable},
+		"ActualPaymentAmount":           {114, 9, numeric, applicable},
+		"AccountStatus":                 {123, 2, alphanumeric, required},
+		"PaymentRating":                 {125, 1, alphanumeric, applicable},
+		"PaymentHistoryProfile":         {126, 24, alphanumeric, required},
+		"SpecialComment":                {150, 2, alphanumeric, applicable},
+		"ComplianceConditionCode":       {152, 2, alphanumeric, applicable},
+		"CurrentBalance":                {154, 9, numeric, required},
+		"AmountPastDue":                 {163, 9, numeric, applicable},
+		"OriginalChargeOffAmount":       {172, 9, numeric, applicable},
+		"DateAccountInformation":        {181, 8, numeric, required},
+		"DateFirstDelinquency":          {189, 8, numeric, applicable},
+		"DateClosed":                    {197, 8, numeric | zeroFill, applicable},
+		"DateLastPayment":               {205, 8, numeric, applicable},
+		"InterestTypeIndicator":         {213, 1, alphanumeric, nonrequired},
+		"Reserved2":                     {214, 17, alphanumeric, nonrequired},
+		"Surname":                       {231, 25, alphanumeric, required},
+		"FirstName":                     {256, 20, alphanumeric, required},
+		"MiddleName":                    {276, 20, alphanumeric, applicable},
+		"GenerationCode":                {296, 1, alphanumeric, applicable},
+		"SocialSecurityNumber":          {297, 9, numeric, required},
+		"DateBirth":                     {306, 8, numeric, required},
+		"TelephoneNumber":               {314, 10, numeric, nonrequired},
+		"ECOACode":                      {324, 1, alphanumeric, required},
+		"ConsumerInformationIndicator":  {325, 2, alphanumeric, applicable},
+		"CountryCode":                   {327, 2, alphanumeric, nonrequired},
+		"FirstLineAddress":              {329, 32, alphanumeric, required},
+		"SecondLineAddress":             {361, 32, alphanumeric, applicable},
+		"City":                          {393, 20, alphanumeric, required},
+		"State":                         {413, 2, alphanumeric, required},
+		"ZipCode":                       {415, 9, alphanumeric, required},
+		"AddressIndicator":              {424, 1, alphanumeric, nonrequired},
+		"ResidenceCode":                 {425, 1, alphanumeric, nonrequired},
+	}
+	baseSegmentPackedFormat = map[string]field{
+		"BlockDescriptorWord":           {0, 4, binaryDescriptor | omitted, applicable},
+		"RecordDescriptorWord":          {0, 4, binaryDescriptor, required},
+		"ProcessingIndicator":           {4, 1, numeric, nonrequired},
+		"TimeStamp":                     {5, 8, packedDateLong, nonrequired},
+		"Reserved1":                     {13, 1, alphanumeric | zeroFill, nonrequired},
+		"IdentificationNumber":          {14, 20, alphanumeric, required},
+		"CycleIdentifier":               {34, 2, alphanumeric, applicable},
+		"ConsumerAccountNumber":         {36, 30, alphanumeric, required},
+		"PortfolioType":                 {66, 1, alphanumeric, required},
+		"AccountType":                   {67, 2, alphanumeric, required},
+		"DateOpened":                    {69, 5, packedDate, required},
+		"CreditLimit":                   {74, 5, packedNumber | zeroFill, applicable},
+		"HighestCredit":                 {79, 5, packedNumber, required},
+		"TermsDuration":                 {84, 3, alphanumeric, required},
+		"TermsFrequency":                {87, 1, alphanumeric, applicable},
+		"ScheduledMonthlyPaymentAmount": {88, 5, packedNumber, applicable},
+		"ActualPaymentAmount":           {93, 5, packedNumber, applicable},
+		"AccountStatus":                 {98, 2, alphanumeric, required},
+		"PaymentRating":                 {100, 1, alphanumeric, applicable},
+		"PaymentHistoryProfile":         {101, 24, alphanumeric, required},
+		"SpecialComment":                {125, 2, alphanumeric, applicable},
+		"ComplianceConditionCode":       {127, 2, alphanumeric, applicable},
+		"CurrentBalance":                {129, 5, packedNumber, required},
+		"AmountPastDue":                 {134, 5, packedNumber, applicable},
+		"OriginalChargeOffAmount":       {139, 5, packedNumber, applicable},
+		"DateAccountInformation":        {144, 5, packedDate, required},
+		"DateFirstDelinquency":          {149, 5, packedDate, applicable},
+		"DateClosed":                    {154, 5, packedDate | zeroFill, applicable},
+		"DateLastPayment":               {159, 5, packedDate, applicable},
+		"InterestTypeIndicator":         {164, 1, alphanumeric, nonrequired},
+		"Reserved2":                     {165, 17, alphanumeric, nonrequired},
+		"Surname":                       {182, 25, alphanumeric, required},
+		"FirstName":                     {207, 20, alphanumeric, required},
+		"MiddleName":                    {227, 20, alphanumeric, applicable},
+		"GenerationCode":                {247, 1, alphanumeric, applicable},
+		"SocialSecurityNumber":          {248, 5, packedNumber, required},
+		"DateBirth":                     {253, 5, packedDate, required},
+		"TelephoneNumber":               {258, 6, packedNumber, nonrequired},
+		"ECOACode":                      {264, 1, alphanumeric, required},
+		"ConsumerInformationIndicator":  {265, 2, alphanumeric, applicable},
+		"CountryCode":                   {267, 2, alphanumeric, nonrequired},
+		"FirstLineAddress":              {269, 32, alphanumeric, required},
+		"SecondLineAddress":             {301, 32, alphanumeric, applicable},
+		"City":                          {333, 20, alphanumeric, required},
+		"State":                         {353, 2, alphanumeric, required},
+		"ZipCode":                       {355, 9, alphanumeric, required},
+		"AddressIndicator":              {364, 1, alphanumeric, nonrequired},
+		"ResidenceCode":                 {365, 1, alphanumeric, nonrequired},
+	}
+	headerRecordCharacterFormat = map[string]field{
+		"BlockDescriptorWord":         {0, 4, numeric | omitted, applicable},
+		"RecordDescriptorWord":        {0, 4, numeric, required},
+		"RecordIdentifier":            {4, 6, alphanumeric, required},
+		"CycleIdentifier":             {10, 2, alphanumeric, applicable},
+		"InnovisProgramIdentifier":    {12, 10, alphanumeric, applicable},
+		"EquifaxProgramIdentifier":    {22, 10, alphanumeric, applicable},
+		"ExperianProgramIdentifier":   {32, 5, alphanumeric, applicable},
+		"TransUnionProgramIdentifier": {37, 10, alphanumeric, applicable},
+		"ActivityDate":                {47, 8, numeric, required},
+		"DateCreated":                 {55, 8, numeric, required},
+		"ProgramDate":                 {63, 8, numeric, nonrequired},
+		"ProgramRevisionDate":         {71, 8, numeric, nonrequired},
+		"ReporterName":                {79, 40, alphanumeric, required},
+		"ReporterAddress":             {119, 96, alphanumeric, required},
+		"ReporterTelephoneNumber":     {215, 10, numeric, nonrequired},
+		"SoftwareVendorName":          {225, 40, alphanumeric, applicable},
+		"SoftwareVersionNumber":       {265, 5, alphanumeric, applicable},
+		"PRBCProgramIdentifier":       {270, 10, alphanumeric, applicable},
+		"Reserved":                    {280, 146, alphanumeric, nonrequired},
+	}
+	headerRecordPackedFormat = map[string]field{
+		"BlockDescriptorWord":         {0, 4, binaryDescriptor | omitted, applicable},
+		"RecordDescriptorWord":        {0, 4, binaryDescriptor, required},
+		"RecordIdentifier":            {4, 6, alphanumeric, required},
+		"CycleIdentifier":             {10, 2, alphanumeric, applicable},
+		"InnovisProgramIdentifier":    {12, 10, alphanumeric, applicable},
+		"EquifaxProgramIdentifier":    {22, 10, alphanumeric, applicable},
+		"ExperianProgramIdentifier":   {32, 5, alphanumeric, applicable},
+		"TransUnionProgramIdentifier": {37, 10, alphanumeric, applicable},
+		"ActivityDate":                {47, 8, numeric, required},
+		"DateCreated":                 {55, 8, numeric, required},
+		"ProgramDate":                 {63, 8, numeric, nonrequired},
+		"ProgramRevisionDate":         {71, 8, numeric, nonrequired},
+		"ReporterName":                {79, 40, alphanumeric, required},
+		"ReporterAddress":             {119, 96, alphanumeric, required},
+		"ReporterTelephoneNumber":     {215, 10, numeric, nonrequired},
+		"SoftwareVendorName":          {225, 40, alphanumeric, applicable},
+		"SoftwareVersionNumber":       {265, 5, alphanumeric, applicable},
+		"PRBCProgramIdentifier":       {270, 10, alphanumeric, applicable},
+		"Reserved":                    {280, 86, alphanumeric, nonrequired},
 	}
 )
