@@ -30,14 +30,14 @@ func (v *validator) isUpperalphanumeric(s string) error {
 	return nil
 }
 
-func (v *validator) isalphanumeric(s string) error {
+func (v *validator) isAlphanumeric(s string) error {
 	if alphanumericRegex.MatchString(s) {
 		return ErrAlphanumeric
 	}
 	return nil
 }
 
-func (v *validator) isnumeric(s string) error {
+func (v *validator) isNumeric(s string) error {
 	if !numericRegex.MatchString(s) {
 		return ErrNumeric
 	}
@@ -80,9 +80,9 @@ func (v *validator) isValidType(elm field, data string) error {
 	}
 
 	if elm.Type&numeric > 0 {
-		return v.isnumeric(data)
+		return v.isNumeric(data)
 	} else if elm.Type&alphanumeric > 0 {
-		return v.isalphanumeric(data)
+		return v.isAlphanumeric(data)
 	} else if elm.Type&alpha > 0 {
 		return v.isUpperalphanumeric(data)
 	} else if elm.Type&binaryDescriptor > 0 || elm.Type&packedDate > 0 ||
