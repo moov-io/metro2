@@ -203,7 +203,7 @@ func (s *PackedHeaderRecord) Description() string {
 }
 
 func (s *PackedHeaderRecord) Parse(record string) error {
-	if utf8.RuneCountInString(record) != PackedHeaderRecordCharacterLength {
+	if utf8.RuneCountInString(record) != PackedHeaderRecordLength {
 		return ErrSegmentInvalidLength
 	}
 

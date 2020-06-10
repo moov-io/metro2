@@ -2,7 +2,7 @@ package segments
 
 import "gopkg.in/check.v1"
 
-func (s *SegmentTest) TestHeaderRecord(c *check.C) {
+func (s *SegmentTest) TestTrailerRecord(c *check.C) {
 	segment := NewHeaderRecord()
 	err := segment.Parse(s.sampleHeaderRecord)
 	c.Assert(err, check.IsNil)
@@ -12,14 +12,14 @@ func (s *SegmentTest) TestHeaderRecord(c *check.C) {
 	c.Assert(segment.Description(), check.Equals, HeaderRecordDescription)
 }
 
-func (s *SegmentTest) TestHeaderRecordWithInvalidData(c *check.C) {
+func (s *SegmentTest) TestTrailerRecordWithInvalidData(c *check.C) {
 	segment := NewHeaderRecord()
 	err := segment.Parse(s.sampleHeaderRecord + "ERROR")
 	c.Assert(err, check.Not(check.IsNil))
 	c.Assert(err, check.DeepEquals, ErrSegmentInvalidLength)
 }
 
-func (s *SegmentTest) TestHeaderRecordWithInvalidActivityDate(c *check.C) {
+func (s *SegmentTest) TestTrailerRecordWithInvalidActivityDate(c *check.C) {
 	segment := &HeaderRecord{}
 	err := segment.Parse(s.sampleHeaderRecord)
 	c.Assert(err, check.IsNil)
@@ -29,7 +29,7 @@ func (s *SegmentTest) TestHeaderRecordWithInvalidActivityDate(c *check.C) {
 	c.Assert(err, check.DeepEquals, ErrRequired)
 }
 
-func (s *SegmentTest) TestPackedHeaderRecord(c *check.C) {
+func (s *SegmentTest) TestPackedTrailerRecord(c *check.C) {
 	segment := NewPackedHeaderRecord()
 	err := segment.Parse(s.samplePackedHeaderRecord)
 	c.Assert(err, check.IsNil)
@@ -39,14 +39,14 @@ func (s *SegmentTest) TestPackedHeaderRecord(c *check.C) {
 	c.Assert(segment.Description(), check.Equals, PackedHeaderRecordDescription)
 }
 
-func (s *SegmentTest) TestPackedHeaderRecordWithInvalidData(c *check.C) {
+func (s *SegmentTest) TestPackedTrailerRecordWithInvalidData(c *check.C) {
 	segment := NewPackedHeaderRecord()
 	err := segment.Parse(s.samplePackedHeaderRecord + "ERROR")
 	c.Assert(err, check.Not(check.IsNil))
 	c.Assert(err, check.DeepEquals, ErrSegmentInvalidLength)
 }
 
-func (s *SegmentTest) TestPackedHeaderRecordWithInvalidActivityDate(c *check.C) {
+func (s *SegmentTest) TestPackedTrailerRecordWithInvalidActivityDate(c *check.C) {
 	segment := &PackedHeaderRecord{}
 	err := segment.Parse(s.samplePackedHeaderRecord)
 	c.Assert(err, check.IsNil)

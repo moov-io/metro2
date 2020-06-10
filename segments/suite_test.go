@@ -16,10 +16,12 @@ import (
 func Test(t *testing.T) { check.TestingT(t) }
 
 type SegmentTest struct {
-	sampleBaseSegment        string
-	samplePackedBaseSegment  string
-	sampleHeaderRecord       string
-	samplePackedHeaderRecord string
+	sampleBaseSegment         string
+	samplePackedBaseSegment   string
+	sampleHeaderRecord        string
+	samplePackedHeaderRecord  string
+	sampleTrailerRecord       string
+	samplePackedTrailerRecord string
 }
 
 var _ = check.Suite(&SegmentTest{})
@@ -51,6 +53,14 @@ func (s *SegmentTest) SetUpSuite(c *check.C) {
 	f, err = os.Open(filepath.Join("..", "testdata", "packed_base_segment.dat"))
 	c.Assert(err, check.IsNil)
 	s.samplePackedBaseSegment = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "trailer_record.dat"))
+	c.Assert(err, check.IsNil)
+	s.sampleTrailerRecord = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "packed_trailer_record.dat"))
+	c.Assert(err, check.IsNil)
+	s.samplePackedTrailerRecord = readStringFromFile(f)
 }
 
 func (s *SegmentTest) TearDownSuite(c *check.C) {}

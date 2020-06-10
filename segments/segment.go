@@ -14,32 +14,32 @@ type Segment interface {
 }
 
 const (
-	HeaderRecordCharacterLength       = 426
-	HeaderRecordDescription           = "Header Record (Character)"
-	BaseSegmentLength                 = 426
-	BaseSegmentDescription            = "Base Segment (Character)"
-	J2SegmentLength                   = 200
-	J2SegmentDescription              = "J2 Segment"
-	K1SegmentLength                   = 34
-	K1SegmentDescription              = "K1 Segment"
-	K2SegmentLength                   = 34
-	K2SegmentDescription              = "K2 Segment"
-	K3SegmentLength                   = 40
-	K3SegmentDescription              = "K3 Segment"
-	K4SegmentLength                   = 30
-	K4SegmentDescription              = "K4 Segment"
-	L1SegmentLength                   = 54
-	L1SegmentDescription              = "L1 Segment"
-	N1SegmentLength                   = 146
-	N1SegmentDescription              = "N1 Segment"
-	TrailerRecordLength               = 426
-	TrailerRecordDescription          = "Trailer Record"
-	PackedHeaderRecordCharacterLength = 366
-	PackedHeaderRecordDescription     = "Header Record (Packed)"
-	PackedBaseSegmentLength           = 366
-	PackedBaseSegmentDescription      = "Base Segment (Packed)"
-	PackedTrailerRecordLength         = 366
-	PackedTrailerRecordDescription    = "Trailer Record (Packed)"
+	HeaderRecordCharacterLength    = 426
+	HeaderRecordDescription        = "Header Record (Character)"
+	BaseSegmentLength              = 426
+	BaseSegmentDescription         = "Base Segment (Character)"
+	J2SegmentLength                = 200
+	J2SegmentDescription           = "J2 Segment"
+	K1SegmentLength                = 34
+	K1SegmentDescription           = "K1 Segment"
+	K2SegmentLength                = 34
+	K2SegmentDescription           = "K2 Segment"
+	K3SegmentLength                = 40
+	K3SegmentDescription           = "K3 Segment"
+	K4SegmentLength                = 30
+	K4SegmentDescription           = "K4 Segment"
+	L1SegmentLength                = 54
+	L1SegmentDescription           = "L1 Segment"
+	N1SegmentLength                = 146
+	N1SegmentDescription           = "N1 Segment"
+	TrailerRecordLength            = 426
+	TrailerRecordDescription       = "Trailer Record"
+	PackedHeaderRecordLength       = 366
+	PackedHeaderRecordDescription  = "Header Record (Packed)"
+	PackedBaseSegmentLength        = 366
+	PackedBaseSegmentDescription   = "Base Segment (Packed)"
+	PackedTrailerRecordLength      = 366
+	PackedTrailerRecordDescription = "Trailer Record (Packed)"
 )
 
 var (
@@ -70,4 +70,12 @@ func NewHeaderRecord() Segment {
 
 func NewPackedHeaderRecord() Segment {
 	return &PackedHeaderRecord{}
+}
+
+func NewTrailerRecord() Segment {
+	return &TrailerRecord{}
+}
+
+func NewPackedTrailerRecord() Segment {
+	return &PackedTrailerRecord{}
 }
