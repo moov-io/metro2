@@ -12,6 +12,7 @@
 # Folders
 _obj
 _test
+.idea
 
 # VSCode ignore
 .vscode/*

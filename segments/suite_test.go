@@ -15,16 +15,18 @@ import (
 
 func Test(t *testing.T) { check.TestingT(t) }
 
-type S struct {
-	sampleBaseSegment string
+type SegmentTest struct {
+	sampleBaseSegment         string
+	samplePackedBaseSegment   string
+	sampleHeaderRecord        string
+	samplePackedHeaderRecord  string
+	sampleTrailerRecord       string
+	samplePackedTrailerRecord string
 }
 
-var _ = check.Suite(&S{})
+var _ = check.Suite(&SegmentTest{})
 
-func (s *S) SetUpSuite(c *check.C) {
-	f, err := os.Open(filepath.Join("..", "testdata", "base_segment.dat"))
-	c.Assert(err, check.IsNil)
-
+func readStringFromFile(f *os.File) string {
 	scanner := bufio.NewScanner(f)
 	scanner.Split(bufio.ScanLines)
 	var lines []string
@@ -32,38 +34,37 @@ func (s *S) SetUpSuite(c *check.C) {
 		lines = append(lines, scanner.Text())
 	}
 
-	s.sampleBaseSegment = strings.Join(lines, "")
+	return strings.Join(lines, "")
 }
 
-func (s *S) TearDownSuite(c *check.C) {}
-
-func (s *S) SetUpTest(c *check.C) {}
-
-func (s *S) TearDownTest(c *check.C) {}
-
-func (s *S) TestBaseSegment(c *check.C) {
-	base := NewBaseSegment()
-	err := base.Parse(s.sampleBaseSegment)
+func (s *SegmentTest) SetUpSuite(c *check.C) {
+	f, err := os.Open(filepath.Join("..", "testdata", "base_segment.dat"))
 	c.Assert(err, check.IsNil)
-	err = base.Validate()
+	s.sampleBaseSegment = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "header_record.dat"))
 	c.Assert(err, check.IsNil)
-	c.Assert(base.String(), check.Equals, s.sampleBaseSegment)
-	c.Assert(base.Description(), check.Equals, BaseSegmentDescription)
+	s.sampleHeaderRecord = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "packed_header_record.dat"))
+	c.Assert(err, check.IsNil)
+	s.samplePackedHeaderRecord = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "packed_base_segment.dat"))
+	c.Assert(err, check.IsNil)
+	s.samplePackedBaseSegment = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "trailer_record.dat"))
+	c.Assert(err, check.IsNil)
+	s.sampleTrailerRecord = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "packed_trailer_record.dat"))
+	c.Assert(err, check.IsNil)
+	s.samplePackedTrailerRecord = readStringFromFile(f)
 }
 
-func (s *S) TestBaseSegmentWithInvalidData(c *check.C) {
-	base := NewBaseSegment()
-	err := base.Parse(s.sampleBaseSegment + "ERROR")
-	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrSegmentInvalidLength)
-}
+func (s *SegmentTest) TearDownSuite(c *check.C) {}
 
-func (s *S) TestBaseSegmentWithInvalidField(c *check.C) {
-	base := &BaseSegment{}
-	err := base.Parse(s.sampleBaseSegment)
-	c.Assert(err, check.IsNil)
-	base.DateClosed = 0
-	err = base.Validate()
-	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrDate)
-}
+func (s *SegmentTest) SetUpTest(c *check.C) {}
+
+func (s *SegmentTest) TearDownTest(c *check.C) {}
