@@ -18,7 +18,7 @@ func (s *SegmentTest) TestHeaderRecordWithInvalidData(c *check.C) {
 	segment := NewTrailerRecord()
 	err := segment.Parse(s.sampleTrailerRecord + "ERROR")
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrSegmentInvalidLength)
+	c.Assert(err, check.DeepEquals, ErrSegmentLength)
 }
 
 func (s *SegmentTest) TestPackedHeaderRecord(c *check.C) {
@@ -35,5 +35,5 @@ func (s *SegmentTest) TestPackedHeaderRecordWithInvalidData(c *check.C) {
 	segment := NewPackedTrailerRecord()
 	err := segment.Parse(s.samplePackedTrailerRecord + "ERROR")
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrSegmentInvalidLength)
+	c.Assert(err, check.DeepEquals, ErrSegmentLength)
 }

@@ -1,6 +1,9 @@
 package segments
 
-import "gopkg.in/check.v1"
+import (
+	"github.com/moov-io/ach"
+	"gopkg.in/check.v1"
+)
 
 func (s *SegmentTest) TestTrailerRecord(c *check.C) {
 	segment := NewHeaderRecord()
@@ -16,7 +19,7 @@ func (s *SegmentTest) TestTrailerRecordWithInvalidData(c *check.C) {
 	segment := NewHeaderRecord()
 	err := segment.Parse(s.sampleHeaderRecord + "ERROR")
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrSegmentInvalidLength)
+	c.Assert(err, check.DeepEquals, ErrSegmentLength)
 }
 
 func (s *SegmentTest) TestTrailerRecordWithInvalidActivityDate(c *check.C) {
@@ -26,7 +29,7 @@ func (s *SegmentTest) TestTrailerRecordWithInvalidActivityDate(c *check.C) {
 	segment.ActivityDate = 0
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrRequired)
+	c.Assert(err, check.DeepEquals, ach.ErrFieldRequired)
 }
 
 func (s *SegmentTest) TestPackedTrailerRecord(c *check.C) {
@@ -43,7 +46,7 @@ func (s *SegmentTest) TestPackedTrailerRecordWithInvalidData(c *check.C) {
 	segment := NewPackedHeaderRecord()
 	err := segment.Parse(s.samplePackedHeaderRecord + "ERROR")
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrSegmentInvalidLength)
+	c.Assert(err, check.DeepEquals, ErrSegmentLength)
 }
 
 func (s *SegmentTest) TestPackedTrailerRecordWithInvalidActivityDate(c *check.C) {
@@ -53,5 +56,5 @@ func (s *SegmentTest) TestPackedTrailerRecordWithInvalidActivityDate(c *check.C)
 	segment.ActivityDate = 0
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrRequired)
+	c.Assert(err, check.DeepEquals, ach.ErrFieldRequired)
 }

@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"github.com/moov-io/ach"
 	"gopkg.in/check.v1"
 )
 
@@ -18,17 +19,7 @@ func (s *SegmentTest) TestBaseSegmentWithInvalidData(c *check.C) {
 	segment := NewBaseSegment()
 	err := segment.Parse(s.sampleBaseSegment + "ERROR")
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrSegmentInvalidLength)
-}
-
-func (s *SegmentTest) TestBaseSegmentWithInvalidTimeStamp(c *check.C) {
-	segment := &BaseSegment{}
-	err := segment.Parse(s.sampleBaseSegment)
-	c.Assert(err, check.IsNil)
-	segment.TimeStamp = 0
-	err = segment.Validate()
-	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrTimestamp)
+	c.Assert(err, check.DeepEquals, ErrSegmentLength)
 }
 
 func (s *SegmentTest) TestBaseSegmentWithIdentificationNumber(c *check.C) {
@@ -38,7 +29,7 @@ func (s *SegmentTest) TestBaseSegmentWithIdentificationNumber(c *check.C) {
 	segment.IdentificationNumber = ""
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrRequired)
+	c.Assert(err, check.DeepEquals, ach.ErrFieldRequired)
 }
 
 func (s *SegmentTest) TestBaseSegmentWithInvalidPortfolioType(c *check.C) {
@@ -48,17 +39,7 @@ func (s *SegmentTest) TestBaseSegmentWithInvalidPortfolioType(c *check.C) {
 	segment.PortfolioType = "A"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "invalid value of portfolio type")
-}
-
-func (s *SegmentTest) TestBaseSegmentWithInvalidDateOpened(c *check.C) {
-	segment := &BaseSegment{}
-	err := segment.Parse(s.sampleBaseSegment)
-	c.Assert(err, check.IsNil)
-	segment.DateOpened = 999999
-	err = segment.Validate()
-	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrDate)
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of portfolio type")
 }
 
 func (s *SegmentTest) TestBaseSegmentWithInvalidTermsDuration(c *check.C) {
@@ -68,27 +49,7 @@ func (s *SegmentTest) TestBaseSegmentWithInvalidTermsDuration(c *check.C) {
 	segment.TermsDuration = "AAA"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "invalid value of terms duration")
-}
-
-func (s *SegmentTest) TestBaseSegmentWithInvalidDateClosed(c *check.C) {
-	segment := &BaseSegment{}
-	err := segment.Parse(s.sampleBaseSegment)
-	c.Assert(err, check.IsNil)
-	segment.DateClosed = 0
-	err = segment.Validate()
-	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrDate)
-}
-
-func (s *SegmentTest) TestBaseSegmentWithInvalidDateFirstDelinquency(c *check.C) {
-	segment := &BaseSegment{}
-	err := segment.Parse(s.sampleBaseSegment)
-	c.Assert(err, check.IsNil)
-	segment.DateFirstDelinquency = 0
-	err = segment.Validate()
-	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrDate)
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of terms duration")
 }
 
 func (s *SegmentTest) TestBaseSegmentWithInvalidPaymentHistoryProfile(c *check.C) {
@@ -98,7 +59,7 @@ func (s *SegmentTest) TestBaseSegmentWithInvalidPaymentHistoryProfile(c *check.C
 	segment.PaymentHistoryProfile = "Z"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "invalid value of payment history profile")
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of payment history profile")
 }
 
 func (s *SegmentTest) TestBaseSegmentWithInvalidInterestTypeIndicator(c *check.C) {
@@ -108,7 +69,7 @@ func (s *SegmentTest) TestBaseSegmentWithInvalidInterestTypeIndicator(c *check.C
 	segment.InterestTypeIndicator = "Z"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "invalid value of interest type indicator")
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of interest type indicator")
 }
 
 func (s *SegmentTest) TestBaseSegmentWithInvalidTelephoneNumber(c *check.C) {
@@ -134,17 +95,7 @@ func (s *SegmentTest) TestPackedBaseSegmentWithInvalidData(c *check.C) {
 	segment := NewPackedBaseSegment()
 	err := segment.Parse(s.samplePackedBaseSegment + "ERROR")
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrSegmentInvalidLength)
-}
-
-func (s *SegmentTest) TestPackedBaseSegmentWithInvalidTimeStamp(c *check.C) {
-	segment := &PackedBaseSegment{}
-	err := segment.Parse(s.samplePackedBaseSegment)
-	c.Assert(err, check.IsNil)
-	segment.TimeStamp = 0
-	err = segment.Validate()
-	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrTimestamp)
+	c.Assert(err, check.DeepEquals, ErrSegmentLength)
 }
 
 func (s *SegmentTest) TestPackedBaseSegmentWithIdentificationNumber(c *check.C) {
@@ -154,7 +105,7 @@ func (s *SegmentTest) TestPackedBaseSegmentWithIdentificationNumber(c *check.C) 
 	segment.IdentificationNumber = ""
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrRequired)
+	c.Assert(err, check.DeepEquals, ach.ErrFieldRequired)
 }
 
 func (s *SegmentTest) TestPackedBaseSegmentWithInvalidPortfolioType(c *check.C) {
@@ -164,17 +115,7 @@ func (s *SegmentTest) TestPackedBaseSegmentWithInvalidPortfolioType(c *check.C) 
 	segment.PortfolioType = "A"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "invalid value of portfolio type")
-}
-
-func (s *SegmentTest) TestPackedBaseSegmentWithInvalidDateOpened(c *check.C) {
-	segment := &PackedBaseSegment{}
-	err := segment.Parse(s.samplePackedBaseSegment)
-	c.Assert(err, check.IsNil)
-	segment.DateOpened = 999999
-	err = segment.Validate()
-	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrDate)
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of portfolio type")
 }
 
 func (s *SegmentTest) TestPackedBaseSegmentWithInvalidTermsDuration(c *check.C) {
@@ -184,27 +125,7 @@ func (s *SegmentTest) TestPackedBaseSegmentWithInvalidTermsDuration(c *check.C) 
 	segment.TermsDuration = "AAA"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "invalid value of terms duration")
-}
-
-func (s *SegmentTest) TestPackedBaseSegmentWithInvalidDateClosed(c *check.C) {
-	segment := &PackedBaseSegment{}
-	err := segment.Parse(s.samplePackedBaseSegment)
-	c.Assert(err, check.IsNil)
-	segment.DateClosed = 0
-	err = segment.Validate()
-	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrDate)
-}
-
-func (s *SegmentTest) TestPackedBaseSegmentWithInvalidDateFirstDelinquency(c *check.C) {
-	segment := &PackedBaseSegment{}
-	err := segment.Parse(s.samplePackedBaseSegment)
-	c.Assert(err, check.IsNil)
-	segment.DateFirstDelinquency = 0
-	err = segment.Validate()
-	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrDate)
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of terms duration")
 }
 
 func (s *SegmentTest) TestPackedBaseSegmentWithInvalidPaymentHistoryProfile(c *check.C) {
@@ -214,7 +135,7 @@ func (s *SegmentTest) TestPackedBaseSegmentWithInvalidPaymentHistoryProfile(c *c
 	segment.PaymentHistoryProfile = "Z"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "invalid value of payment history profile")
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of payment history profile")
 }
 
 func (s *SegmentTest) TestPackedBaseSegmentWithInvalidInterestTypeIndicator(c *check.C) {
@@ -224,7 +145,7 @@ func (s *SegmentTest) TestPackedBaseSegmentWithInvalidInterestTypeIndicator(c *c
 	segment.InterestTypeIndicator = "Z"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "invalid value of interest type indicator")
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of interest type indicator")
 }
 
 func (s *SegmentTest) TestPackedBaseSegmentWithInvalidTelephoneNumber(c *check.C) {

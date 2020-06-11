@@ -5,15 +5,17 @@
 package segments
 
 import (
-	"errors"
-	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/moov-io/ach"
 )
 
+// BaseSegment holds the base segment
 type BaseSegment struct {
 	// Contains a value equal to the length of the block of data and must be reported when using the packed format or
 	// when reporting variable length records.  This value includes the four bytes reserved for this field.
@@ -42,7 +44,7 @@ type BaseSegment struct {
 	// Contains date and time of actual account information update.
 	// Format for packed date is 0MMDDYYYYHHMMSSs — where s is the sign.
 	// Format is MMDDYYYYHHMMSS for character date.
-	TimeStamp int64 `json:"timeStamp"`
+	TimeStamp time.Time `json:"timeStamp"`
 
 	// Used to uniquely identify a data furnisher.
 	// Report your internal code to identify each branch, office, and/or credit central where information is verified.
@@ -92,7 +94,7 @@ type BaseSegment struct {
 	//
 	// Format for character date is MMDDYYYY.  Format for packed date is 0MMDDYYYYs — where s is the sign.
 	// If the day is not available, use 01.
-	DateOpened int `json:"dateOpened"`
+	DateOpened time.Time `json:"dateOpened"`
 
 	// Report the following values in whole dollars only:
 	//
@@ -278,7 +280,7 @@ type BaseSegment struct {
 	// Format for character date is MMDDYYYY.  Format for packed date is 0MMDDYYYYs – where s is the sign.
 	// Notes: This date must not reflect a future date.
 	// For guidelines on reporting paid, closed or inactive accounts, refer to FAQs 39, 40 and 41.
-	DateAccountInformation int `json:"dateAccountInformation" validate:"required"`
+	DateAccountInformation time.Time `json:"dateAccountInformation" validate:"required"`
 
 	// This date is used to ensure compliance with the Fair Credit Reporting Act.
 	// The date in the Date of First Delinquency field must be determined each reporting period based on the following hierarchy:
@@ -294,21 +296,21 @@ type BaseSegment struct {
 	// Notes:
 	// • Refer to Exhibit 9 for detailed reporting instructions, examples and excerpts from the Fair Credit Reporting Act.
 	// • First-time reporters should refer to Frequently Asked Question 22 for important information.
-	DateFirstDelinquency int `json:"dateFirstDelinquency,omitempty"`
+	DateFirstDelinquency time.Time `json:"dateFirstDelinquency,omitempty"`
 
 	// For all portfolio types, contains the date the account was closed to further purchases, paid in full, transferred or sold.  For Line of Credit, Open or Revolving accounts, there may be a balance due.
 	//
 	// Format for character date is MMDDYYYY.
 	// Format for packed date is 0MMDDYYYYs — where s is the sign.
 	// If not applicable, zero fill.
-	DateClosed int `json:"dateClosed,omitempty"`
+	DateClosed time.Time `json:"dateClosed,omitempty"`
 
 	// Report the date the most recent payment was received, whether full or partial payment is made.
 	//
 	// Format for character date is MMDDYYYY.
 	// Format for packed date is 0MMDDYYYYs — where s is the sign.
 	// If the day is not available, use 01.
-	DateLastPayment int `json:"dateLastPayment,omitempty"`
+	DateLastPayment time.Time `json:"dateLastPayment,omitempty"`
 
 	// Contains one of the following values that designates the interest type:
 	//
@@ -386,7 +388,7 @@ type BaseSegment struct {
 	// Notes:  If the Date of Birth is not reported, the Social Security Number is required to be reported.
 	//         When reporting Authorized Users (ECOA Code 3), the full Date of Birth (MMDDYYYY) must be reported for all newly-added Authorized Users on all pre-existing and newly-opened accounts, even if the Social Security Number is reported.
 	//         Do not report accounts of consumers who are too young to enter into a binding contract.
-	DateBirth int `json:"dateBirth" validate:"required"`
+	DateBirth time.Time `json:"dateBirth" validate:"required"`
 
 	// Contains the telephone number of the primary consumer (Area Code + 7 digits).
 	TelephoneNumber int64 `json:"telephoneNumber"`
@@ -489,73 +491,139 @@ type BaseSegment struct {
 	validator
 }
 
+// PackedBaseSegment holds the packed base segment
 type PackedBaseSegment BaseSegment
 
 const (
-	PortfolioTypeCredit                = "C"
-	PortfolioTypeInstallment           = "I"
-	PortfolioTypeMortgage              = "M"
-	PortfolioTypeOpen                  = "O"
-	PortfolioTypeRevolving             = "R"
-	TermsDurationCredit                = "LOC"
-	TermsDurationOpen                  = "001"
-	TermsDurationRevolving             = "REV"
-	TermsFrequencyDeferred             = "D"
-	TermsFrequencyPayment              = "P"
-	TermsFrequencyWeekly               = "W"
-	TermsFrequencyBiweekly             = "B"
-	TermsFrequencySemimonthly          = "E"
-	TermsFrequencyMonthly              = "M"
-	TermsFrequencyBimonthly            = "L"
-	TermsFrequencyQuarterly            = "Q"
-	TermsFrequencyTriAnnually          = "T"
-	TermsFrequencySemiannually         = "S"
-	TermsFrequencyAnnually             = "Y"
-	PaymentRatingCurrent               = "0"
-	PaymentRatingPast30                = "1"
-	PaymentRatingPast60                = "2"
-	PaymentRatingPast90                = "3"
-	PaymentRatingPast120               = "4"
-	PaymentRatingPast150               = "5"
-	PaymentRatingPast180               = "6"
-	PaymentRatingCollection            = "G"
-	PaymentRatingChargeOff             = "L"
-	PaymentHistoryPast0                = '0'
-	PaymentHistoryPast30               = '1'
-	PaymentHistoryPast60               = '2'
-	PaymentHistoryPast90               = '3'
-	PaymentHistoryPast120              = '4'
-	PaymentHistoryPast150              = '5'
-	PaymentHistoryPast180              = '6'
-	PaymentHistoryNoPayment            = 'B'
-	PaymentHistoryNoPaymentMonth       = 'D'
-	PaymentHistoryZero                 = 'E'
-	PaymentHistoryCollection           = 'G'
+	// type of portfolio, Line of Credit
+	PortfolioTypeCredit = "C"
+	// type of portfolio, Installment
+	PortfolioTypeInstallment = "I"
+	// type of portfolio, Mortgage
+	PortfolioTypeMortgage = "M"
+	// type of portfolio, Open
+	PortfolioTypeOpen = "O"
+	// type of portfolio, Revolving
+	PortfolioTypeRevolving = "R"
+	// duration of credit extended, Line of Credit
+	TermsDurationCredit = "LOC"
+	// duration of credit extended, Open
+	TermsDurationOpen = "001"
+	// duration of credit extended, Revolving
+	TermsDurationRevolving = "REV"
+	// frequency for payments due, Deferred (Refer to Note)
+	TermsFrequencyDeferred = "D"
+	// frequency for payments due, Single Payment Loan
+	TermsFrequencyPayment = "P"
+	// frequency for payments due, Weekly
+	TermsFrequencyWeekly = "W"
+	// frequency for payments due, Biweekly
+	TermsFrequencyBiweekly = "B"
+	// frequency for payments due, Semimonthly
+	TermsFrequencySemimonthly = "E"
+	// frequency for payments due, Monthly
+	TermsFrequencyMonthly = "M"
+	// frequency for payments due, Bimonthly
+	TermsFrequencyBimonthly = "L"
+	// frequency for payments due, Quarterly
+	TermsFrequencyQuarterly = "Q"
+	// frequency for payments due, Tri-annually
+	TermsFrequencyTriAnnually = "T"
+	// frequency for payments due, Semiannually
+	TermsFrequencySemiannually = "S"
+	// frequency for payments due, Annually
+	TermsFrequencyAnnually = "Y"
+	// code that properly identifies whether the account was current, past due, in collections or charged off
+	// Current account (0–29 days past the due date)
+	PaymentRatingCurrent = "0"
+	// code that properly identifies whether the account was current, past due, in collections or charged off
+	// 30-59 days past the due date
+	PaymentRatingPast30 = "1"
+	// code that properly identifies whether the account was current, past due, in collections or charged off
+	// 60-89 days past the due date
+	PaymentRatingPast60 = "2"
+	// code that properly identifies whether the account was current, past due, in collections or charged off
+	// 90-119 days past the due date
+	PaymentRatingPast90 = "3"
+	// code that properly identifies whether the account was current, past due, in collections or charged off
+	// 120-149 days past the due date
+	PaymentRatingPast120 = "4"
+	// code that properly identifies whether the account was current, past due, in collections or charged off
+	// 150-179 days past the due date
+	PaymentRatingPast150 = "5"
+	// code that properly identifies whether the account was current, past due, in collections or charged off
+	// 180 or more days past the due date
+	PaymentRatingPast180 = "6"
+	// code that properly identifies whether the account was current, past due, in collections or charged off
+	// Collection
+	PaymentRatingCollection = "G"
+	// code that properly identifies whether the account was current, past due, in collections or charged off
+	// Charge-off
+	PaymentRatingChargeOff = "L"
+	// consecutive payment activity, 0 payments past due (current account)
+	PaymentHistoryPast0 = '0'
+	// consecutive payment activity, 30 - 59 days past due date
+	PaymentHistoryPast30 = '1'
+	// consecutive payment activity, 60 - 89 days past due date
+	PaymentHistoryPast60 = '2'
+	// consecutive payment activity, 90 - 119 days past due date
+	PaymentHistoryPast90 = '3'
+	// consecutive payment activity, 120 - 149 days past due date
+	PaymentHistoryPast120 = '4'
+	// consecutive payment activity, 150 - 179 days past due date
+	PaymentHistoryPast150 = '5'
+	// consecutive payment activity, 180 or more days past due date
+	PaymentHistoryPast180 = '6'
+	// consecutive payment activity, No payment history available prior to this time
+	PaymentHistoryNoPayment = 'B'
+	// consecutive payment activity, No payment history available this month.
+	PaymentHistoryNoPaymentMonth = 'D'
+	// consecutive payment activity, Zero balance and current account
+	PaymentHistoryZero = 'E'
+	// consecutive payment activity, Collection
+	PaymentHistoryCollection = 'G'
+	// consecutive payment activity, Foreclosure Completed
 	PaymentHistoryForeclosureCompleted = 'H'
-	PaymentHistoryVoluntarySurrender   = 'J'
-	PaymentHistoryRepossession         = 'K'
-	PaymentHistoryChargeOff            = 'L'
-	AccountStatus05                    = "05"
-	AccountStatus13                    = "13"
-	AccountStatus65                    = "65"
-	AccountStatus88                    = "88"
-	AccountStatus89                    = "89"
-	AccountStatus94                    = "94"
-	AccountStatus95                    = "95"
+	// consecutive payment activity, Voluntary Surrender
+	PaymentHistoryVoluntarySurrender = 'J'
+	// consecutive payment activity, Repossession
+	PaymentHistoryRepossession = 'K'
+	// consecutive payment activity, Charge-off
+	PaymentHistoryChargeOff = 'L'
+	//  status code that properly identifies the current condition of the account, "05"
+	AccountStatus05 = "05"
+	//  status code that properly identifies the current condition of the account, "13"
+	AccountStatus13 = "13"
+	//  status code that properly identifies the current condition of the account, "65"
+	AccountStatus65 = "65"
+	//  status code that properly identifies the current condition of the account, "88"
+	AccountStatus88 = "88"
+	//  status code that properly identifies the current condition of the account, "89"
+	AccountStatus89 = "89"
+	//  status code that properly identifies the current condition of the account, "94"
+	AccountStatus94 = "94"
+	//  status code that properly identifies the current condition of the account, "95"
+	AccountStatus95 = "95"
+	// designates the interest type, Fixed
+	InterestIndicatorFixed = "F"
+	// designates the interest type, Variable/Adjustable
+	InterestIndicatorVariable = "V"
 )
 
+// Description returns description of base segment
 func (s *BaseSegment) Description() string {
 	return BaseSegmentDescription
 }
 
+// Parse takes the input record string and parses the base segment values
 func (s *BaseSegment) Parse(record string) error {
 	if utf8.RuneCountInString(record) != BaseSegmentLength {
-		return ErrSegmentInvalidLength
+		return ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return ErrSegmentParse
+		return ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -568,7 +636,7 @@ func (s *BaseSegment) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := baseSegmentCharacterFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return ErrSegmentInvalidType
+			return ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
@@ -588,7 +656,8 @@ func (s *BaseSegment) Parse(record string) error {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-
+			case time.Time:
+				field.Set(value)
 			}
 		}
 	}
@@ -596,6 +665,7 @@ func (s *BaseSegment) Parse(record string) error {
 	return nil
 }
 
+// String writes the base segment struct to a 426 character string.
 func (s *BaseSegment) String() string {
 	var buf strings.Builder
 	specifications := s.toSpecifications(baseSegmentCharacterFormat)
@@ -613,19 +683,20 @@ func (s *BaseSegment) String() string {
 	return buf.String()
 }
 
+// Validate performs some checks on the record and returns an error if not Validated
 func (s *BaseSegment) Validate() error {
 	fields := reflect.ValueOf(s).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
-			return ErrSegmentParse
+			return ErrValidField
 		}
 
 		if spec, ok := baseSegmentCharacterFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return ErrRequired
+					return ach.ErrFieldRequired
 				}
 			}
 		}
@@ -651,16 +722,9 @@ func (s *BaseSegment) Validate() error {
 // customized field validation functions
 // function name should be "Validate" + field name
 
-func (s *BaseSegment) ValidateTimeStamp() error {
-	if err := s.isTimestamp(s.TimeStamp); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *BaseSegment) ValidateIdentificationNumber() error {
-	if filled, err := s.filledString(s.IdentificationNumber); err == nil {
-		return fmt.Errorf("the field filled by %s", filled)
+	if validFilledString(s.IdentificationNumber) {
+		return newErrValidValue("identification number")
 	}
 	return nil
 }
@@ -670,14 +734,7 @@ func (s *BaseSegment) ValidatePortfolioType() error {
 	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
 		return nil
 	}
-	return errors.New("invalid value of portfolio type")
-}
-
-func (s *BaseSegment) ValidateDateOpened() error {
-	if err := s.isDate(s.DateOpened); err != nil {
-		return err
-	}
-	return nil
+	return newErrValidValue("portfolio type")
 }
 
 func (s *BaseSegment) ValidateTermsDuration() error {
@@ -687,7 +744,7 @@ func (s *BaseSegment) ValidateTermsDuration() error {
 	}
 	_, err := strconv.Atoi(s.TermsDuration)
 	if err != nil {
-		return errors.New("invalid value of terms duration")
+		return newErrValidValue("terms duration")
 	}
 	return nil
 }
@@ -699,7 +756,7 @@ func (s *BaseSegment) ValidateTermsFrequency() error {
 		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, blankString:
 		return nil
 	}
-	return errors.New("invalid value of terms frequency")
+	return newErrValidValue("terms frequency")
 }
 
 func (s *BaseSegment) ValidatePaymentRating() error {
@@ -710,18 +767,18 @@ func (s *BaseSegment) ValidatePaymentRating() error {
 			PaymentRatingPast120, PaymentRatingPast150, PaymentRatingPast180, PaymentRatingCollection, PaymentRatingChargeOff:
 			return nil
 		}
-		return errors.New("invalid value of payment rating")
+		return newErrValidValue("payment rating")
 	}
 
 	if s.PaymentRating == blankString {
 		return nil
 	}
-	return errors.New("invalid value of payment rating")
+	return newErrValidValue("payment rating")
 }
 
 func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
 	if len(s.PaymentHistoryProfile) != 24 {
-		return errors.New("invalid value of payment history profile")
+		return newErrValidValue("payment history profile")
 	}
 	for i := 0; i < len(s.PaymentHistoryProfile); i++ {
 		switch s.PaymentHistoryProfile[i] {
@@ -732,45 +789,17 @@ func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
 			PaymentHistoryChargeOff:
 			continue
 		}
-		return errors.New("invalid value of payment history profile")
-	}
-	return nil
-}
-
-func (s *BaseSegment) ValidateDateFirstDelinquency() error {
-	if err := s.isDate(s.DateFirstDelinquency); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *BaseSegment) ValidateDateClosed() error {
-	if err := s.isDate(s.DateClosed); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *BaseSegment) ValidateDateLastPayment() error {
-	if err := s.isDate(s.DateLastPayment); err != nil {
-		return err
+		return newErrValidValue("payment history profile")
 	}
 	return nil
 }
 
 func (s *BaseSegment) ValidateInterestTypeIndicator() error {
 	switch s.InterestTypeIndicator {
-	case "F", "V", blankString:
+	case InterestIndicatorFixed, InterestIndicatorVariable, blankString:
 		return nil
 	}
-	return errors.New("invalid value of interest type indicator")
-}
-
-func (s *BaseSegment) ValidateDateBirth() error {
-	if err := s.isDate(s.DateBirth); err != nil {
-		return err
-	}
-	return nil
+	return newErrValidValue("interest type indicator")
 }
 
 func (s *BaseSegment) ValidateTelephoneNumber() error {
@@ -780,18 +809,20 @@ func (s *BaseSegment) ValidateTelephoneNumber() error {
 	return nil
 }
 
+// Description returns description of packed base segment
 func (s *PackedBaseSegment) Description() string {
 	return PackedBaseSegmentDescription
 }
 
+// Parse takes the input record string and parses the packed base segment values
 func (s *PackedBaseSegment) Parse(record string) error {
-	if utf8.RuneCountInString(record) != PackedBaseSegmentLength {
-		return ErrSegmentInvalidLength
+	if utf8.RuneCountInString(record) != PackedSegmentLength {
+		return ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return ErrSegmentParse
+		return ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -804,7 +835,7 @@ func (s *PackedBaseSegment) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := baseSegmentPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return ErrSegmentInvalidType
+			return ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
@@ -824,7 +855,8 @@ func (s *PackedBaseSegment) Parse(record string) error {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-
+			case time.Time:
+				field.Set(value)
 			}
 		}
 	}
@@ -832,6 +864,7 @@ func (s *PackedBaseSegment) Parse(record string) error {
 	return nil
 }
 
+// String writes the packed base segment struct to a 426 character string.
 func (s *PackedBaseSegment) String() string {
 	var buf strings.Builder
 	specifications := s.toSpecifications(baseSegmentPackedFormat)
@@ -840,7 +873,7 @@ func (s *PackedBaseSegment) String() string {
 		return ""
 	}
 
-	buf.Grow(BaseSegmentLength)
+	buf.Grow(PackedSegmentLength)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
@@ -849,19 +882,20 @@ func (s *PackedBaseSegment) String() string {
 	return buf.String()
 }
 
+// Validate performs some checks on the record and returns an error if not Validated
 func (s *PackedBaseSegment) Validate() error {
 	fields := reflect.ValueOf(s).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
-			return ErrSegmentParse
+			return ErrValidField
 		}
 
 		if spec, ok := baseSegmentPackedFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return ErrRequired
+					return ach.ErrFieldRequired
 				}
 			}
 		}
@@ -887,16 +921,9 @@ func (s *PackedBaseSegment) Validate() error {
 // customized field validation functions
 // function name should be "Validate" + field name
 
-func (s *PackedBaseSegment) ValidateTimeStamp() error {
-	if err := s.isTimestamp(s.TimeStamp); err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *PackedBaseSegment) ValidateIdentificationNumber() error {
-	if filled, err := s.filledString(s.IdentificationNumber); err == nil {
-		return fmt.Errorf("the field filled by %s", filled)
+	if validFilledString(s.IdentificationNumber) {
+		return newErrValidValue("identification number")
 	}
 	return nil
 }
@@ -906,14 +933,7 @@ func (s *PackedBaseSegment) ValidatePortfolioType() error {
 	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
 		return nil
 	}
-	return errors.New("invalid value of portfolio type")
-}
-
-func (s *PackedBaseSegment) ValidateDateOpened() error {
-	if err := s.isDate(s.DateOpened); err != nil {
-		return err
-	}
-	return nil
+	return newErrValidValue("portfolio type")
 }
 
 func (s *PackedBaseSegment) ValidateTermsDuration() error {
@@ -923,7 +943,7 @@ func (s *PackedBaseSegment) ValidateTermsDuration() error {
 	}
 	_, err := strconv.Atoi(s.TermsDuration)
 	if err != nil {
-		return errors.New("invalid value of terms duration")
+		return newErrValidValue("terms duration")
 	}
 	return nil
 }
@@ -935,7 +955,7 @@ func (s *PackedBaseSegment) ValidateTermsFrequency() error {
 		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, blankString:
 		return nil
 	}
-	return errors.New("invalid value of terms frequency")
+	return newErrValidValue("terms frequency")
 }
 
 func (s *PackedBaseSegment) ValidatePaymentRating() error {
@@ -946,18 +966,18 @@ func (s *PackedBaseSegment) ValidatePaymentRating() error {
 			PaymentRatingPast120, PaymentRatingPast150, PaymentRatingPast180, PaymentRatingCollection, PaymentRatingChargeOff:
 			return nil
 		}
-		return errors.New("invalid value of payment rating")
+		return newErrValidValue("payment rating")
 	}
 
 	if s.PaymentRating == blankString {
 		return nil
 	}
-	return errors.New("invalid value of payment rating")
+	return newErrValidValue("payment rating")
 }
 
 func (s *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
 	if len(s.PaymentHistoryProfile) != 24 {
-		return errors.New("invalid value of payment history profile")
+		return newErrValidValue("payment history profile")
 	}
 	for i := 0; i < len(s.PaymentHistoryProfile); i++ {
 		switch s.PaymentHistoryProfile[i] {
@@ -968,45 +988,17 @@ func (s *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
 			PaymentHistoryChargeOff:
 			continue
 		}
-		return errors.New("invalid value of payment history profile")
-	}
-	return nil
-}
-
-func (s *PackedBaseSegment) ValidateDateFirstDelinquency() error {
-	if err := s.isDate(s.DateFirstDelinquency); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *PackedBaseSegment) ValidateDateClosed() error {
-	if err := s.isDate(s.DateClosed); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *PackedBaseSegment) ValidateDateLastPayment() error {
-	if err := s.isDate(s.DateLastPayment); err != nil {
-		return err
+		return newErrValidValue("payment history profile")
 	}
 	return nil
 }
 
 func (s *PackedBaseSegment) ValidateInterestTypeIndicator() error {
 	switch s.InterestTypeIndicator {
-	case "F", "V", blankString:
+	case InterestIndicatorFixed, InterestIndicatorVariable, blankString:
 		return nil
 	}
-	return errors.New("invalid value of interest type indicator")
-}
-
-func (s *PackedBaseSegment) ValidateDateBirth() error {
-	if err := s.isDate(s.DateBirth); err != nil {
-		return err
-	}
-	return nil
+	return newErrValidValue("interest type indicator")
 }
 
 func (s *PackedBaseSegment) ValidateTelephoneNumber() error {

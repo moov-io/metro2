@@ -9,8 +9,11 @@ import (
 	"strings"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/moov-io/ach"
 )
 
+// HeaderRecord holds the header record
 type HeaderRecord struct {
 	// Contains a value equal to the length of the block of data and must be reported when using the packed format or
 	// when reporting variable length records.  This value includes the four bytes reserved for this field.
@@ -93,20 +96,23 @@ type HeaderRecord struct {
 	validator
 }
 
+// PackedHeaderRecord holds the packed header record
 type PackedHeaderRecord HeaderRecord
 
+// Description returns description of header record
 func (s *HeaderRecord) Description() string {
 	return HeaderRecordDescription
 }
 
+// Parse takes the input record string and parses the header record values
 func (s *HeaderRecord) Parse(record string) error {
-	if utf8.RuneCountInString(record) != BaseSegmentLength {
-		return ErrSegmentInvalidLength
+	if utf8.RuneCountInString(record) != HeaderRecordCharacterLength {
+		return ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return ErrSegmentParse
+		return ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -119,7 +125,7 @@ func (s *HeaderRecord) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := headerRecordCharacterFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return ErrSegmentInvalidType
+			return ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
@@ -146,6 +152,7 @@ func (s *HeaderRecord) Parse(record string) error {
 	return nil
 }
 
+// String writes the header record struct to a 426 character string.
 func (s *HeaderRecord) String() string {
 	var buf strings.Builder
 	specifications := s.toSpecifications(headerRecordCharacterFormat)
@@ -163,19 +170,20 @@ func (s *HeaderRecord) String() string {
 	return buf.String()
 }
 
+// Validate performs some checks on the record and returns an error if not Validated
 func (s *HeaderRecord) Validate() error {
 	fields := reflect.ValueOf(s).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
-			return ErrSegmentParse
+			return ErrValidField
 		}
 
 		if spec, ok := headerRecordCharacterFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return ErrRequired
+					return ach.ErrFieldRequired
 				}
 			}
 		}
@@ -198,18 +206,20 @@ func (s *HeaderRecord) Validate() error {
 	return nil
 }
 
+// Description returns description of packed header record
 func (s *PackedHeaderRecord) Description() string {
 	return PackedHeaderRecordDescription
 }
 
+// Parse takes the input record string and parses the packed header record values
 func (s *PackedHeaderRecord) Parse(record string) error {
-	if utf8.RuneCountInString(record) != PackedHeaderRecordLength {
-		return ErrSegmentInvalidLength
+	if utf8.RuneCountInString(record) != PackedSegmentLength {
+		return ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return ErrSegmentParse
+		return ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -222,7 +232,7 @@ func (s *PackedHeaderRecord) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := headerRecordPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return ErrSegmentInvalidType
+			return ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
@@ -249,6 +259,7 @@ func (s *PackedHeaderRecord) Parse(record string) error {
 	return nil
 }
 
+// String writes the packed header record struct to a 426 character string.
 func (s *PackedHeaderRecord) String() string {
 	var buf strings.Builder
 	specifications := s.toSpecifications(headerRecordPackedFormat)
@@ -257,7 +268,7 @@ func (s *PackedHeaderRecord) String() string {
 		return ""
 	}
 
-	buf.Grow(BaseSegmentLength)
+	buf.Grow(PackedSegmentLength)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
@@ -266,19 +277,20 @@ func (s *PackedHeaderRecord) String() string {
 	return buf.String()
 }
 
+// Validate performs some checks on the record and returns an error if not Validated
 func (s *PackedHeaderRecord) Validate() error {
 	fields := reflect.ValueOf(s).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
-			return ErrSegmentParse
+			return ErrValidField
 		}
 
 		if spec, ok := headerRecordPackedFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return ErrRequired
+					return ach.ErrFieldRequired
 				}
 			}
 		}

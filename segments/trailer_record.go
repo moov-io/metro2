@@ -9,8 +9,11 @@ import (
 	"strings"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/moov-io/ach"
 )
 
+// TrailerRecord holds the trailer record
 type TrailerRecord struct {
 	// Contains a value equal to the length of the physical record. This value includes the four bytes reserved for this field.
 	// If fixed-length records are being reported, the Trailer Record should be the same length as all the data records.
@@ -156,20 +159,23 @@ type TrailerRecord struct {
 	validator
 }
 
+// PackedTrailerRecord holds the packed trailer record
 type PackedTrailerRecord TrailerRecord
 
+// Description returns description of trailer record
 func (s *TrailerRecord) Description() string {
 	return TrailerRecordDescription
 }
 
+// Parse takes the input record string and parses the trailer record values
 func (s *TrailerRecord) Parse(record string) error {
 	if utf8.RuneCountInString(record) != TrailerRecordLength {
-		return ErrSegmentInvalidLength
+		return ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return ErrSegmentParse
+		return ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -182,7 +188,7 @@ func (s *TrailerRecord) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := trailerRecordCharacterFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return ErrSegmentInvalidType
+			return ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
@@ -210,6 +216,7 @@ func (s *TrailerRecord) Parse(record string) error {
 	return nil
 }
 
+// String writes the trailer record struct to a 426 character string.
 func (s *TrailerRecord) String() string {
 	var buf strings.Builder
 	specifications := s.toSpecifications(trailerRecordCharacterFormat)
@@ -227,19 +234,20 @@ func (s *TrailerRecord) String() string {
 	return buf.String()
 }
 
+// Validate performs some checks on the record and returns an error if not Validated
 func (s *TrailerRecord) Validate() error {
 	fields := reflect.ValueOf(s).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
-			return ErrSegmentParse
+			return ErrValidField
 		}
 
 		if spec, ok := trailerRecordCharacterFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return ErrRequired
+					return ach.ErrFieldRequired
 				}
 			}
 		}
@@ -262,18 +270,20 @@ func (s *TrailerRecord) Validate() error {
 	return nil
 }
 
+// Description returns description of packed trailer record
 func (s *PackedTrailerRecord) Description() string {
 	return PackedTrailerRecordDescription
 }
 
+// Parse takes the input record string and parses the packed trailer record values
 func (s *PackedTrailerRecord) Parse(record string) error {
-	if utf8.RuneCountInString(record) != PackedHeaderRecordLength {
-		return ErrSegmentInvalidLength
+	if utf8.RuneCountInString(record) != PackedSegmentLength {
+		return ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return ErrSegmentParse
+		return ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -286,7 +296,7 @@ func (s *PackedTrailerRecord) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := trailerRecordPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return ErrSegmentInvalidType
+			return ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
@@ -314,6 +324,7 @@ func (s *PackedTrailerRecord) Parse(record string) error {
 	return nil
 }
 
+// String writes the trailer record struct to a 426 character string.
 func (s *PackedTrailerRecord) String() string {
 	var buf strings.Builder
 	specifications := s.toSpecifications(trailerRecordPackedFormat)
@@ -322,7 +333,7 @@ func (s *PackedTrailerRecord) String() string {
 		return ""
 	}
 
-	buf.Grow(PackedHeaderRecordLength)
+	buf.Grow(PackedSegmentLength)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
@@ -331,19 +342,20 @@ func (s *PackedTrailerRecord) String() string {
 	return buf.String()
 }
 
+// Validate performs some checks on the record and returns an error if not Validated
 func (s *PackedTrailerRecord) Validate() error {
 	fields := reflect.ValueOf(s).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
-			return ErrSegmentParse
+			return ErrValidField
 		}
 
 		if spec, ok := trailerRecordPackedFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return ErrRequired
+					return ach.ErrFieldRequired
 				}
 			}
 		}
