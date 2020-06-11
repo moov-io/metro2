@@ -144,54 +144,30 @@ func (c *converter) toString(elm field, data reflect.Value) string {
 		value := make([]byte, 4)
 		binary.BigEndian.PutUint16(value[0:], uint16(data.Int()))
 		return string(value)
-	} else if elm.Type&packedDate > 0 {
-		datastr := strings.Repeat(zeroString, elm.Length)
-		if datatime, ok := data.Interface().(time.Time); ok {
-			if !datatime.IsZero() {
-				datastr = datatime.Format(dateFormat)
-			}
+	} else if elm.Type&packedTimestamp > 0 || elm.Type&packedDate > 0 {
+		size := packedDateSize
+		dateformat := dateFormat
+		if elm.Type&packedTimestamp > 0 {
+			size = packedTimestampSize
+			dateformat = timestampFormat
 		}
-		dataint, err := strconv.Atoi(datastr)
-		if err != nil {
-			return datastr
+		dataint := int64(0)
+		if data.Type() == reflect.TypeOf(time.Time{}) {
+			f := data.MethodByName("Format").Interface().(func(string) string)
+			dataint, _ = strconv.ParseInt(f(dateformat), 10, 64)
 		}
+
 		var out bytes.Buffer
 		out.Grow(elm.Length)
 		if dataint > 0 {
 			out.WriteByte(0x00)
 			v := uint64(dataint)
-			for i := 0; i < packedDateSize-2; i++ {
-				out.WriteByte(byte(v >> (8 * (packedDateSize - 3 - i))))
+			for i := 0; i < size-2; i++ {
+				out.WriteByte(byte(v >> (8 * (size - 3 - i))))
 			}
 			out.WriteByte(0x73)
 		} else {
-			for i := 0; i < packedDateSize; i++ {
-				out.WriteByte(0x00)
-			}
-		}
-		return out.String()
-	} else if elm.Type&packedTimestamp > 0 {
-		datastr := strings.Repeat(zeroString, elm.Length)
-		if datatime, ok := data.Interface().(time.Time); ok {
-			if !datatime.IsZero() {
-				datastr = datatime.Format(timestampFormat)
-			}
-		}
-		dataint, err := strconv.Atoi(datastr)
-		if err != nil {
-			return datastr
-		}
-		var out bytes.Buffer
-		out.Grow(elm.Length)
-		if dataint > 0 {
-			out.WriteByte(0x00)
-			v := uint64(dataint)
-			for i := 0; i < packedTimestampSize-2; i++ {
-				out.WriteByte(byte(v >> (8 * (packedTimestampSize - 3 - i))))
-			}
-			out.WriteByte(0x73)
-		} else {
-			for i := 0; i < packedTimestampSize; i++ {
+			for i := 0; i < size; i++ {
 				out.WriteByte(0x00)
 			}
 		}
