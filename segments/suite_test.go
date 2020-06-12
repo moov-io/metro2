@@ -42,6 +42,10 @@ func (s *SegmentTest) SetUpSuite(c *check.C) {
 	c.Assert(err, check.IsNil)
 	s.sampleBaseSegment = readStringFromFile(f)
 
+	f, err = os.Open(filepath.Join("..", "testdata", "packed_base_segment.dat"))
+	c.Assert(err, check.IsNil)
+	s.samplePackedBaseSegment = readStringFromFile(f)
+
 	f, err = os.Open(filepath.Join("..", "testdata", "header_record.dat"))
 	c.Assert(err, check.IsNil)
 	s.sampleHeaderRecord = readStringFromFile(f)
@@ -49,10 +53,6 @@ func (s *SegmentTest) SetUpSuite(c *check.C) {
 	f, err = os.Open(filepath.Join("..", "testdata", "packed_header_record.dat"))
 	c.Assert(err, check.IsNil)
 	s.samplePackedHeaderRecord = readStringFromFile(f)
-
-	f, err = os.Open(filepath.Join("..", "testdata", "packed_base_segment.dat"))
-	c.Assert(err, check.IsNil)
-	s.samplePackedBaseSegment = readStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "trailer_record.dat"))
 	c.Assert(err, check.IsNil)

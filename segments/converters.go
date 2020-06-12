@@ -12,12 +12,9 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-)
+	"time"
 
-const (
-	zeroString  = "0"
-	blankString = " "
-	nineString  = "9"
+	"github.com/moov-io/metro2/utils"
 )
 
 type converter struct{}
@@ -25,58 +22,31 @@ type converter struct{}
 func (c *converter) parseValue(elm field, data string) (reflect.Value, error) {
 	if elm.Type&numeric > 0 {
 		value, err := strconv.ParseInt(data, 10, 64)
-		if err != nil {
-			return reflect.Value{}, err
-		}
-		return reflect.ValueOf(value), nil
+		return reflect.ValueOf(value), err
+	} else if elm.Type&timestamp > 0 {
+		ret, err := timeFromTimestampString(data)
+		return reflect.ValueOf(ret), err
+	} else if elm.Type&date > 0 {
+		ret, err := timeFromDateString(data)
+		return reflect.ValueOf(ret), err
 	} else if elm.Type&alphanumeric > 0 {
 		return reflect.ValueOf(data), nil
 	} else if elm.Type&alpha > 0 {
-		upperString := strings.ToUpper(data)
-		return reflect.ValueOf(upperString), nil
-	} else if elm.Type&binaryDescriptor > 0 {
+		return reflect.ValueOf(strings.ToUpper(data)), nil
+	} else if elm.Type&descriptor > 0 {
 		value := int64(binary.BigEndian.Uint16([]byte(data)))
 		return reflect.ValueOf(value), nil
-	} else if elm.Type&packedDateLong > 0 {
-		value := int64(0)
-		bin := []byte(data)
-		if bin[0] == 0x00 && bin[packedDateLongSize-1] == 0x73 {
-			var in bytes.Buffer
-			in.Grow(int64Size)
-			for i := 0; i < 2; i++ {
-				in.WriteByte(0x00)
-			}
-			in.Write(bin[1 : packedDateLongSize-1])
-			value = int64(binary.BigEndian.Uint64(in.Bytes()))
-		}
-		return reflect.ValueOf(value), nil
+	} else if elm.Type&packedTimestamp > 0 {
+		ret, err := timeFromPackedTimestampString(data)
+		return reflect.ValueOf(ret), err
 	} else if elm.Type&packedDate > 0 {
-		value := int64(0)
-		bin := []byte(data)
-		if bin[0] == 0x00 && bin[packedDateSize-1] == 0x73 {
-			var in bytes.Buffer
-			in.Grow(int64Size)
-			for i := 0; i < 5; i++ {
-				in.WriteByte(0x00)
-			}
-			in.Write(bin[1 : packedDateSize-1])
-			value = int64(binary.BigEndian.Uint64(in.Bytes()))
-		}
-		return reflect.ValueOf(value), nil
+		ret, err := timeFromPackedDateString(data)
+		return reflect.ValueOf(ret), err
 	} else if elm.Type&packedNumber > 0 {
-		length := len(data)
-		var in bytes.Buffer
-
-		in.Grow(int64Size)
-		for i := 0; i < int64Size-length; i++ {
-			in.WriteByte(0x00)
-		}
-		in.Write([]byte(data))
-		value := int64(binary.BigEndian.Uint64(in.Bytes()))
-		return reflect.ValueOf(value), nil
+		return reflect.ValueOf(packedNumberFromString(data)), nil
 	}
 
-	return reflect.Value{}, ErrSegmentParseType
+	return reflect.Value{}, utils.ErrValidField
 }
 
 func (c *converter) fillString(elm field) string {
@@ -94,67 +64,29 @@ func (c *converter) toString(elm field, data reflect.Value) string {
 		return ""
 	}
 
-	fieldSize := strconv.Itoa(elm.Length)
+	sizeStr := strconv.Itoa(elm.Length)
 	if elm.Type&numeric > 0 {
-		return fmt.Sprintf("%0"+fieldSize+"d", data)
+		return fmt.Sprintf("%0"+sizeStr+"d", data)
+	} else if elm.Type&timestamp > 0 {
+		if datatime, ok := data.Interface().(time.Time); ok && !datatime.IsZero() {
+			return datatime.Format(timestampFormat)
+		}
+		return strings.Repeat(zeroString, elm.Length)
+	} else if elm.Type&date > 0 {
+		if datatime, ok := data.Interface().(time.Time); ok && !datatime.IsZero() {
+			return datatime.Format(dateFormat)
+		}
+		return strings.Repeat(zeroString, elm.Length)
 	} else if elm.Type&alphanumeric > 0 || elm.Type&alpha > 0 {
-		return fmt.Sprintf("%-"+fieldSize+"s", data)
-	} else if elm.Type&binaryDescriptor > 0 {
-		value := make([]byte, 4)
-		binary.BigEndian.PutUint16(value[0:], uint16(data.Int()))
-		return string(value)
+		return fmt.Sprintf("%-"+sizeStr+"s", data)
+	} else if elm.Type&descriptor > 0 {
+		return descriptorString(data)
+	} else if elm.Type&packedTimestamp > 0 {
+		return packedTimeString(data, timestampFormat, elm.Length, packedTimestampSize)
 	} else if elm.Type&packedDate > 0 {
-		var out bytes.Buffer
-		out.Grow(elm.Length)
-		if data.Int() > 0 {
-			out.WriteByte(0x00)
-			v := uint64(data.Int())
-			for i := 0; i < packedDateSize-2; i++ {
-				out.WriteByte(byte(v >> (8 * (packedDateSize - 3 - i))))
-			}
-			out.WriteByte(0x73)
-		} else {
-			for i := 0; i < packedDateSize; i++ {
-				out.WriteByte(0x00)
-			}
-		}
-		return out.String()
-	} else if elm.Type&packedDateLong > 0 {
-		var out bytes.Buffer
-		out.Grow(elm.Length)
-		if data.Int() > 0 {
-			out.WriteByte(0x00)
-			v := uint64(data.Int())
-			for i := 0; i < packedDateLongSize-2; i++ {
-				out.WriteByte(byte(v >> (8 * (packedDateLongSize - 3 - i))))
-			}
-			out.WriteByte(0x73)
-		} else {
-			for i := 0; i < packedDateLongSize; i++ {
-				out.WriteByte(0x00)
-			}
-		}
-		return out.String()
+		return packedTimeString(data, dateFormat, elm.Length, packedDateSize)
 	} else if elm.Type&packedNumber > 0 {
-		var out bytes.Buffer
-		out.Grow(elm.Length)
-		if data.Int() > 0 {
-			length := elm.Length
-			v := uint64(data.Int())
-			for i := 0; i < length; i++ {
-				shift := 8 * (length - i - 1)
-				if shift > 0 {
-					out.WriteByte(byte(v >> shift))
-				} else {
-					out.WriteByte(byte(v))
-				}
-			}
-		} else {
-			for i := 0; i < elm.Length; i++ {
-				out.WriteByte(0x00)
-			}
-		}
-		return out.String()
+		return packedNumberString(data, elm.Length)
 	}
 
 	return c.fillString(elm)
@@ -169,4 +101,117 @@ func (c *converter) toSpecifications(fieldsFormat map[string]field) []specificat
 		return specifications[i].Key < specifications[j].Key
 	})
 	return specifications
+}
+
+// convert functions
+func timeFromTimestampString(date string) (time.Time, error) {
+	if strings.Count(date, "0") != len(date) {
+		return time.Parse(timestampFormat, date)
+	}
+	return time.Time{}, nil
+}
+
+func timeFromDateString(date string) (time.Time, error) {
+	if strings.Count(date, "0") != len(date) {
+		return time.Parse(dateFormat, date)
+	}
+	return time.Time{}, nil
+}
+
+func timeFromPackedTimestampString(date string) (time.Time, error) {
+	value := int64(0)
+	bin := []byte(date)
+	if bin[0] == 0x00 && bin[packedTimestampSize-1] == 0x73 {
+		var in bytes.Buffer
+		in.Grow(int64size)
+		for i := 0; i < 2; i++ {
+			in.WriteByte(0x00)
+		}
+		in.Write(bin[1 : packedTimestampSize-1])
+		value = int64(binary.BigEndian.Uint64(in.Bytes()))
+	}
+
+	datestr := fmt.Sprintf("%0"+timestampSizeStr+"d", value)
+	return timeFromTimestampString(datestr)
+}
+
+func timeFromPackedDateString(date string) (time.Time, error) {
+	value := int64(0)
+	bin := []byte(date)
+	if bin[0] == 0x00 && bin[packedDateSize-1] == 0x73 {
+		var in bytes.Buffer
+		in.Grow(int64size)
+		for i := 0; i < 5; i++ {
+			in.WriteByte(0x00)
+		}
+		in.Write(bin[1 : packedDateSize-1])
+		value = int64(binary.BigEndian.Uint64(in.Bytes()))
+	}
+
+	datestr := fmt.Sprintf("%0"+dateSizeStr+"d", value)
+	return timeFromDateString(datestr)
+}
+
+func packedNumberFromString(data string) int64 {
+	length := len(data)
+	var in bytes.Buffer
+
+	in.Grow(int64size)
+	for i := 0; i < int64size-length; i++ {
+		in.WriteByte(0x00)
+	}
+	in.Write([]byte(data))
+	value := int64(binary.BigEndian.Uint64(in.Bytes()))
+	return value
+}
+
+func packedTimeString(data reflect.Value, format string, length int, size int) string {
+	value := int64(0)
+	if data.Type() == reflect.TypeOf(time.Time{}) {
+		f := data.MethodByName("Format").Interface().(func(string) string)
+		value, _ = strconv.ParseInt(f(format), 10, 64)
+	}
+
+	var out bytes.Buffer
+	out.Grow(length)
+	if value > 0 {
+		out.WriteByte(0x00)
+		v := uint64(value)
+		for i := 0; i < size-2; i++ {
+			out.WriteByte(byte(v >> (8 * (size - 3 - i))))
+		}
+		out.WriteByte(0x73)
+	} else {
+		for i := 0; i < size; i++ {
+			out.WriteByte(0x00)
+		}
+	}
+	return out.String()
+}
+
+func packedNumberString(data reflect.Value, length int) string {
+	var out bytes.Buffer
+	out.Grow(length)
+	if data.Int() > 0 {
+		v := uint64(data.Int())
+		for i := 0; i < length; i++ {
+			shift := 8 * (length - i - 1)
+			if shift > 0 {
+				out.WriteByte(byte(v >> shift))
+			} else {
+				out.WriteByte(byte(v))
+			}
+		}
+	} else {
+		for i := 0; i < length; i++ {
+			out.WriteByte(0x00)
+		}
+	}
+	return out.String()
+}
+
+func descriptorString(data reflect.Value) string {
+	value := make([]byte, 4)
+	binary.BigEndian.PutUint16(value[0:], uint16(data.Int()))
+	return string(value)
 }
