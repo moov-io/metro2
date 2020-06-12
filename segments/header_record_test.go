@@ -1,11 +1,12 @@
 package segments
 
 import (
-	"github.com/moov-io/ach"
 	"gopkg.in/check.v1"
+
+	"github.com/moov-io/metro2/utils"
 )
 
-func (s *SegmentTest) TestTrailerRecord(c *check.C) {
+func (s *SegmentTest) TestHeaderRecord(c *check.C) {
 	segment := NewHeaderRecord()
 	err := segment.Parse(s.sampleHeaderRecord)
 	c.Assert(err, check.IsNil)
@@ -15,24 +16,14 @@ func (s *SegmentTest) TestTrailerRecord(c *check.C) {
 	c.Assert(segment.Description(), check.Equals, HeaderRecordDescription)
 }
 
-func (s *SegmentTest) TestTrailerRecordWithInvalidData(c *check.C) {
+func (s *SegmentTest) TestHeaderRecordWithInvalidData(c *check.C) {
 	segment := NewHeaderRecord()
 	err := segment.Parse(s.sampleHeaderRecord + "ERROR")
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrSegmentLength)
+	c.Assert(err, check.DeepEquals, utils.ErrSegmentLength)
 }
 
-func (s *SegmentTest) TestTrailerRecordWithInvalidActivityDate(c *check.C) {
-	segment := &HeaderRecord{}
-	err := segment.Parse(s.sampleHeaderRecord)
-	c.Assert(err, check.IsNil)
-	segment.ActivityDate = 0
-	err = segment.Validate()
-	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ach.ErrFieldRequired)
-}
-
-func (s *SegmentTest) TestPackedTrailerRecord(c *check.C) {
+func (s *SegmentTest) TestPackedHeaderRecord(c *check.C) {
 	segment := NewPackedHeaderRecord()
 	err := segment.Parse(s.samplePackedHeaderRecord)
 	c.Assert(err, check.IsNil)
@@ -42,19 +33,9 @@ func (s *SegmentTest) TestPackedTrailerRecord(c *check.C) {
 	c.Assert(segment.Description(), check.Equals, PackedHeaderRecordDescription)
 }
 
-func (s *SegmentTest) TestPackedTrailerRecordWithInvalidData(c *check.C) {
+func (s *SegmentTest) TestPackedHeaderRecordWithInvalidData(c *check.C) {
 	segment := NewPackedHeaderRecord()
 	err := segment.Parse(s.samplePackedHeaderRecord + "ERROR")
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrSegmentLength)
-}
-
-func (s *SegmentTest) TestPackedTrailerRecordWithInvalidActivityDate(c *check.C) {
-	segment := &PackedHeaderRecord{}
-	err := segment.Parse(s.samplePackedHeaderRecord)
-	c.Assert(err, check.IsNil)
-	segment.ActivityDate = 0
-	err = segment.Validate()
-	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ach.ErrFieldRequired)
+	c.Assert(err, check.DeepEquals, utils.ErrSegmentLength)
 }

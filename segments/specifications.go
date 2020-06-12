@@ -17,36 +17,6 @@ type specification struct {
 	Field field
 }
 
-const (
-	nullable            = ""
-	required            = "Y"
-	applicable          = "A"
-	timestampSizeStr    = "14"
-	dateSizeStr         = "8"
-	packedTimestampSize = 8
-	packedDateSize      = 5
-	int64size           = 8
-)
-
-// field types
-const (
-	alphanumeric = 1 << iota
-	alpha
-	numeric
-	timestamp
-	date
-	descriptor
-	packedTimestamp
-	packedDate
-	packedNumber
-)
-
-// field type options
-const (
-	zeroFill = 1 << 14
-	omitted  = 1 << 15
-)
-
 var (
 	baseSegmentCharacterFormat = map[string]field{
 		"BlockDescriptorWord":           {0, 4, numeric | omitted, applicable},
@@ -157,10 +127,10 @@ var (
 		"EquifaxProgramIdentifier":    {22, 10, alphanumeric, applicable},
 		"ExperianProgramIdentifier":   {32, 5, alphanumeric, applicable},
 		"TransUnionProgramIdentifier": {37, 10, alphanumeric, applicable},
-		"ActivityDate":                {47, 8, numeric, required},
-		"DateCreated":                 {55, 8, numeric, required},
-		"ProgramDate":                 {63, 8, numeric, nullable},
-		"ProgramRevisionDate":         {71, 8, numeric, nullable},
+		"ActivityDate":                {47, 8, date, required},
+		"DateCreated":                 {55, 8, date, required},
+		"ProgramDate":                 {63, 8, date, nullable},
+		"ProgramRevisionDate":         {71, 8, date, nullable},
 		"ReporterName":                {79, 40, alphanumeric, required},
 		"ReporterAddress":             {119, 96, alphanumeric, required},
 		"ReporterTelephoneNumber":     {215, 10, numeric, nullable},
@@ -178,10 +148,10 @@ var (
 		"EquifaxProgramIdentifier":    {22, 10, alphanumeric, applicable},
 		"ExperianProgramIdentifier":   {32, 5, alphanumeric, applicable},
 		"TransUnionProgramIdentifier": {37, 10, alphanumeric, applicable},
-		"ActivityDate":                {47, 8, numeric, required},
-		"DateCreated":                 {55, 8, numeric, required},
-		"ProgramDate":                 {63, 8, numeric, nullable},
-		"ProgramRevisionDate":         {71, 8, numeric, nullable},
+		"ActivityDate":                {47, 8, date, required},
+		"DateCreated":                 {55, 8, date, required},
+		"ProgramDate":                 {63, 8, date, nullable},
+		"ProgramRevisionDate":         {71, 8, date, nullable},
 		"ReporterName":                {79, 40, alphanumeric, required},
 		"ReporterAddress":             {119, 96, alphanumeric, required},
 		"ReporterTelephoneNumber":     {215, 10, numeric, nullable},

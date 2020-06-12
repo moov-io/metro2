@@ -1,8 +1,9 @@
 package segments
 
 import (
-	"github.com/moov-io/ach"
 	"gopkg.in/check.v1"
+
+	"github.com/moov-io/metro2/utils"
 )
 
 func (s *SegmentTest) TestBaseSegment(c *check.C) {
@@ -19,7 +20,7 @@ func (s *SegmentTest) TestBaseSegmentWithInvalidData(c *check.C) {
 	segment := NewBaseSegment()
 	err := segment.Parse(s.sampleBaseSegment + "ERROR")
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrSegmentLength)
+	c.Assert(err, check.DeepEquals, utils.ErrSegmentLength)
 }
 
 func (s *SegmentTest) TestBaseSegmentWithIdentificationNumber(c *check.C) {
@@ -29,7 +30,7 @@ func (s *SegmentTest) TestBaseSegmentWithIdentificationNumber(c *check.C) {
 	segment.IdentificationNumber = ""
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ach.ErrFieldRequired)
+	c.Assert(err, check.DeepEquals, utils.ErrFieldRequired)
 }
 
 func (s *SegmentTest) TestBaseSegmentWithInvalidPortfolioType(c *check.C) {
@@ -95,7 +96,7 @@ func (s *SegmentTest) TestPackedBaseSegmentWithInvalidData(c *check.C) {
 	segment := NewPackedBaseSegment()
 	err := segment.Parse(s.samplePackedBaseSegment + "ERROR")
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ErrSegmentLength)
+	c.Assert(err, check.DeepEquals, utils.ErrSegmentLength)
 }
 
 func (s *SegmentTest) TestPackedBaseSegmentWithIdentificationNumber(c *check.C) {
@@ -105,7 +106,7 @@ func (s *SegmentTest) TestPackedBaseSegmentWithIdentificationNumber(c *check.C) 
 	segment.IdentificationNumber = ""
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, ach.ErrFieldRequired)
+	c.Assert(err, check.DeepEquals, utils.ErrFieldRequired)
 }
 
 func (s *SegmentTest) TestPackedBaseSegmentWithInvalidPortfolioType(c *check.C) {

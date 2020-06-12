@@ -6,39 +6,31 @@ package segments
 
 import (
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 
-	"github.com/moov-io/ach"
-)
-
-var (
-	upperAlphanumericRegex = regexp.MustCompile(`[^ A-Z0-9!"#$%&'()*+,-.\\/:;<>=?@\[\]^_{}|~]+`)
-	alphanumericRegex      = regexp.MustCompile(`[^ \w!"#$%&'()*+,-.\\/:;<>=?@\[\]^_{}|~]+`)
-	phoneRegex             = regexp.MustCompile(`^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$`)
-	numericRegex           = regexp.MustCompile(`[0-9a-fA-F]`)
+	"github.com/moov-io/metro2/utils"
 )
 
 type validator struct{}
 
-func (v *validator) isUpperalphanumeric(s string) error {
+func (v *validator) isUpperAlphanumeric(s string) error {
 	if upperAlphanumericRegex.MatchString(s) {
-		return ach.ErrUpperAlpha
+		return utils.ErrUpperAlpha
 	}
 	return nil
 }
 
 func (v *validator) isAlphanumeric(s string) error {
 	if alphanumericRegex.MatchString(s) {
-		return ach.ErrNonAlphanumeric
+		return utils.ErrNonAlphanumeric
 	}
 	return nil
 }
 
 func (v *validator) isNumeric(s string) error {
 	if !numericRegex.MatchString(s) {
-		return ErrNumeric
+		return utils.ErrNumeric
 	}
 	return nil
 }
@@ -46,45 +38,47 @@ func (v *validator) isNumeric(s string) error {
 func (v *validator) isPhoneNumber(number int64) error {
 	phoneNumber := fmt.Sprintf("%010d", number)
 	if !phoneRegex.MatchString(phoneNumber) {
-		return ErrPhoneNumber
+		return utils.ErrPhoneNumber
 	}
 	return nil
 }
 
 func (v *validator) isValidType(elm field, data string) error {
+	// required check
 	if elm.Required == required {
 		if elm.Type&numeric > 0 {
 			val, _ := strconv.Atoi(data)
 			if val == 0 {
-				return ach.ErrFieldRequired
+				return utils.ErrFieldRequired
 			}
 		} else if elm.Type&alphanumeric > 0 || elm.Type&alpha > 0 || elm.Type&descriptor > 0 {
 			if len(data) == 0 {
-				return ach.ErrFieldRequired
+				return utils.ErrFieldRequired
+			}
+		} else if elm.Type&timestamp > 0 || elm.Type&date > 0 {
+			if validFilledString(data) {
+				return utils.ErrFieldRequired
 			}
 		}
 	}
 
+	// date check
 	if elm.Type&numeric > 0 {
 		return v.isNumeric(data)
 	} else if elm.Type&alphanumeric > 0 {
 		return v.isAlphanumeric(data)
 	} else if elm.Type&alpha > 0 {
-		return v.isUpperalphanumeric(data)
+		return v.isUpperAlphanumeric(data)
 	} else if elm.Type&descriptor > 0 || elm.Type&packedDate > 0 || elm.Type&packedNumber > 0 ||
 		elm.Type&packedTimestamp > 0 || elm.Type&timestamp > 0 || elm.Type&date > 0 {
 		return nil
 	}
 
-	return ErrValidField
+	return utils.ErrValidField
 }
 
 func (v *validator) validateFuncName(name string) string {
 	return "Validate" + name
-}
-
-func newErrValidValue(field string) error {
-	return fmt.Errorf("is an invalid value of %s", field)
 }
 
 func validFilledString(s string) bool {

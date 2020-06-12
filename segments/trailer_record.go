@@ -7,10 +7,11 @@ package segments
 import (
 	"reflect"
 	"strings"
+	"time"
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/moov-io/ach"
+	"github.com/moov-io/metro2/utils"
 )
 
 // TrailerRecord holds the trailer record
@@ -170,12 +171,12 @@ func (s *TrailerRecord) Description() string {
 // Parse takes the input record string and parses the trailer record values
 func (s *TrailerRecord) Parse(record string) error {
 	if utf8.RuneCountInString(record) != TrailerRecordLength {
-		return ErrSegmentLength
+		return utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return ErrValidField
+		return utils.ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -188,7 +189,7 @@ func (s *TrailerRecord) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := trailerRecordCharacterFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return ErrValidField
+			return utils.ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
@@ -208,7 +209,8 @@ func (s *TrailerRecord) Parse(record string) error {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-
+			case time.Time:
+				field.Set(value)
 			}
 		}
 	}
@@ -240,14 +242,14 @@ func (s *TrailerRecord) Validate() error {
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
-			return ErrValidField
+			return utils.ErrValidField
 		}
 
 		if spec, ok := trailerRecordCharacterFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return ach.ErrFieldRequired
+					return utils.ErrFieldRequired
 				}
 			}
 		}
@@ -278,12 +280,12 @@ func (s *PackedTrailerRecord) Description() string {
 // Parse takes the input record string and parses the packed trailer record values
 func (s *PackedTrailerRecord) Parse(record string) error {
 	if utf8.RuneCountInString(record) != PackedSegmentLength {
-		return ErrSegmentLength
+		return utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return ErrValidField
+		return utils.ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -296,7 +298,7 @@ func (s *PackedTrailerRecord) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := trailerRecordPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return ErrValidField
+			return utils.ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
@@ -316,7 +318,8 @@ func (s *PackedTrailerRecord) Parse(record string) error {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-
+			case time.Time:
+				field.Set(value)
 			}
 		}
 	}
@@ -348,14 +351,14 @@ func (s *PackedTrailerRecord) Validate() error {
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
-			return ErrValidField
+			return utils.ErrValidField
 		}
 
 		if spec, ok := trailerRecordPackedFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return ach.ErrFieldRequired
+					return utils.ErrFieldRequired
 				}
 			}
 		}

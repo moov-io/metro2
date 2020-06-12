@@ -12,7 +12,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/moov-io/ach"
+	"github.com/moov-io/metro2/utils"
 )
 
 // BaseSegment holds the base segment
@@ -494,122 +494,6 @@ type BaseSegment struct {
 // PackedBaseSegment holds the packed base segment
 type PackedBaseSegment BaseSegment
 
-const (
-	// type of portfolio, Line of Credit
-	PortfolioTypeCredit = "C"
-	// type of portfolio, Installment
-	PortfolioTypeInstallment = "I"
-	// type of portfolio, Mortgage
-	PortfolioTypeMortgage = "M"
-	// type of portfolio, Open
-	PortfolioTypeOpen = "O"
-	// type of portfolio, Revolving
-	PortfolioTypeRevolving = "R"
-	// duration of credit extended, Line of Credit
-	TermsDurationCredit = "LOC"
-	// duration of credit extended, Open
-	TermsDurationOpen = "001"
-	// duration of credit extended, Revolving
-	TermsDurationRevolving = "REV"
-	// frequency for payments due, Deferred (Refer to Note)
-	TermsFrequencyDeferred = "D"
-	// frequency for payments due, Single Payment Loan
-	TermsFrequencyPayment = "P"
-	// frequency for payments due, Weekly
-	TermsFrequencyWeekly = "W"
-	// frequency for payments due, Biweekly
-	TermsFrequencyBiweekly = "B"
-	// frequency for payments due, Semimonthly
-	TermsFrequencySemimonthly = "E"
-	// frequency for payments due, Monthly
-	TermsFrequencyMonthly = "M"
-	// frequency for payments due, Bimonthly
-	TermsFrequencyBimonthly = "L"
-	// frequency for payments due, Quarterly
-	TermsFrequencyQuarterly = "Q"
-	// frequency for payments due, Tri-annually
-	TermsFrequencyTriAnnually = "T"
-	// frequency for payments due, Semiannually
-	TermsFrequencySemiannually = "S"
-	// frequency for payments due, Annually
-	TermsFrequencyAnnually = "Y"
-	// code that properly identifies whether the account was current, past due, in collections or charged off
-	// Current account (0–29 days past the due date)
-	PaymentRatingCurrent = "0"
-	// code that properly identifies whether the account was current, past due, in collections or charged off
-	// 30-59 days past the due date
-	PaymentRatingPast30 = "1"
-	// code that properly identifies whether the account was current, past due, in collections or charged off
-	// 60-89 days past the due date
-	PaymentRatingPast60 = "2"
-	// code that properly identifies whether the account was current, past due, in collections or charged off
-	// 90-119 days past the due date
-	PaymentRatingPast90 = "3"
-	// code that properly identifies whether the account was current, past due, in collections or charged off
-	// 120-149 days past the due date
-	PaymentRatingPast120 = "4"
-	// code that properly identifies whether the account was current, past due, in collections or charged off
-	// 150-179 days past the due date
-	PaymentRatingPast150 = "5"
-	// code that properly identifies whether the account was current, past due, in collections or charged off
-	// 180 or more days past the due date
-	PaymentRatingPast180 = "6"
-	// code that properly identifies whether the account was current, past due, in collections or charged off
-	// Collection
-	PaymentRatingCollection = "G"
-	// code that properly identifies whether the account was current, past due, in collections or charged off
-	// Charge-off
-	PaymentRatingChargeOff = "L"
-	// consecutive payment activity, 0 payments past due (current account)
-	PaymentHistoryPast0 = '0'
-	// consecutive payment activity, 30 - 59 days past due date
-	PaymentHistoryPast30 = '1'
-	// consecutive payment activity, 60 - 89 days past due date
-	PaymentHistoryPast60 = '2'
-	// consecutive payment activity, 90 - 119 days past due date
-	PaymentHistoryPast90 = '3'
-	// consecutive payment activity, 120 - 149 days past due date
-	PaymentHistoryPast120 = '4'
-	// consecutive payment activity, 150 - 179 days past due date
-	PaymentHistoryPast150 = '5'
-	// consecutive payment activity, 180 or more days past due date
-	PaymentHistoryPast180 = '6'
-	// consecutive payment activity, No payment history available prior to this time
-	PaymentHistoryNoPayment = 'B'
-	// consecutive payment activity, No payment history available this month.
-	PaymentHistoryNoPaymentMonth = 'D'
-	// consecutive payment activity, Zero balance and current account
-	PaymentHistoryZero = 'E'
-	// consecutive payment activity, Collection
-	PaymentHistoryCollection = 'G'
-	// consecutive payment activity, Foreclosure Completed
-	PaymentHistoryForeclosureCompleted = 'H'
-	// consecutive payment activity, Voluntary Surrender
-	PaymentHistoryVoluntarySurrender = 'J'
-	// consecutive payment activity, Repossession
-	PaymentHistoryRepossession = 'K'
-	// consecutive payment activity, Charge-off
-	PaymentHistoryChargeOff = 'L'
-	//  status code that properly identifies the current condition of the account, "05"
-	AccountStatus05 = "05"
-	//  status code that properly identifies the current condition of the account, "13"
-	AccountStatus13 = "13"
-	//  status code that properly identifies the current condition of the account, "65"
-	AccountStatus65 = "65"
-	//  status code that properly identifies the current condition of the account, "88"
-	AccountStatus88 = "88"
-	//  status code that properly identifies the current condition of the account, "89"
-	AccountStatus89 = "89"
-	//  status code that properly identifies the current condition of the account, "94"
-	AccountStatus94 = "94"
-	//  status code that properly identifies the current condition of the account, "95"
-	AccountStatus95 = "95"
-	// designates the interest type, Fixed
-	InterestIndicatorFixed = "F"
-	// designates the interest type, Variable/Adjustable
-	InterestIndicatorVariable = "V"
-)
-
 // Description returns description of base segment
 func (s *BaseSegment) Description() string {
 	return BaseSegmentDescription
@@ -618,12 +502,12 @@ func (s *BaseSegment) Description() string {
 // Parse takes the input record string and parses the base segment values
 func (s *BaseSegment) Parse(record string) error {
 	if utf8.RuneCountInString(record) != BaseSegmentLength {
-		return ErrSegmentLength
+		return utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return ErrValidField
+		return utils.ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -636,7 +520,7 @@ func (s *BaseSegment) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := baseSegmentCharacterFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return ErrValidField
+			return utils.ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
@@ -689,14 +573,14 @@ func (s *BaseSegment) Validate() error {
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
-			return ErrValidField
+			return utils.ErrValidField
 		}
 
 		if spec, ok := baseSegmentCharacterFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return ach.ErrFieldRequired
+					return utils.ErrFieldRequired
 				}
 			}
 		}
@@ -724,7 +608,7 @@ func (s *BaseSegment) Validate() error {
 
 func (s *BaseSegment) ValidateIdentificationNumber() error {
 	if validFilledString(s.IdentificationNumber) {
-		return newErrValidValue("identification number")
+		return utils.NewErrValidValue("identification number")
 	}
 	return nil
 }
@@ -734,7 +618,7 @@ func (s *BaseSegment) ValidatePortfolioType() error {
 	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
 		return nil
 	}
-	return newErrValidValue("portfolio type")
+	return utils.NewErrValidValue("portfolio type")
 }
 
 func (s *BaseSegment) ValidateTermsDuration() error {
@@ -744,7 +628,7 @@ func (s *BaseSegment) ValidateTermsDuration() error {
 	}
 	_, err := strconv.Atoi(s.TermsDuration)
 	if err != nil {
-		return newErrValidValue("terms duration")
+		return utils.NewErrValidValue("terms duration")
 	}
 	return nil
 }
@@ -756,7 +640,7 @@ func (s *BaseSegment) ValidateTermsFrequency() error {
 		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, blankString:
 		return nil
 	}
-	return newErrValidValue("terms frequency")
+	return utils.NewErrValidValue("terms frequency")
 }
 
 func (s *BaseSegment) ValidatePaymentRating() error {
@@ -767,18 +651,18 @@ func (s *BaseSegment) ValidatePaymentRating() error {
 			PaymentRatingPast120, PaymentRatingPast150, PaymentRatingPast180, PaymentRatingCollection, PaymentRatingChargeOff:
 			return nil
 		}
-		return newErrValidValue("payment rating")
+		return utils.NewErrValidValue("payment rating")
 	}
 
 	if s.PaymentRating == blankString {
 		return nil
 	}
-	return newErrValidValue("payment rating")
+	return utils.NewErrValidValue("payment rating")
 }
 
 func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
 	if len(s.PaymentHistoryProfile) != 24 {
-		return newErrValidValue("payment history profile")
+		return utils.NewErrValidValue("payment history profile")
 	}
 	for i := 0; i < len(s.PaymentHistoryProfile); i++ {
 		switch s.PaymentHistoryProfile[i] {
@@ -789,7 +673,7 @@ func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
 			PaymentHistoryChargeOff:
 			continue
 		}
-		return newErrValidValue("payment history profile")
+		return utils.NewErrValidValue("payment history profile")
 	}
 	return nil
 }
@@ -799,7 +683,7 @@ func (s *BaseSegment) ValidateInterestTypeIndicator() error {
 	case InterestIndicatorFixed, InterestIndicatorVariable, blankString:
 		return nil
 	}
-	return newErrValidValue("interest type indicator")
+	return utils.NewErrValidValue("interest type indicator")
 }
 
 func (s *BaseSegment) ValidateTelephoneNumber() error {
@@ -817,12 +701,12 @@ func (s *PackedBaseSegment) Description() string {
 // Parse takes the input record string and parses the packed base segment values
 func (s *PackedBaseSegment) Parse(record string) error {
 	if utf8.RuneCountInString(record) != PackedSegmentLength {
-		return ErrSegmentLength
+		return utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return ErrValidField
+		return utils.ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -835,7 +719,7 @@ func (s *PackedBaseSegment) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := baseSegmentPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return ErrValidField
+			return utils.ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
@@ -888,14 +772,14 @@ func (s *PackedBaseSegment) Validate() error {
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
-			return ErrValidField
+			return utils.ErrValidField
 		}
 
 		if spec, ok := baseSegmentPackedFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return ach.ErrFieldRequired
+					return utils.ErrFieldRequired
 				}
 			}
 		}
@@ -923,7 +807,7 @@ func (s *PackedBaseSegment) Validate() error {
 
 func (s *PackedBaseSegment) ValidateIdentificationNumber() error {
 	if validFilledString(s.IdentificationNumber) {
-		return newErrValidValue("identification number")
+		return utils.NewErrValidValue("identification number")
 	}
 	return nil
 }
@@ -933,7 +817,7 @@ func (s *PackedBaseSegment) ValidatePortfolioType() error {
 	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
 		return nil
 	}
-	return newErrValidValue("portfolio type")
+	return utils.NewErrValidValue("portfolio type")
 }
 
 func (s *PackedBaseSegment) ValidateTermsDuration() error {
@@ -943,7 +827,7 @@ func (s *PackedBaseSegment) ValidateTermsDuration() error {
 	}
 	_, err := strconv.Atoi(s.TermsDuration)
 	if err != nil {
-		return newErrValidValue("terms duration")
+		return utils.NewErrValidValue("terms duration")
 	}
 	return nil
 }
@@ -955,7 +839,7 @@ func (s *PackedBaseSegment) ValidateTermsFrequency() error {
 		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, blankString:
 		return nil
 	}
-	return newErrValidValue("terms frequency")
+	return utils.NewErrValidValue("terms frequency")
 }
 
 func (s *PackedBaseSegment) ValidatePaymentRating() error {
@@ -966,18 +850,18 @@ func (s *PackedBaseSegment) ValidatePaymentRating() error {
 			PaymentRatingPast120, PaymentRatingPast150, PaymentRatingPast180, PaymentRatingCollection, PaymentRatingChargeOff:
 			return nil
 		}
-		return newErrValidValue("payment rating")
+		return utils.NewErrValidValue("payment rating")
 	}
 
 	if s.PaymentRating == blankString {
 		return nil
 	}
-	return newErrValidValue("payment rating")
+	return utils.NewErrValidValue("payment rating")
 }
 
 func (s *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
 	if len(s.PaymentHistoryProfile) != 24 {
-		return newErrValidValue("payment history profile")
+		return utils.NewErrValidValue("payment history profile")
 	}
 	for i := 0; i < len(s.PaymentHistoryProfile); i++ {
 		switch s.PaymentHistoryProfile[i] {
@@ -988,7 +872,7 @@ func (s *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
 			PaymentHistoryChargeOff:
 			continue
 		}
-		return newErrValidValue("payment history profile")
+		return utils.NewErrValidValue("payment history profile")
 	}
 	return nil
 }
@@ -998,7 +882,7 @@ func (s *PackedBaseSegment) ValidateInterestTypeIndicator() error {
 	case InterestIndicatorFixed, InterestIndicatorVariable, blankString:
 		return nil
 	}
-	return newErrValidValue("interest type indicator")
+	return utils.NewErrValidValue("interest type indicator")
 }
 
 func (s *PackedBaseSegment) ValidateTelephoneNumber() error {

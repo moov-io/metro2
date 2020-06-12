@@ -4,10 +4,6 @@
 
 package segments
 
-import (
-	"errors"
-)
-
 // General segment interface
 type Segment interface {
 	Description() string
@@ -18,7 +14,7 @@ type Segment interface {
 
 const (
 	// HeaderRecordCharacterLength indicates length of header record
-	HeaderRecordCharacterLength = 426
+	HeaderRecordLength = 426
 	// BaseSegmentLength indicates length of base segment
 	BaseSegmentLength = 426
 	// J2SegmentLength indicates length of J2 segment
@@ -66,19 +62,6 @@ const (
 	PackedBaseSegmentDescription = "Base Segment (Packed)"
 	// PackedTrailerRecordLength indicates length of description trailer record
 	PackedTrailerRecordDescription = "Trailer Record (Packed)"
-)
-
-var (
-	//ErrUpperAlpha is given when a field is not numeric characters
-	ErrNumeric = errors.New("is not numeric characters")
-	//ErrUpperAlpha is given when a field is an invalid phone number
-	ErrPhoneNumber = errors.New("is an invalid phone number")
-	//ErrValidYear is given when there's an invalid date
-	ErrValidDate = errors.New("is an invalid Date")
-	//ErrValidYear is given when a segment has an invalid length
-	ErrSegmentLength = errors.New("has an invalid length")
-	//ErrValidField is given when there's an invalid field
-	ErrValidField = errors.New("is an invalid field")
 )
 
 // NewBaseSegment returns a new base segment

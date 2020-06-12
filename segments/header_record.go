@@ -7,10 +7,11 @@ package segments
 import (
 	"reflect"
 	"strings"
+	"time"
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/moov-io/ach"
+	"github.com/moov-io/metro2/utils"
 )
 
 // HeaderRecord holds the header record
@@ -56,22 +57,22 @@ type HeaderRecord struct {
 	// If accounts are updated on different dates, use most recent.
 	// A future date should not be reported.
 	// Format is MMDDYYYY.
-	ActivityDate int `json:"activityDate" validate:"required"`
+	ActivityDate time.Time `json:"activityDate" validate:"required"`
 
 	// Contains the date the media was generated.
 	// A future date should not be reported.
 	// Format is MMDDYYYY.
-	DateCreated int `json:"dateCreated" validate:"required"`
+	DateCreated time.Time `json:"dateCreated" validate:"required"`
 
 	// Contains the date your reporting format was developed.
 	// Format is MMDDYYYY.
 	// If the day is not available, use 01.
-	ProgramDate int `json:"programDate"`
+	ProgramDate time.Time `json:"programDate"`
 
 	// Contains the last date your reporting format was revised.
 	// Format is MMDDYYYY.
 	// If the day is not available, use 01.
-	ProgramRevisionDate int `json:"programRevisionDate"`
+	ProgramRevisionDate time.Time `json:"programRevisionDate"`
 
 	// Contains the name of the processing company sending the data; i.e., data furnisher or processor.
 	// If multiple Header Records are provided, the Reporter Name on the second and subsequent Headers may be repeated or blank filled.
@@ -106,13 +107,13 @@ func (s *HeaderRecord) Description() string {
 
 // Parse takes the input record string and parses the header record values
 func (s *HeaderRecord) Parse(record string) error {
-	if utf8.RuneCountInString(record) != HeaderRecordCharacterLength {
-		return ErrSegmentLength
+	if utf8.RuneCountInString(record) != HeaderRecordLength {
+		return utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return ErrValidField
+		return utils.ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -125,7 +126,7 @@ func (s *HeaderRecord) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := headerRecordCharacterFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return ErrValidField
+			return utils.ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
@@ -145,6 +146,8 @@ func (s *HeaderRecord) Parse(record string) error {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
+			case time.Time:
+				field.Set(value)
 			}
 		}
 	}
@@ -161,7 +164,7 @@ func (s *HeaderRecord) String() string {
 		return ""
 	}
 
-	buf.Grow(BaseSegmentLength)
+	buf.Grow(HeaderRecordLength)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
@@ -176,14 +179,14 @@ func (s *HeaderRecord) Validate() error {
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
-			return ErrValidField
+			return utils.ErrValidField
 		}
 
 		if spec, ok := headerRecordCharacterFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return ach.ErrFieldRequired
+					return utils.ErrFieldRequired
 				}
 			}
 		}
@@ -214,12 +217,12 @@ func (s *PackedHeaderRecord) Description() string {
 // Parse takes the input record string and parses the packed header record values
 func (s *PackedHeaderRecord) Parse(record string) error {
 	if utf8.RuneCountInString(record) != PackedSegmentLength {
-		return ErrSegmentLength
+		return utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return ErrValidField
+		return utils.ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -232,7 +235,7 @@ func (s *PackedHeaderRecord) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := headerRecordPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return ErrValidField
+			return utils.ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
@@ -252,6 +255,8 @@ func (s *PackedHeaderRecord) Parse(record string) error {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
+			case time.Time:
+				field.Set(value)
 			}
 		}
 	}
@@ -283,14 +288,14 @@ func (s *PackedHeaderRecord) Validate() error {
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
-			return ErrValidField
+			return utils.ErrValidField
 		}
 
 		if spec, ok := headerRecordPackedFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return ach.ErrFieldRequired
+					return utils.ErrFieldRequired
 				}
 			}
 		}
