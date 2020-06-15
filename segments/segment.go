@@ -17,6 +17,8 @@ const (
 	HeaderRecordLength = 426
 	// BaseSegmentLength indicates length of base segment
 	BaseSegmentLength = 426
+	// J1SegmentLength indicates length of J1 segment
+	J1SegmentLength = 100
 	// J2SegmentLength indicates length of J2 segment
 	J2SegmentLength = 200
 	// K1SegmentLength indicates length of K1 segment
@@ -40,6 +42,8 @@ const (
 	HeaderRecordDescription = "Header Record (Character)"
 	// BaseSegmentLength indicates description of base segment
 	BaseSegmentDescription = "Base Segment (Character)"
+	// J1SegmentLength indicates description of J1 segment
+	J1SegmentDescription = "J1 Segment"
 	// J2SegmentLength indicates description of J2 segment
 	J2SegmentDescription = "J2 Segment"
 	// K1SegmentLength indicates description of K1 segment
@@ -92,4 +96,44 @@ func NewTrailerRecord() Segment {
 // NewPackedTrailerRecord returns a new packed trailer record
 func NewPackedTrailerRecord() Segment {
 	return &PackedTrailerRecord{}
+}
+
+// NewJ1Segment returns a new j1 segment
+func NewJ1Segment() Segment {
+	return &J1Segment{}
+}
+
+// NewJ2Segment returns a new j1 segment
+func NewJ2Segment() Segment {
+	return &J2Segment{}
+}
+
+// NewK1Segment returns a new k1 segment
+func NewK1Segment() Segment {
+	return &K1Segment{}
+}
+
+// NewK2Segment returns a new k2 segment
+func NewK2Segment() Segment {
+	return &K2Segment{}
+}
+
+// NewK3Segment returns a new k3 segment
+func NewK3Segment() Segment {
+	return &K3Segment{}
+}
+
+// NewK4Segment returns a new k4 segment
+func NewK4Segment() Segment {
+	return &K4Segment{}
+}
+
+// NewL1Segment returns a new l1 segment
+func NewL1Segment() Segment {
+	return &L1Segment{}
+}
+
+// NewN1Segment returns a new n1 segment
+func NewN1Segment() Segment {
+	return &N1Segment{}
 }

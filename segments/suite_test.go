@@ -22,6 +22,14 @@ type SegmentTest struct {
 	samplePackedHeaderRecord  string
 	sampleTrailerRecord       string
 	samplePackedTrailerRecord string
+	sampleJ1Segment           string
+	sampleJ2Segment           string
+	sampleK1Segment           string
+	sampleK2Segment           string
+	sampleK3Segment           string
+	sampleK4Segment           string
+	sampleL1Segment           string
+	sampleN1Segment           string
 }
 
 var _ = check.Suite(&SegmentTest{})
@@ -61,6 +69,38 @@ func (s *SegmentTest) SetUpSuite(c *check.C) {
 	f, err = os.Open(filepath.Join("..", "testdata", "packed_trailer_record.dat"))
 	c.Assert(err, check.IsNil)
 	s.samplePackedTrailerRecord = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "j1_segment.dat"))
+	c.Assert(err, check.IsNil)
+	s.sampleJ1Segment = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "j2_segment.dat"))
+	c.Assert(err, check.IsNil)
+	s.sampleJ2Segment = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "k1_segment.dat"))
+	c.Assert(err, check.IsNil)
+	s.sampleK1Segment = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "k2_segment.dat"))
+	c.Assert(err, check.IsNil)
+	s.sampleK2Segment = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "k3_segment.dat"))
+	c.Assert(err, check.IsNil)
+	s.sampleK3Segment = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "k4_segment.dat"))
+	c.Assert(err, check.IsNil)
+	s.sampleK4Segment = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "l1_segment.dat"))
+	c.Assert(err, check.IsNil)
+	s.sampleL1Segment = readStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "n1_segment.dat"))
+	c.Assert(err, check.IsNil)
+	s.sampleN1Segment = readStringFromFile(f)
 }
 
 func (s *SegmentTest) TearDownSuite(c *check.C) {}
