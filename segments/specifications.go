@@ -258,4 +258,83 @@ var (
 		"TotalTelephoneNumbersAllSegments": {226, 5, packedNumber, nullable},
 		"Reserved2":                        {231, 135, alphanumeric, nullable},
 	}
+	j1SegmentFormat = map[string]field{
+		"SegmentIdentifier":            {0, 2, alphanumeric, required},
+		"Reserved1":                    {2, 1, alphanumeric, nullable},
+		"Surname":                      {3, 25, alphanumeric, required},
+		"FirstName":                    {28, 20, alphanumeric, required},
+		"MiddleName":                   {48, 20, alphanumeric, applicable},
+		"GenerationCode":               {68, 1, alphanumeric, applicable},
+		"SocialSecurityNumber":         {69, 9, numeric, required},
+		"DateBirth":                    {78, 8, date, required},
+		"TelephoneNumber":              {86, 10, numeric, nullable},
+		"ECOACode":                     {96, 1, alphanumeric, required},
+		"ConsumerInformationIndicator": {97, 2, alphanumeric, applicable},
+		"Reserved2":                    {99, 1, alphanumeric, nullable},
+	}
+	j2SegmentFormat = map[string]field{
+		"SegmentIdentifier":            {0, 2, alphanumeric, required},
+		"Reserved1":                    {2, 1, alphanumeric, nullable},
+		"Surname":                      {3, 25, alphanumeric, required},
+		"FirstName":                    {28, 20, alphanumeric, required},
+		"MiddleName":                   {48, 20, alphanumeric, applicable},
+		"GenerationCode":               {68, 1, alphanumeric, applicable},
+		"SocialSecurityNumber":         {69, 9, numeric, required},
+		"DateBirth":                    {78, 8, date, required},
+		"TelephoneNumber":              {86, 10, numeric, nullable},
+		"ECOACode":                     {96, 1, alphanumeric, required},
+		"ConsumerInformationIndicator": {97, 2, alphanumeric, applicable},
+		"CountryCode":                  {99, 2, alphanumeric, nullable},
+		"FirstLineAddress":             {101, 32, alphanumeric, required},
+		"SecondLineAddress":            {133, 32, alphanumeric, applicable},
+		"City":                         {165, 20, alphanumeric, required},
+		"State":                        {185, 2, alphanumeric, required},
+		"ZipCode":                      {187, 9, alphanumeric, required},
+		"AddressIndicator":             {196, 1, alphanumeric, nullable},
+		"ResidenceCode":                {197, 1, alphanumeric, nullable},
+		"Reserved2":                    {198, 2, alphanumeric, nullable},
+	}
+	k1SegmentFormat = map[string]field{
+		"SegmentIdentifier":      {0, 2, alphanumeric, required},
+		"OriginalCreditorName":   {2, 30, alphanumeric, required},
+		"CreditorClassification": {32, 2, numeric, required},
+	}
+	k2SegmentFormat = map[string]field{
+		"SegmentIdentifier":  {0, 2, alphanumeric, required},
+		"PurchasedIndicator": {2, 1, numeric, required},
+		"PurchasedName":      {3, 30, alphanumeric, required},
+		"Reserved":           {33, 1, alphanumeric, nullable},
+	}
+	k3SegmentFormat = map[string]field{
+		"SegmentIdentifier":            {0, 2, alphanumeric, required},
+		"AgencyIdentifier":             {2, 2, numeric, applicable},
+		"AccountNumber":                {4, 18, alphanumeric, applicable},
+		"MortgageIdentificationNumber": {22, 18, alphanumeric, nullable},
+	}
+	k4SegmentFormat = map[string]field{
+		"SegmentIdentifier":           {0, 2, alphanumeric, required},
+		"SpecializedPaymentIndicator": {2, 2, numeric, required},
+		"DeferredPaymentStartDate":    {4, 8, date, applicable},
+		"BalloonPaymentDueDate":       {12, 8, date, applicable},
+		"BalloonPaymentAmount":        {20, 9, numeric, applicable},
+		"Reserved":                    {29, 1, alphanumeric, nullable},
+	}
+	l1SegmentFormat = map[string]field{
+		"SegmentIdentifier":        {0, 2, alphanumeric, required},
+		"ChangeIndicator":          {2, 1, numeric, required},
+		"NewConsumerAccountNumber": {3, 30, alphanumeric, applicable},
+		"NewIdentificationNumber":  {33, 20, alphanumeric, applicable},
+		"Reserved":                 {53, 1, alphanumeric, nullable},
+	}
+	n1SegmentFormat = map[string]field{
+		"SegmentIdentifier":         {0, 2, alphanumeric, required},
+		"EmployerName":              {2, 30, alphanumeric, required},
+		"FirstLineEmployerAddress":  {32, 32, alphanumeric, nullable},
+		"SecondLineEmployerAddress": {64, 32, alphanumeric, nullable},
+		"EmployerCity":              {96, 20, alphanumeric, nullable},
+		"EmployerState":             {116, 2, alphanumeric, nullable},
+		"ZipCode":                   {118, 9, alphanumeric, nullable},
+		"Occupation":                {127, 18, alphanumeric, applicable},
+		"Reserved":                  {145, 1, alphanumeric, nullable},
+	}
 )

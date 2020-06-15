@@ -119,6 +119,100 @@ const (
 	InterestIndicatorFixed = "F"
 	// designates the interest type, Variable/Adjustable
 	InterestIndicatorVariable = "V"
+	// Consumer Account Number Change ONLY
+	ChangeIndicatorAccountNumber = 1
+	// Identification Number Change ONLY
+	ChangeIndicatorIdentificationNumber = 2
+	// Consumer Account Number AND Identification Number Change
+	ChangeIndicatorBothNumber = 3
+	// Generation Code Junior
+	GenerationCodeJunior = "J"
+	// Generation Code Senior
+	GenerationCodeSenior = "S"
+	// Generation Code 2
+	GenerationCode2 = "2"
+	// Generation Code 3
+	GenerationCode3 = "3"
+	// Generation Code 4
+	GenerationCode4 = "4"
+	// Generation Code 5
+	GenerationCode5 = "5"
+	// Generation Code 6
+	GenerationCode6 = "6"
+	// Generation Code 7
+	GenerationCode7 = "7"
+	// Generation Code 8
+	GenerationCode8 = "8"
+	// Generation Code 9
+	GenerationCode9 = "9"
+	// Confirmed/Verified address
+	AddressIndicatorConfirmed = "C"
+	// Known to be address of associated consumer
+	AddressIndicatorKnown = "Y"
+	// Not confirmed address
+	AddressIndicatorNotConfirmed = "N"
+	// Military address
+	AddressIndicatorMilitary = "M"
+	// Secondary address
+	AddressIndicatorSecondary = "S"
+	// Business address — not consumer's residence
+	AddressIndicatorBusiness = "B"
+	// Non-deliverable address/Returned mail
+	AddressIndicatorNonDeliverable = "U"
+	// Data reporter’s default address
+	AddressIndicatorData = "D"
+	// Bill Payer Service — not consumer’s residence
+	AddressIndicatorBill = "P"
+	// Residence Code Owns
+	ResidenceCodeOwns = "O"
+	// Residence Code Rents
+	ResidenceCodeRents = "R"
+	// Creditor Classification
+	CreditorClassificationRetail = 1
+	// Creditor Classification Medical/Health Care
+	CreditorClassificationMedical = 2
+	// Creditor Classification Oil Company
+	CreditorClassificationOil = 3
+	// Creditor Classification Government
+	CreditorClassificationGovernment = 4
+	// Creditor Classification Personal Services
+	CreditorClassificationPersonal = 5
+	// Creditor Classification Insurance
+	CreditorClassificationInsurance = 6
+	// Creditor Classification Educational
+	CreditorClassificationEducational = 7
+	// Creditor Classification Banking
+	CreditorClassificationBanking = 8
+	// Creditor Classification Rental/Leasing
+	CreditorClassificationRental = 9
+	// Creditor Classification Utilities
+	CreditorClassificationUtilities = 10
+	// Creditor Classification Cable/Cellular
+	CreditorClassificationCable = 11
+	// Creditor Classification Financial
+	CreditorClassificationFinancial = 12
+	// Creditor Classification Credit Union
+	CreditorClassificationCredit = 13
+	// Creditor Classification Automotive
+	CreditorClassificationAutomotive = 14
+	// Creditor Classification Check Guarantee
+	CreditorClassificationGuarantee = 15
+	// Purchased From Name
+	PurchasedIndicatorFromName = 1
+	// Sold To Name
+	PurchasedIndicatorToName = 2
+	// Remove Previously Reported K2 Segment Information
+	PurchasedIndicatorRemove = 9
+	// Agency Identifier not applicable
+	AgencyIdentifierNotApplicable = 0
+	// Agency Identifier Fannie Mae
+	AgencyIdentifierFannieMae = 1
+	// Agency Identifier Freddie Mac
+	AgencyIdentifierFreddieMac = 2
+	// Specialized Payment Indicator Balloon Payment
+	SpecializedBalloonPayment = 1
+	// Specialized Payment Indicator Deferred Payment
+	SpecializedDeferredPayment = 2
 )
 
 // Internal Constants
