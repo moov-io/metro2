@@ -28,3 +28,13 @@ var (
 func NewErrValidValue(field string) error {
 	return fmt.Errorf("is an invalid value of %s", field)
 }
+
+// NewErrValidSegment returns a error that has invalid segment
+func NewErrValidSegment(name string) error {
+	return fmt.Errorf("is an invalid segment (%s)", name)
+}
+
+// NewErrValidSegment returns a error that has invalid segment
+func NewErrValidFileFormat(name string) error {
+	return fmt.Errorf("is an invalid file format (%s)", name)
+}

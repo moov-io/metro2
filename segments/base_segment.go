@@ -5,14 +5,13 @@
 package segments
 
 import (
+	"github.com/moov-io/metro2/utils"
 	"reflect"
 	"strconv"
 	"strings"
 	"time"
 	"unicode"
 	"unicode/utf8"
-
-	"github.com/moov-io/metro2/utils"
 )
 
 // BaseSegment holds the base segment
@@ -500,43 +499,49 @@ func (s *BaseSegment) Description() string {
 }
 
 // Parse takes the input record string and parses the base segment values
-func (s *BaseSegment) Parse(record string) error {
-	if utf8.RuneCountInString(record) != BaseSegmentLength {
-		return utils.ErrSegmentLength
+func (s *BaseSegment) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < UnpackedSegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
+	read := 0
+	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		// skip local variable
 		if !unicode.IsUpper([]rune(fieldName)[0]) {
 			continue
 		}
-
 		field := fields.FieldByName(fieldName)
 		spec, ok := baseSegmentCharacterFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
-
-		data := record[spec.Start : spec.Start+spec.Length]
+		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
+		read += spec.Length
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
-
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
-
 		// set value
 		if value.IsValid() && field.CanSet() {
 			switch value.Interface().(type) {
 			case int, int64:
+				if fieldName == "BlockDescriptorWord" {
+					if !s.isFixedLength(record) {
+						read = 0
+						continue
+					}
+					offset += 4
+				}
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
@@ -546,7 +551,7 @@ func (s *BaseSegment) Parse(record string) error {
 		}
 	}
 
-	return nil
+	return read, nil
 }
 
 // String writes the base segment struct to a 426 character string.
@@ -558,10 +563,17 @@ func (s *BaseSegment) String() string {
 		return ""
 	}
 
-	buf.Grow(BaseSegmentLength)
+	blockSize := s.BlockDescriptorWord
+	if blockSize == 0 {
+		blockSize = s.RecordDescriptorWord
+	}
+	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
+	}
+	if blockSize > buf.Len() && s.BlockDescriptorWord > 0 {
+		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
 
 	return buf.String()
@@ -699,43 +711,49 @@ func (s *PackedBaseSegment) Description() string {
 }
 
 // Parse takes the input record string and parses the packed base segment values
-func (s *PackedBaseSegment) Parse(record string) error {
-	if utf8.RuneCountInString(record) != PackedSegmentLength {
-		return utils.ErrSegmentLength
+func (s *PackedBaseSegment) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < PackedSegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
+	read := 0
+	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		// skip local variable
 		if !unicode.IsUpper([]rune(fieldName)[0]) {
 			continue
 		}
-
 		field := fields.FieldByName(fieldName)
 		spec, ok := baseSegmentPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
-
-		data := record[spec.Start : spec.Start+spec.Length]
+		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
+		read += spec.Length
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
-
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
-
 		// set value
 		if value.IsValid() && field.CanSet() {
 			switch value.Interface().(type) {
 			case int, int64:
+				if fieldName == "BlockDescriptorWord" {
+					if !s.isFixedLength(record) {
+						read = 0
+						continue
+					}
+					offset += 4
+				}
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
@@ -745,7 +763,7 @@ func (s *PackedBaseSegment) Parse(record string) error {
 		}
 	}
 
-	return nil
+	return read, nil
 }
 
 // String writes the packed base segment struct to a 426 character string.
@@ -757,10 +775,17 @@ func (s *PackedBaseSegment) String() string {
 		return ""
 	}
 
-	buf.Grow(PackedSegmentLength)
+	blockSize := s.BlockDescriptorWord
+	if blockSize == 0 {
+		blockSize = s.RecordDescriptorWord
+	}
+	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
+	}
+	if blockSize > buf.Len() && s.BlockDescriptorWord > 0 {
+		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
 
 	return buf.String()

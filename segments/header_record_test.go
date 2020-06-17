@@ -2,13 +2,11 @@ package segments
 
 import (
 	"gopkg.in/check.v1"
-
-	"github.com/moov-io/metro2/utils"
 )
 
 func (s *SegmentTest) TestHeaderRecord(c *check.C) {
 	segment := NewHeaderRecord()
-	err := segment.Parse(s.sampleHeaderRecord)
+	_, err := segment.Parse(s.sampleHeaderRecord)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -18,14 +16,13 @@ func (s *SegmentTest) TestHeaderRecord(c *check.C) {
 
 func (s *SegmentTest) TestHeaderRecordWithInvalidData(c *check.C) {
 	segment := NewHeaderRecord()
-	err := segment.Parse(s.sampleHeaderRecord + "ERROR")
+	_, err := segment.Parse("ERROR" + s.sampleHeaderRecord)
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, utils.ErrSegmentLength)
 }
 
 func (s *SegmentTest) TestPackedHeaderRecord(c *check.C) {
 	segment := NewPackedHeaderRecord()
-	err := segment.Parse(s.samplePackedHeaderRecord)
+	_, err := segment.Parse(s.samplePackedHeaderRecord)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -35,7 +32,6 @@ func (s *SegmentTest) TestPackedHeaderRecord(c *check.C) {
 
 func (s *SegmentTest) TestPackedHeaderRecordWithInvalidData(c *check.C) {
 	segment := NewPackedHeaderRecord()
-	err := segment.Parse(s.samplePackedHeaderRecord + "ERROR")
+	_, err := segment.Parse("ERROR" + s.samplePackedHeaderRecord)
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err, check.DeepEquals, utils.ErrSegmentLength)
 }

@@ -16,6 +16,13 @@ import (
 
 // TrailerRecord holds the trailer record
 type TrailerRecord struct {
+	// Contains a value equal to the length of the block of data and must be reported when using the packed format or
+	// when reporting variable length records.  This value includes the four bytes reserved for this field.
+	// Report the standard IBM variable record length conventions.
+	//
+	// This field is not required when reporting fixed length, fixed block records.
+	BlockDescriptorWord int `json:"blockDescriptorWord,omitempty"`
+
 	// Contains a value equal to the length of the physical record. This value includes the four bytes reserved for this field.
 	// If fixed-length records are being reported, the Trailer Record should be the same length as all the data records.
 	// The Trailer Record should be padded with blanks to fill the needed number of positions.
@@ -169,43 +176,49 @@ func (s *TrailerRecord) Description() string {
 }
 
 // Parse takes the input record string and parses the trailer record values
-func (s *TrailerRecord) Parse(record string) error {
-	if utf8.RuneCountInString(record) != TrailerRecordLength {
-		return utils.ErrSegmentLength
+func (s *TrailerRecord) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < UnpackedSegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
+	read := 0
+	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		// skip local variable
 		if !unicode.IsUpper([]rune(fieldName)[0]) {
 			continue
 		}
-
 		field := fields.FieldByName(fieldName)
 		spec, ok := trailerRecordCharacterFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
-
-		data := record[spec.Start : spec.Start+spec.Length]
+		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
+		read += spec.Length
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
-
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
-
 		// set value
 		if value.IsValid() && field.CanSet() {
 			switch value.Interface().(type) {
 			case int, int64:
+				if fieldName == "BlockDescriptorWord" {
+					if !s.isFixedLength(record) {
+						read = 0
+						continue
+					}
+					offset += 4
+				}
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
@@ -215,7 +228,7 @@ func (s *TrailerRecord) Parse(record string) error {
 		}
 	}
 
-	return nil
+	return read, nil
 }
 
 // String writes the trailer record struct to a 426 character string.
@@ -227,10 +240,17 @@ func (s *TrailerRecord) String() string {
 		return ""
 	}
 
-	buf.Grow(TrailerRecordLength)
+	blockSize := s.BlockDescriptorWord
+	if blockSize == 0 {
+		blockSize = s.RecordDescriptorWord
+	}
+	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
+	}
+	if blockSize > buf.Len() && s.BlockDescriptorWord > 0 {
+		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
 
 	return buf.String()
@@ -278,43 +298,49 @@ func (s *PackedTrailerRecord) Description() string {
 }
 
 // Parse takes the input record string and parses the packed trailer record values
-func (s *PackedTrailerRecord) Parse(record string) error {
-	if utf8.RuneCountInString(record) != PackedSegmentLength {
-		return utils.ErrSegmentLength
+func (s *PackedTrailerRecord) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < PackedSegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
+	read := 0
+	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		// skip local variable
 		if !unicode.IsUpper([]rune(fieldName)[0]) {
 			continue
 		}
-
 		field := fields.FieldByName(fieldName)
 		spec, ok := trailerRecordPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
-
-		data := record[spec.Start : spec.Start+spec.Length]
+		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
+		read += spec.Length
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
-
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
-
 		// set value
 		if value.IsValid() && field.CanSet() {
 			switch value.Interface().(type) {
 			case int, int64:
+				if fieldName == "BlockDescriptorWord" {
+					if !s.isFixedLength(record) {
+						read = 0
+						continue
+					}
+					offset += 4
+				}
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
@@ -324,7 +350,7 @@ func (s *PackedTrailerRecord) Parse(record string) error {
 		}
 	}
 
-	return nil
+	return read, nil
 }
 
 // String writes the trailer record struct to a 426 character string.
@@ -336,10 +362,17 @@ func (s *PackedTrailerRecord) String() string {
 		return ""
 	}
 
-	buf.Grow(PackedSegmentLength)
+	blockSize := s.BlockDescriptorWord
+	if blockSize == 0 {
+		blockSize = s.RecordDescriptorWord
+	}
+	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
+	}
+	if blockSize > buf.Len() && s.BlockDescriptorWord > 0 {
+		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
 
 	return buf.String()

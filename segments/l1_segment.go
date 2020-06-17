@@ -42,14 +42,14 @@ func (s *L1Segment) Description() string {
 }
 
 // Parse takes the input record string and parses the l1 segment values
-func (s *L1Segment) Parse(record string) error {
-	if utf8.RuneCountInString(record) != L1SegmentLength {
-		return utils.ErrSegmentLength
+func (s *L1Segment) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < L1SegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -62,17 +62,17 @@ func (s *L1Segment) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := l1SegmentFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
 
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 		// set value
@@ -88,7 +88,7 @@ func (s *L1Segment) Parse(record string) error {
 		}
 	}
 
-	return nil
+	return L1SegmentLength, nil
 }
 
 // String writes the l1 segment struct to a 54 character string.

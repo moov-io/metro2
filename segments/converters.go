@@ -60,7 +60,7 @@ func (c *converter) toString(elm field, data reflect.Value) string {
 	if !data.IsValid() {
 		return c.fillString(elm)
 	}
-	if elm.Type&omitted > 0 {
+	if elm.Type&omitted > 0 && data.Interface().(int) == 0 {
 		return ""
 	}
 
@@ -98,6 +98,9 @@ func (c *converter) toSpecifications(fieldsFormat map[string]field) []specificat
 		specifications = append(specifications, specification{field.Start, key, field})
 	}
 	sort.Slice(specifications, func(i, j int) bool {
+		if specifications[i].Key == specifications[j].Key {
+			return specifications[i].Name < specifications[j].Name
+		}
 		return specifications[i].Key < specifications[j].Key
 	})
 	return specifications

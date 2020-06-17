@@ -7,16 +7,16 @@ package segments
 // General segment interface
 type Segment interface {
 	Description() string
-	Parse(record string) error
+	Parse(string) (int, error)
 	String() string
 	Validate() error
 }
 
 const (
-	// HeaderRecordCharacterLength indicates length of header record
-	HeaderRecordLength = 426
-	// BaseSegmentLength indicates length of base segment
-	BaseSegmentLength = 426
+	// UnpackedSegmentLength indicates length of unpacked segment
+	UnpackedSegmentLength = 426
+	// PackedSegmentLength indicates length of packed segment
+	PackedSegmentLength = 366
 	// J1SegmentLength indicates length of J1 segment
 	J1SegmentLength = 100
 	// J2SegmentLength indicates length of J2 segment
@@ -33,39 +33,35 @@ const (
 	L1SegmentLength = 54
 	// N1SegmentLength indicates length of N1 segment
 	N1SegmentLength = 146
-	// TrailerRecordLength indicates length of trailer record
-	TrailerRecordLength = 426
-	// PackedSegmentLength indicates length of packed segment
-	PackedSegmentLength = 366
 
 	// HeaderRecordCharacterLength indicates description of header record
-	HeaderRecordDescription = "Header Record (Character)"
+	HeaderRecordDescription = "headerCharacter"
 	// BaseSegmentLength indicates description of base segment
-	BaseSegmentDescription = "Base Segment (Character)"
+	BaseSegmentDescription = "baseCharacter"
 	// J1SegmentLength indicates description of J1 segment
-	J1SegmentDescription = "J1 Segment"
+	J1SegmentDescription = "j1"
 	// J2SegmentLength indicates description of J2 segment
-	J2SegmentDescription = "J2 Segment"
+	J2SegmentDescription = "j2"
 	// K1SegmentLength indicates description of K1 segment
-	K1SegmentDescription = "K1 Segment"
+	K1SegmentDescription = "k1"
 	// K2SegmentLength indicates description of K2 segment
-	K2SegmentDescription = "K2 Segment"
+	K2SegmentDescription = "k2"
 	// K3SegmentLength indicates description of K3 segment
-	K3SegmentDescription = "K3 Segment"
+	K3SegmentDescription = "k3"
 	// K4SegmentLength indicates description of K4 segment
-	K4SegmentDescription = "K4 Segment"
+	K4SegmentDescription = "k4"
 	// L1SegmentLength indicates description of L1 segment
-	L1SegmentDescription = "L1 Segment"
+	L1SegmentDescription = "l1"
 	// N1SegmentLength indicates description of N1 segment
-	N1SegmentDescription = "N1 Segment"
+	N1SegmentDescription = "n1"
 	// TrailerRecordLength indicates description of trailer record
-	TrailerRecordDescription = "Trailer Record"
+	TrailerRecordDescription = "trailer"
 	// PackedHeaderRecordLength indicates description of packed header record
-	PackedHeaderRecordDescription = "Header Record (Packed)"
+	PackedHeaderRecordDescription = "headerPacked"
 	// PackedBaseSegmentLength indicates length of description base segment
-	PackedBaseSegmentDescription = "Base Segment (Packed)"
+	PackedBaseSegmentDescription = "basePacked"
 	// PackedTrailerRecordLength indicates length of description trailer record
-	PackedTrailerRecordDescription = "Trailer Record (Packed)"
+	PackedTrailerRecordDescription = "trailerPacked"
 )
 
 // NewBaseSegment returns a new base segment
