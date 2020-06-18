@@ -38,3 +38,8 @@ func NewErrValidSegment(name string) error {
 func NewErrValidFileFormat(name string) error {
 	return fmt.Errorf("is an invalid file format (%s)", name)
 }
+
+// NewErrFileParse returns a error that has invalid parse data
+func NewErrFileParse() error {
+	return fmt.Errorf("is an invalid invalid parse data")
+}

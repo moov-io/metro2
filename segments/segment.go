@@ -10,6 +10,8 @@ type Segment interface {
 	Parse(string) (int, error)
 	String() string
 	Validate() error
+	BlockSize() int
+	Length() int
 }
 
 const (
@@ -62,6 +64,23 @@ const (
 	PackedBaseSegmentDescription = "basePacked"
 	// PackedTrailerRecordLength indicates length of description trailer record
 	PackedTrailerRecordDescription = "trailerPacked"
+
+	// J1SegmentIdentifier indicates segment identifier of J1 segment
+	J1SegmentIdentifier = "J1"
+	// J2SegmentIdentifier indicates segment identifier of J2 segment
+	J2SegmentIdentifier = "J2"
+	// K1SegmentIdentifier indicates segment identifier of K1 segment
+	K1SegmentIdentifier = "K1"
+	// K2SegmentIdentifier indicates segment identifier of K2 segment
+	K2SegmentIdentifier = "K2"
+	// K3SegmentIdentifier indicates segment identifier of K3 segment
+	K3SegmentIdentifier = "K3"
+	// K4SegmentIdentifier indicates segment identifier of K4 segment
+	K4SegmentIdentifier = "K4"
+	// L1SegmentIdentifier indicates segment identifier of L1 segment
+	L1SegmentIdentifier = "L1"
+	// N1SegmentIdentifier indicates segment identifier of N1 segment
+	N1SegmentIdentifier = "N1"
 )
 
 // NewBaseSegment returns a new base segment

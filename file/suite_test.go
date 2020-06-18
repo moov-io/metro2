@@ -7,31 +7,53 @@ package file
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"github.com/moov-io/metro2/segments"
 	"gopkg.in/check.v1"
+	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/moov-io/metro2/segments"
+	"github.com/moov-io/metro2/utils"
 )
 
 func Test(t *testing.T) { check.TestingT(t) }
 
 type FileTest struct {
+	unpackedFixedLengthFile     string
+	unpackedVariableBlockedFile string
+	unpackedVariableBlockedJson string
 }
 
 var _ = check.Suite(&FileTest{})
 
-func (s *FileTest) SetUpSuite(c *check.C) {
+func (t *FileTest) SetUpSuite(c *check.C) {
+	f, err := os.Open(filepath.Join("..", "testdata", "unpacked_fixed_file.dat"))
+	c.Assert(err, check.IsNil)
+	t.unpackedFixedLengthFile = utils.ReadStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "unpacked_variable_file.dat"))
+	c.Assert(err, check.IsNil)
+	t.unpackedVariableBlockedFile = utils.ReadStringFromFile(f)
+
+	f, err = os.Open(filepath.Join("..", "testdata", "unpacked_variable_file.json"))
+	c.Assert(err, check.IsNil)
+	t.unpackedVariableBlockedJson = utils.ReadStringFromFile(f)
 }
 
-func (s *FileTest) TearDownSuite(c *check.C) {}
+func (t *FileTest) TearDownSuite(c *check.C) {}
 
-func (s *FileTest) SetUpTest(c *check.C) {}
+func (t *FileTest) SetUpTest(c *check.C) {}
 
-func (s *FileTest) TearDownTest(c *check.C) {}
+func (t *FileTest) TearDownTest(c *check.C) {}
 
-func (s *FileTest) TestFileUnmarshal(c *check.C) {}
+func (t *FileTest) TestFileUnmarshal(c *check.C) {
+	f, err := NewFile(CharacterFileFormat)
+	c.Assert(err, check.IsNil)
+	err = json.Unmarshal([]byte(t.unpackedVariableBlockedJson), f)
+	c.Assert(err, check.IsNil)
+}
 
-func (s *FileTest) TestFileMarshal(c *check.C) {
+func (t *FileTest) TestFileMarshal(c *check.C) {
 	f, err := NewFile(CharacterFileFormat)
 	c.Assert(err, check.IsNil)
 	f.AddApplicableSegment(segments.NewN1Segment())
@@ -41,5 +63,18 @@ func (s *FileTest) TestFileMarshal(c *check.C) {
 	var out bytes.Buffer
 	err = json.Indent(&out, jsonStr, "", "\t")
 	c.Assert(err, check.IsNil)
-	fmt.Println(out.String())
+}
+
+func (t *FileTest) TestUnpackedFixedLengthFileParse(c *check.C) {
+	f, err := NewFile(CharacterFileFormat)
+	c.Assert(err, check.IsNil)
+	err = f.Parse(t.unpackedFixedLengthFile)
+	c.Assert(err, check.IsNil)
+}
+
+func (t *FileTest) TestUnpackedVariableBlockedFileParse(c *check.C) {
+	f, err := NewFile(CharacterFileFormat)
+	c.Assert(err, check.IsNil)
+	err = f.Parse(t.unpackedVariableBlockedFile)
+	c.Assert(err, check.IsNil)
 }

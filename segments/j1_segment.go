@@ -212,6 +212,16 @@ func (s *J1Segment) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *J1Segment) BlockSize() int {
+	return 0
+}
+
+// Length returns size of segment
+func (s *J1Segment) Length() int {
+	return J1SegmentLength
+}
+
 // validation of generation code
 func (s *J1Segment) ValidateGenerationCode() error {
 	switch s.GenerationCode {

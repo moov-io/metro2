@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+
 	"github.com/moov-io/metro2/segments"
+	"github.com/moov-io/metro2/utils"
 )
 
 // File contains the structures of a parsed metro 2 file.
@@ -19,7 +21,8 @@ type fileInstance struct {
 	format string
 }
 
-func (f *fileInstance) SetSegment(s segments.Segment) error {
+// SetBlock can set block record like as header, base, trailer
+func (f *fileInstance) SetBlock(s segments.Segment) error {
 	err := s.Validate()
 	if err != nil {
 		return err
@@ -35,6 +38,7 @@ func (f *fileInstance) SetSegment(s segments.Segment) error {
 	return nil
 }
 
+// AddApplicableSegment can append applicable segment like as j1, j2, k1, k2, k3, k4, l1, n1
 func (f *fileInstance) AddApplicableSegment(s segments.Segment) error {
 	err := s.Validate()
 	if err != nil {
@@ -52,6 +56,7 @@ func (f *fileInstance) AddApplicableSegment(s segments.Segment) error {
 	return nil
 }
 
+// GetSegment returns single segment like as header, base, trailer k1, k2, k3, k4, l1, n1
 func (f *fileInstance) GetSegment(description string) segments.Segment {
 	switch description {
 	case segments.HeaderRecordDescription:
@@ -69,7 +74,8 @@ func (f *fileInstance) GetSegment(description string) segments.Segment {
 	return nil
 }
 
-func (f *fileInstance) GetSegments(description string) []segments.Segment {
+// GetSegment returns multiple segments like as j1, j2
+func (f *fileInstance) GetListSegments(description string) []segments.Segment {
 	switch description {
 	case segments.J1SegmentDescription:
 		return f.J1Segments
@@ -79,14 +85,63 @@ func (f *fileInstance) GetSegments(description string) []segments.Segment {
 	return nil
 }
 
+// GeneratorTrailer returns trailer segment that created automatically
 func (f *fileInstance) GeneratorTrailer() (segments.Segment, error) {
 	return nil, nil
 }
 
-func (f *fileInstance) UnmarshalJSON(p []byte) error {
+// UnmarshalJSON parses a JSON blob
+func (f *fileInstance) UnmarshalJSON(data []byte) error {
+	f.reset()
+
+	var dummy map[string]interface{}
+	err := json.Unmarshal(data, &dummy)
+	if err != nil {
+		return nil
+	}
+
+	for key, record := range dummy {
+		buf, err := json.Marshal(record)
+		if err != nil {
+			return err
+		}
+
+		switch key {
+		case segments.BaseSegmentDescription:
+			err = json.Unmarshal(buf, f.Base)
+		case segments.HeaderRecordDescription:
+			err = json.Unmarshal(buf, f.Header)
+		case segments.TrailerRecordDescription:
+			err = json.Unmarshal(buf, f.Trailer)
+		case segments.J1SegmentDescription, segments.J2SegmentDescription:
+			var list []interface{}
+			err := json.Unmarshal(buf, &list)
+			if err != nil {
+				return nil
+			}
+			for _, subSegment := range list {
+				subBuf, err := json.Marshal(subSegment)
+				if err != nil {
+					return err
+				}
+				err = f.unmarshalApplicableSegments(key, subBuf)
+				if err != nil {
+					return err
+				}
+			}
+		default:
+			err = f.unmarshalApplicableSegments(key, buf)
+		}
+
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
+// MarshalJSON returns JSON blob
 func (f *fileInstance) MarshalJSON() ([]byte, error) {
 	buffer := bytes.NewBufferString("{")
 
@@ -137,14 +192,134 @@ func (f *fileInstance) MarshalJSON() ([]byte, error) {
 	return buffer.Bytes(), nil
 }
 
+// Validate performs some checks on the file and returns an error if not Validated
 func (f *fileInstance) Validate() error {
 	return nil
 }
 
+// Parse attempts to initialize a *File object assuming the input is valid raw data.
 func (f *fileInstance) Parse(record string) error {
+	f.reset()
+	offset := 0
+
+	// Header Record
+	hread, err := f.Header.Parse(record)
+	if err != nil {
+		return err
+	}
+	offset += hread
+
+	// Data Record
+	dread, err := f.Base.Parse(record[offset:])
+	if err != nil {
+		return err
+	}
+
+	positionSegments := f.Base.Length()
+	if f.Base.BlockSize() > 0 {
+		positionSegments += 4
+	}
+	read, err := f.readApplicableSegments(record[offset+positionSegments:])
+	if err != nil {
+		return err
+	}
+
+	if read+positionSegments > dread {
+		return utils.NewErrFileParse()
+	}
+	offset += dread
+
+	// Trailer Record
+	tread, err := f.Trailer.Parse(record[offset:])
+	if err != nil {
+		return err
+	}
+	offset += tread
+
+	if offset != len(record) {
+		return utils.NewErrFileParse()
+	}
+
 	return nil
 }
 
+// String writes the File struct to raw string.
 func (f *fileInstance) String() string {
 	return ""
+}
+
+func (f *fileInstance) readApplicableSegments(record string) (int, error) {
+	var segment segments.Segment
+	offset := 0
+
+	for offset < len(record) {
+		switch record[offset : offset+2] {
+		case segments.J1SegmentIdentifier:
+			segment = segments.NewJ1Segment()
+		case segments.J2SegmentIdentifier:
+			segment = segments.NewJ2Segment()
+		case segments.K1SegmentIdentifier:
+			segment = segments.NewK1Segment()
+		case segments.K2SegmentIdentifier:
+			segment = segments.NewK2Segment()
+		case segments.K3SegmentIdentifier:
+			segment = segments.NewK3Segment()
+		case segments.K4SegmentIdentifier:
+			segment = segments.NewK4Segment()
+		case segments.L1SegmentIdentifier:
+			segment = segments.NewL1Segment()
+		case segments.N1SegmentIdentifier:
+			segment = segments.NewN1Segment()
+		default:
+			return offset, nil
+		}
+		read, err := segment.Parse(record[offset:])
+		if err != nil {
+			return 0, err
+		}
+		err = f.AddApplicableSegment(segment)
+		if err != nil {
+			return 0, err
+		}
+		offset += read
+	}
+
+	return offset, nil
+}
+
+func (f *fileInstance) unmarshalApplicableSegments(description string, data []byte) error {
+	var segment segments.Segment
+
+	switch description {
+	case segments.J1SegmentDescription:
+		segment = segments.NewJ1Segment()
+	case segments.J2SegmentDescription:
+		segment = segments.NewJ2Segment()
+	case segments.K1SegmentDescription:
+		segment = segments.NewK1Segment()
+	case segments.K2SegmentDescription:
+		segment = segments.NewK2Segment()
+	case segments.K3SegmentDescription:
+		segment = segments.NewK3Segment()
+	case segments.K4SegmentDescription:
+		segment = segments.NewK4Segment()
+	case segments.L1SegmentDescription:
+		segment = segments.NewL1Segment()
+	case segments.N1SegmentDescription:
+		segment = segments.NewN1Segment()
+	default:
+		return nil
+	}
+
+	err := json.Unmarshal(data, segment)
+	if err != nil {
+		return err
+	}
+	return f.AddApplicableSegment(segment)
+}
+
+func (f *fileInstance) reset() {
+	f.Appendages = make(map[string]segments.Segment)
+	f.J1Segments = []segments.Segment{}
+	f.J2Segments = []segments.Segment{}
 }

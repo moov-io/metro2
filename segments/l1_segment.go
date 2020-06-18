@@ -145,6 +145,16 @@ func (s *L1Segment) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *L1Segment) BlockSize() int {
+	return 0
+}
+
+// Length returns size of segment
+func (s *L1Segment) Length() int {
+	return L1SegmentLength
+}
+
 // validation of change indicator
 func (s *L1Segment) ValidateChangeIndicator() error {
 	switch s.ChangeIndicator {

@@ -5,11 +5,10 @@
 package segments
 
 import (
-	"bufio"
+	"github.com/moov-io/metro2/utils"
 	"gopkg.in/check.v1"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 )
 
@@ -34,73 +33,62 @@ type SegmentTest struct {
 
 var _ = check.Suite(&SegmentTest{})
 
-func readStringFromFile(f *os.File) string {
-	scanner := bufio.NewScanner(f)
-	scanner.Split(bufio.ScanLines)
-	var lines []string
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
-	}
-
-	return strings.Join(lines, "")
-}
-
 func (s *SegmentTest) SetUpSuite(c *check.C) {
 	f, err := os.Open(filepath.Join("..", "testdata", "base_segment.dat"))
 	c.Assert(err, check.IsNil)
-	s.sampleBaseSegment = readStringFromFile(f)
+	s.sampleBaseSegment = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "packed_base_segment.dat"))
 	c.Assert(err, check.IsNil)
-	s.samplePackedBaseSegment = readStringFromFile(f)
+	s.samplePackedBaseSegment = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "header_record.dat"))
 	c.Assert(err, check.IsNil)
-	s.sampleHeaderRecord = readStringFromFile(f)
+	s.sampleHeaderRecord = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "packed_header_record.dat"))
 	c.Assert(err, check.IsNil)
-	s.samplePackedHeaderRecord = readStringFromFile(f)
+	s.samplePackedHeaderRecord = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "trailer_record.dat"))
 	c.Assert(err, check.IsNil)
-	s.sampleTrailerRecord = readStringFromFile(f)
+	s.sampleTrailerRecord = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "packed_trailer_record.dat"))
 	c.Assert(err, check.IsNil)
-	s.samplePackedTrailerRecord = readStringFromFile(f)
+	s.samplePackedTrailerRecord = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "j1_segment.dat"))
 	c.Assert(err, check.IsNil)
-	s.sampleJ1Segment = readStringFromFile(f)
+	s.sampleJ1Segment = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "j2_segment.dat"))
 	c.Assert(err, check.IsNil)
-	s.sampleJ2Segment = readStringFromFile(f)
+	s.sampleJ2Segment = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "k1_segment.dat"))
 	c.Assert(err, check.IsNil)
-	s.sampleK1Segment = readStringFromFile(f)
+	s.sampleK1Segment = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "k2_segment.dat"))
 	c.Assert(err, check.IsNil)
-	s.sampleK2Segment = readStringFromFile(f)
+	s.sampleK2Segment = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "k3_segment.dat"))
 	c.Assert(err, check.IsNil)
-	s.sampleK3Segment = readStringFromFile(f)
+	s.sampleK3Segment = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "k4_segment.dat"))
 	c.Assert(err, check.IsNil)
-	s.sampleK4Segment = readStringFromFile(f)
+	s.sampleK4Segment = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "l1_segment.dat"))
 	c.Assert(err, check.IsNil)
-	s.sampleL1Segment = readStringFromFile(f)
+	s.sampleL1Segment = utils.ReadStringFromFile(f)
 
 	f, err = os.Open(filepath.Join("..", "testdata", "n1_segment.dat"))
 	c.Assert(err, check.IsNil)
-	s.sampleN1Segment = readStringFromFile(f)
+	s.sampleN1Segment = utils.ReadStringFromFile(f)
 }
 
 func (s *SegmentTest) TearDownSuite(c *check.C) {}

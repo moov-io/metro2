@@ -7,10 +7,10 @@ import (
 
 // General file interface
 type File interface {
-	SetSegment(segments.Segment) error
+	SetBlock(segments.Segment) error
 	AddApplicableSegment(segments.Segment) error
 	GetSegment(string) segments.Segment
-	GetSegments(string) []segments.Segment
+	GetListSegments(string) []segments.Segment
 	GeneratorTrailer() (segments.Segment, error)
 	UnmarshalJSON(p []byte) error
 	MarshalJSON() ([]byte, error)

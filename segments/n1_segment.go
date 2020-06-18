@@ -151,3 +151,13 @@ func (s *N1Segment) Validate() error {
 
 	return nil
 }
+
+// BlockSize returns size of block
+func (s *N1Segment) BlockSize() int {
+	return 0
+}
+
+// Length returns size of segment
+func (s *N1Segment) Length() int {
+	return N1SegmentLength
+}

@@ -186,7 +186,6 @@ func (s *TrailerRecord) Parse(record string) (int, error) {
 		return 0, utils.ErrValidField
 	}
 
-	read := 0
 	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
@@ -200,7 +199,6 @@ func (s *TrailerRecord) Parse(record string) (int, error) {
 			return 0, utils.ErrValidField
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		read += spec.Length
 		if err := s.isValidType(spec, data); err != nil {
 			return 0, err
 		}
@@ -214,7 +212,6 @@ func (s *TrailerRecord) Parse(record string) (int, error) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
 					if !s.isFixedLength(record) {
-						read = 0
 						continue
 					}
 					offset += 4
@@ -228,7 +225,10 @@ func (s *TrailerRecord) Parse(record string) (int, error) {
 		}
 	}
 
-	return read, nil
+	if s.BlockDescriptorWord > 0 {
+		return s.BlockDescriptorWord, nil
+	}
+	return s.RecordDescriptorWord, nil
 }
 
 // String writes the trailer record struct to a 426 character string.
@@ -292,6 +292,16 @@ func (s *TrailerRecord) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *TrailerRecord) BlockSize() int {
+	return s.BlockDescriptorWord
+}
+
+// Length returns size of segment
+func (s *TrailerRecord) Length() int {
+	return UnpackedSegmentLength
+}
+
 // Description returns description of packed trailer record
 func (s *PackedTrailerRecord) Description() string {
 	return PackedTrailerRecordDescription
@@ -308,7 +318,6 @@ func (s *PackedTrailerRecord) Parse(record string) (int, error) {
 		return 0, utils.ErrValidField
 	}
 
-	read := 0
 	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
@@ -322,7 +331,6 @@ func (s *PackedTrailerRecord) Parse(record string) (int, error) {
 			return 0, utils.ErrValidField
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		read += spec.Length
 		if err := s.isValidType(spec, data); err != nil {
 			return 0, err
 		}
@@ -336,7 +344,6 @@ func (s *PackedTrailerRecord) Parse(record string) (int, error) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
 					if !s.isFixedLength(record) {
-						read = 0
 						continue
 					}
 					offset += 4
@@ -350,7 +357,10 @@ func (s *PackedTrailerRecord) Parse(record string) (int, error) {
 		}
 	}
 
-	return read, nil
+	if s.BlockDescriptorWord > 0 {
+		return s.BlockDescriptorWord, nil
+	}
+	return s.RecordDescriptorWord, nil
 }
 
 // String writes the trailer record struct to a 426 character string.
@@ -412,4 +422,14 @@ func (s *PackedTrailerRecord) Validate() error {
 	}
 
 	return nil
+}
+
+// BlockSize returns size of block
+func (s *PackedTrailerRecord) BlockSize() int {
+	return s.BlockDescriptorWord
+}
+
+// Length returns size of segment
+func (s *PackedTrailerRecord) Length() int {
+	return PackedSegmentLength
 }

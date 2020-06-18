@@ -164,6 +164,16 @@ func (s *K1Segment) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *K1Segment) BlockSize() int {
+	return 0
+}
+
+// Length returns size of segment
+func (s *K1Segment) Length() int {
+	return K1SegmentLength
+}
+
 // validation of creditor classification
 func (s *K1Segment) ValidateCreditorClassification() error {
 	switch s.CreditorClassification {
@@ -303,6 +313,16 @@ func (s *K2Segment) Validate() error {
 	}
 
 	return nil
+}
+
+// BlockSize returns size of block
+func (s *K2Segment) BlockSize() int {
+	return 0
+}
+
+// Length returns size of segment
+func (s *K2Segment) Length() int {
+	return K2SegmentLength
 }
 
 // validation of purchased indicator
@@ -458,6 +478,16 @@ func (s *K3Segment) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *K3Segment) BlockSize() int {
+	return 0
+}
+
+// Length returns size of segment
+func (s *K3Segment) Length() int {
+	return K3SegmentLength
+}
+
 // validation of agency identifier
 func (s *K3Segment) ValidateAgencyIdentifier() error {
 	switch s.AgencyIdentifier {
@@ -610,6 +640,16 @@ func (s *K4Segment) Validate() error {
 	}
 
 	return nil
+}
+
+// BlockSize returns size of block
+func (s *K4Segment) BlockSize() int {
+	return 0
+}
+
+// Length returns size of segment
+func (s *K4Segment) Length() int {
+	return K4SegmentLength
 }
 
 // validation of specialized payment indicator

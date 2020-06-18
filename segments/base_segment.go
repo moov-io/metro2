@@ -5,13 +5,14 @@
 package segments
 
 import (
-	"github.com/moov-io/metro2/utils"
 	"reflect"
 	"strconv"
 	"strings"
 	"time"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/moov-io/metro2/utils"
 )
 
 // BaseSegment holds the base segment
@@ -509,7 +510,6 @@ func (s *BaseSegment) Parse(record string) (int, error) {
 		return 0, utils.ErrValidField
 	}
 
-	read := 0
 	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
@@ -523,7 +523,6 @@ func (s *BaseSegment) Parse(record string) (int, error) {
 			return 0, utils.ErrValidField
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		read += spec.Length
 		if err := s.isValidType(spec, data); err != nil {
 			return 0, err
 		}
@@ -537,7 +536,6 @@ func (s *BaseSegment) Parse(record string) (int, error) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
 					if !s.isFixedLength(record) {
-						read = 0
 						continue
 					}
 					offset += 4
@@ -551,7 +549,10 @@ func (s *BaseSegment) Parse(record string) (int, error) {
 		}
 	}
 
-	return read, nil
+	if s.BlockDescriptorWord > 0 {
+		return s.BlockDescriptorWord, nil
+	}
+	return s.RecordDescriptorWord, nil
 }
 
 // String writes the base segment struct to a 426 character string.
@@ -615,6 +616,16 @@ func (s *BaseSegment) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *BaseSegment) BlockSize() int {
+	return s.BlockDescriptorWord
+}
+
+// Length returns size of segment
+func (s *BaseSegment) Length() int {
+	return UnpackedSegmentLength
+}
+
 // customized field validation functions
 // function name should be "Validate" + field name
 
@@ -649,7 +660,7 @@ func (s *BaseSegment) ValidateTermsFrequency() error {
 	switch s.TermsFrequency {
 	case TermsFrequencyDeferred, TermsFrequencyPayment, TermsFrequencyWeekly, TermsFrequencyBiweekly,
 		TermsFrequencySemimonthly, TermsFrequencyMonthly, TermsFrequencyBimonthly, TermsFrequencyQuarterly,
-		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, blankString:
+		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, "":
 		return nil
 	}
 	return utils.NewErrValidValue("terms frequency")
@@ -666,7 +677,7 @@ func (s *BaseSegment) ValidatePaymentRating() error {
 		return utils.NewErrValidValue("payment rating")
 	}
 
-	if s.PaymentRating == blankString {
+	if s.PaymentRating == "" {
 		return nil
 	}
 	return utils.NewErrValidValue("payment rating")
@@ -692,7 +703,7 @@ func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
 
 func (s *BaseSegment) ValidateInterestTypeIndicator() error {
 	switch s.InterestTypeIndicator {
-	case InterestIndicatorFixed, InterestIndicatorVariable, blankString:
+	case InterestIndicatorFixed, InterestIndicatorVariable, "":
 		return nil
 	}
 	return utils.NewErrValidValue("interest type indicator")
@@ -721,7 +732,6 @@ func (s *PackedBaseSegment) Parse(record string) (int, error) {
 		return 0, utils.ErrValidField
 	}
 
-	read := 0
 	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
@@ -735,7 +745,6 @@ func (s *PackedBaseSegment) Parse(record string) (int, error) {
 			return 0, utils.ErrValidField
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		read += spec.Length
 		if err := s.isValidType(spec, data); err != nil {
 			return 0, err
 		}
@@ -749,7 +758,6 @@ func (s *PackedBaseSegment) Parse(record string) (int, error) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
 					if !s.isFixedLength(record) {
-						read = 0
 						continue
 					}
 					offset += 4
@@ -763,7 +771,10 @@ func (s *PackedBaseSegment) Parse(record string) (int, error) {
 		}
 	}
 
-	return read, nil
+	if s.BlockDescriptorWord > 0 {
+		return s.BlockDescriptorWord, nil
+	}
+	return s.RecordDescriptorWord, nil
 }
 
 // String writes the packed base segment struct to a 426 character string.
@@ -827,6 +838,16 @@ func (s *PackedBaseSegment) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *PackedBaseSegment) BlockSize() int {
+	return s.BlockDescriptorWord
+}
+
+// Length returns size of segment
+func (s *PackedBaseSegment) Length() int {
+	return PackedSegmentLength
+}
+
 // customized field validation functions
 // function name should be "Validate" + field name
 
@@ -861,7 +882,7 @@ func (s *PackedBaseSegment) ValidateTermsFrequency() error {
 	switch s.TermsFrequency {
 	case TermsFrequencyDeferred, TermsFrequencyPayment, TermsFrequencyWeekly, TermsFrequencyBiweekly,
 		TermsFrequencySemimonthly, TermsFrequencyMonthly, TermsFrequencyBimonthly, TermsFrequencyQuarterly,
-		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, blankString:
+		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, "":
 		return nil
 	}
 	return utils.NewErrValidValue("terms frequency")
@@ -878,7 +899,7 @@ func (s *PackedBaseSegment) ValidatePaymentRating() error {
 		return utils.NewErrValidValue("payment rating")
 	}
 
-	if s.PaymentRating == blankString {
+	if s.PaymentRating == "" {
 		return nil
 	}
 	return utils.NewErrValidValue("payment rating")
@@ -904,7 +925,7 @@ func (s *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
 
 func (s *PackedBaseSegment) ValidateInterestTypeIndicator() error {
 	switch s.InterestTypeIndicator {
-	case InterestIndicatorFixed, InterestIndicatorVariable, blankString:
+	case InterestIndicatorFixed, InterestIndicatorVariable, "":
 		return nil
 	}
 	return utils.NewErrValidValue("interest type indicator")

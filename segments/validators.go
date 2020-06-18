@@ -6,9 +6,10 @@ package segments
 
 import (
 	"fmt"
-	"github.com/moov-io/metro2/utils"
 	"strconv"
 	"strings"
+
+	"github.com/moov-io/metro2/utils"
 )
 
 type validator struct{}

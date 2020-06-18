@@ -30,6 +30,7 @@ func (c *converter) parseValue(elm field, data string) (reflect.Value, error) {
 		ret, err := timeFromDateString(data)
 		return reflect.ValueOf(ret), err
 	} else if elm.Type&alphanumeric > 0 {
+		data = strings.TrimRight(data, blankString)
 		return reflect.ValueOf(data), nil
 	} else if elm.Type&alpha > 0 {
 		return reflect.ValueOf(strings.ToUpper(data)), nil
