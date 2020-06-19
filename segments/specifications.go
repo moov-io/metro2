@@ -161,6 +161,7 @@ var (
 		"Reserved":                    {280, 86, alphanumeric, nullable},
 	}
 	trailerRecordCharacterFormat = map[string]field{
+		"BlockDescriptorWord":              {0, 4, numeric | omitted, applicable},
 		"RecordDescriptorWord":             {0, 4, numeric, required},
 		"RecordIdentifier":                 {4, 7, alphanumeric, required},
 		"TotalBaseRecords":                 {11, 9, numeric, required},
@@ -210,6 +211,7 @@ var (
 		"Reserved2":                        {407, 19, numeric, nullable},
 	}
 	trailerRecordPackedFormat = map[string]field{
+		"BlockDescriptorWord":              {0, 4, descriptor | omitted, applicable},
 		"RecordDescriptorWord":             {0, 4, descriptor, required},
 		"RecordIdentifier":                 {4, 7, alphanumeric, required},
 		"TotalBaseRecords":                 {11, 5, packedNumber, required},

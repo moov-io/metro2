@@ -35,6 +35,34 @@ func (v *validator) isNumeric(s string) error {
 	return nil
 }
 
+func (v *validator) isFixedLength(s string) bool {
+	// check record identifier for header, trailer record
+	if s[4] > 0x40 {
+		return false
+	}
+
+	// packed format of base segment
+	if s[6] == 0x00 && s[7] == 0x00 {
+		return true
+	}
+
+	// unpacked format of base segment
+	bdw, err := strconv.Atoi(s[0:4])
+	if err != nil {
+		return false
+	}
+	rdw, err := strconv.Atoi(s[4:8])
+	if err != nil {
+		return false
+	}
+
+	if rdw+4 == bdw {
+		return true
+	}
+
+	return false
+}
+
 func (v *validator) isPhoneNumber(number int64) error {
 	phoneNumber := fmt.Sprintf("%010d", number)
 	if !phoneRegex.MatchString(phoneNumber) {

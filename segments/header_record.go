@@ -106,43 +106,46 @@ func (s *HeaderRecord) Description() string {
 }
 
 // Parse takes the input record string and parses the header record values
-func (s *HeaderRecord) Parse(record string) error {
-	if utf8.RuneCountInString(record) != HeaderRecordLength {
-		return utils.ErrSegmentLength
+func (s *HeaderRecord) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < UnpackedSegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
+	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		// skip local variable
 		if !unicode.IsUpper([]rune(fieldName)[0]) {
 			continue
 		}
-
 		field := fields.FieldByName(fieldName)
 		spec, ok := headerRecordCharacterFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
-
-		data := record[spec.Start : spec.Start+spec.Length]
+		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
-
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
-
 		// set value
 		if value.IsValid() && field.CanSet() {
 			switch value.Interface().(type) {
 			case int, int64:
+				if fieldName == "BlockDescriptorWord" {
+					if !s.isFixedLength(record) {
+						continue
+					}
+					offset += 4
+				}
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
@@ -152,7 +155,10 @@ func (s *HeaderRecord) Parse(record string) error {
 		}
 	}
 
-	return nil
+	if s.BlockDescriptorWord > 0 {
+		return s.BlockDescriptorWord, nil
+	}
+	return s.RecordDescriptorWord, nil
 }
 
 // String writes the header record struct to a 426 character string.
@@ -164,10 +170,17 @@ func (s *HeaderRecord) String() string {
 		return ""
 	}
 
-	buf.Grow(HeaderRecordLength)
+	blockSize := s.BlockDescriptorWord
+	if blockSize == 0 {
+		blockSize = s.RecordDescriptorWord
+	}
+	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
+	}
+	if blockSize > buf.Len() {
+		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
 
 	return buf.String()
@@ -209,49 +222,62 @@ func (s *HeaderRecord) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *HeaderRecord) BlockSize() int {
+	return s.BlockDescriptorWord
+}
+
+// Length returns size of segment
+func (s *HeaderRecord) Length() int {
+	return UnpackedSegmentLength
+}
+
 // Description returns description of packed header record
 func (s *PackedHeaderRecord) Description() string {
 	return PackedHeaderRecordDescription
 }
 
 // Parse takes the input record string and parses the packed header record values
-func (s *PackedHeaderRecord) Parse(record string) error {
-	if utf8.RuneCountInString(record) != PackedSegmentLength {
-		return utils.ErrSegmentLength
+func (s *PackedHeaderRecord) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < PackedSegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
+	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		// skip local variable
 		if !unicode.IsUpper([]rune(fieldName)[0]) {
 			continue
 		}
-
 		field := fields.FieldByName(fieldName)
 		spec, ok := headerRecordPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
-
-		data := record[spec.Start : spec.Start+spec.Length]
+		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
-
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
-
 		// set value
 		if value.IsValid() && field.CanSet() {
 			switch value.Interface().(type) {
 			case int, int64:
+				if fieldName == "BlockDescriptorWord" {
+					if !s.isFixedLength(record) {
+						continue
+					}
+					offset += 4
+				}
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
@@ -261,7 +287,10 @@ func (s *PackedHeaderRecord) Parse(record string) error {
 		}
 	}
 
-	return nil
+	if s.BlockDescriptorWord > 0 {
+		return s.BlockDescriptorWord, nil
+	}
+	return s.RecordDescriptorWord, nil
 }
 
 // String writes the packed header record struct to a 426 character string.
@@ -273,10 +302,17 @@ func (s *PackedHeaderRecord) String() string {
 		return ""
 	}
 
-	buf.Grow(PackedSegmentLength)
+	blockSize := s.BlockDescriptorWord
+	if blockSize == 0 {
+		blockSize = s.RecordDescriptorWord
+	}
+	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
+	}
+	if blockSize > buf.Len() {
+		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
 
 	return buf.String()
@@ -316,4 +352,14 @@ func (s *PackedHeaderRecord) Validate() error {
 	}
 
 	return nil
+}
+
+// BlockSize returns size of block
+func (s *PackedHeaderRecord) BlockSize() int {
+	return s.BlockDescriptorWord
+}
+
+// Length returns size of segment
+func (s *PackedHeaderRecord) Length() int {
+	return PackedSegmentLength
 }

@@ -500,43 +500,46 @@ func (s *BaseSegment) Description() string {
 }
 
 // Parse takes the input record string and parses the base segment values
-func (s *BaseSegment) Parse(record string) error {
-	if utf8.RuneCountInString(record) != BaseSegmentLength {
-		return utils.ErrSegmentLength
+func (s *BaseSegment) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < UnpackedSegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
+	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		// skip local variable
 		if !unicode.IsUpper([]rune(fieldName)[0]) {
 			continue
 		}
-
 		field := fields.FieldByName(fieldName)
 		spec, ok := baseSegmentCharacterFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
-
-		data := record[spec.Start : spec.Start+spec.Length]
+		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
-
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
-
 		// set value
 		if value.IsValid() && field.CanSet() {
 			switch value.Interface().(type) {
 			case int, int64:
+				if fieldName == "BlockDescriptorWord" {
+					if !s.isFixedLength(record) {
+						continue
+					}
+					offset += 4
+				}
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
@@ -546,7 +549,10 @@ func (s *BaseSegment) Parse(record string) error {
 		}
 	}
 
-	return nil
+	if s.BlockDescriptorWord > 0 {
+		return s.BlockDescriptorWord, nil
+	}
+	return s.RecordDescriptorWord, nil
 }
 
 // String writes the base segment struct to a 426 character string.
@@ -558,10 +564,17 @@ func (s *BaseSegment) String() string {
 		return ""
 	}
 
-	buf.Grow(BaseSegmentLength)
+	blockSize := s.RecordDescriptorWord
+	if s.BlockDescriptorWord > 0 {
+		blockSize += 4
+	}
+	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
+	}
+	if blockSize > buf.Len() {
+		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
 
 	return buf.String()
@@ -603,6 +616,16 @@ func (s *BaseSegment) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *BaseSegment) BlockSize() int {
+	return s.BlockDescriptorWord
+}
+
+// Length returns size of segment
+func (s *BaseSegment) Length() int {
+	return UnpackedSegmentLength
+}
+
 // customized field validation functions
 // function name should be "Validate" + field name
 
@@ -637,7 +660,7 @@ func (s *BaseSegment) ValidateTermsFrequency() error {
 	switch s.TermsFrequency {
 	case TermsFrequencyDeferred, TermsFrequencyPayment, TermsFrequencyWeekly, TermsFrequencyBiweekly,
 		TermsFrequencySemimonthly, TermsFrequencyMonthly, TermsFrequencyBimonthly, TermsFrequencyQuarterly,
-		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, blankString:
+		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, "":
 		return nil
 	}
 	return utils.NewErrValidValue("terms frequency")
@@ -654,7 +677,7 @@ func (s *BaseSegment) ValidatePaymentRating() error {
 		return utils.NewErrValidValue("payment rating")
 	}
 
-	if s.PaymentRating == blankString {
+	if s.PaymentRating == "" {
 		return nil
 	}
 	return utils.NewErrValidValue("payment rating")
@@ -680,7 +703,7 @@ func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
 
 func (s *BaseSegment) ValidateInterestTypeIndicator() error {
 	switch s.InterestTypeIndicator {
-	case InterestIndicatorFixed, InterestIndicatorVariable, blankString:
+	case InterestIndicatorFixed, InterestIndicatorVariable, "":
 		return nil
 	}
 	return utils.NewErrValidValue("interest type indicator")
@@ -699,43 +722,46 @@ func (s *PackedBaseSegment) Description() string {
 }
 
 // Parse takes the input record string and parses the packed base segment values
-func (s *PackedBaseSegment) Parse(record string) error {
-	if utf8.RuneCountInString(record) != PackedSegmentLength {
-		return utils.ErrSegmentLength
+func (s *PackedBaseSegment) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < PackedSegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
+	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		// skip local variable
 		if !unicode.IsUpper([]rune(fieldName)[0]) {
 			continue
 		}
-
 		field := fields.FieldByName(fieldName)
 		spec, ok := baseSegmentPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
-
-		data := record[spec.Start : spec.Start+spec.Length]
+		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
-
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
-
 		// set value
 		if value.IsValid() && field.CanSet() {
 			switch value.Interface().(type) {
 			case int, int64:
+				if fieldName == "BlockDescriptorWord" {
+					if !s.isFixedLength(record) {
+						continue
+					}
+					offset += 4
+				}
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
@@ -745,7 +771,10 @@ func (s *PackedBaseSegment) Parse(record string) error {
 		}
 	}
 
-	return nil
+	if s.BlockDescriptorWord > 0 {
+		return s.BlockDescriptorWord, nil
+	}
+	return s.RecordDescriptorWord, nil
 }
 
 // String writes the packed base segment struct to a 426 character string.
@@ -757,10 +786,17 @@ func (s *PackedBaseSegment) String() string {
 		return ""
 	}
 
-	buf.Grow(PackedSegmentLength)
+	blockSize := s.RecordDescriptorWord
+	if s.BlockDescriptorWord > 0 {
+		blockSize += 4
+	}
+	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
+	}
+	if blockSize > buf.Len() {
+		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
 
 	return buf.String()
@@ -802,6 +838,16 @@ func (s *PackedBaseSegment) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *PackedBaseSegment) BlockSize() int {
+	return s.BlockDescriptorWord
+}
+
+// Length returns size of segment
+func (s *PackedBaseSegment) Length() int {
+	return PackedSegmentLength
+}
+
 // customized field validation functions
 // function name should be "Validate" + field name
 
@@ -836,7 +882,7 @@ func (s *PackedBaseSegment) ValidateTermsFrequency() error {
 	switch s.TermsFrequency {
 	case TermsFrequencyDeferred, TermsFrequencyPayment, TermsFrequencyWeekly, TermsFrequencyBiweekly,
 		TermsFrequencySemimonthly, TermsFrequencyMonthly, TermsFrequencyBimonthly, TermsFrequencyQuarterly,
-		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, blankString:
+		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, "":
 		return nil
 	}
 	return utils.NewErrValidValue("terms frequency")
@@ -853,7 +899,7 @@ func (s *PackedBaseSegment) ValidatePaymentRating() error {
 		return utils.NewErrValidValue("payment rating")
 	}
 
-	if s.PaymentRating == blankString {
+	if s.PaymentRating == "" {
 		return nil
 	}
 	return utils.NewErrValidValue("payment rating")
@@ -879,7 +925,7 @@ func (s *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
 
 func (s *PackedBaseSegment) ValidateInterestTypeIndicator() error {
 	switch s.InterestTypeIndicator {
-	case InterestIndicatorFixed, InterestIndicatorVariable, blankString:
+	case InterestIndicatorFixed, InterestIndicatorVariable, "":
 		return nil
 	}
 	return utils.NewErrValidValue("interest type indicator")

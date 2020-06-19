@@ -61,14 +61,14 @@ func (s *K1Segment) Description() string {
 }
 
 // Parse takes the input record string and parses the k1 segment values
-func (s *K1Segment) Parse(record string) error {
-	if utf8.RuneCountInString(record) != K1SegmentLength {
-		return utils.ErrSegmentLength
+func (s *K1Segment) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < K1SegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -81,17 +81,17 @@ func (s *K1Segment) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := k1SegmentFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
 
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 		// set value
@@ -107,7 +107,7 @@ func (s *K1Segment) Parse(record string) error {
 		}
 	}
 
-	return nil
+	return K1SegmentLength, nil
 }
 
 // String writes the k1 segment struct to a 34 character string.
@@ -164,6 +164,16 @@ func (s *K1Segment) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *K1Segment) BlockSize() int {
+	return 0
+}
+
+// Length returns size of segment
+func (s *K1Segment) Length() int {
+	return K1SegmentLength
+}
+
 // validation of creditor classification
 func (s *K1Segment) ValidateCreditorClassification() error {
 	switch s.CreditorClassification {
@@ -202,14 +212,14 @@ func (s *K2Segment) Description() string {
 }
 
 // Parse takes the input record string and parses the k2 segment values
-func (s *K2Segment) Parse(record string) error {
-	if utf8.RuneCountInString(record) != K2SegmentLength {
-		return utils.ErrSegmentLength
+func (s *K2Segment) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < K2SegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -222,17 +232,17 @@ func (s *K2Segment) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := k2SegmentFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
 
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 		// set value
@@ -248,7 +258,7 @@ func (s *K2Segment) Parse(record string) error {
 		}
 	}
 
-	return nil
+	return K3SegmentLength, nil
 }
 
 // String writes the k2 segment struct to a 34 character string.
@@ -305,6 +315,16 @@ func (s *K2Segment) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *K2Segment) BlockSize() int {
+	return 0
+}
+
+// Length returns size of segment
+func (s *K2Segment) Length() int {
+	return K2SegmentLength
+}
+
 // validation of purchased indicator
 func (s *K2Segment) ValidatePurchasedIndicator() error {
 	switch s.PurchasedIndicator {
@@ -355,14 +375,14 @@ func (s *K3Segment) Description() string {
 }
 
 // Parse takes the input record string and parses the k3 segment values
-func (s *K3Segment) Parse(record string) error {
-	if utf8.RuneCountInString(record) != K3SegmentLength {
-		return utils.ErrSegmentLength
+func (s *K3Segment) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < K3SegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -375,17 +395,17 @@ func (s *K3Segment) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := k3SegmentFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
 
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 		// set value
@@ -401,7 +421,7 @@ func (s *K3Segment) Parse(record string) error {
 		}
 	}
 
-	return nil
+	return K3SegmentLength, nil
 }
 
 // String writes the k3 segment struct to a 40 character string.
@@ -458,6 +478,16 @@ func (s *K3Segment) Validate() error {
 	return nil
 }
 
+// BlockSize returns size of block
+func (s *K3Segment) BlockSize() int {
+	return 0
+}
+
+// Length returns size of segment
+func (s *K3Segment) Length() int {
+	return K3SegmentLength
+}
+
 // validation of agency identifier
 func (s *K3Segment) ValidateAgencyIdentifier() error {
 	switch s.AgencyIdentifier {
@@ -509,14 +539,14 @@ func (s *K4Segment) Description() string {
 }
 
 // Parse takes the input record string and parses the k4 segment values
-func (s *K4Segment) Parse(record string) error {
-	if utf8.RuneCountInString(record) != K4SegmentLength {
-		return utils.ErrSegmentLength
+func (s *K4Segment) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < K4SegmentLength {
+		return 0, utils.ErrSegmentLength
 	}
 
 	fields := reflect.ValueOf(s).Elem()
 	if !fields.IsValid() {
-		return utils.ErrValidField
+		return 0, utils.ErrValidField
 	}
 
 	for i := 0; i < fields.NumField(); i++ {
@@ -529,17 +559,17 @@ func (s *K4Segment) Parse(record string) error {
 		field := fields.FieldByName(fieldName)
 		spec, ok := k4SegmentFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return utils.ErrValidField
+			return 0, utils.ErrValidField
 		}
 
 		data := record[spec.Start : spec.Start+spec.Length]
 		if err := s.isValidType(spec, data); err != nil {
-			return err
+			return 0, err
 		}
 
 		value, err := s.parseValue(spec, data)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 		// set value
@@ -555,7 +585,7 @@ func (s *K4Segment) Parse(record string) error {
 		}
 	}
 
-	return nil
+	return K4SegmentLength, nil
 }
 
 // String writes the k4 segment struct to a 30 character string.
@@ -610,6 +640,16 @@ func (s *K4Segment) Validate() error {
 	}
 
 	return nil
+}
+
+// BlockSize returns size of block
+func (s *K4Segment) BlockSize() int {
+	return 0
+}
+
+// Length returns size of segment
+func (s *K4Segment) Length() int {
+	return K4SegmentLength
 }
 
 // validation of specialized payment indicator
