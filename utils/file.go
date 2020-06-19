@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func ReadStringFromFile(f *os.File) string {
+func ReadFile(f *os.File) string {
 	scanner := bufio.NewScanner(f)
 	scanner.Split(bufio.ScanLines)
 	var lines []string

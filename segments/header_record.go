@@ -179,7 +179,7 @@ func (s *HeaderRecord) String() string {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
 	}
-	if blockSize > buf.Len() && s.BlockDescriptorWord > 0 {
+	if blockSize > buf.Len() {
 		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
 
@@ -311,7 +311,7 @@ func (s *PackedHeaderRecord) String() string {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
 	}
-	if blockSize > buf.Len() && s.BlockDescriptorWord > 0 {
+	if blockSize > buf.Len() {
 		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
 

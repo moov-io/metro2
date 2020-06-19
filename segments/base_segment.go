@@ -564,16 +564,16 @@ func (s *BaseSegment) String() string {
 		return ""
 	}
 
-	blockSize := s.BlockDescriptorWord
-	if blockSize == 0 {
-		blockSize = s.RecordDescriptorWord
+	blockSize := s.RecordDescriptorWord
+	if s.BlockDescriptorWord > 0 {
+		blockSize += 4
 	}
 	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
 	}
-	if blockSize > buf.Len() && s.BlockDescriptorWord > 0 {
+	if blockSize > buf.Len() {
 		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
 
@@ -786,16 +786,16 @@ func (s *PackedBaseSegment) String() string {
 		return ""
 	}
 
-	blockSize := s.BlockDescriptorWord
-	if blockSize == 0 {
-		blockSize = s.RecordDescriptorWord
+	blockSize := s.RecordDescriptorWord
+	if s.BlockDescriptorWord > 0 {
+		blockSize += 4
 	}
 	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
 	}
-	if blockSize > buf.Len() && s.BlockDescriptorWord > 0 {
+	if blockSize > buf.Len() {
 		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
 

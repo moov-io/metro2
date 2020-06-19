@@ -1,9 +1,9 @@
 package file
 
 import (
-	"bytes"
 	"encoding/json"
-	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/moov-io/metro2/segments"
 	"github.com/moov-io/metro2/utils"
@@ -94,7 +94,7 @@ func (f *fileInstance) GeneratorTrailer() (segments.Segment, error) {
 func (f *fileInstance) UnmarshalJSON(data []byte) error {
 	f.reset()
 
-	var dummy map[string]interface{}
+	dummy := make(map[string]interface{})
 	err := json.Unmarshal(data, &dummy)
 	if err != nil {
 		return nil
@@ -107,11 +107,11 @@ func (f *fileInstance) UnmarshalJSON(data []byte) error {
 		}
 
 		switch key {
-		case segments.BaseSegmentDescription:
+		case segments.BaseSegmentDescription, segments.PackedBaseSegmentDescription:
 			err = json.Unmarshal(buf, f.Base)
-		case segments.HeaderRecordDescription:
+		case segments.HeaderRecordDescription, segments.PackedHeaderRecordDescription:
 			err = json.Unmarshal(buf, f.Header)
-		case segments.TrailerRecordDescription:
+		case segments.TrailerRecordDescription, segments.PackedTrailerRecordDescription:
 			err = json.Unmarshal(buf, f.Trailer)
 		case segments.J1SegmentDescription, segments.J2SegmentDescription:
 			var list []interface{}
@@ -141,55 +141,62 @@ func (f *fileInstance) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type fileInstanceJson struct {
+	Header        segments.Segment   `json:"headerCharacter,omitempty"`
+	Base          segments.Segment   `json:"baseCharacter,omitempty"`
+	PackedHeader  segments.Segment   `json:"headerPacked,omitempty"`
+	PackedBase    segments.Segment   `json:"basePacked,omitempty"`
+	J1Segments    []segments.Segment `json:"j1,omitempty"`
+	J2Segments    []segments.Segment `json:"j2,omitempty"`
+	K1Segments    segments.Segment   `json:"k1,omitempty"`
+	K2Segments    segments.Segment   `json:"k2,omitempty"`
+	K3Segments    segments.Segment   `json:"k3,omitempty"`
+	K4Segments    segments.Segment   `json:"k4,omitempty"`
+	L1Segments    segments.Segment   `json:"l1,omitempty"`
+	N1Segments    segments.Segment   `json:"n1,omitempty"`
+	Trailer       segments.Segment   `json:"trailer,omitempty"`
+	PackedTrailer segments.Segment   `json:"trailerPacked,omitempty"`
+}
+
 // MarshalJSON returns JSON blob
 func (f *fileInstance) MarshalJSON() ([]byte, error) {
-	buffer := bytes.NewBufferString("{")
+	dummy := fileInstanceJson{}
 
-	value, err := json.Marshal(f.Header)
-	if err != nil {
-		return nil, err
+	if f.Header.Description() == segments.HeaderRecordDescription {
+		dummy.Header = f.Header
+	} else {
+		dummy.PackedHeader = f.Header
 	}
-	buffer.WriteString(fmt.Sprintf("\"%s\":%s,", f.Header.Description(), string(value)))
-
-	value, err = json.Marshal(f.Base)
-	if err != nil {
-		return nil, err
+	if f.Base.Description() == segments.BaseSegmentDescription {
+		dummy.Base = f.Base
+	} else {
+		dummy.PackedBase = f.Base
 	}
-	buffer.WriteString(fmt.Sprintf("\"%s\":%s,", f.Base.Description(), string(value)))
+	if f.Trailer.Description() == segments.TrailerRecordDescription {
+		dummy.Trailer = f.Trailer
+	} else {
+		dummy.PackedTrailer = f.Trailer
+	}
+	dummy.J1Segments = f.J1Segments
+	dummy.J2Segments = f.J2Segments
 
-	if len(f.J1Segments) > 0 {
-		value, err = json.Marshal(f.J1Segments)
-		if err != nil {
-			return nil, err
+	for key, sub := range f.Appendages {
+		switch key {
+		case segments.K1SegmentDescription:
+			dummy.K1Segments = sub
+		case segments.K2SegmentDescription:
+			dummy.K2Segments = sub
+		case segments.K3SegmentDescription:
+			dummy.K3Segments = sub
+		case segments.K4SegmentDescription:
+			dummy.K4Segments = sub
+		case segments.L1SegmentDescription:
+			dummy.L1Segments = sub
+		case segments.N1SegmentDescription:
+			dummy.N1Segments = sub
 		}
-		buffer.WriteString(fmt.Sprintf("\"%s\":%s,", segments.J1SegmentDescription, string(value)))
 	}
-
-	if len(f.J2Segments) > 0 {
-		value, err = json.Marshal(f.J2Segments)
-		if err != nil {
-			return nil, err
-		}
-		buffer.WriteString(fmt.Sprintf("\"%s\":%s,", segments.J2SegmentDescription, string(value)))
-	}
-
-	for key, value := range f.Appendages {
-		jsonValue, err := json.Marshal(value)
-		if err != nil {
-			return nil, err
-		}
-		buffer.WriteString(fmt.Sprintf("\"%s\":%s,", key, string(jsonValue)))
-	}
-
-	trailerValue, err := json.Marshal(f.Trailer)
-	if err != nil {
-		return nil, err
-	}
-	buffer.WriteString(fmt.Sprintf("\"%s\":%s", f.Trailer.Description(), string(trailerValue)))
-
-	buffer.WriteString("}")
-
-	return buffer.Bytes(), nil
+	return json.Marshal(dummy)
 }
 
 // Validate performs some checks on the file and returns an error if not Validated
@@ -245,7 +252,51 @@ func (f *fileInstance) Parse(record string) error {
 
 // String writes the File struct to raw string.
 func (f *fileInstance) String() string {
-	return ""
+	var buf strings.Builder
+
+	// Header Block
+	header := f.Header.String()
+
+	// Data Block
+	base := f.Base.String()
+	dataBlockSize := len(base)
+	baseSize := f.Base.Length()
+	if f.Base.BlockSize() > 0 {
+		baseSize += 4
+	}
+	base = base[:baseSize]
+
+	for _, sub := range f.J1Segments {
+		base += sub.String()
+	}
+	for _, sub := range f.J2Segments {
+		base += sub.String()
+	}
+
+	if len(f.Appendages) > 0 {
+		var keys []string
+		for key := range f.Appendages {
+			keys = append(keys, key)
+		}
+		sort.Strings(keys)
+		for _, key := range keys {
+			base += f.Appendages[key].String()
+		}
+	}
+
+	if dataBlockSize > len(base) {
+		base += strings.Repeat(" ", dataBlockSize-len(base))
+	}
+
+	// Trailer Block
+	trailer := f.Trailer.String()
+
+	buf.Grow(len(header) + len(base) + len(trailer))
+	buf.WriteString(header)
+	buf.WriteString(base)
+	buf.WriteString(trailer)
+
+	return buf.String()
 }
 
 func (f *fileInstance) readApplicableSegments(record string) (int, error) {
