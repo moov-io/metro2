@@ -1,4 +1,8 @@
-package segments
+// Copyright 2020 The Moov Authors
+// Use of this source code is governed by an Apache License
+// license that can be found in the LICENSE file.
+
+package lib
 
 import (
 	"reflect"
@@ -103,9 +107,9 @@ type J1Segment struct {
 	validator
 }
 
-// Description returns description of j1 segment
-func (s *J1Segment) Description() string {
-	return J1SegmentDescription
+// Name returns name of j1 segment
+func (s *J1Segment) Name() string {
+	return J1SegmentName
 }
 
 // Parse takes the input record string and parses the j1 segment values
@@ -210,11 +214,6 @@ func (s *J1Segment) Validate() error {
 	}
 
 	return nil
-}
-
-// BlockSize returns size of block
-func (s *J1Segment) BlockSize() int {
-	return 0
 }
 
 // Length returns size of segment

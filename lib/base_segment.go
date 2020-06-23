@@ -2,9 +2,10 @@
 // Use of this source code is governed by an Apache License
 // license that can be found in the LICENSE file.
 
-package segments
+package lib
 
 import (
+	"encoding/json"
 	"reflect"
 	"strconv"
 	"strings"
@@ -487,6 +488,15 @@ type BaseSegment struct {
 	// If not available or unknown, blank fill.
 	ResidenceCode string `json:"residenceCode"`
 
+	j1Segments []Segment
+	j2Segments []Segment
+	k1Segment  Segment
+	k2Segment  Segment
+	k3Segment  Segment
+	k4Segment  Segment
+	l1Segment  Segment
+	n1Segment  Segment
+
 	converter
 	validator
 }
@@ -494,18 +504,32 @@ type BaseSegment struct {
 // PackedBaseSegment holds the packed base segment
 type PackedBaseSegment BaseSegment
 
-// Description returns description of base segment
-func (s *BaseSegment) Description() string {
-	return BaseSegmentDescription
+type baseJson BaseSegment
+
+type dataRecordJson struct {
+	Base       baseJson  `json:"base,omitempty"`
+	J1Segments []Segment `json:"j1,omitempty"`
+	J2Segments []Segment `json:"j2,omitempty"`
+	K1Segment  Segment   `json:"k1,omitempty"`
+	K2Segment  Segment   `json:"k2,omitempty"`
+	K3Segment  Segment   `json:"k3,omitempty"`
+	K4Segment  Segment   `json:"k4,omitempty"`
+	L1Segment  Segment   `json:"l1,omitempty"`
+	N1Segment  Segment   `json:"n1,omitempty"`
+}
+
+// Name returns name of base segment
+func (r *BaseSegment) Name() string {
+	return BaseSegmentName
 }
 
 // Parse takes the input record string and parses the base segment values
-func (s *BaseSegment) Parse(record string) (int, error) {
-	if utf8.RuneCountInString(record) < UnpackedSegmentLength {
+func (r *BaseSegment) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < UnpackedRecordLength {
 		return 0, utils.ErrSegmentLength
 	}
 
-	fields := reflect.ValueOf(s).Elem()
+	fields := reflect.ValueOf(r).Elem()
 	if !fields.IsValid() {
 		return 0, utils.ErrValidField
 	}
@@ -523,10 +547,10 @@ func (s *BaseSegment) Parse(record string) (int, error) {
 			return 0, utils.ErrValidField
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		if err := s.isValidType(spec, data); err != nil {
+		if err := r.isValidType(spec, data); err != nil {
 			return 0, err
 		}
-		value, err := s.parseValue(spec, data)
+		value, err := r.parseValue(spec, data)
 		if err != nil {
 			return 0, err
 		}
@@ -535,7 +559,7 @@ func (s *BaseSegment) Parse(record string) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !s.isFixedLength(record) {
+					if !r.isFixedLength(record) {
 						continue
 					}
 					offset += 4
@@ -549,30 +573,77 @@ func (s *BaseSegment) Parse(record string) (int, error) {
 		}
 	}
 
-	if s.BlockDescriptorWord > 0 {
-		return s.BlockDescriptorWord, nil
+	offset = UnpackedRecordLength
+	if r.BlockDescriptorWord > 0 {
+		offset = UnpackedRecordLength + 4
 	}
-	return s.RecordDescriptorWord, nil
+	r.j1Segments = []Segment{}
+	r.j2Segments = []Segment{}
+
+	read, err := readApplicableSegments(record[offset:], r)
+	if err != nil {
+		return 0, err
+	}
+
+	if r.BlockDescriptorWord > 0 && read+offset > r.BlockDescriptorWord {
+		return 0, utils.NewErrParse()
+	}
+	if r.BlockDescriptorWord == 0 && read+offset > r.RecordDescriptorWord {
+		return 0, utils.NewErrParse()
+	}
+
+	if r.BlockDescriptorWord > 0 {
+		return r.BlockDescriptorWord, nil
+	}
+	return r.RecordDescriptorWord, nil
 }
 
 // String writes the base segment struct to a 426 character string.
-func (s *BaseSegment) String() string {
+func (r *BaseSegment) String() string {
 	var buf strings.Builder
-	specifications := s.toSpecifications(baseSegmentCharacterFormat)
-	fields := reflect.ValueOf(s).Elem()
+	specifications := r.toSpecifications(baseSegmentCharacterFormat)
+	fields := reflect.ValueOf(r).Elem()
 	if !fields.IsValid() {
 		return ""
 	}
 
-	blockSize := s.RecordDescriptorWord
-	if s.BlockDescriptorWord > 0 {
+	blockSize := r.RecordDescriptorWord
+	if r.BlockDescriptorWord > 0 {
 		blockSize += 4
 	}
 	buf.Grow(blockSize)
 	for _, spec := range specifications {
-		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
+		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
 	}
+
+	applicableSegment := ""
+	for _, sub := range r.j1Segments {
+		applicableSegment += sub.String()
+	}
+	for _, sub := range r.j2Segments {
+		applicableSegment += sub.String()
+	}
+	if r.k1Segment != nil {
+		applicableSegment += r.k1Segment.String()
+	}
+	if r.k2Segment != nil {
+		applicableSegment += r.k2Segment.String()
+	}
+	if r.k3Segment != nil {
+		applicableSegment += r.k3Segment.String()
+	}
+	if r.k4Segment != nil {
+		applicableSegment += r.k4Segment.String()
+	}
+	if r.l1Segment != nil {
+		applicableSegment += r.l1Segment.String()
+	}
+	if r.n1Segment != nil {
+		applicableSegment += r.n1Segment.String()
+	}
+	buf.WriteString(applicableSegment)
+
 	if blockSize > buf.Len() {
 		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
@@ -581,8 +652,8 @@ func (s *BaseSegment) String() string {
 }
 
 // Validate performs some checks on the record and returns an error if not Validated
-func (s *BaseSegment) Validate() error {
-	fields := reflect.ValueOf(s).Elem()
+func (r *BaseSegment) Validate() error {
+	fields := reflect.ValueOf(r).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
@@ -598,8 +669,8 @@ func (s *BaseSegment) Validate() error {
 			}
 		}
 
-		funcName := s.validateFuncName(fieldName)
-		method := reflect.ValueOf(s).MethodByName(funcName)
+		funcName := r.validateFuncName(fieldName)
+		method := reflect.ValueOf(r).MethodByName(funcName)
 		if method.IsValid() {
 			response := method.Call(nil)
 			if len(response) == 0 {
@@ -617,47 +688,193 @@ func (s *BaseSegment) Validate() error {
 }
 
 // BlockSize returns size of block
-func (s *BaseSegment) BlockSize() int {
-	return s.BlockDescriptorWord
+func (r *BaseSegment) BlockSize() int {
+	return r.BlockDescriptorWord
 }
 
 // Length returns size of segment
-func (s *BaseSegment) Length() int {
-	return UnpackedSegmentLength
+func (r *BaseSegment) Length() int {
+	return r.RecordDescriptorWord
+}
+
+// GetSegments returns list of applicable segments by segment name
+func (r *BaseSegment) GetSegments(name string) []Segment {
+	var ret []Segment
+	switch name {
+	case J1SegmentName:
+		return r.j1Segments
+	case J2SegmentName:
+		return r.j2Segments
+	case K1SegmentName:
+		ret = append(ret, r.k1Segment)
+	case K2SegmentName:
+		ret = append(ret, r.k2Segment)
+	case K3SegmentName:
+		ret = append(ret, r.k3Segment)
+	case K4SegmentName:
+		ret = append(ret, r.k4Segment)
+	case L1SegmentName:
+		ret = append(ret, r.l1Segment)
+	case N1SegmentName:
+		ret = append(ret, r.n1Segment)
+	default:
+		return nil
+	}
+	return ret
+}
+
+// AddApplicableSegment will add new applicable segment into record
+func (r *BaseSegment) AddApplicableSegment(s Segment) error {
+	err := s.Validate()
+	if err != nil {
+		return err
+	}
+	switch s.Name() {
+	case J1SegmentName:
+		r.j1Segments = append(r.j1Segments, s)
+	case J2SegmentName:
+		r.j2Segments = append(r.j2Segments, s)
+	case K1SegmentName:
+		r.k1Segment = s
+	case K2SegmentName:
+		r.k2Segment = s
+	case K3SegmentName:
+		r.k3Segment = s
+	case K4SegmentName:
+		r.k4Segment = s
+	case L1SegmentName:
+		r.l1Segment = s
+	case N1SegmentName:
+		r.n1Segment = s
+	}
+
+	return nil
+}
+
+// MarshalJSON returns JSON blob
+func (r *BaseSegment) MarshalJSON() ([]byte, error) {
+	dummy := dataRecordJson{}
+	base := baseJson{}
+
+	formFields := reflect.ValueOf(r).Elem()
+	toFields := reflect.ValueOf(&base).Elem()
+	for i := 0; i < formFields.NumField(); i++ {
+		fieldName := formFields.Type().Field(i).Name
+		fromField := formFields.FieldByName(fieldName)
+		toField := toFields.FieldByName(fieldName)
+		if fromField.IsValid() && toField.CanSet() {
+			toField.Set(fromField)
+		}
+	}
+
+	dummy.Base = base
+	dummy.J1Segments = r.j1Segments
+	dummy.J2Segments = r.j2Segments
+	dummy.K1Segment = r.k1Segment
+	dummy.K2Segment = r.k2Segment
+	dummy.K3Segment = r.k3Segment
+	dummy.K4Segment = r.k4Segment
+	dummy.L1Segment = r.l1Segment
+	dummy.N1Segment = r.n1Segment
+
+	return json.Marshal(dummy)
+}
+
+// UnmarshalJSON parses a JSON blob
+func (r *BaseSegment) UnmarshalJSON(data []byte) error {
+
+	dummy := make(map[string]interface{})
+	err := json.Unmarshal(data, &dummy)
+	if err != nil {
+		return nil
+	}
+
+	r.j1Segments = []Segment{}
+	r.j2Segments = []Segment{}
+
+	for key, record := range dummy {
+		buf, err := json.Marshal(record)
+		if err != nil {
+			return err
+		}
+
+		switch key {
+		case BaseSegmentName:
+			base := baseJson{}
+			err := json.Unmarshal(buf, &base)
+			if err != nil {
+				return err
+			}
+			formFields := reflect.ValueOf(&base).Elem()
+			toFields := reflect.ValueOf(r).Elem()
+			for i := 0; i < formFields.NumField(); i++ {
+				fieldName := formFields.Type().Field(i).Name
+				fromField := formFields.FieldByName(fieldName)
+				toField := toFields.FieldByName(fieldName)
+				if fromField.IsValid() && toField.CanSet() {
+					toField.Set(fromField)
+				}
+			}
+		case J1SegmentName, J2SegmentName:
+			var list []interface{}
+			err := json.Unmarshal(buf, &list)
+			if err != nil {
+				return nil
+			}
+			for _, subSegment := range list {
+				subBuf, err := json.Marshal(subSegment)
+				if err != nil {
+					return err
+				}
+				err = unmarshalApplicableSegments(key, subBuf, r)
+				if err != nil {
+					return err
+				}
+			}
+		default:
+			err = unmarshalApplicableSegments(key, buf, r)
+		}
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // customized field validation functions
 // function name should be "Validate" + field name
 
-func (s *BaseSegment) ValidateIdentificationNumber() error {
-	if validFilledString(s.IdentificationNumber) {
+func (r *BaseSegment) ValidateIdentificationNumber() error {
+	if validFilledString(r.IdentificationNumber) {
 		return utils.NewErrValidValue("identification number")
 	}
 	return nil
 }
 
-func (s *BaseSegment) ValidatePortfolioType() error {
-	switch s.PortfolioType {
+func (r *BaseSegment) ValidatePortfolioType() error {
+	switch r.PortfolioType {
 	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
 		return nil
 	}
 	return utils.NewErrValidValue("portfolio type")
 }
 
-func (s *BaseSegment) ValidateTermsDuration() error {
-	switch s.TermsDuration {
+func (r *BaseSegment) ValidateTermsDuration() error {
+	switch r.TermsDuration {
 	case TermsDurationCredit, TermsDurationOpen, TermsDurationRevolving:
 		return nil
 	}
-	_, err := strconv.Atoi(s.TermsDuration)
+	_, err := strconv.Atoi(r.TermsDuration)
 	if err != nil {
 		return utils.NewErrValidValue("terms duration")
 	}
 	return nil
 }
 
-func (s *BaseSegment) ValidateTermsFrequency() error {
-	switch s.TermsFrequency {
+func (r *BaseSegment) ValidateTermsFrequency() error {
+	switch r.TermsFrequency {
 	case TermsFrequencyDeferred, TermsFrequencyPayment, TermsFrequencyWeekly, TermsFrequencyBiweekly,
 		TermsFrequencySemimonthly, TermsFrequencyMonthly, TermsFrequencyBimonthly, TermsFrequencyQuarterly,
 		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, "":
@@ -666,10 +883,10 @@ func (s *BaseSegment) ValidateTermsFrequency() error {
 	return utils.NewErrValidValue("terms frequency")
 }
 
-func (s *BaseSegment) ValidatePaymentRating() error {
-	switch s.AccountStatus {
+func (r *BaseSegment) ValidatePaymentRating() error {
+	switch r.AccountStatus {
 	case AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88, AccountStatus89, AccountStatus94, AccountStatus95:
-		switch s.PaymentRating {
+		switch r.PaymentRating {
 		case PaymentRatingCurrent, PaymentRatingPast30, PaymentRatingPast60, PaymentRatingPast90,
 			PaymentRatingPast120, PaymentRatingPast150, PaymentRatingPast180, PaymentRatingCollection, PaymentRatingChargeOff:
 			return nil
@@ -677,18 +894,18 @@ func (s *BaseSegment) ValidatePaymentRating() error {
 		return utils.NewErrValidValue("payment rating")
 	}
 
-	if s.PaymentRating == "" {
+	if r.PaymentRating == "" {
 		return nil
 	}
 	return utils.NewErrValidValue("payment rating")
 }
 
-func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
-	if len(s.PaymentHistoryProfile) != 24 {
+func (r *BaseSegment) ValidatePaymentHistoryProfile() error {
+	if len(r.PaymentHistoryProfile) != 24 {
 		return utils.NewErrValidValue("payment history profile")
 	}
-	for i := 0; i < len(s.PaymentHistoryProfile); i++ {
-		switch s.PaymentHistoryProfile[i] {
+	for i := 0; i < len(r.PaymentHistoryProfile); i++ {
+		switch r.PaymentHistoryProfile[i] {
 		case PaymentHistoryPast0, PaymentHistoryPast30, PaymentHistoryPast60, PaymentHistoryPast90,
 			PaymentHistoryPast120, PaymentHistoryPast150, PaymentHistoryPast180, PaymentHistoryNoPayment,
 			PaymentHistoryNoPaymentMonth, PaymentHistoryZero, PaymentHistoryCollection,
@@ -701,33 +918,33 @@ func (s *BaseSegment) ValidatePaymentHistoryProfile() error {
 	return nil
 }
 
-func (s *BaseSegment) ValidateInterestTypeIndicator() error {
-	switch s.InterestTypeIndicator {
+func (r *BaseSegment) ValidateInterestTypeIndicator() error {
+	switch r.InterestTypeIndicator {
 	case InterestIndicatorFixed, InterestIndicatorVariable, "":
 		return nil
 	}
 	return utils.NewErrValidValue("interest type indicator")
 }
 
-func (s *BaseSegment) ValidateTelephoneNumber() error {
-	if err := s.isPhoneNumber(s.TelephoneNumber); err != nil {
+func (r *BaseSegment) ValidateTelephoneNumber() error {
+	if err := r.isPhoneNumber(r.TelephoneNumber); err != nil {
 		return err
 	}
 	return nil
 }
 
-// Description returns description of packed base segment
-func (s *PackedBaseSegment) Description() string {
-	return PackedBaseSegmentDescription
+// Name returns name of packed base segment
+func (r *PackedBaseSegment) Name() string {
+	return PackedBaseSegmentName
 }
 
 // Parse takes the input record string and parses the packed base segment values
-func (s *PackedBaseSegment) Parse(record string) (int, error) {
-	if utf8.RuneCountInString(record) < PackedSegmentLength {
+func (r *PackedBaseSegment) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < PackedRecordLength {
 		return 0, utils.ErrSegmentLength
 	}
 
-	fields := reflect.ValueOf(s).Elem()
+	fields := reflect.ValueOf(r).Elem()
 	if !fields.IsValid() {
 		return 0, utils.ErrValidField
 	}
@@ -745,10 +962,10 @@ func (s *PackedBaseSegment) Parse(record string) (int, error) {
 			return 0, utils.ErrValidField
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		if err := s.isValidType(spec, data); err != nil {
+		if err := r.isValidType(spec, data); err != nil {
 			return 0, err
 		}
-		value, err := s.parseValue(spec, data)
+		value, err := r.parseValue(spec, data)
 		if err != nil {
 			return 0, err
 		}
@@ -757,8 +974,8 @@ func (s *PackedBaseSegment) Parse(record string) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !s.isFixedLength(record) {
-						continue
+					if !r.isFixedLength(record) {
+						return 0, utils.NewErrBlockDescriptorWord()
 					}
 					offset += 4
 				}
@@ -771,30 +988,68 @@ func (s *PackedBaseSegment) Parse(record string) (int, error) {
 		}
 	}
 
-	if s.BlockDescriptorWord > 0 {
-		return s.BlockDescriptorWord, nil
+	offset = PackedRecordLength + 4
+	r.j1Segments = []Segment{}
+	r.j2Segments = []Segment{}
+
+	read, err := readApplicableSegments(record[offset:], r)
+	if err != nil {
+		return 0, err
 	}
-	return s.RecordDescriptorWord, nil
+
+	if read+offset > r.BlockDescriptorWord {
+		return 0, utils.NewErrParse()
+	}
+
+	return r.BlockDescriptorWord, nil
 }
 
 // String writes the packed base segment struct to a 426 character string.
-func (s *PackedBaseSegment) String() string {
+func (r *PackedBaseSegment) String() string {
 	var buf strings.Builder
-	specifications := s.toSpecifications(baseSegmentPackedFormat)
-	fields := reflect.ValueOf(s).Elem()
+	specifications := r.toSpecifications(baseSegmentPackedFormat)
+	fields := reflect.ValueOf(r).Elem()
 	if !fields.IsValid() {
 		return ""
 	}
 
-	blockSize := s.RecordDescriptorWord
-	if s.BlockDescriptorWord > 0 {
+	blockSize := r.RecordDescriptorWord
+	if r.BlockDescriptorWord > 0 {
 		blockSize += 4
 	}
 	buf.Grow(blockSize)
 	for _, spec := range specifications {
-		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
+		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
 	}
+
+	applicableSegment := ""
+	for _, sub := range r.j1Segments {
+		applicableSegment += sub.String()
+	}
+	for _, sub := range r.j2Segments {
+		applicableSegment += sub.String()
+	}
+	if r.k1Segment != nil {
+		applicableSegment += r.k1Segment.String()
+	}
+	if r.k2Segment != nil {
+		applicableSegment += r.k2Segment.String()
+	}
+	if r.k3Segment != nil {
+		applicableSegment += r.k3Segment.String()
+	}
+	if r.k4Segment != nil {
+		applicableSegment += r.k4Segment.String()
+	}
+	if r.l1Segment != nil {
+		applicableSegment += r.l1Segment.String()
+	}
+	if r.n1Segment != nil {
+		applicableSegment += r.n1Segment.String()
+	}
+	buf.WriteString(applicableSegment)
+
 	if blockSize > buf.Len() {
 		buf.WriteString(strings.Repeat(blankString, blockSize-buf.Len()))
 	}
@@ -803,8 +1058,8 @@ func (s *PackedBaseSegment) String() string {
 }
 
 // Validate performs some checks on the record and returns an error if not Validated
-func (s *PackedBaseSegment) Validate() error {
-	fields := reflect.ValueOf(s).Elem()
+func (r *PackedBaseSegment) Validate() error {
+	fields := reflect.ValueOf(r).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
@@ -820,8 +1075,8 @@ func (s *PackedBaseSegment) Validate() error {
 			}
 		}
 
-		funcName := s.validateFuncName(fieldName)
-		method := reflect.ValueOf(s).MethodByName(funcName)
+		funcName := r.validateFuncName(fieldName)
+		method := reflect.ValueOf(r).MethodByName(funcName)
 		if method.IsValid() {
 			response := method.Call(nil)
 			if len(response) == 0 {
@@ -839,47 +1094,193 @@ func (s *PackedBaseSegment) Validate() error {
 }
 
 // BlockSize returns size of block
-func (s *PackedBaseSegment) BlockSize() int {
-	return s.BlockDescriptorWord
+func (r *PackedBaseSegment) BlockSize() int {
+	return r.BlockDescriptorWord
 }
 
 // Length returns size of segment
-func (s *PackedBaseSegment) Length() int {
-	return PackedSegmentLength
+func (r *PackedBaseSegment) Length() int {
+	return r.RecordDescriptorWord
+}
+
+// GetSegments returns list of applicable segments by segment name
+func (r *PackedBaseSegment) GetSegments(name string) []Segment {
+	var ret []Segment
+	switch name {
+	case J1SegmentName:
+		return r.j1Segments
+	case J2SegmentName:
+		return r.j2Segments
+	case K1SegmentName:
+		ret = append(ret, r.k1Segment)
+	case K2SegmentName:
+		ret = append(ret, r.k2Segment)
+	case K3SegmentName:
+		ret = append(ret, r.k3Segment)
+	case K4SegmentName:
+		ret = append(ret, r.k4Segment)
+	case L1SegmentName:
+		ret = append(ret, r.l1Segment)
+	case N1SegmentName:
+		ret = append(ret, r.n1Segment)
+	default:
+		return nil
+	}
+	return ret
+}
+
+// AddApplicableSegment will add new applicable segment into record
+func (r *PackedBaseSegment) AddApplicableSegment(s Segment) error {
+	err := s.Validate()
+	if err != nil {
+		return err
+	}
+	switch s.Name() {
+	case J1SegmentName:
+		r.j1Segments = append(r.j1Segments, s)
+	case J2SegmentName:
+		r.j2Segments = append(r.j2Segments, s)
+	case K1SegmentName:
+		r.k1Segment = s
+	case K2SegmentName:
+		r.k2Segment = s
+	case K3SegmentName:
+		r.k3Segment = s
+	case K4SegmentName:
+		r.k4Segment = s
+	case L1SegmentName:
+		r.l1Segment = s
+	case N1SegmentName:
+		r.n1Segment = s
+	}
+
+	return nil
+}
+
+// MarshalJSON returns JSON blob
+func (r *PackedBaseSegment) MarshalJSON() ([]byte, error) {
+	dummy := dataRecordJson{}
+	base := baseJson{}
+
+	formFields := reflect.ValueOf(r).Elem()
+	toFields := reflect.ValueOf(&base).Elem()
+	for i := 0; i < formFields.NumField(); i++ {
+		fieldName := formFields.Type().Field(i).Name
+		fromField := formFields.FieldByName(fieldName)
+		toField := toFields.FieldByName(fieldName)
+		if fromField.IsValid() && toField.CanSet() {
+			toField.Set(fromField)
+		}
+	}
+
+	dummy.Base = base
+	dummy.J1Segments = r.j1Segments
+	dummy.J2Segments = r.j2Segments
+	dummy.K1Segment = r.k1Segment
+	dummy.K2Segment = r.k2Segment
+	dummy.K3Segment = r.k3Segment
+	dummy.K4Segment = r.k4Segment
+	dummy.L1Segment = r.l1Segment
+	dummy.N1Segment = r.n1Segment
+
+	return json.Marshal(dummy)
+}
+
+// UnmarshalJSON parses a JSON blob
+func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
+
+	dummy := make(map[string]interface{})
+	err := json.Unmarshal(data, &dummy)
+	if err != nil {
+		return err
+	}
+
+	r.j1Segments = []Segment{}
+	r.j2Segments = []Segment{}
+
+	for key, record := range dummy {
+		buf, err := json.Marshal(record)
+		if err != nil {
+			return err
+		}
+
+		switch key {
+		case BaseSegmentName:
+			base := baseJson{}
+			err := json.Unmarshal(buf, &base)
+			if err != nil {
+				return err
+			}
+			formFields := reflect.ValueOf(&base).Elem()
+			toFields := reflect.ValueOf(r).Elem()
+			for i := 0; i < formFields.NumField(); i++ {
+				fieldName := formFields.Type().Field(i).Name
+				fromField := formFields.FieldByName(fieldName)
+				toField := toFields.FieldByName(fieldName)
+				if fromField.IsValid() && toField.CanSet() {
+					toField.Set(fromField)
+				}
+			}
+		case J1SegmentName, J2SegmentName:
+			var list []interface{}
+			err := json.Unmarshal(buf, &list)
+			if err != nil {
+				return err
+			}
+			for _, subSegment := range list {
+				subBuf, err := json.Marshal(subSegment)
+				if err != nil {
+					return err
+				}
+				err = unmarshalApplicableSegments(key, subBuf, r)
+				if err != nil {
+					return err
+				}
+			}
+		default:
+			err = unmarshalApplicableSegments(key, buf, r)
+		}
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // customized field validation functions
 // function name should be "Validate" + field name
 
-func (s *PackedBaseSegment) ValidateIdentificationNumber() error {
-	if validFilledString(s.IdentificationNumber) {
+func (r *PackedBaseSegment) ValidateIdentificationNumber() error {
+	if validFilledString(r.IdentificationNumber) {
 		return utils.NewErrValidValue("identification number")
 	}
 	return nil
 }
 
-func (s *PackedBaseSegment) ValidatePortfolioType() error {
-	switch s.PortfolioType {
+func (r *PackedBaseSegment) ValidatePortfolioType() error {
+	switch r.PortfolioType {
 	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
 		return nil
 	}
 	return utils.NewErrValidValue("portfolio type")
 }
 
-func (s *PackedBaseSegment) ValidateTermsDuration() error {
-	switch s.TermsDuration {
+func (r *PackedBaseSegment) ValidateTermsDuration() error {
+	switch r.TermsDuration {
 	case TermsDurationCredit, TermsDurationOpen, TermsDurationRevolving:
 		return nil
 	}
-	_, err := strconv.Atoi(s.TermsDuration)
+	_, err := strconv.Atoi(r.TermsDuration)
 	if err != nil {
 		return utils.NewErrValidValue("terms duration")
 	}
 	return nil
 }
 
-func (s *PackedBaseSegment) ValidateTermsFrequency() error {
-	switch s.TermsFrequency {
+func (r *PackedBaseSegment) ValidateTermsFrequency() error {
+	switch r.TermsFrequency {
 	case TermsFrequencyDeferred, TermsFrequencyPayment, TermsFrequencyWeekly, TermsFrequencyBiweekly,
 		TermsFrequencySemimonthly, TermsFrequencyMonthly, TermsFrequencyBimonthly, TermsFrequencyQuarterly,
 		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, "":
@@ -888,10 +1289,10 @@ func (s *PackedBaseSegment) ValidateTermsFrequency() error {
 	return utils.NewErrValidValue("terms frequency")
 }
 
-func (s *PackedBaseSegment) ValidatePaymentRating() error {
-	switch s.AccountStatus {
+func (r *PackedBaseSegment) ValidatePaymentRating() error {
+	switch r.AccountStatus {
 	case AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88, AccountStatus89, AccountStatus94, AccountStatus95:
-		switch s.PaymentRating {
+		switch r.PaymentRating {
 		case PaymentRatingCurrent, PaymentRatingPast30, PaymentRatingPast60, PaymentRatingPast90,
 			PaymentRatingPast120, PaymentRatingPast150, PaymentRatingPast180, PaymentRatingCollection, PaymentRatingChargeOff:
 			return nil
@@ -899,18 +1300,18 @@ func (s *PackedBaseSegment) ValidatePaymentRating() error {
 		return utils.NewErrValidValue("payment rating")
 	}
 
-	if s.PaymentRating == "" {
+	if r.PaymentRating == "" {
 		return nil
 	}
 	return utils.NewErrValidValue("payment rating")
 }
 
-func (s *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
-	if len(s.PaymentHistoryProfile) != 24 {
+func (r *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
+	if len(r.PaymentHistoryProfile) != 24 {
 		return utils.NewErrValidValue("payment history profile")
 	}
-	for i := 0; i < len(s.PaymentHistoryProfile); i++ {
-		switch s.PaymentHistoryProfile[i] {
+	for i := 0; i < len(r.PaymentHistoryProfile); i++ {
+		switch r.PaymentHistoryProfile[i] {
 		case PaymentHistoryPast0, PaymentHistoryPast30, PaymentHistoryPast60, PaymentHistoryPast90,
 			PaymentHistoryPast120, PaymentHistoryPast150, PaymentHistoryPast180, PaymentHistoryNoPayment,
 			PaymentHistoryNoPaymentMonth, PaymentHistoryZero, PaymentHistoryCollection,
@@ -923,17 +1324,87 @@ func (s *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
 	return nil
 }
 
-func (s *PackedBaseSegment) ValidateInterestTypeIndicator() error {
-	switch s.InterestTypeIndicator {
+func (r *PackedBaseSegment) ValidateInterestTypeIndicator() error {
+	switch r.InterestTypeIndicator {
 	case InterestIndicatorFixed, InterestIndicatorVariable, "":
 		return nil
 	}
 	return utils.NewErrValidValue("interest type indicator")
 }
 
-func (s *PackedBaseSegment) ValidateTelephoneNumber() error {
-	if err := s.isPhoneNumber(s.TelephoneNumber); err != nil {
+func (r *PackedBaseSegment) ValidateTelephoneNumber() error {
+	if err := r.isPhoneNumber(r.TelephoneNumber); err != nil {
 		return err
 	}
 	return nil
+}
+
+func readApplicableSegments(record string, f Record) (int, error) {
+	var segment Segment
+	offset := 0
+
+	for offset < len(record) {
+		switch record[offset : offset+2] {
+		case J1SegmentIdentifier:
+			segment = NewJ1Segment()
+		case J2SegmentIdentifier:
+			segment = NewJ2Segment()
+		case K1SegmentIdentifier:
+			segment = NewK1Segment()
+		case K2SegmentIdentifier:
+			segment = NewK2Segment()
+		case K3SegmentIdentifier:
+			segment = NewK3Segment()
+		case K4SegmentIdentifier:
+			segment = NewK4Segment()
+		case L1SegmentIdentifier:
+			segment = NewL1Segment()
+		case N1SegmentIdentifier:
+			segment = NewN1Segment()
+		default:
+			return offset, nil
+		}
+		read, err := segment.Parse(record[offset:])
+		if err != nil {
+			return 0, err
+		}
+		err = f.AddApplicableSegment(segment)
+		if err != nil {
+			return 0, err
+		}
+		offset += read
+	}
+
+	return offset, nil
+}
+
+func unmarshalApplicableSegments(description string, data []byte, r Record) error {
+	var segment Segment
+
+	switch description {
+	case J1SegmentName:
+		segment = NewJ1Segment()
+	case J2SegmentName:
+		segment = NewJ2Segment()
+	case K1SegmentName:
+		segment = NewK1Segment()
+	case K2SegmentName:
+		segment = NewK2Segment()
+	case K3SegmentName:
+		segment = NewK3Segment()
+	case K4SegmentName:
+		segment = NewK4Segment()
+	case L1SegmentName:
+		segment = NewL1Segment()
+	case N1SegmentName:
+		segment = NewN1Segment()
+	default:
+		return nil
+	}
+
+	err := json.Unmarshal(data, segment)
+	if err != nil {
+		return err
+	}
+	return r.AddApplicableSegment(segment)
 }

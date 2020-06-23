@@ -1,4 +1,8 @@
-package segments
+// Copyright 2020 The Moov Authors
+// Use of this source code is governed by an Apache License
+// license that can be found in the LICENSE file.
+
+package lib
 
 import (
 	"reflect"
@@ -55,9 +59,9 @@ type K1Segment struct {
 	validator
 }
 
-// Description returns description of K1 segment
-func (s *K1Segment) Description() string {
-	return K1SegmentDescription
+// Name returns name of K1 segment
+func (s *K1Segment) Name() string {
+	return K1SegmentName
 }
 
 // Parse takes the input record string and parses the k1 segment values
@@ -164,11 +168,6 @@ func (s *K1Segment) Validate() error {
 	return nil
 }
 
-// BlockSize returns size of block
-func (s *K1Segment) BlockSize() int {
-	return 0
-}
-
 // Length returns size of segment
 func (s *K1Segment) Length() int {
 	return K1SegmentLength
@@ -206,9 +205,9 @@ type K2Segment struct {
 	validator
 }
 
-// Description returns description of K2 segment
-func (s *K2Segment) Description() string {
-	return K2SegmentDescription
+// Name returns name of K2 segment
+func (s *K2Segment) Name() string {
+	return K2SegmentName
 }
 
 // Parse takes the input record string and parses the k2 segment values
@@ -315,11 +314,6 @@ func (s *K2Segment) Validate() error {
 	return nil
 }
 
-// BlockSize returns size of block
-func (s *K2Segment) BlockSize() int {
-	return 0
-}
-
 // Length returns size of segment
 func (s *K2Segment) Length() int {
 	return K2SegmentLength
@@ -369,9 +363,9 @@ type K3Segment struct {
 	validator
 }
 
-// Description returns description of K3 segment
-func (s *K3Segment) Description() string {
-	return K3SegmentDescription
+// Name returns name of K3 segment
+func (s *K3Segment) Name() string {
+	return K3SegmentName
 }
 
 // Parse takes the input record string and parses the k3 segment values
@@ -478,11 +472,6 @@ func (s *K3Segment) Validate() error {
 	return nil
 }
 
-// BlockSize returns size of block
-func (s *K3Segment) BlockSize() int {
-	return 0
-}
-
 // Length returns size of segment
 func (s *K3Segment) Length() int {
 	return K3SegmentLength
@@ -533,9 +522,9 @@ type K4Segment struct {
 	validator
 }
 
-// Description returns description of K4 segment
-func (s *K4Segment) Description() string {
-	return K4SegmentDescription
+// Name returns name of K4 segment
+func (s *K4Segment) Name() string {
+	return K4SegmentName
 }
 
 // Parse takes the input record string and parses the k4 segment values
@@ -640,11 +629,6 @@ func (s *K4Segment) Validate() error {
 	}
 
 	return nil
-}
-
-// BlockSize returns size of block
-func (s *K4Segment) BlockSize() int {
-	return 0
 }
 
 // Length returns size of segment

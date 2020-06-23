@@ -1,0 +1,264 @@
+// Copyright 2020 The Moov Authors
+// Use of this source code is governed by an Apache License
+// license that can be found in the LICENSE file.
+
+package lib
+
+import (
+	"encoding/json"
+	"gopkg.in/check.v1"
+
+	"github.com/moov-io/metro2/utils"
+)
+
+func (t *SegmentTest) TestBaseSegment(c *check.C) {
+	segment := NewBaseSegment()
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	err = segment.Validate()
+	c.Assert(err, check.IsNil)
+	c.Assert(segment.String(), check.Equals, t.sampleBaseSegment)
+	c.Assert(segment.Name(), check.Equals, BaseSegmentName)
+}
+
+func (t *SegmentTest) TestBaseSegmentWithInvalidData(c *check.C) {
+	segment := NewBaseSegment()
+	_, err := segment.Parse("ERROR" + t.sampleBaseSegment)
+	c.Assert(err, check.Not(check.IsNil))
+}
+
+func (t *SegmentTest) TestBaseSegmentWithIdentificationNumber(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.IdentificationNumber = ""
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err, check.DeepEquals, utils.ErrFieldRequired)
+}
+
+func (t *SegmentTest) TestBaseSegmentWithInvalidPortfolioType(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.PortfolioType = "A"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of portfolio type")
+}
+
+func (t *SegmentTest) TestBaseSegmentWithInvalidTermsDuration(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.TermsDuration = "AAA"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of terms duration")
+}
+
+func (t *SegmentTest) TestBaseSegmentWithInvalidPaymentHistoryProfile(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.PaymentHistoryProfile = "Z"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of payment history profile")
+}
+
+func (t *SegmentTest) TestBaseSegmentWithInvalidInterestTypeIndicator(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.InterestTypeIndicator = "Z"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of interest type indicator")
+}
+
+func (t *SegmentTest) TestBaseSegmentWithInvalidTelephoneNumber(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.TelephoneNumber = 0
+	err = segment.Validate()
+	c.Assert(err, check.IsNil)
+}
+
+func (t *SegmentTest) TestPackedBaseSegment(c *check.C) {
+	segment := NewPackedBaseSegment()
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	err = segment.Validate()
+	c.Assert(err, check.IsNil)
+	c.Assert(segment.String(), check.Equals, t.samplePackedBaseSegment)
+	c.Assert(segment.Name(), check.Equals, PackedBaseSegmentName)
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithInvalidData(c *check.C) {
+	segment := NewPackedBaseSegment()
+	_, err := segment.Parse("ERROR" + t.samplePackedBaseSegment)
+	c.Assert(err, check.Not(check.IsNil))
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithIdentificationNumber(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.IdentificationNumber = ""
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err, check.DeepEquals, utils.ErrFieldRequired)
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithInvalidPortfolioType(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.PortfolioType = "A"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of portfolio type")
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithInvalidTermsDuration(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.TermsDuration = "AAA"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of terms duration")
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithInvalidPaymentHistoryProfile(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.PaymentHistoryProfile = "Z"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of payment history profile")
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithInvalidInterestTypeIndicator(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.InterestTypeIndicator = "Z"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of interest type indicator")
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithInvalidTelephoneNumber(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.TelephoneNumber = 0
+	err = segment.Validate()
+	c.Assert(err, check.IsNil)
+}
+
+func (t *SegmentTest) TestBaseRecordApplicableSegment(c *check.C) {
+	f := NewBaseSegment()
+	jsonStr := `{
+		  "segmentIdentifier": "J1",
+		  "surname": "BEAUCHAMP",
+		  "firstName": "KEVIN",
+		  "generationCode": "S",
+		  "socialSecurityNumber": 445112877,
+		  "dateBirth": "2020-01-02T00:00:00Z",
+		  "telephoneNumber": 4335552333,
+		  "ecoaCode": "2",
+		  "consumerInformationIndicator": "R"
+		}`
+	newSegment := NewJ1Segment()
+	err := json.Unmarshal([]byte(jsonStr), &newSegment)
+	c.Assert(err, check.IsNil)
+	err = f.AddApplicableSegment(newSegment)
+	c.Assert(err, check.IsNil)
+	list := f.GetSegments(J1SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+}
+
+func (t *SegmentTest) TestBaseRecordApplicableSingleSegment(c *check.C) {
+	f := NewBaseSegment()
+	jsonStr := `{
+		"segmentIdentifier": "K3",
+		"mortgageIdentificationNumber": "Mortgage Number"
+	  }`
+	newSegment := NewK3Segment()
+	err := json.Unmarshal([]byte(jsonStr), &newSegment)
+	c.Assert(err, check.IsNil)
+	err = f.AddApplicableSegment(newSegment)
+	c.Assert(err, check.IsNil)
+	list := f.GetSegments(K3SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+}
+
+func (t *SegmentTest) TestBaseSegmentJson(c *check.C) {
+	segment := NewBaseSegment()
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	err = segment.Validate()
+	c.Assert(err, check.IsNil)
+	buf, err := json.Marshal(segment)
+	c.Assert(err, check.IsNil)
+	err = json.Unmarshal(buf, segment)
+	c.Assert(err, check.IsNil)
+	c.Assert(segment.String(), check.Equals, t.sampleBaseSegment)
+	c.Assert(segment.Name(), check.Equals, BaseSegmentName)
+}
+
+func (t *SegmentTest) TestPackedBaseRecordApplicableSegment(c *check.C) {
+	f := NewPackedBaseSegment()
+	jsonStr := `{
+		  "segmentIdentifier": "J1",
+		  "surname": "BEAUCHAMP",
+		  "firstName": "KEVIN",
+		  "generationCode": "S",
+		  "socialSecurityNumber": 445112877,
+		  "dateBirth": "2020-01-02T00:00:00Z",
+		  "telephoneNumber": 4335552333,
+		  "ecoaCode": "2",
+		  "consumerInformationIndicator": "R"
+		}`
+	newSegment := NewJ1Segment()
+	err := json.Unmarshal([]byte(jsonStr), &newSegment)
+	c.Assert(err, check.IsNil)
+	err = f.AddApplicableSegment(newSegment)
+	c.Assert(err, check.IsNil)
+	list := f.GetSegments(J1SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+}
+
+func (t *SegmentTest) TestPackedBaseRecordApplicableSingleSegment(c *check.C) {
+	f := NewPackedBaseSegment()
+	jsonStr := `{
+		"segmentIdentifier": "K3",
+		"mortgageIdentificationNumber": "Mortgage Number"
+	  }`
+	newSegment := NewK3Segment()
+	err := json.Unmarshal([]byte(jsonStr), &newSegment)
+	c.Assert(err, check.IsNil)
+	err = f.AddApplicableSegment(newSegment)
+	c.Assert(err, check.IsNil)
+	list := f.GetSegments(K3SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentJson(c *check.C) {
+	segment := NewPackedBaseSegment()
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	err = segment.Validate()
+	c.Assert(err, check.IsNil)
+	buf, err := json.Marshal(segment)
+	c.Assert(err, check.IsNil)
+	err = json.Unmarshal(buf, segment)
+	c.Assert(err, check.IsNil)
+	c.Assert(segment.String(), check.Equals, t.samplePackedBaseSegment)
+	c.Assert(segment.Name(), check.Equals, PackedBaseSegmentName)
+}
