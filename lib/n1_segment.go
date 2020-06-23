@@ -1,4 +1,4 @@
-package segments
+package lib
 
 import (
 	"reflect"
@@ -43,9 +43,9 @@ type N1Segment struct {
 	validator
 }
 
-// Description returns description of N1 segment
-func (s *N1Segment) Description() string {
-	return N1SegmentDescription
+// Name returns name of N1 segment
+func (s *N1Segment) Name() string {
+	return N1SegmentName
 }
 
 // Parse takes the input record string and parses the n1 segment values
@@ -150,11 +150,6 @@ func (s *N1Segment) Validate() error {
 	}
 
 	return nil
-}
-
-// BlockSize returns size of block
-func (s *N1Segment) BlockSize() int {
-	return 0
 }
 
 // Length returns size of segment

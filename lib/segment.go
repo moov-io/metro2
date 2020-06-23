@@ -2,23 +2,18 @@
 // Use of this source code is governed by an Apache License
 // license that can be found in the LICENSE file.
 
-package segments
+package lib
 
 // General segment interface
 type Segment interface {
-	Description() string
+	Name() string
 	Parse(string) (int, error)
 	String() string
 	Validate() error
-	BlockSize() int
 	Length() int
 }
 
 const (
-	// UnpackedSegmentLength indicates length of unpacked segment
-	UnpackedSegmentLength = 426
-	// PackedSegmentLength indicates length of packed segment
-	PackedSegmentLength = 366
 	// J1SegmentLength indicates length of J1 segment
 	J1SegmentLength = 100
 	// J2SegmentLength indicates length of J2 segment
@@ -36,34 +31,22 @@ const (
 	// N1SegmentLength indicates length of N1 segment
 	N1SegmentLength = 146
 
-	// HeaderRecordCharacterLength indicates description of header record
-	HeaderRecordDescription = "headerCharacter"
-	// BaseSegmentLength indicates description of base segment
-	BaseSegmentDescription = "baseCharacter"
-	// J1SegmentLength indicates description of J1 segment
-	J1SegmentDescription = "j1"
-	// J2SegmentLength indicates description of J2 segment
-	J2SegmentDescription = "j2"
-	// K1SegmentLength indicates description of K1 segment
-	K1SegmentDescription = "k1"
-	// K2SegmentLength indicates description of K2 segment
-	K2SegmentDescription = "k2"
-	// K3SegmentLength indicates description of K3 segment
-	K3SegmentDescription = "k3"
-	// K4SegmentLength indicates description of K4 segment
-	K4SegmentDescription = "k4"
-	// L1SegmentLength indicates description of L1 segment
-	L1SegmentDescription = "l1"
-	// N1SegmentLength indicates description of N1 segment
-	N1SegmentDescription = "n1"
-	// TrailerRecordLength indicates description of trailer record
-	TrailerRecordDescription = "trailer"
-	// PackedHeaderRecordLength indicates description of packed header record
-	PackedHeaderRecordDescription = "headerPacked"
-	// PackedBaseSegmentLength indicates length of description base segment
-	PackedBaseSegmentDescription = "basePacked"
-	// PackedTrailerRecordLength indicates length of description trailer record
-	PackedTrailerRecordDescription = "trailerPacked"
+	// J1SegmentLength indicates name of J1 segment
+	J1SegmentName = "j1"
+	// J2SegmentLength indicates name of J2 segment
+	J2SegmentName = "j2"
+	// K1SegmentLength indicates name of K1 segment
+	K1SegmentName = "k1"
+	// K2SegmentLength indicates name of K2 segment
+	K2SegmentName = "k2"
+	// K3SegmentLength indicates name of K3 segment
+	K3SegmentName = "k3"
+	// K4SegmentLength indicates name of K4 segment
+	K4SegmentName = "k4"
+	// L1SegmentLength indicates name of L1 segment
+	L1SegmentName = "l1"
+	// N1SegmentLength indicates name of N1 segment
+	N1SegmentName = "n1"
 
 	// J1SegmentIdentifier indicates segment identifier of J1 segment
 	J1SegmentIdentifier = "J1"
@@ -82,36 +65,6 @@ const (
 	// N1SegmentIdentifier indicates segment identifier of N1 segment
 	N1SegmentIdentifier = "N1"
 )
-
-// NewBaseSegment returns a new base segment
-func NewBaseSegment() Segment {
-	return &BaseSegment{}
-}
-
-// NewPackedBaseSegment returns a new packed base segment
-func NewPackedBaseSegment() Segment {
-	return &PackedBaseSegment{}
-}
-
-// NewHeaderRecord returns a new header record
-func NewHeaderRecord() Segment {
-	return &HeaderRecord{}
-}
-
-// NewPackedHeaderRecord returns a new packed header record
-func NewPackedHeaderRecord() Segment {
-	return &PackedHeaderRecord{}
-}
-
-// NewTrailerRecord returns a new trailer record
-func NewTrailerRecord() Segment {
-	return &TrailerRecord{}
-}
-
-// NewPackedTrailerRecord returns a new packed trailer record
-func NewPackedTrailerRecord() Segment {
-	return &PackedTrailerRecord{}
-}
 
 // NewJ1Segment returns a new j1 segment
 func NewJ1Segment() Segment {

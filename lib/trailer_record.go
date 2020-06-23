@@ -2,7 +2,7 @@
 // Use of this source code is governed by an Apache License
 // license that can be found in the LICENSE file.
 
-package segments
+package lib
 
 import (
 	"reflect"
@@ -167,21 +167,18 @@ type TrailerRecord struct {
 	validator
 }
 
-// PackedTrailerRecord holds the packed trailer record
-type PackedTrailerRecord TrailerRecord
-
-// Description returns description of trailer record
-func (s *TrailerRecord) Description() string {
-	return TrailerRecordDescription
+// Name returns name of trailer record
+func (r *TrailerRecord) Name() string {
+	return TrailerRecordName
 }
 
 // Parse takes the input record string and parses the trailer record values
-func (s *TrailerRecord) Parse(record string) (int, error) {
-	if utf8.RuneCountInString(record) < UnpackedSegmentLength {
+func (r *TrailerRecord) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < UnpackedRecordLength {
 		return 0, utils.ErrSegmentLength
 	}
 
-	fields := reflect.ValueOf(s).Elem()
+	fields := reflect.ValueOf(r).Elem()
 	if !fields.IsValid() {
 		return 0, utils.ErrValidField
 	}
@@ -199,10 +196,10 @@ func (s *TrailerRecord) Parse(record string) (int, error) {
 			return 0, utils.ErrValidField
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		if err := s.isValidType(spec, data); err != nil {
+		if err := r.isValidType(spec, data); err != nil {
 			return 0, err
 		}
-		value, err := s.parseValue(spec, data)
+		value, err := r.parseValue(spec, data)
 		if err != nil {
 			return 0, err
 		}
@@ -211,7 +208,7 @@ func (s *TrailerRecord) Parse(record string) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !s.isFixedLength(record) {
+					if !r.isFixedLength(record) {
 						continue
 					}
 					offset += 4
@@ -225,28 +222,28 @@ func (s *TrailerRecord) Parse(record string) (int, error) {
 		}
 	}
 
-	if s.BlockDescriptorWord > 0 {
-		return s.BlockDescriptorWord, nil
+	if r.BlockDescriptorWord > 0 {
+		return r.BlockDescriptorWord, nil
 	}
-	return s.RecordDescriptorWord, nil
+	return r.RecordDescriptorWord, nil
 }
 
 // String writes the trailer record struct to a 426 character string.
-func (s *TrailerRecord) String() string {
+func (r *TrailerRecord) String() string {
 	var buf strings.Builder
-	specifications := s.toSpecifications(trailerRecordCharacterFormat)
-	fields := reflect.ValueOf(s).Elem()
+	specifications := r.toSpecifications(trailerRecordCharacterFormat)
+	fields := reflect.ValueOf(r).Elem()
 	if !fields.IsValid() {
 		return ""
 	}
 
-	blockSize := s.BlockDescriptorWord
+	blockSize := r.BlockDescriptorWord
 	if blockSize == 0 {
-		blockSize = s.RecordDescriptorWord
+		blockSize = r.RecordDescriptorWord
 	}
 	buf.Grow(blockSize)
 	for _, spec := range specifications {
-		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
+		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
 	}
 	if blockSize > buf.Len() {
@@ -257,8 +254,8 @@ func (s *TrailerRecord) String() string {
 }
 
 // Validate performs some checks on the record and returns an error if not Validated
-func (s *TrailerRecord) Validate() error {
-	fields := reflect.ValueOf(s).Elem()
+func (r *TrailerRecord) Validate() error {
+	fields := reflect.ValueOf(r).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
@@ -274,8 +271,8 @@ func (s *TrailerRecord) Validate() error {
 			}
 		}
 
-		funcName := s.validateFuncName(fieldName)
-		method := reflect.ValueOf(s).MethodByName(funcName)
+		funcName := r.validateFuncName(fieldName)
+		method := reflect.ValueOf(r).MethodByName(funcName)
 		if method.IsValid() {
 			response := method.Call(nil)
 			if len(response) == 0 {
@@ -293,27 +290,40 @@ func (s *TrailerRecord) Validate() error {
 }
 
 // BlockSize returns size of block
-func (s *TrailerRecord) BlockSize() int {
-	return s.BlockDescriptorWord
+func (r *TrailerRecord) BlockSize() int {
+	return r.BlockDescriptorWord
 }
 
-// Length returns size of segment
-func (s *TrailerRecord) Length() int {
-	return UnpackedSegmentLength
+// Length returns size of record
+func (r *TrailerRecord) Length() int {
+	return r.RecordDescriptorWord
 }
 
-// Description returns description of packed trailer record
-func (s *PackedTrailerRecord) Description() string {
-	return PackedTrailerRecordDescription
+// GetSegments returns list of applicable segments by segment name
+func (r *TrailerRecord) GetSegments(string) []Segment {
+	return nil
+}
+
+// AddApplicableSegment will add new applicable segment into record
+func (r *TrailerRecord) AddApplicableSegment(s Segment) error {
+	return utils.NewErrApplicableSegment(s.Name())
+}
+
+// PackedTrailerRecord holds the packed trailer record
+type PackedTrailerRecord TrailerRecord
+
+// Name returns name of packed trailer record
+func (r *PackedTrailerRecord) Name() string {
+	return PackedTrailerRecordName
 }
 
 // Parse takes the input record string and parses the packed trailer record values
-func (s *PackedTrailerRecord) Parse(record string) (int, error) {
-	if utf8.RuneCountInString(record) < PackedSegmentLength {
+func (r *PackedTrailerRecord) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < PackedRecordLength {
 		return 0, utils.ErrSegmentLength
 	}
 
-	fields := reflect.ValueOf(s).Elem()
+	fields := reflect.ValueOf(r).Elem()
 	if !fields.IsValid() {
 		return 0, utils.ErrValidField
 	}
@@ -331,10 +341,10 @@ func (s *PackedTrailerRecord) Parse(record string) (int, error) {
 			return 0, utils.ErrValidField
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		if err := s.isValidType(spec, data); err != nil {
+		if err := r.isValidType(spec, data); err != nil {
 			return 0, err
 		}
-		value, err := s.parseValue(spec, data)
+		value, err := r.parseValue(spec, data)
 		if err != nil {
 			return 0, err
 		}
@@ -343,8 +353,8 @@ func (s *PackedTrailerRecord) Parse(record string) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !s.isFixedLength(record) {
-						continue
+					if !r.isFixedLength(record) {
+						return 0, utils.NewErrBlockDescriptorWord()
 					}
 					offset += 4
 				}
@@ -357,28 +367,28 @@ func (s *PackedTrailerRecord) Parse(record string) (int, error) {
 		}
 	}
 
-	if s.BlockDescriptorWord > 0 {
-		return s.BlockDescriptorWord, nil
+	if r.BlockDescriptorWord > 0 {
+		return r.BlockDescriptorWord, nil
 	}
-	return s.RecordDescriptorWord, nil
+	return r.RecordDescriptorWord, nil
 }
 
 // String writes the trailer record struct to a 426 character string.
-func (s *PackedTrailerRecord) String() string {
+func (r *PackedTrailerRecord) String() string {
 	var buf strings.Builder
-	specifications := s.toSpecifications(trailerRecordPackedFormat)
-	fields := reflect.ValueOf(s).Elem()
+	specifications := r.toSpecifications(trailerRecordPackedFormat)
+	fields := reflect.ValueOf(r).Elem()
 	if !fields.IsValid() {
 		return ""
 	}
 
-	blockSize := s.BlockDescriptorWord
+	blockSize := r.BlockDescriptorWord
 	if blockSize == 0 {
-		blockSize = s.RecordDescriptorWord
+		blockSize = r.RecordDescriptorWord
 	}
 	buf.Grow(blockSize)
 	for _, spec := range specifications {
-		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
+		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
 	}
 	if blockSize > buf.Len() {
@@ -389,8 +399,8 @@ func (s *PackedTrailerRecord) String() string {
 }
 
 // Validate performs some checks on the record and returns an error if not Validated
-func (s *PackedTrailerRecord) Validate() error {
-	fields := reflect.ValueOf(s).Elem()
+func (r *PackedTrailerRecord) Validate() error {
+	fields := reflect.ValueOf(r).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
@@ -406,8 +416,8 @@ func (s *PackedTrailerRecord) Validate() error {
 			}
 		}
 
-		funcName := s.validateFuncName(fieldName)
-		method := reflect.ValueOf(s).MethodByName(funcName)
+		funcName := r.validateFuncName(fieldName)
+		method := reflect.ValueOf(r).MethodByName(funcName)
 		if method.IsValid() {
 			response := method.Call(nil)
 			if len(response) == 0 {
@@ -425,11 +435,21 @@ func (s *PackedTrailerRecord) Validate() error {
 }
 
 // BlockSize returns size of block
-func (s *PackedTrailerRecord) BlockSize() int {
-	return s.BlockDescriptorWord
+func (r *PackedTrailerRecord) BlockSize() int {
+	return r.BlockDescriptorWord
 }
 
-// Length returns size of segment
-func (s *PackedTrailerRecord) Length() int {
-	return PackedSegmentLength
+// Length returns size of record
+func (r *PackedTrailerRecord) Length() int {
+	return r.RecordDescriptorWord
+}
+
+// GetSegments returns list of applicable segments by segment name
+func (r *PackedTrailerRecord) GetSegments(string) []Segment {
+	return nil
+}
+
+// AddApplicableSegment will add new applicable segment into record
+func (r *PackedTrailerRecord) AddApplicableSegment(s Segment) error {
+	return utils.NewErrApplicableSegment(s.Name())
 }

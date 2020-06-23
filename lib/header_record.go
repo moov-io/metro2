@@ -2,7 +2,7 @@
 // Use of this source code is governed by an Apache License
 // license that can be found in the LICENSE file.
 
-package segments
+package lib
 
 import (
 	"reflect"
@@ -100,18 +100,18 @@ type HeaderRecord struct {
 // PackedHeaderRecord holds the packed header record
 type PackedHeaderRecord HeaderRecord
 
-// Description returns description of header record
-func (s *HeaderRecord) Description() string {
-	return HeaderRecordDescription
+// Name returns name of header record
+func (r *HeaderRecord) Name() string {
+	return HeaderRecordName
 }
 
 // Parse takes the input record string and parses the header record values
-func (s *HeaderRecord) Parse(record string) (int, error) {
-	if utf8.RuneCountInString(record) < UnpackedSegmentLength {
+func (r *HeaderRecord) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < UnpackedRecordLength {
 		return 0, utils.ErrSegmentLength
 	}
 
-	fields := reflect.ValueOf(s).Elem()
+	fields := reflect.ValueOf(r).Elem()
 	if !fields.IsValid() {
 		return 0, utils.ErrValidField
 	}
@@ -129,10 +129,10 @@ func (s *HeaderRecord) Parse(record string) (int, error) {
 			return 0, utils.ErrValidField
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		if err := s.isValidType(spec, data); err != nil {
+		if err := r.isValidType(spec, data); err != nil {
 			return 0, err
 		}
-		value, err := s.parseValue(spec, data)
+		value, err := r.parseValue(spec, data)
 		if err != nil {
 			return 0, err
 		}
@@ -141,7 +141,7 @@ func (s *HeaderRecord) Parse(record string) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !s.isFixedLength(record) {
+					if !r.isFixedLength(record) {
 						continue
 					}
 					offset += 4
@@ -155,28 +155,28 @@ func (s *HeaderRecord) Parse(record string) (int, error) {
 		}
 	}
 
-	if s.BlockDescriptorWord > 0 {
-		return s.BlockDescriptorWord, nil
+	if r.BlockDescriptorWord > 0 {
+		return r.BlockDescriptorWord, nil
 	}
-	return s.RecordDescriptorWord, nil
+	return r.RecordDescriptorWord, nil
 }
 
 // String writes the header record struct to a 426 character string.
-func (s *HeaderRecord) String() string {
+func (r *HeaderRecord) String() string {
 	var buf strings.Builder
-	specifications := s.toSpecifications(headerRecordCharacterFormat)
-	fields := reflect.ValueOf(s).Elem()
+	specifications := r.toSpecifications(headerRecordCharacterFormat)
+	fields := reflect.ValueOf(r).Elem()
 	if !fields.IsValid() {
 		return ""
 	}
 
-	blockSize := s.BlockDescriptorWord
+	blockSize := r.BlockDescriptorWord
 	if blockSize == 0 {
-		blockSize = s.RecordDescriptorWord
+		blockSize = r.RecordDescriptorWord
 	}
 	buf.Grow(blockSize)
 	for _, spec := range specifications {
-		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
+		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
 	}
 	if blockSize > buf.Len() {
@@ -187,8 +187,8 @@ func (s *HeaderRecord) String() string {
 }
 
 // Validate performs some checks on the record and returns an error if not Validated
-func (s *HeaderRecord) Validate() error {
-	fields := reflect.ValueOf(s).Elem()
+func (r *HeaderRecord) Validate() error {
+	fields := reflect.ValueOf(r).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
@@ -204,8 +204,8 @@ func (s *HeaderRecord) Validate() error {
 			}
 		}
 
-		funcName := s.validateFuncName(fieldName)
-		method := reflect.ValueOf(s).MethodByName(funcName)
+		funcName := r.validateFuncName(fieldName)
+		method := reflect.ValueOf(r).MethodByName(funcName)
 		if method.IsValid() {
 			response := method.Call(nil)
 			if len(response) == 0 {
@@ -223,27 +223,37 @@ func (s *HeaderRecord) Validate() error {
 }
 
 // BlockSize returns size of block
-func (s *HeaderRecord) BlockSize() int {
-	return s.BlockDescriptorWord
+func (r *HeaderRecord) BlockSize() int {
+	return r.BlockDescriptorWord
 }
 
 // Length returns size of segment
-func (s *HeaderRecord) Length() int {
-	return UnpackedSegmentLength
+func (r *HeaderRecord) Length() int {
+	return r.RecordDescriptorWord
 }
 
-// Description returns description of packed header record
-func (s *PackedHeaderRecord) Description() string {
-	return PackedHeaderRecordDescription
+// GetSegments returns list of applicable segments by segment name
+func (r *HeaderRecord) GetSegments(string) []Segment {
+	return nil
+}
+
+// AddApplicableSegment will add new applicable segment into record
+func (r *HeaderRecord) AddApplicableSegment(s Segment) error {
+	return utils.NewErrApplicableSegment(s.Name())
+}
+
+// Name returns name of packed header record
+func (r *PackedHeaderRecord) Name() string {
+	return PackedHeaderRecordName
 }
 
 // Parse takes the input record string and parses the packed header record values
-func (s *PackedHeaderRecord) Parse(record string) (int, error) {
-	if utf8.RuneCountInString(record) < PackedSegmentLength {
+func (r *PackedHeaderRecord) Parse(record string) (int, error) {
+	if utf8.RuneCountInString(record) < PackedRecordLength {
 		return 0, utils.ErrSegmentLength
 	}
 
-	fields := reflect.ValueOf(s).Elem()
+	fields := reflect.ValueOf(r).Elem()
 	if !fields.IsValid() {
 		return 0, utils.ErrValidField
 	}
@@ -261,10 +271,10 @@ func (s *PackedHeaderRecord) Parse(record string) (int, error) {
 			return 0, utils.ErrValidField
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		if err := s.isValidType(spec, data); err != nil {
+		if err := r.isValidType(spec, data); err != nil {
 			return 0, err
 		}
-		value, err := s.parseValue(spec, data)
+		value, err := r.parseValue(spec, data)
 		if err != nil {
 			return 0, err
 		}
@@ -273,8 +283,8 @@ func (s *PackedHeaderRecord) Parse(record string) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !s.isFixedLength(record) {
-						continue
+					if !r.isFixedLength(record) {
+						return 0, utils.NewErrBlockDescriptorWord()
 					}
 					offset += 4
 				}
@@ -287,28 +297,28 @@ func (s *PackedHeaderRecord) Parse(record string) (int, error) {
 		}
 	}
 
-	if s.BlockDescriptorWord > 0 {
-		return s.BlockDescriptorWord, nil
+	if r.BlockDescriptorWord > 0 {
+		return r.BlockDescriptorWord, nil
 	}
-	return s.RecordDescriptorWord, nil
+	return r.RecordDescriptorWord, nil
 }
 
 // String writes the packed header record struct to a 426 character string.
-func (s *PackedHeaderRecord) String() string {
+func (r *PackedHeaderRecord) String() string {
 	var buf strings.Builder
-	specifications := s.toSpecifications(headerRecordPackedFormat)
-	fields := reflect.ValueOf(s).Elem()
+	specifications := r.toSpecifications(headerRecordPackedFormat)
+	fields := reflect.ValueOf(r).Elem()
 	if !fields.IsValid() {
 		return ""
 	}
 
-	blockSize := s.BlockDescriptorWord
+	blockSize := r.BlockDescriptorWord
 	if blockSize == 0 {
-		blockSize = s.RecordDescriptorWord
+		blockSize = r.RecordDescriptorWord
 	}
 	buf.Grow(blockSize)
 	for _, spec := range specifications {
-		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
+		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
 	}
 	if blockSize > buf.Len() {
@@ -319,8 +329,8 @@ func (s *PackedHeaderRecord) String() string {
 }
 
 // Validate performs some checks on the record and returns an error if not Validated
-func (s *PackedHeaderRecord) Validate() error {
-	fields := reflect.ValueOf(s).Elem()
+func (r *PackedHeaderRecord) Validate() error {
+	fields := reflect.ValueOf(r).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if !fields.IsValid() {
@@ -336,8 +346,8 @@ func (s *PackedHeaderRecord) Validate() error {
 			}
 		}
 
-		funcName := s.validateFuncName(fieldName)
-		method := reflect.ValueOf(s).MethodByName(funcName)
+		funcName := r.validateFuncName(fieldName)
+		method := reflect.ValueOf(r).MethodByName(funcName)
 		if method.IsValid() {
 			response := method.Call(nil)
 			if len(response) == 0 {
@@ -355,11 +365,21 @@ func (s *PackedHeaderRecord) Validate() error {
 }
 
 // BlockSize returns size of block
-func (s *PackedHeaderRecord) BlockSize() int {
-	return s.BlockDescriptorWord
+func (r *PackedHeaderRecord) BlockSize() int {
+	return r.BlockDescriptorWord
 }
 
 // Length returns size of segment
-func (s *PackedHeaderRecord) Length() int {
-	return PackedSegmentLength
+func (r *PackedHeaderRecord) Length() int {
+	return r.RecordDescriptorWord
+}
+
+// GetSegments returns list of applicable segments by segment name
+func (r *PackedHeaderRecord) GetSegments(string) []Segment {
+	return nil
+}
+
+// AddApplicableSegment will add new applicable segment into record
+func (r *PackedHeaderRecord) AddApplicableSegment(s Segment) error {
+	return utils.NewErrApplicableSegment(s.Name())
 }

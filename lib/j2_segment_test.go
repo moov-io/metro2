@@ -1,28 +1,32 @@
-package segments
+// Copyright 2020 The Moov Authors
+// Use of this source code is governed by an Apache License
+// license that can be found in the LICENSE file.
+
+package lib
 
 import (
 	"gopkg.in/check.v1"
 )
 
-func (s *SegmentTest) TestJ2Segment(c *check.C) {
+func (t *SegmentTest) TestJ2Segment(c *check.C) {
 	segment := NewJ2Segment()
-	_, err := segment.Parse(s.sampleJ2Segment)
+	_, err := segment.Parse(t.sampleJ2Segment)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, s.sampleJ2Segment)
-	c.Assert(segment.Description(), check.Equals, J2SegmentDescription)
+	c.Assert(segment.String(), check.Equals, t.sampleJ2Segment)
+	c.Assert(segment.Name(), check.Equals, J2SegmentName)
 }
 
-func (s *SegmentTest) TestJ2SegmentWithInvalidData(c *check.C) {
+func (t *SegmentTest) TestJ2SegmentWithInvalidData(c *check.C) {
 	segment := NewJ2Segment()
-	_, err := segment.Parse("ERROR" + s.sampleJ2Segment)
+	_, err := segment.Parse("ERROR" + t.sampleJ2Segment)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
-func (s *SegmentTest) TestJ2SegmentWithInvalidGenerationCode(c *check.C) {
+func (t *SegmentTest) TestJ2SegmentWithInvalidGenerationCode(c *check.C) {
 	segment := J2Segment{}
-	_, err := segment.Parse(s.sampleJ2Segment)
+	_, err := segment.Parse(t.sampleJ2Segment)
 	c.Assert(err, check.IsNil)
 	segment.GenerationCode = "0"
 	err = segment.Validate()
@@ -30,18 +34,18 @@ func (s *SegmentTest) TestJ2SegmentWithInvalidGenerationCode(c *check.C) {
 	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of generation code")
 }
 
-func (s *SegmentTest) TestJ2SegmentWithInvalidTelephoneNumber(c *check.C) {
+func (t *SegmentTest) TestJ2SegmentWithInvalidTelephoneNumber(c *check.C) {
 	segment := &J2Segment{}
-	_, err := segment.Parse(s.sampleJ2Segment)
+	_, err := segment.Parse(t.sampleJ2Segment)
 	c.Assert(err, check.IsNil)
 	segment.TelephoneNumber = 0
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
 }
 
-func (s *SegmentTest) TestJ2SegmentWithInvalidAddressIndicator(c *check.C) {
+func (t *SegmentTest) TestJ2SegmentWithInvalidAddressIndicator(c *check.C) {
 	segment := J2Segment{}
-	_, err := segment.Parse(s.sampleJ2Segment)
+	_, err := segment.Parse(t.sampleJ2Segment)
 	c.Assert(err, check.IsNil)
 	segment.AddressIndicator = "0"
 	err = segment.Validate()
@@ -49,9 +53,9 @@ func (s *SegmentTest) TestJ2SegmentWithInvalidAddressIndicator(c *check.C) {
 	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of address indicator")
 }
 
-func (s *SegmentTest) TestJ2SegmentWithInvalidResidenceCode(c *check.C) {
+func (t *SegmentTest) TestJ2SegmentWithInvalidResidenceCode(c *check.C) {
 	segment := J2Segment{}
-	_, err := segment.Parse(s.sampleJ2Segment)
+	_, err := segment.Parse(t.sampleJ2Segment)
 	c.Assert(err, check.IsNil)
 	segment.ResidenceCode = "0"
 	err = segment.Validate()

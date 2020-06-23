@@ -29,9 +29,9 @@ func NewErrValidValue(field string) error {
 	return fmt.Errorf("is an invalid value of %s", field)
 }
 
-// NewErrValidSegment returns a error that has invalid segment
-func NewErrValidSegment(name string) error {
-	return fmt.Errorf("is an invalid segment (%s)", name)
+// NewErrApplicableSegment returns a error that can't support applicable segment
+func NewErrApplicableSegment(name string) error {
+	return fmt.Errorf("is not suuport applicable segment (%s)", name)
 }
 
 // NewErrValidSegment returns a error that has invalid segment
@@ -39,7 +39,17 @@ func NewErrValidFileFormat(name string) error {
 	return fmt.Errorf("is an invalid file format (%s)", name)
 }
 
-// NewErrFileParse returns a error that has invalid parse data
-func NewErrFileParse() error {
+// NewErrParse returns a error that has invalid parse data
+func NewErrParse() error {
 	return fmt.Errorf("is an invalid invalid parse data")
+}
+
+// NewErrBlockDescriptorWord returns a error that
+func NewErrBlockDescriptorWord() error {
+	return fmt.Errorf("should be block descriptor word")
+}
+
+// NewErrValidRecord returns a error if is invalid record
+func NewErrValidRecord(name string) error {
+	return fmt.Errorf("is an invalid record (%s)", name)
 }
