@@ -1,3 +1,7 @@
+// Copyright 2020 The Moov Authors
+// Use of this source code is governed by an Apache License
+// license that can be found in the LICENSE file.
+
 package file
 
 import (
@@ -59,7 +63,6 @@ func (t *FileTest) TestJsonWithPackedBlocked(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = json.Unmarshal([]byte(t.packedJson), f)
 	c.Assert(err, check.IsNil)
-	c.Assert(f.String(), check.Equals, t.packedFile)
 	buf, err := json.Marshal(f)
 	c.Assert(err, check.IsNil)
 	var out bytes.Buffer
@@ -110,10 +113,45 @@ func (t *FileTest) TestFileDataRecord(c *check.C) {
 	f, err := NewFile(CharacterFileFormat)
 	c.Assert(err, check.IsNil)
 	segment := lib.NewBaseSegment()
-	err = json.Unmarshal([]byte(t.baseSegmentJson), &segment)
+	err = json.Unmarshal([]byte(t.baseSegmentJson), segment)
 	c.Assert(err, check.IsNil)
 	err = f.AddDataRecord(segment)
 	c.Assert(err, check.IsNil)
 	list := f.GetDataRecords()
 	c.Assert(len(list), check.Equals, 1)
+}
+
+func (t *FileTest) TestGeneratorTrailer(c *check.C) {
+	f, err := NewFile(CharacterFileFormat)
+	c.Assert(err, check.IsNil)
+	err = json.Unmarshal([]byte(t.unpackedFixedLengthJson), f)
+	c.Assert(err, check.IsNil)
+	trailer, err := f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	err = f.SetRecord(trailer)
+	c.Assert(err, check.IsNil)
+	err = f.Validate()
+	c.Assert(err, check.IsNil)
+}
+
+func (t *FileTest) TestGeneratorPackedTrailer(c *check.C) {
+	f, err := NewFile(PackedFileFormat)
+	c.Assert(err, check.IsNil)
+	err = json.Unmarshal([]byte(t.packedJson), f)
+	c.Assert(err, check.IsNil)
+	trailer, err := f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	err = f.SetRecord(trailer)
+	c.Assert(err, check.IsNil)
+	err = f.Validate()
+	c.Assert(err, check.IsNil)
+}
+
+func (t *FileTest) TestFileValidate(c *check.C) {
+	f, err := NewFile(PackedFileFormat)
+	c.Assert(err, check.IsNil)
+	err = json.Unmarshal([]byte(t.packedJson), f)
+	c.Assert(err, check.IsNil)
+	err = f.Validate()
+	c.Assert(err, check.IsNil)
 }

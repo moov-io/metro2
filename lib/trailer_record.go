@@ -167,6 +167,8 @@ type TrailerRecord struct {
 	validator
 }
 
+type TrailerInformation TrailerRecord
+
 // Name returns name of trailer record
 func (r *TrailerRecord) Name() string {
 	return TrailerRecordName

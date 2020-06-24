@@ -105,6 +105,38 @@ const (
 	PaymentHistoryRepossession = 'K'
 	// consecutive payment activity, Charge-off
 	PaymentHistoryChargeOff = 'L'
+	//  status code that properly identifies the current condition of the account, "DF"
+	AccountStatusDF = "DF"
+	//  status code that properly identifies the current condition of the account, "DA"
+	AccountStatusDA = "DA"
+	//  status code that properly identifies the current condition of the account, "11"
+	AccountStatus11 = "11"
+	//  status code that properly identifies the current condition of the account, "61"
+	AccountStatus61 = "61"
+	//  status code that properly identifies the current condition of the account, "62"
+	AccountStatus62 = "62"
+	//  status code that properly identifies the current condition of the account, "63"
+	AccountStatus63 = "63"
+	//  status code that properly identifies the current condition of the account, "64"
+	AccountStatus64 = "64"
+	//  status code that properly identifies the current condition of the account, "71"
+	AccountStatus71 = "71"
+	//  status code that properly identifies the current condition of the account, "78"
+	AccountStatus78 = "78"
+	//  status code that properly identifies the current condition of the account, "80"
+	AccountStatus80 = "80"
+	//  status code that properly identifies the current condition of the account, "82"
+	AccountStatus82 = "82"
+	//  status code that properly identifies the current condition of the account, "83"
+	AccountStatus83 = "83"
+	//  status code that properly identifies the current condition of the account, "84"
+	AccountStatus84 = "84"
+	//  status code that properly identifies the current condition of the account, "93"
+	AccountStatus93 = "93"
+	//  status code that properly identifies the current condition of the account, "96"
+	AccountStatus96 = "96"
+	//  status code that properly identifies the current condition of the account, "97"
+	AccountStatus97 = "97"
 	//  status code that properly identifies the current condition of the account, "05"
 	AccountStatus05 = "05"
 	//  status code that properly identifies the current condition of the account, "13"
@@ -217,6 +249,8 @@ const (
 	SpecializedBalloonPayment = 1
 	// Specialized Payment Indicator Deferred Payment
 	SpecializedDeferredPayment = 2
+	// ECOA Code Z
+	ECOACodeZ = "Z"
 )
 
 // Internal Constants
