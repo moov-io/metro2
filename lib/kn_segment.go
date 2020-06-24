@@ -257,7 +257,7 @@ func (s *K2Segment) Parse(record string) (int, error) {
 		}
 	}
 
-	return K3SegmentLength, nil
+	return K2SegmentLength, nil
 }
 
 // String writes the k2 segment struct to a 34 character string.
