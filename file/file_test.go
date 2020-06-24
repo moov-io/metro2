@@ -121,7 +121,6 @@ func (t *FileTest) TestFileDataRecord(c *check.C) {
 	c.Assert(len(list), check.Equals, 1)
 }
 
-/*
 func (t *FileTest) TestGeneratorTrailer(c *check.C) {
 	f, err := NewFile(CharacterFileFormat)
 	c.Assert(err, check.IsNil)
@@ -156,4 +155,3 @@ func (t *FileTest) TestFileValidate(c *check.C) {
 	err = f.Validate()
 	c.Assert(err, check.IsNil)
 }
-*/
