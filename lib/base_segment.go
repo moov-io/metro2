@@ -706,16 +706,34 @@ func (r *BaseSegment) GetSegments(name string) []Segment {
 	case J2SegmentName:
 		return r.j2Segments
 	case K1SegmentName:
+		if r.k1Segment == nil {
+			return nil
+		}
 		ret = append(ret, r.k1Segment)
 	case K2SegmentName:
+		if r.k2Segment == nil {
+			return nil
+		}
 		ret = append(ret, r.k2Segment)
 	case K3SegmentName:
+		if r.k3Segment == nil {
+			return nil
+		}
 		ret = append(ret, r.k3Segment)
 	case K4SegmentName:
+		if r.k4Segment == nil {
+			return nil
+		}
 		ret = append(ret, r.k4Segment)
 	case L1SegmentName:
+		if r.l1Segment == nil {
+			return nil
+		}
 		ret = append(ret, r.l1Segment)
 	case N1SegmentName:
+		if r.n1Segment == nil {
+			return nil
+		}
 		ret = append(ret, r.n1Segment)
 	default:
 		return nil
@@ -756,11 +774,11 @@ func (r *BaseSegment) MarshalJSON() ([]byte, error) {
 	dummy := dataRecordJson{}
 	base := baseJson{}
 
-	formFields := reflect.ValueOf(r).Elem()
+	fromFields := reflect.ValueOf(r).Elem()
 	toFields := reflect.ValueOf(&base).Elem()
-	for i := 0; i < formFields.NumField(); i++ {
-		fieldName := formFields.Type().Field(i).Name
-		fromField := formFields.FieldByName(fieldName)
+	for i := 0; i < fromFields.NumField(); i++ {
+		fieldName := fromFields.Type().Field(i).Name
+		fromField := fromFields.FieldByName(fieldName)
 		toField := toFields.FieldByName(fieldName)
 		if fromField.IsValid() && toField.CanSet() {
 			toField.Set(fromField)
@@ -805,11 +823,11 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 			if err != nil {
 				return err
 			}
-			formFields := reflect.ValueOf(&base).Elem()
+			fromFields := reflect.ValueOf(&base).Elem()
 			toFields := reflect.ValueOf(r).Elem()
-			for i := 0; i < formFields.NumField(); i++ {
-				fieldName := formFields.Type().Field(i).Name
-				fromField := formFields.FieldByName(fieldName)
+			for i := 0; i < fromFields.NumField(); i++ {
+				fieldName := fromFields.Type().Field(i).Name
+				fromField := fromFields.FieldByName(fieldName)
 				toField := toFields.FieldByName(fieldName)
 				if fromField.IsValid() && toField.CanSet() {
 					toField.Set(fromField)
@@ -1112,16 +1130,34 @@ func (r *PackedBaseSegment) GetSegments(name string) []Segment {
 	case J2SegmentName:
 		return r.j2Segments
 	case K1SegmentName:
+		if r.k1Segment == nil {
+			return nil
+		}
 		ret = append(ret, r.k1Segment)
 	case K2SegmentName:
+		if r.k2Segment == nil {
+			return nil
+		}
 		ret = append(ret, r.k2Segment)
 	case K3SegmentName:
+		if r.k3Segment == nil {
+			return nil
+		}
 		ret = append(ret, r.k3Segment)
 	case K4SegmentName:
+		if r.k4Segment == nil {
+			return nil
+		}
 		ret = append(ret, r.k4Segment)
 	case L1SegmentName:
+		if r.l1Segment == nil {
+			return nil
+		}
 		ret = append(ret, r.l1Segment)
 	case N1SegmentName:
+		if r.n1Segment == nil {
+			return nil
+		}
 		ret = append(ret, r.n1Segment)
 	default:
 		return nil
@@ -1162,11 +1198,11 @@ func (r *PackedBaseSegment) MarshalJSON() ([]byte, error) {
 	dummy := dataRecordJson{}
 	base := baseJson{}
 
-	formFields := reflect.ValueOf(r).Elem()
+	fromFields := reflect.ValueOf(r).Elem()
 	toFields := reflect.ValueOf(&base).Elem()
-	for i := 0; i < formFields.NumField(); i++ {
-		fieldName := formFields.Type().Field(i).Name
-		fromField := formFields.FieldByName(fieldName)
+	for i := 0; i < fromFields.NumField(); i++ {
+		fieldName := fromFields.Type().Field(i).Name
+		fromField := fromFields.FieldByName(fieldName)
 		toField := toFields.FieldByName(fieldName)
 		if fromField.IsValid() && toField.CanSet() {
 			toField.Set(fromField)
@@ -1211,11 +1247,11 @@ func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
 			if err != nil {
 				return err
 			}
-			formFields := reflect.ValueOf(&base).Elem()
+			fromFields := reflect.ValueOf(&base).Elem()
 			toFields := reflect.ValueOf(r).Elem()
-			for i := 0; i < formFields.NumField(); i++ {
-				fieldName := formFields.Type().Field(i).Name
-				fromField := formFields.FieldByName(fieldName)
+			for i := 0; i < fromFields.NumField(); i++ {
+				fieldName := fromFields.Type().Field(i).Name
+				fromField := fromFields.FieldByName(fieldName)
 				toField := toFields.FieldByName(fieldName)
 				if fromField.IsValid() && toField.CanSet() {
 					toField.Set(fromField)

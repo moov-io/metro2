@@ -34,6 +34,8 @@ const (
 	PackedBaseSegmentName = "basePacked"
 	// PackedTrailerRecordName indicates length of name trailer record
 	PackedTrailerRecordName = "trailerPacked"
+	// TrailerIdentifier indicates record identifier of N1 segment
+	TrailerIdentifier = "TRAILER"
 )
 
 // NewHeaderRecord returns a new header record
