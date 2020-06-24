@@ -1,7 +1,6 @@
 {
   "header": {
-    "blockDescriptorWord": 370,
-    "recordDescriptorWord": 366,
+    "recordDescriptorWord": 480,
     "recordIdentifier": "HEADER",
     "transUnionProgramIdentifier": "5555555555",
     "activityDate": "2002-08-20T00:00:00Z",
@@ -15,34 +14,33 @@
   "data": [
     {
       "base": {
-        "blockDescriptorWord": 1110,
-        "recordDescriptorWord": 1106,
+        "recordDescriptorWord": 1098,
         "processingIndicator": 1,
-        "timeStamp": "2020-01-01T01:12:20Z",
+        "timeStamp": "2020-01-01T01:11:22Z",
         "identificationNumber": "6666666",
         "consumerAccountNumber": "553723456",
         "portfolioType": "M",
         "accountType": "48",
         "dateOpened": "2019-11-22T00:00:00Z",
-        "highestCredit": 416,
+        "highestCredit": 2438,
         "termsDuration": "LOC",
-        "actualPaymentAmount": 160,
+        "actualPaymentAmount": 100,
         "accountStatus": "62",
         "paymentHistoryProfile": "BBBBBBBBBBBBBBBBBBBBBBBB",
         "specialComment": "AS",
         "complianceConditionCode": "XA",
-        "currentBalance": 14649,
+        "currentBalance": 2233,
         "dateAccountInformation": "2002-09-20T00:00:00Z",
-        "dateFirstDelinquency": "2002-09-20T00:00:00Z",
-        "dateClosed": "2002-09-20T00:00:00Z",
-        "dateLastPayment": "2002-09-20T00:00:00Z",
+        "dateFirstDelinquency": "2001-07-19T00:00:00Z",
+        "dateClosed": "2002-08-02T00:00:00Z",
+        "dateLastPayment": "2002-08-02T00:00:00Z",
         "interestTypeIndicator": "",
         "surname": "SMITH-JONES",
         "firstName": "JUNIOR",
         "generationCode": "S",
-        "socialSecurityNumber": 1052832,
-        "dateBirth": "2002-09-20T00:00:00Z",
-        "telephoneNumber": 1234567890,
+        "socialSecurityNumber": 159328759,
+        "dateBirth": "1972-03-18T00:00:00Z",
+        "telephoneNumber": 5175555555,
         "ecoaCode": "1",
         "countryCode": "US",
         "firstLineAddress": "RMXH+6W Casper, Wyoming,",
@@ -85,30 +83,28 @@
           "sipCode": "72654",
           "addressIndicator": "Y",
           "residenceCode": "O"
-        },
-        {
-          "segmentIdentifier": "J2",
-          "surname": "BEAUCHAMP",
-          "firstName": "KEVIN",
-          "generationCode": "S",
-          "socialSecurityNumber": 445112877,
-          "dateBirth": "2020-01-02T00:00:00Z",
-          "telephoneNumber": 4335552333,
-          "ecoaCode": "2",
-          "consumerInformationIndicator": "R",
-          "countryCode": "US",
-          "firstLineAddress": "234 HARRISON PLACE",
-          "secondLineAddress": "SUITE #305",
-          "city": "LANSING",
-          "state": "MI",
-          "sipCode": "72654",
-          "addressIndicator": "Y",
-          "residenceCode": "O"
         }
       ],
+      "k1": {
+        "segmentIdentifier": "K1",
+        "originalCreditorName": "WETCOSAT INDUSTRIES LTD.",
+        "creditorClassification": 4
+      },
+      "k2": {
+        "segmentIdentifier": "K2",
+        "purchasedIndicator": 1,
+        "purchasedName": "Purchased From Name"
+      },
       "k3": {
         "segmentIdentifier": "K3",
         "mortgageIdentificationNumber": "Mortgage Number"
+      },
+      "k4": {
+        "segmentIdentifier": "K4",
+        "specializedPaymentIndicator": 1,
+        "deferredPaymentStartDate": "2020-01-20T00:00:00Z",
+        "balloonPaymentDueDate": "2020-01-20T00:00:00Z",
+        "balloonPaymentAmount": 1234
       },
       "l1": {
         "segmentIdentifier": "L1",
@@ -128,13 +124,12 @@
     }
   ],
   "trailer": {
-    "blockDescriptorWord": 370,
     "recordDescriptorWord": 366,
     "recordIdentifier": "TRAILER",
     "totalBaseRecords": 1,
     "totalStatusCodeDF": 0,
     "totalConsumerSegmentsJ1": 2,
-    "totalConsumerSegmentsJ2": 2,
+    "totalConsumerSegmentsJ2": 1,
     "blockCount": 3,
     "totalStatusCodeDA": 0,
     "totalStatusCode05": 0,
@@ -160,19 +155,19 @@
     "totalStatusCode97": 0,
     "totalECOACodeZ": 0,
     "totalEmploymentSegments": 1,
-    "totalOriginalCreditorSegments": 0,
-    "totalPurchasedToSegments": 0,
+    "totalOriginalCreditorSegments": 1,
+    "totalPurchasedToSegments": 1,
     "totalMortgageInformationSegments": 1,
-    "totalPaymentInformationSegments": 0,
+    "totalPaymentInformationSegments": 1,
     "totalChangeSegments": 1,
-    "totalSocialNumbersAllSegments": 3,
+    "totalSocialNumbersAllSegments": 2,
     "totalSocialNumbersBaseSegments": 0,
     "totalSocialNumbersJ1Segments": 1,
-    "totalSocialNumbersJ2Segments": 2,
-    "totalDatesBirthAllSegments": 4,
+    "totalSocialNumbersJ2Segments": 1,
+    "totalDatesBirthAllSegments": 3,
     "totalDatesBirthBaseSegments": 1,
     "totalDatesBirthJ1Segments": 1,
-    "totalDatesBirthJ2Segments": 2,
-    "totalTelephoneNumbersAllSegments": 4
+    "totalDatesBirthJ2Segments": 1,
+    "totalTelephoneNumbersAllSegments": 3
   }
 }
