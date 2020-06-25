@@ -30,12 +30,13 @@ func (f *fileInstance) SetRecord(r lib.Record) error {
 		return err
 	}
 
-	switch r.Name() {
-	case lib.HeaderRecordName, lib.PackedHeaderRecordName:
+	if (f.format == PackedFileFormat && r.Name() == lib.PackedHeaderRecordName) ||
+		(f.format == CharacterFileFormat && r.Name() == lib.HeaderRecordName) {
 		f.Header = r
-	case lib.TrailerRecordName, lib.PackedTrailerRecordName:
+	} else if (f.format == PackedFileFormat && r.Name() == lib.PackedTrailerRecordName) ||
+		(f.format == CharacterFileFormat && r.Name() == lib.TrailerRecordName) {
 		f.Trailer = r
-	default:
+	} else {
 		return utils.NewErrValidRecord(r.Name())
 	}
 
@@ -49,10 +50,11 @@ func (f *fileInstance) AddDataRecord(r lib.Record) error {
 		return err
 	}
 
-	switch r.Name() {
-	case lib.BaseSegmentName, lib.PackedBaseSegmentName:
+	if f.format == PackedFileFormat && r.Name() == lib.PackedBaseSegmentName {
 		f.Bases = append(f.Bases, r)
-	default:
+	} else if f.format == CharacterFileFormat && r.Name() == lib.BaseSegmentName {
+		f.Bases = append(f.Bases, r)
+	} else {
 		return utils.NewErrValidRecord(r.Name())
 	}
 

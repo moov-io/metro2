@@ -203,20 +203,6 @@ func (r *HeaderRecord) Validate() error {
 				}
 			}
 		}
-
-		funcName := r.validateFuncName(fieldName)
-		method := reflect.ValueOf(r).MethodByName(funcName)
-		if method.IsValid() {
-			response := method.Call(nil)
-			if len(response) == 0 {
-				continue
-			}
-
-			err := method.Call(nil)[0]
-			if !err.IsNil() {
-				return err.Interface().(error)
-			}
-		}
 	}
 
 	return nil
@@ -343,20 +329,6 @@ func (r *PackedHeaderRecord) Validate() error {
 				if fieldValue.IsZero() {
 					return utils.ErrFieldRequired
 				}
-			}
-		}
-
-		funcName := r.validateFuncName(fieldName)
-		method := reflect.ValueOf(r).MethodByName(funcName)
-		if method.IsValid() {
-			response := method.Call(nil)
-			if len(response) == 0 {
-				continue
-			}
-
-			err := method.Call(nil)[0]
-			if !err.IsNil() {
-				return err.Interface().(error)
 			}
 		}
 	}
