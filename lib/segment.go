@@ -68,40 +68,56 @@ const (
 
 // NewJ1Segment returns a new j1 segment
 func NewJ1Segment() Segment {
-	return &J1Segment{}
+	return &J1Segment{
+		SegmentIdentifier: J1SegmentIdentifier,
+	}
 }
 
 // NewJ2Segment returns a new j1 segment
 func NewJ2Segment() Segment {
-	return &J2Segment{}
+	return &J2Segment{
+		SegmentIdentifier: J2SegmentIdentifier,
+	}
 }
 
 // NewK1Segment returns a new k1 segment
 func NewK1Segment() Segment {
-	return &K1Segment{}
+	return &K1Segment{
+		SegmentIdentifier: K1SegmentIdentifier,
+	}
 }
 
 // NewK2Segment returns a new k2 segment
 func NewK2Segment() Segment {
-	return &K2Segment{}
+	return &K2Segment{
+		SegmentIdentifier: K2SegmentIdentifier,
+	}
 }
 
 // NewK3Segment returns a new k3 segment
 func NewK3Segment() Segment {
-	return &K3Segment{}
+	return &K3Segment{
+		SegmentIdentifier: K3SegmentIdentifier,
+	}
 }
 
 // NewK4Segment returns a new k4 segment
 func NewK4Segment() Segment {
-	return &K4Segment{}
+	return &K4Segment{
+		SegmentIdentifier: K4SegmentIdentifier,
+	}
 }
 
 // NewL1Segment returns a new l1 segment
 func NewL1Segment() Segment {
-	return &L1Segment{}
+	return &L1Segment{
+		SegmentIdentifier: L1SegmentIdentifier,
+	}
 }
 
 // NewN1Segment returns a new n1 segment
 func NewN1Segment() Segment {
-	return &N1Segment{}
+	return &N1Segment{
+		SegmentIdentifier: N1SegmentIdentifier,
+	}
 }

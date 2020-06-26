@@ -167,3 +167,24 @@ func (t *FileTest) TestGetRecord(c *check.C) {
 	_, err = f.GetRecord(lib.BaseSegmentName)
 	c.Assert(err, check.NotNil)
 }
+
+func (t *FileTest) TestCreateFile(c *check.C) {
+	_, err := CreateFile([]byte(t.packedJson))
+	c.Assert(err, check.IsNil)
+	f, err := CreateFile([]byte(t.packedFile))
+	c.Assert(err, check.IsNil)
+	c.Assert(f.String(), check.Equals, t.packedFile)
+}
+
+func (t *FileTest) TestCreateFileFailed(c *check.C) {
+	_, err := CreateFile([]byte(t.packedFile[8:]))
+	c.Assert(err, check.NotNil)
+	data := `{
+  "header": {
+    "recordDescriptorWord": 480,
+    "recordIdentifier": "error",
+  }
+}`
+	_, err = CreateFile([]byte(data))
+	c.Assert(err, check.NotNil)
+}

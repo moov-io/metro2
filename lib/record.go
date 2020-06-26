@@ -34,28 +34,38 @@ const (
 	PackedBaseSegmentName = "basePacked"
 	// PackedTrailerRecordName indicates length of name trailer record
 	PackedTrailerRecordName = "trailerPacked"
-	// TrailerIdentifier indicates record identifier of N1 segment
+	// TrailerIdentifier indicates record identifier of trailer record
 	TrailerIdentifier = "TRAILER"
+	// HeaderIdentifier indicates record identifier of header record
+	HeaderIdentifier = "HEADER"
 )
 
 // NewHeaderRecord returns a new header record
 func NewHeaderRecord() Record {
-	return &HeaderRecord{}
+	return &HeaderRecord{
+		RecordIdentifier: HeaderIdentifier,
+	}
 }
 
 // NewPackedHeaderRecord returns a new packed header record
 func NewPackedHeaderRecord() Record {
-	return &PackedHeaderRecord{}
+	return &PackedHeaderRecord{
+		RecordIdentifier: HeaderIdentifier,
+	}
 }
 
 // NewTrailerRecord returns a new trailer record
 func NewTrailerRecord() Record {
-	return &TrailerRecord{}
+	return &TrailerRecord{
+		RecordIdentifier: TrailerIdentifier,
+	}
 }
 
 // NewPackedTrailerRecord returns a new packed trailer record
 func NewPackedTrailerRecord() Record {
-	return &PackedTrailerRecord{}
+	return &PackedTrailerRecord{
+		RecordIdentifier: TrailerIdentifier,
+	}
 }
 
 // NewBaseSegment returns a new base segment

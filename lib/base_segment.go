@@ -559,7 +559,7 @@ func (r *BaseSegment) Parse(record string) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !r.isFixedLength(record) {
+					if !utils.IsVariableLength(record) {
 						continue
 					}
 					offset += 4
@@ -992,7 +992,7 @@ func (r *PackedBaseSegment) Parse(record string) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !r.isFixedLength(record) {
+					if !utils.IsVariableLength(record) {
 						return 0, utils.NewErrBlockDescriptorWord()
 					}
 					offset += 4
