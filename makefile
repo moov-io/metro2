@@ -38,13 +38,6 @@ else
 	@rm -rf ./bin/ openapi-generator-cli-*.jar metro2.db ./storage/ lint-project.sh
 endif
 
-dist: clean build
-ifeq ($(OS),Windows_NT)
-	CGO_ENABLED=1 GOOS=windows go build -o bin/metro2.exe github.com/moov-io/metro2/cmd/server
-else
-	CGO_ENABLED=1 GOOS=$(PLATFORM) go build -o bin/metro2-$(PLATFORM)-amd64 github.com/moov-io/metro2/cmd/server
-endif
-
 release: docker AUTHORS
 	go vet ./...
 	go test -coverprofile=cover-$(VERSION).out ./...
