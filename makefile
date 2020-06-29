@@ -6,7 +6,7 @@ VERSION := $(shell grep -Eo '(v[0-9]+[\.][0-9]+[\.][0-9]+(-[a-zA-Z0-9]*)?)' vers
 build:
 	go fmt ./...
 	@mkdir -p ./bin/
-#	CGO_ENABLED=1 go build -o ./bin/metro2 github.com/moov-io/metro2/cmd/server/
+	CGO_ENABLED=1 go build -o ./bin/metro2 github.com/moov-io/metro2/cmd/metro2
 
 .PHONY: check
 check:
@@ -16,6 +16,13 @@ else
 	@wget -O lint-project.sh https://raw.githubusercontent.com/moov-io/infra/master/go/lint-project.sh
 	@chmod +x ./lint-project.sh
 	time ./lint-project.sh
+endif
+
+dist: clean build
+ifeq ($(OS),Windows_NT)
+	CGO_ENABLED=1 GOOS=windows go build -o bin/metro2.exe github.com/moov-io/metro2/cmd/metro2
+else
+	CGO_ENABLED=0 GOOS=$(PLATFORM) go build -o bin/metro2-$(PLATFORM)-amd64 github.com/moov-io/metro2/cmd/metro2
 endif
 
 docker:
