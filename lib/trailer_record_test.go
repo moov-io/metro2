@@ -16,6 +16,11 @@ func (t *SegmentTest) TestTrailerRecord(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.sampleTrailerRecord)
 	c.Assert(segment.Name(), check.Equals, TrailerRecordName)
+	c.Assert(segment.Length(), check.Equals, UnpackedRecordLength)
+	c.Assert(segment.BlockSize(), check.Equals, 0)
+	c.Assert(segment.GetSegments(K1SegmentName), check.IsNil)
+	_sub := NewJ1Segment()
+	c.Assert(segment.AddApplicableSegment(_sub), check.NotNil)
 }
 
 func (t *SegmentTest) TestTrailerRecordWithInvalidData(c *check.C) {
@@ -32,6 +37,11 @@ func (t *SegmentTest) TestPackedTrailerRecord(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.samplePackedTrailerRecord)
 	c.Assert(segment.Name(), check.Equals, PackedTrailerRecordName)
+	c.Assert(segment.Length(), check.Equals, PackedRecordLength)
+	c.Assert(segment.BlockSize(), check.Equals, PackedRecordLength+4)
+	c.Assert(segment.GetSegments(K1SegmentName), check.IsNil)
+	_sub := NewJ1Segment()
+	c.Assert(segment.AddApplicableSegment(_sub), check.NotNil)
 }
 
 func (t *SegmentTest) TestPackedTrailerRecordWithInvalidData(c *check.C) {

@@ -7,7 +7,6 @@ package lib
 import (
 	"reflect"
 	"strings"
-	"time"
 	"unicode"
 	"unicode/utf8"
 
@@ -210,7 +209,7 @@ func (r *TrailerRecord) Parse(record string) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !r.isFixedLength(record) {
+					if !utils.IsVariableLength(record) {
 						continue
 					}
 					offset += 4
@@ -218,8 +217,6 @@ func (r *TrailerRecord) Parse(record string) (int, error) {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-			case time.Time:
-				field.Set(value)
 			}
 		}
 	}
@@ -270,20 +267,6 @@ func (r *TrailerRecord) Validate() error {
 				if fieldValue.IsZero() {
 					return utils.ErrFieldRequired
 				}
-			}
-		}
-
-		funcName := r.validateFuncName(fieldName)
-		method := reflect.ValueOf(r).MethodByName(funcName)
-		if method.IsValid() {
-			response := method.Call(nil)
-			if len(response) == 0 {
-				continue
-			}
-
-			err := method.Call(nil)[0]
-			if !err.IsNil() {
-				return err.Interface().(error)
 			}
 		}
 	}
@@ -355,7 +338,7 @@ func (r *PackedTrailerRecord) Parse(record string) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !r.isFixedLength(record) {
+					if !utils.IsVariableLength(record) {
 						return 0, utils.NewErrBlockDescriptorWord()
 					}
 					offset += 4
@@ -363,8 +346,6 @@ func (r *PackedTrailerRecord) Parse(record string) (int, error) {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-			case time.Time:
-				field.Set(value)
 			}
 		}
 	}
@@ -415,20 +396,6 @@ func (r *PackedTrailerRecord) Validate() error {
 				if fieldValue.IsZero() {
 					return utils.ErrFieldRequired
 				}
-			}
-		}
-
-		funcName := r.validateFuncName(fieldName)
-		method := reflect.ValueOf(r).MethodByName(funcName)
-		if method.IsValid() {
-			response := method.Call(nil)
-			if len(response) == 0 {
-				continue
-			}
-
-			err := method.Call(nil)[0]
-			if !err.IsNil() {
-				return err.Interface().(error)
 			}
 		}
 	}

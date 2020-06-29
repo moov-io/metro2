@@ -40,7 +40,6 @@ func (t *FileTest) TestJsonWithUnpackedFixedLength(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = json.Unmarshal([]byte(t.unpackedFixedLengthJson), f)
 	c.Assert(err, check.IsNil)
-	c.Assert(f.String(), check.Equals, t.unpackedFixedLengthFile)
 	buf, err := json.Marshal(f)
 	c.Assert(err, check.IsNil)
 	var out bytes.Buffer
@@ -55,6 +54,8 @@ func (t *FileTest) TestParseWithUnpackedFixedLength(c *check.C) {
 	f, err := NewFile(CharacterFileFormat)
 	c.Assert(err, check.IsNil)
 	err = f.Parse(t.unpackedFixedLengthFile)
+	c.Assert(err, check.IsNil)
+	_, err = f.GeneratorTrailer()
 	c.Assert(err, check.IsNil)
 }
 
@@ -154,4 +155,36 @@ func (t *FileTest) TestFileValidate(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = f.Validate()
 	c.Assert(err, check.IsNil)
+}
+
+func (t *FileTest) TestGetRecord(c *check.C) {
+	f, err := NewFile(PackedFileFormat)
+	c.Assert(err, check.IsNil)
+	err = json.Unmarshal([]byte(t.packedJson), f)
+	c.Assert(err, check.IsNil)
+	_, err = f.GetRecord(lib.TrailerRecordName)
+	c.Assert(err, check.IsNil)
+	_, err = f.GetRecord(lib.BaseSegmentName)
+	c.Assert(err, check.NotNil)
+}
+
+func (t *FileTest) TestCreateFile(c *check.C) {
+	_, err := CreateFile([]byte(t.packedJson))
+	c.Assert(err, check.IsNil)
+	f, err := CreateFile([]byte(t.packedFile))
+	c.Assert(err, check.IsNil)
+	c.Assert(f.String(), check.Equals, t.packedFile)
+}
+
+func (t *FileTest) TestCreateFileFailed(c *check.C) {
+	_, err := CreateFile([]byte(t.packedFile[8:]))
+	c.Assert(err, check.NotNil)
+	data := `{
+  "header": {
+    "recordDescriptorWord": 480,
+    "recordIdentifier": "error",
+  }
+}`
+	_, err = CreateFile([]byte(data))
+	c.Assert(err, check.NotNil)
 }

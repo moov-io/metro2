@@ -16,6 +16,11 @@ func (t *SegmentTest) TestHeaderRecord(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.sampleHeaderRecord)
 	c.Assert(segment.Name(), check.Equals, HeaderRecordName)
+	c.Assert(segment.Length(), check.Equals, UnpackedRecordLength)
+	c.Assert(segment.BlockSize(), check.Equals, UnpackedRecordLength+4)
+	c.Assert(segment.GetSegments(K1SegmentName), check.IsNil)
+	_sub := NewJ1Segment()
+	c.Assert(segment.AddApplicableSegment(_sub), check.NotNil)
 }
 
 func (t *SegmentTest) TestHeaderRecordWithInvalidData(c *check.C) {
@@ -32,6 +37,11 @@ func (t *SegmentTest) TestPackedHeaderRecord(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.samplePackedHeaderRecord)
 	c.Assert(segment.Name(), check.Equals, PackedHeaderRecordName)
+	c.Assert(segment.Length(), check.Equals, PackedRecordLength)
+	c.Assert(segment.BlockSize(), check.Equals, PackedRecordLength+4)
+	c.Assert(segment.GetSegments(K1SegmentName), check.IsNil)
+	_sub := NewJ1Segment()
+	c.Assert(segment.AddApplicableSegment(_sub), check.NotNil)
 }
 
 func (t *SegmentTest) TestPackedHeaderRecordWithInvalidData(c *check.C) {

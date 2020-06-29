@@ -15,4 +15,8 @@ const (
 	TrailerRecordName = "trailer"
 	// Name of data record
 	DataRecordName = "data"
+	// data with json format
+	JsonData = "json"
+	// data with metro format (raw data)
+	MetroData = "metro"
 )

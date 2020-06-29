@@ -141,7 +141,7 @@ func (r *HeaderRecord) Parse(record string) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !r.isFixedLength(record) {
+					if !utils.IsVariableLength(record) {
 						continue
 					}
 					offset += 4
@@ -201,20 +201,6 @@ func (r *HeaderRecord) Validate() error {
 				if fieldValue.IsZero() {
 					return utils.ErrFieldRequired
 				}
-			}
-		}
-
-		funcName := r.validateFuncName(fieldName)
-		method := reflect.ValueOf(r).MethodByName(funcName)
-		if method.IsValid() {
-			response := method.Call(nil)
-			if len(response) == 0 {
-				continue
-			}
-
-			err := method.Call(nil)[0]
-			if !err.IsNil() {
-				return err.Interface().(error)
 			}
 		}
 	}
@@ -283,7 +269,7 @@ func (r *PackedHeaderRecord) Parse(record string) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !r.isFixedLength(record) {
+					if !utils.IsVariableLength(record) {
 						return 0, utils.NewErrBlockDescriptorWord()
 					}
 					offset += 4
@@ -343,20 +329,6 @@ func (r *PackedHeaderRecord) Validate() error {
 				if fieldValue.IsZero() {
 					return utils.ErrFieldRequired
 				}
-			}
-		}
-
-		funcName := r.validateFuncName(fieldName)
-		method := reflect.ValueOf(r).MethodByName(funcName)
-		if method.IsValid() {
-			response := method.Call(nil)
-			if len(response) == 0 {
-				continue
-			}
-
-			err := method.Call(nil)[0]
-			if !err.IsNil() {
-				return err.Interface().(error)
 			}
 		}
 	}
