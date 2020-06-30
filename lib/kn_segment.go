@@ -105,8 +105,6 @@ func (s *K1Segment) Parse(record string) (int, error) {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-			case time.Time:
-				field.Set(value)
 			}
 		}
 	}
@@ -251,8 +249,6 @@ func (s *K2Segment) Parse(record string) (int, error) {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-			case time.Time:
-				field.Set(value)
 			}
 		}
 	}
@@ -409,8 +405,6 @@ func (s *K3Segment) Parse(record string) (int, error) {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-			case time.Time:
-				field.Set(value)
 			}
 		}
 	}

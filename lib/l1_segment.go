@@ -7,7 +7,6 @@ package lib
 import (
 	"reflect"
 	"strings"
-	"time"
 	"unicode"
 	"unicode/utf8"
 
@@ -86,8 +85,6 @@ func (s *L1Segment) Parse(record string) (int, error) {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-			case time.Time:
-				field.Set(value)
 			}
 		}
 	}

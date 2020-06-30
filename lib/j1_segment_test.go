@@ -16,6 +16,7 @@ func (t *SegmentTest) TestJ1Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.sampleJ1Segment)
 	c.Assert(segment.Name(), check.Equals, J1SegmentName)
+	c.Assert(segment.Length(), check.Equals, J1SegmentLength)
 }
 
 func (t *SegmentTest) TestJ1SegmentWithInvalidData(c *check.C) {
@@ -41,4 +42,9 @@ func (t *SegmentTest) TestJ1SegmentWithInvalidTelephoneNumber(c *check.C) {
 	segment.TelephoneNumber = 0
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
+}
+
+func (t *SegmentTest) TestJ1SegmentWithInvalidData2(c *check.C) {
+	_, err := NewJ1Segment().Parse(t.sampleJ1Segment[:16])
+	c.Assert(err, check.Not(check.IsNil))
 }
