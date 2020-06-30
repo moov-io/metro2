@@ -54,6 +54,11 @@ const (
 	headerIdentifier   = "HEADER"
 )
 
+const (
+	OutputJsonFormat  = "json"
+	OutputMetroFormat = "metro"
+)
+
 // Metro file check
 func IsMetroFile(s string) bool {
 	if len(s) < packedRecordLength {

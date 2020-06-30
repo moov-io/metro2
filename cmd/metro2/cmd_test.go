@@ -2,10 +2,12 @@ package main
 
 import (
 	"bytes"
-	"github.com/spf13/cobra"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/moov-io/metro2/utils"
+	"github.com/spf13/cobra"
 )
 
 var testJsonFilePath = ""
@@ -32,38 +34,66 @@ func executeCommand(root *cobra.Command, args ...string) (output string, err err
 	return output, err
 }
 
+func TestConvertWithoutInput(t *testing.T) {
+	_, err := executeCommand(rootCmd, "convert", "output", "--format", utils.OutputJsonFormat)
+	if err == nil {
+		t.Errorf("invalid input file")
+	}
+}
+
+func TestConvertWithInvalidParam(t *testing.T) {
+	_, err := executeCommand(rootCmd, "convert", "--input", testJsonFilePath, "--format", utils.OutputJsonFormat)
+	if err == nil {
+		t.Errorf("requires output argument")
+	}
+}
+
 func TestConvertJson(t *testing.T) {
-	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", outputJsonFormat)
+	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", utils.OutputJsonFormat)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
 }
 
 func TestConvertMetro(t *testing.T) {
-	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", outputMetroFormat)
+	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", utils.OutputMetroFormat)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
 }
 
+func TestConvertUnknown(t *testing.T) {
+	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", "unknown")
+	if err == nil {
+		t.Errorf("don't support the format")
+	}
+}
+
 func TestConvertMetroWithGenerate(t *testing.T) {
-	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", outputMetroFormat, "--generate=true")
+	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", utils.OutputMetroFormat, "--generate=true")
 	if err != nil {
 		t.Errorf(err.Error())
 	}
 }
 
 func TestPrintMetro(t *testing.T) {
-	_, err := executeCommand(rootCmd, "print", "--input", testJsonFilePath, "--format", outputMetroFormat)
+	_, err := executeCommand(rootCmd, "print", "--input", testJsonFilePath, "--format", utils.OutputMetroFormat)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
 }
 
 func TestPrintJson(t *testing.T) {
-	_, err := executeCommand(rootCmd, "print", "--input", testJsonFilePath, "--format", outputJsonFormat)
+	_, err := executeCommand(rootCmd, "print", "--input", testJsonFilePath, "--format", utils.OutputJsonFormat)
 	if err != nil {
 		t.Errorf(err.Error())
+	}
+}
+
+func TestPrintUnknown(t *testing.T) {
+	_, err := executeCommand(rootCmd, "print", "--input", testJsonFilePath, "--format", "unknown")
+	if err == nil {
+		t.Errorf("don't support the format")
 	}
 }
 
@@ -78,5 +108,12 @@ func TestUnknown(t *testing.T) {
 	_, err := executeCommand(rootCmd, "unknown")
 	if err == nil {
 		t.Errorf("don't support unknown")
+	}
+}
+
+func TestWeb(t *testing.T) {
+	_, err := executeCommand(rootCmd, "web", "--test=true")
+	if err != nil {
+		t.Errorf(err.Error())
 	}
 }

@@ -16,6 +16,7 @@ func (t *SegmentTest) TestK1Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.sampleK1Segment)
 	c.Assert(segment.Name(), check.Equals, K1SegmentName)
+	c.Assert(segment.Length(), check.Equals, K1SegmentLength)
 }
 
 func (t *SegmentTest) TestK1SegmentWithInvalidData(c *check.C) {
@@ -42,6 +43,7 @@ func (t *SegmentTest) TestK2Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.sampleK2Segment)
 	c.Assert(segment.Name(), check.Equals, K2SegmentName)
+	c.Assert(segment.Length(), check.Equals, K2SegmentLength)
 }
 
 func (t *SegmentTest) TestK2SegmentWithInvalidData(c *check.C) {
@@ -79,6 +81,7 @@ func (t *SegmentTest) TestK3Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.sampleK3Segment)
 	c.Assert(segment.Name(), check.Equals, K3SegmentName)
+	c.Assert(segment.Length(), check.Equals, K3SegmentLength)
 }
 
 func (t *SegmentTest) TestK3SegmentWithInvalidData(c *check.C) {
@@ -116,6 +119,7 @@ func (t *SegmentTest) TestK4Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.sampleK4Segment)
 	c.Assert(segment.Name(), check.Equals, K4SegmentName)
+	c.Assert(segment.Length(), check.Equals, K4SegmentLength)
 }
 
 func (t *SegmentTest) TestK4SegmentWithInvalidData(c *check.C) {
@@ -132,4 +136,15 @@ func (t *SegmentTest) TestK4SegmentWithInvalidSpecializedPaymentIndicator(c *che
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
 	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of specialized payment indicator")
+}
+
+func (t *SegmentTest) TestNSegmentWithInvalidData(c *check.C) {
+	_, err := NewK1Segment().Parse(t.sampleK1Segment[:16])
+	c.Assert(err, check.Not(check.IsNil))
+	_, err = NewK2Segment().Parse(t.sampleK2Segment[:16])
+	c.Assert(err, check.Not(check.IsNil))
+	_, err = NewK3Segment().Parse(t.sampleK3Segment[:16])
+	c.Assert(err, check.Not(check.IsNil))
+	_, err = NewK4Segment().Parse(t.sampleK4Segment[:16])
+	c.Assert(err, check.Not(check.IsNil))
 }

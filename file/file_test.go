@@ -57,6 +57,85 @@ func (t *FileTest) TestParseWithUnpackedFixedLength(c *check.C) {
 	c.Assert(err, check.IsNil)
 	_, err = f.GeneratorTrailer()
 	c.Assert(err, check.IsNil)
+	trailer := f.GetDataRecords()[0]
+	a := trailer.(*lib.BaseSegment)
+	a.AccountStatus = lib.AccountStatusDF
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatusDA
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus05
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus11
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus13
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus61
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus63
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus64
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus65
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+}
+
+func (t *FileTest) TestParseWithUnpackedFixedLength2(c *check.C) {
+	f, err := NewFile(CharacterFileFormat)
+	c.Assert(err, check.IsNil)
+	err = f.Parse(t.unpackedFixedLengthFile)
+	c.Assert(err, check.IsNil)
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	trailer := f.GetDataRecords()[0]
+	a := trailer.(*lib.BaseSegment)
+	a.AccountStatus = lib.AccountStatus71
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus78
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus80
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus82
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus83
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus84
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus88
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus89
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus93
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus94
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus95
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus96
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
+	a.AccountStatus = lib.AccountStatus97
+	_, err = f.GeneratorTrailer()
+	c.Assert(err, check.IsNil)
 }
 
 func (t *FileTest) TestJsonWithPackedBlocked(c *check.C) {

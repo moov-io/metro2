@@ -3,7 +3,6 @@ package lib
 import (
 	"reflect"
 	"strings"
-	"time"
 	"unicode"
 	"unicode/utf8"
 
@@ -85,12 +84,8 @@ func (s *N1Segment) Parse(record string) (int, error) {
 		// set value
 		if value.IsValid() && field.CanSet() {
 			switch value.Interface().(type) {
-			case int, int64:
-				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-			case time.Time:
-				field.Set(value)
 			}
 		}
 	}
@@ -131,20 +126,6 @@ func (s *N1Segment) Validate() error {
 				if fieldValue.IsZero() {
 					return utils.ErrFieldRequired
 				}
-			}
-		}
-
-		funcName := s.validateFuncName(fieldName)
-		method := reflect.ValueOf(s).MethodByName(funcName)
-		if method.IsValid() {
-			response := method.Call(nil)
-			if len(response) == 0 {
-				continue
-			}
-
-			err := method.Call(nil)[0]
-			if !err.IsNil() {
-				return err.Interface().(error)
 			}
 		}
 	}

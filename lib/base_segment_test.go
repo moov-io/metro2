@@ -19,6 +19,8 @@ func (t *SegmentTest) TestBaseSegment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.sampleBaseSegment)
 	c.Assert(segment.Name(), check.Equals, BaseSegmentName)
+	c.Assert(segment.Length(), check.Equals, 1264)
+	c.Assert(segment.BlockSize(), check.Equals, 1268)
 }
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidData(c *check.C) {
@@ -94,6 +96,8 @@ func (t *SegmentTest) TestPackedBaseSegment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.samplePackedBaseSegment)
 	c.Assert(segment.Name(), check.Equals, PackedBaseSegmentName)
+	c.Assert(segment.Length(), check.Equals, 1106)
+	c.Assert(segment.BlockSize(), check.Equals, 1110)
 }
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidData(c *check.C) {
@@ -179,8 +183,28 @@ func (t *SegmentTest) TestBaseRecordApplicableSegment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = f.AddApplicableSegment(newSegment)
 	c.Assert(err, check.IsNil)
+	err = f.AddApplicableSegment(NewK1Segment())
+	c.Assert(err, check.NotNil)
+	err = f.AddApplicableSegment(NewK2Segment())
+	c.Assert(err, check.NotNil)
+	err = f.AddApplicableSegment(NewK4Segment())
+	c.Assert(err, check.NotNil)
 	list := f.GetSegments(J1SegmentName)
 	c.Assert(len(list), check.Equals, 1)
+	list = f.GetSegments(J2SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = f.GetSegments(K1SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = f.GetSegments(K2SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = f.GetSegments(K3SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = f.GetSegments(K4SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = f.GetSegments(L1SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = f.GetSegments(N1SegmentName)
+	c.Assert(len(list), check.Equals, 0)
 }
 
 func (t *SegmentTest) TestBaseRecordApplicableSingleSegment(c *check.C) {
@@ -232,6 +256,20 @@ func (t *SegmentTest) TestPackedBaseRecordApplicableSegment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	list := f.GetSegments(J1SegmentName)
 	c.Assert(len(list), check.Equals, 1)
+	list = f.GetSegments(J2SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = f.GetSegments(K1SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = f.GetSegments(K2SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = f.GetSegments(K3SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = f.GetSegments(K4SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = f.GetSegments(L1SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = f.GetSegments(N1SegmentName)
+	c.Assert(len(list), check.Equals, 0)
 }
 
 func (t *SegmentTest) TestPackedBaseRecordApplicableSingleSegment(c *check.C) {

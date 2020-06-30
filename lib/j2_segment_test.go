@@ -16,6 +16,7 @@ func (t *SegmentTest) TestJ2Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.sampleJ2Segment)
 	c.Assert(segment.Name(), check.Equals, J2SegmentName)
+	c.Assert(segment.Length(), check.Equals, J2SegmentLength)
 }
 
 func (t *SegmentTest) TestJ2SegmentWithInvalidData(c *check.C) {
@@ -61,4 +62,9 @@ func (t *SegmentTest) TestJ2SegmentWithInvalidResidenceCode(c *check.C) {
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
 	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of residence code")
+}
+
+func (t *SegmentTest) TestJ2SegmentWithInvalidData2(c *check.C) {
+	_, err := NewJ2Segment().Parse(t.sampleJ2Segment[:16])
+	c.Assert(err, check.Not(check.IsNil))
 }

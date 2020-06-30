@@ -16,6 +16,7 @@ func (t *SegmentTest) TestL1Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(segment.String(), check.Equals, t.sampleL1Segment)
 	c.Assert(segment.Name(), check.Equals, L1SegmentName)
+	c.Assert(segment.Length(), check.Equals, L1SegmentLength)
 }
 
 func (t *SegmentTest) TestL1SegmentWithInvalidData(c *check.C) {
@@ -54,4 +55,9 @@ func (t *SegmentTest) TestL1SegmentWithInvalidChangeIndicator(c *check.C) {
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
 	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of change indicator")
+}
+
+func (t *SegmentTest) TestL1SegmentWithInvalidData2(c *check.C) {
+	_, err := NewL1Segment().Parse(t.sampleL1Segment[:16])
+	c.Assert(err, check.Not(check.IsNil))
 }

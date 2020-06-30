@@ -5,21 +5,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/moov-io/metro2/file"
+	"github.com/moov-io/metro2/server"
 	"github.com/moov-io/metro2/utils"
 	"github.com/spf13/cobra"
-	"log"
-	"os"
 )
 
 var (
 	inputFile = ""
 	rawData   = ""
-)
-
-const (
-	outputJsonFormat  = "json"
-	outputMetroFormat = "metro"
 )
 
 var WebCmd = &cobra.Command{
@@ -32,8 +30,15 @@ var WebCmd = &cobra.Command{
 			return err
 		}
 		fmt.Println("Starting web server on port ", port)
-		//listen := "localhost:" + port
-		//log.Println(http.ListenAndServe(listen, nil))
+		listen := "localhost:" + port
+		h, err := server.ConfigureHandlers()
+		if err != nil {
+			return err
+		}
+		test, _ := cmd.Flags().GetBool("test")
+		if !test {
+			log.Println(http.ListenAndServe(listen, h))
+		}
 		return nil
 	},
 }
@@ -60,7 +65,7 @@ var Print = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if format != outputJsonFormat && format != outputMetroFormat {
+		if format != utils.OutputJsonFormat && format != utils.OutputMetroFormat {
 			return errors.New("don't support the format")
 		}
 
@@ -70,7 +75,7 @@ var Print = &cobra.Command{
 		}
 
 		output := ""
-		if format == outputJsonFormat {
+		if format == utils.OutputJsonFormat {
 			buf, err := json.Marshal(f)
 			if err != nil {
 				return err
@@ -81,8 +86,7 @@ var Print = &cobra.Command{
 				return err
 			}
 			output = pretty.String()
-		}
-		if format == outputMetroFormat {
+		} else if format == utils.OutputMetroFormat {
 			output = f.String()
 		}
 		fmt.Println(output)
@@ -105,7 +109,7 @@ var Convert = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		if format != outputJsonFormat && format != outputMetroFormat {
+		if format != utils.OutputJsonFormat && format != utils.OutputMetroFormat {
 			return errors.New("don't support the format")
 		}
 
@@ -127,7 +131,7 @@ var Convert = &cobra.Command{
 		}
 
 		output := ""
-		if format == outputJsonFormat {
+		if format == utils.OutputJsonFormat {
 			buf, err := json.Marshal(mf)
 			if err != nil {
 				return err
@@ -138,8 +142,7 @@ var Convert = &cobra.Command{
 				return err
 			}
 			output = pretty.String()
-		}
-		if format == outputMetroFormat {
+		} else if format == utils.OutputMetroFormat {
 			output = mf.String()
 		}
 		f, err := os.Create(args[0])
@@ -157,23 +160,7 @@ var rootCmd = &cobra.Command{
 	Short: "",
 	Long:  "",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		if inputFile == "" {
-			path, err := os.Getwd()
-			if err != nil {
-				log.Println(err)
-			}
-			inputFile = path + "/" + "metro.json"
-		}
-		_, err := os.Stat(inputFile)
-		if os.IsNotExist(err) {
-			return errors.New("invalid input file")
-		}
-		f, err := os.Open(inputFile)
-		if err != nil {
-			return err
-		}
-		rawData = utils.ReadFile(f)
-
+		isWeb := false
 		cmdNames := make([]string, 0)
 		getName := func(c *cobra.Command) {}
 		getName = func(c *cobra.Command) {
@@ -181,15 +168,39 @@ var rootCmd = &cobra.Command{
 				return
 			}
 			cmdNames = append([]string{c.Name()}, cmdNames...)
+			if c.Name() == "web" {
+				isWeb = true
+			}
 			getName(c.Parent())
 		}
 		getName(cmd)
+
+		if !isWeb {
+			if inputFile == "" {
+				path, err := os.Getwd()
+				if err != nil {
+					log.Println(err)
+				}
+				inputFile = path + "/" + "metro.json"
+			}
+			_, err := os.Stat(inputFile)
+			if os.IsNotExist(err) {
+				return errors.New("invalid input file")
+			}
+			f, err := os.Open(inputFile)
+			if err != nil {
+				return err
+			}
+			rawData = utils.ReadFile(f)
+		}
+
 		return nil
 	},
 }
 
 func initRootCmd() {
 	WebCmd.Flags().String("port", "8080", "port of the web server")
+	WebCmd.Flags().BoolP("test", "t", false, "test server")
 	Convert.Flags().String("format", "json", "format of metro file(required)")
 	Convert.Flags().BoolP("generate", "g", false, "generate trailer record")
 	Convert.MarkFlagRequired("format")
