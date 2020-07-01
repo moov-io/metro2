@@ -173,7 +173,7 @@ func (t *ServerTest) TestPrintWithInvalidData(c *check.C) {
 	recorder, request := t.makeRequest(http.MethodPost, "/print", body.String(), c)
 	request.Header.Set("Content-Type", writer.FormDataContentType())
 	t.testServer.ServeHTTP(recorder, request)
-	c.Assert(recorder.Code, check.Equals, http.StatusNotImplemented)
+	c.Assert(recorder.Code, check.Equals, http.StatusBadRequest)
 }
 
 func (t *ServerTest) TestConvertWithInvalidData(c *check.C) {
@@ -185,7 +185,7 @@ func (t *ServerTest) TestConvertWithInvalidData(c *check.C) {
 	recorder, request := t.makeRequest(http.MethodPost, "/convert", body.String(), c)
 	request.Header.Set("Content-Type", writer.FormDataContentType())
 	t.testServer.ServeHTTP(recorder, request)
-	c.Assert(recorder.Code, check.Equals, http.StatusNotImplemented)
+	c.Assert(recorder.Code, check.Equals, http.StatusBadRequest)
 }
 
 func (t *ServerTest) TestValidateWithInvalidData(c *check.C) {
@@ -197,5 +197,5 @@ func (t *ServerTest) TestValidateWithInvalidData(c *check.C) {
 	recorder, request := t.makeRequest(http.MethodPost, "/validator", body.String(), c)
 	request.Header.Set("Content-Type", writer.FormDataContentType())
 	t.testServer.ServeHTTP(recorder, request)
-	c.Assert(recorder.Code, check.Equals, http.StatusNotImplemented)
+	c.Assert(recorder.Code, check.Equals, http.StatusBadRequest)
 }
