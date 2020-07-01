@@ -34,10 +34,10 @@ Command is the central point of the application. Each interaction that the appli
  ------- | -------
  print | The print command allows users to print a metro file with special file format (json, metro).
  validator | The validator command allows users to validate a metro file.
- convert | The validator command convert allows users to convert from a metro file to another format file. Result will create a metro file.
- web | The web command will lunch a web server with some endpoints to management metro file.
+ convert | The convert command allows users to convert from a metro file to another format file. Result will create a metro file.
+ web | The web command will launch a web server with endpoints to management metro files.
  
-Web server have some endpoints.
+### Web server endpoints
  
  endpoint | method | request type | info
  ------- | ------- | ------- | -------
