@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/moov-io/metro2/file"
 	"github.com/moov-io/metro2/server"
@@ -179,9 +180,9 @@ var rootCmd = &cobra.Command{
 			if inputFile == "" {
 				path, err := os.Getwd()
 				if err != nil {
-					log.Println(err)
+					log.Fatal(err)
 				}
-				inputFile = path + "/" + "metro.json"
+				inputFile = filepath.Join(path, "metro.json")
 			}
 			_, err := os.Stat(inputFile)
 			if os.IsNotExist(err) {

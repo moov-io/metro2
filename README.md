@@ -26,6 +26,26 @@ $ go test ./...
 ok   	github.com/moov-io/metro2	0.710s	coverage: 98.1% of statements
 ```
 
+## Commands
+
+Command is the central point of the application. Each interaction that the application supports will be contained in a Command.
+
+ command | info
+ ------- | -------
+ print | The print command allows users to print a metro file with special file format (json, metro).
+ validator | The validator command allows users to validate a metro file.
+ convert | The validator command convert allows users to convert from a metro file to another format file. Result will create a metro file.
+ web | The web command will lunch a web server with some endpoints to management metro file.
+ 
+Web server have some endpoints.
+ 
+ endpoint | method | request type | info
+ ------- | ------- | ------- | -------
+ /print | post | multipart/form-data | print metro file.
+ /convert | post | multipart/form-data | convert metro file. will download new file.
+ /validator | post | multipart/form-data | validate metro file.
+ /health |  get | | check web server.
+
 ## Getting Help
 
  channel | info

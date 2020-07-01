@@ -1,42 +1,46 @@
 package server
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
 	"regexp"
 
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"github.com/gorilla/mux"
 	"github.com/moov-io/metro2/file"
 	"github.com/moov-io/metro2/utils"
 )
 
-func parseInput(c echo.Context) (file.File, error) {
-	f, err := c.FormFile("file")
+func parseInputFromRequest(r *http.Request) (file.File, error) {
+	src, _, err := r.FormFile("file")
 	if err != nil {
-		return nil, c.JSON(http.StatusBadRequest, err.Error())
-	}
-	src, err := f.Open()
-	if err != nil {
-		return nil, c.JSON(http.StatusBadRequest, err.Error())
+		return nil, err
 	}
 	defer src.Close()
 
 	var input bytes.Buffer
 	if _, err = io.Copy(&input, src); err != nil {
-		return nil, c.JSON(http.StatusBadRequest, err.Error())
+		return nil, err
 	}
 
 	space := regexp.MustCompile(`\s+`)
 	buf := space.ReplaceAllString(input.String(), " ")
 	mf, err := file.CreateFile([]byte(buf))
 	if err != nil {
-		return nil, c.JSON(http.StatusNotImplemented, err.Error())
+		return nil, err
 	}
 	return mf, nil
+}
+
+func outputString(w http.ResponseWriter, output string) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(output))
+}
+
+func outputJson(w http.ResponseWriter, output interface{}) {
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(output)
 }
 
 // title: validate metro file
@@ -47,18 +51,20 @@ func parseInput(c echo.Context) (file.File, error) {
 //   200: OK
 //   400: Bad Request
 //   501: Not Implemented
-func validator(c echo.Context) error {
-	mf, err := parseInput(c)
+func validator(w http.ResponseWriter, r *http.Request) {
+	mf, err := parseInputFromRequest(r)
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	err = mf.Validate()
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.Error())
+		http.Error(w, err.Error(), http.StatusNotImplemented)
+		return
 	}
 
-	return c.JSON(http.StatusOK, "valid file")
+	outputString(w, "valid file")
 }
 
 // title: print metro file
@@ -69,18 +75,21 @@ func validator(c echo.Context) error {
 //   200: OK
 //   400: Bad Request
 //   501: Not Implemented
-func print(c echo.Context) error {
-	mf, err := parseInput(c)
+func print(w http.ResponseWriter, r *http.Request) {
+	mf, err := parseInputFromRequest(r)
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	format := c.FormValue("format")
+	format := r.FormValue("format")
 	if format == utils.OutputMetroFormat {
-		return c.JSON(http.StatusOK, mf)
+		outputString(w, mf.String())
+	} else if format == utils.OutputJsonFormat || len(format) == 0 {
+		outputJson(w, mf)
+	} else {
+		http.Error(w, "invalid print format", http.StatusBadRequest)
 	}
-
-	return c.JSONPretty(http.StatusOK, mf, "  ")
 }
 
 // title: convert metro file
@@ -91,28 +100,32 @@ func print(c echo.Context) error {
 //   200: OK
 //   400: Bad Request
 //   501: Not Implemented
-func convert(c echo.Context) error {
-	mf, err := parseInput(c)
+func convert(w http.ResponseWriter, r *http.Request) {
+	mf, err := parseInputFromRequest(r)
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	generate := c.FormValue("generate")
+	generate := r.FormValue("generate")
 	if generate == "true" {
 		trailer, err := mf.GeneratorTrailer()
 		if err != nil {
-			return c.JSON(http.StatusNotImplemented, err.Error())
+			http.Error(w, err.Error(), http.StatusNotImplemented)
+			return
 		}
 		err = mf.SetRecord(trailer)
 		if err != nil {
-			return c.JSON(http.StatusNotImplemented, err.Error())
+			http.Error(w, err.Error(), http.StatusNotImplemented)
+			return
 		}
 	}
 
-	format := c.FormValue("format")
+	format := r.FormValue("format")
 	buf, err := json.Marshal(mf)
 	if err != nil {
-		return c.JSON(http.StatusNotImplemented, err.Error())
+		http.Error(w, err.Error(), http.StatusNotImplemented)
+		return
 	}
 
 	filename := "metro.json"
@@ -122,19 +135,12 @@ func convert(c echo.Context) error {
 		filename = "metro"
 	}
 
-	res := c.Response()
-	writer := bufio.NewWriter(res)
-	header := res.Header()
-	header.Set(echo.HeaderContentType, echo.MIMEOctetStream)
-	header.Set(echo.HeaderContentDisposition, "attachment; filename="+filename)
-	header.Set("Content-Transfer-Encoding", "binary")
-	header.Set("Expires", "0")
-	res.WriteHeader(http.StatusOK)
-
-	writer.WriteString(output)
-	writer.Flush()
-
-	return nil
+	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
+	w.Header().Set("Content-Transfer-Encoding", "binary")
+	w.Header().Set("Expires", "0")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(output))
 }
 
 // title: health server
@@ -142,19 +148,15 @@ func convert(c echo.Context) error {
 // method: GET
 // responses:
 //   200: OK
-func health(c echo.Context) error {
-	return c.JSON(http.StatusOK, "health")
+func health(w http.ResponseWriter, r *http.Request) {
+	outputJson(w, map[string]bool{"health": true})
 }
 
 func ConfigureHandlers() (http.Handler, error) {
-	r := echo.New()
-	r.Use(middleware.Logger())
-	r.Use(middleware.Recover())
-
-	r.POST("/validator", validator)
-	r.POST("/print", print)
-	r.POST("/convert", convert)
-	r.GET("/health", health)
-
+	r := mux.NewRouter()
+	r.HandleFunc("/health", health).Methods("GET")
+	r.HandleFunc("/print", print).Methods("POST")
+	r.HandleFunc("/validator", validator).Methods("POST")
+	r.HandleFunc("/convert", convert).Methods("POST")
 	return r, nil
 }
