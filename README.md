@@ -8,10 +8,6 @@
 
 Metro2 is an open-source consumer credit history report for credit report file creation and validation.
 
-## Project Status
-
-This project is currently under development and could introduce breaking changes to reach a stable status. We are looking for community feedback so please try out our code or give us feedback!
-
 ## Getting Started
 
 Metro2 is primarily a Go library which can read and write credit reporting specifications. We write unit tests and fuzz the code to help ensure our code is production ready for everyone. Metro2 uses [Go Modules](https://github.com/golang/go/wiki/Modules) to manage dependencies and suggests Go 1.14 or greater.
@@ -28,32 +24,31 @@ ok   	github.com/moov-io/metro2	0.710s	coverage: 98.1% of statements
 
 ## Commands
 
-Command is the central point of the application. Each interaction that the application supports will be contained in a Command.
+Each interaction that the library supports is exposed in a command-line option:
 
- command | info
+ Command | Info
  ------- | -------
- print | The print command allows users to print a metro file with special file format (json, metro).
- validator | The validator command allows users to validate a metro file.
- convert | The convert command allows users to convert from a metro file to another format file. Result will create a metro file.
- web | The web command will launch a web server with endpoints to management metro files.
- 
+`convert` | The convert command allows users to convert from a metro file to another format file. Result will create a metro file.
+`print` | The print command allows users to print a metro file with special file format (json, metro).
+`validator` | The validator command allows users to validate a metro file.
+`web` | The web command will launch a web server with endpoints to management metro files.
+
 ### Web server endpoints
- 
- endpoint | method | request type | info
+
+Method | Endpoint | Content-Type | Info
  ------- | ------- | ------- | -------
- /print | post | multipart/form-data | print metro file.
- /convert | post | multipart/form-data | convert metro file. will download new file.
- /validator | post | multipart/form-data | validate metro file.
- /health |  get | | check web server.
+ `POST` | `/convert` | multipart/form-data | convert metro file. will download new file.
+ `GET` | `/health` | text/plain | check web server.
+ `POST` | `/print` | multipart/form-data | print metro file.
+ `POST` | `/validator` | multipart/form-data | validate metro file.
 
 ## Getting Help
 
  channel | info
  ------- | -------
- [Project Documentation](https://docs.moov.io/) | Our project documentation available online.
- Google Group [moov-users](https://groups.google.com/forum/#!forum/moov-users)| The Moov users Google group is for contributors other people contributing to the Moov project. You can join them without a google account by sending an email to [moov-users+subscribe@googlegroups.com](mailto:moov-users+subscribe@googlegroups.com). After receiving the join-request message, you can simply reply to that to confirm the subscription.
+  Google Group [moov-users](https://groups.google.com/forum/#!forum/moov-users)| The Moov users Google group is for contributors other people contributing to the Moov project. You can join them without a google account by sending an email to [moov-users+subscribe@googlegroups.com](mailto:moov-users+subscribe@googlegroups.com). After receiving the join-request message, you can simply reply to that to confirm the subscription.
 Twitter [@moov_io](https://twitter.com/moov_io)	| You can follow Moov.IO's Twitter feed to get updates on our project(s). You can also tweet us questions or just share blogs or stories.
-[GitHub Issue](https://github.com/moov-io) | If you are able to reproduce a problem please open a GitHub Issue under the specific project that caused the error.
+[GitHub Issue](https://github.com/moov-io/metro2/issues) | If you are able to reproduce a problem please open a GitHub Issue under the specific project that caused the error.
 [moov-io slack](https://slack.moov.io/) | Join our slack channel (`#metro2`) to have an interactive discussion about the development of the project.
 
 ## Supported and Tested Platforms
