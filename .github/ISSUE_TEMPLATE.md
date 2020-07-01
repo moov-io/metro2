@@ -1,6 +1,6 @@
 <!-- Please fill out the following questions, thanks! -->
 
-PayGate Version: ``
+Metro2 Version: ``
 
 **What were you trying to do?**
 
