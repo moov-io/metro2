@@ -2,7 +2,6 @@ package server
 
 import (
 	"bytes"
-	"gopkg.in/check.v1"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -11,6 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"gopkg.in/check.v1"
 )
 
 func Test(t *testing.T) { check.TestingT(t) }
@@ -41,7 +42,7 @@ func (t *ServerTest) makeRequest(method, url, body string, c *check.C) (*httptes
 }
 
 func (t *ServerTest) getWriter(name string, c *check.C) (*multipart.Writer, *bytes.Buffer) {
-	path := filepath.Join("..", "testdata", name)
+	path := filepath.Join("..", "..", "testdata", name)
 	file, err := os.Open(path)
 	c.Assert(err, check.IsNil)
 	defer file.Close()
@@ -55,7 +56,7 @@ func (t *ServerTest) getWriter(name string, c *check.C) (*multipart.Writer, *byt
 }
 
 func (t *ServerTest) getErrWriter(name string, c *check.C) (*multipart.Writer, *bytes.Buffer) {
-	path := filepath.Join("..", "testdata", name)
+	path := filepath.Join("..", "..", "testdata", name)
 	file, err := os.Open(path)
 	c.Assert(err, check.IsNil)
 	defer file.Close()

@@ -8,8 +8,8 @@ import (
 	"regexp"
 
 	"github.com/gorilla/mux"
-	"github.com/moov-io/metro2/file"
-	"github.com/moov-io/metro2/utils"
+	"github.com/moov-io/metro2/pkg/file"
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 func parseInputFromRequest(r *http.Request) (file.File, error) {

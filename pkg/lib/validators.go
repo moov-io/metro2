@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/moov-io/metro2/utils"
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 type validator struct{}

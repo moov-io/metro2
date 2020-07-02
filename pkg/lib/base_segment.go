@@ -13,7 +13,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/moov-io/metro2/utils"
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 // BaseSegment holds the base segment
