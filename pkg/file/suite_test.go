@@ -29,31 +29,31 @@ type FileTest struct {
 var _ = check.Suite(&FileTest{})
 
 func (t *FileTest) SetUpSuite(c *check.C) {
-	f, err := os.Open(filepath.Join("../..", "testdata", "unpacked_fixed_file.dat"))
+	f, err := os.Open(filepath.Join("..", string(filepath.Separator), "..", "testdata", "unpacked_fixed_file.dat"))
 	c.Assert(err, check.IsNil)
 	t.unpackedFixedLengthFile = utils.ReadFile(f)
 
-	f, err = os.Open(filepath.Join("../..", "testdata", "unpacked_fixed_file.json"))
+	f, err = os.Open(filepath.Join("..", string(filepath.Separator), "..", "testdata", "unpacked_fixed_file.json"))
 	c.Assert(err, check.IsNil)
 	t.unpackedFixedLengthJson = utils.ReadFile(f)
 
-	f, err = os.Open(filepath.Join("../..", "testdata", "unpacked_variable_file.dat"))
+	f, err = os.Open(filepath.Join("..", string(filepath.Separator), "..", "testdata", "unpacked_variable_file.dat"))
 	c.Assert(err, check.IsNil)
 	t.unpackedVariableBlockedFile = utils.ReadFile(f)
 
-	f, err = os.Open(filepath.Join("../..", "testdata", "unpacked_variable_file.json"))
+	f, err = os.Open(filepath.Join("..", string(filepath.Separator), "..", "testdata", "unpacked_variable_file.json"))
 	c.Assert(err, check.IsNil)
 	t.unpackedVariableBlockedJson = utils.ReadFile(f)
 
-	f, err = os.Open(filepath.Join("../..", "testdata", "packed_file.dat"))
+	f, err = os.Open(filepath.Join("..", string(filepath.Separator), "..", "testdata", "packed_file.dat"))
 	c.Assert(err, check.IsNil)
 	t.packedFile = utils.ReadFile(f)
 
-	f, err = os.Open(filepath.Join("../..", "testdata", "packed_file.json"))
+	f, err = os.Open(filepath.Join("..", string(filepath.Separator), "..", "testdata", "packed_file.json"))
 	c.Assert(err, check.IsNil)
 	t.packedJson = utils.ReadFile(f)
 
-	f, err = os.Open(filepath.Join("../..", "testdata", "base_segment.json"))
+	f, err = os.Open(filepath.Join("..", string(filepath.Separator), "..", "testdata", "base_segment.json"))
 	c.Assert(err, check.IsNil)
 	t.baseSegmentJson = utils.ReadFile(f)
 }
