@@ -5,8 +5,17 @@
 package lib
 
 import (
+	"testing"
+
 	"gopkg.in/check.v1"
 )
+
+func TestHeaderRecordErr(t *testing.T) {
+	record := &HeaderRecord{}
+	if _, err := record.Parse("12345"); err == nil {
+		t.Error("expected error")
+	}
+}
 
 func (t *SegmentTest) TestHeaderRecord(c *check.C) {
 	segment := NewHeaderRecord()

@@ -6,10 +6,19 @@ package lib
 
 import (
 	"encoding/json"
+	"testing"
+
 	"gopkg.in/check.v1"
 
 	"github.com/moov-io/metro2/utils"
 )
+
+func TestBaseSegmentErr(t *testing.T) {
+	record := &BaseSegment{}
+	if _, err := record.Parse("12345"); err == nil {
+		t.Error("expected error")
+	}
+}
 
 func (t *SegmentTest) TestBaseSegment(c *check.C) {
 	segment := NewBaseSegment()

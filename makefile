@@ -38,6 +38,12 @@ else
 	@rm -rf ./bin/ openapi-generator-cli-*.jar metro2.db ./storage/ lint-project.sh
 endif
 
+.PHONY: cover-test cover-web
+cover-test:
+	go test -coverprofile=cover.out ./...
+cover-web:
+	go tool cover -html=cover.out
+
 release: docker AUTHORS
 	go vet ./...
 	go test -coverprofile=cover-$(VERSION).out ./...

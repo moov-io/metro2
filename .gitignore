@@ -49,6 +49,8 @@ staticcheck*
 bin/
 tmp/
 
+/cmd/metro2/output
+
 # fuzzing
 test/fuzz-reader/crashes
 test/fuzz-reader/suppressions

@@ -5,8 +5,17 @@
 package lib
 
 import (
+	"testing"
+
 	"gopkg.in/check.v1"
 )
+
+func TestTrailerRecordErr(t *testing.T) {
+	record := &TrailerRecord{}
+	if _, err := record.Parse("12345"); err == nil {
+		t.Error("expected error")
+	}
+}
 
 func (t *SegmentTest) TestTrailerRecord(c *check.C) {
 	segment := NewTrailerRecord()
