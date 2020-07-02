@@ -11,7 +11,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/moov-io/metro2/utils"
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 // J2Segment holds the j2 segment

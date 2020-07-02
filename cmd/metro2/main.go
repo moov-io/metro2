@@ -10,9 +10,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/moov-io/metro2/file"
-	"github.com/moov-io/metro2/server"
-	"github.com/moov-io/metro2/utils"
+	"github.com/moov-io/metro2/pkg/file"
+	"github.com/moov-io/metro2/pkg/server"
+	"github.com/moov-io/metro2/pkg/utils"
 	"github.com/spf13/cobra"
 )
 

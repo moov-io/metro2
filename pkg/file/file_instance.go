@@ -10,8 +10,8 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/moov-io/metro2/lib"
-	"github.com/moov-io/metro2/utils"
+	"github.com/moov-io/metro2/pkg/lib"
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 // File contains the structures of a parsed metro 2 file.

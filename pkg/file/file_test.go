@@ -7,9 +7,10 @@ package file
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/moov-io/metro2/lib"
-	"gopkg.in/check.v1"
 	"strings"
+
+	"github.com/moov-io/metro2/pkg/lib"
+	"gopkg.in/check.v1"
 )
 
 func (t *FileTest) TestJsonWithUnpackedVariableBlocked(c *check.C) {

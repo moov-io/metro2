@@ -11,7 +11,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/moov-io/metro2/utils"
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 // K1Segment holds the k1 segment
