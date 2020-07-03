@@ -27,7 +27,7 @@ type TrailerRecord struct {
 	// The Trailer Record should be padded with blanks to fill the needed number of positions.
 	RecordDescriptorWord int `json:"recordDescriptorWord" validate:"required"`
 
-	// Contains a constant of HEADER, which is used to identify this record.
+	// Contains a constant of TRAILER, which is used to identify this record.
 	RecordIdentifier string `json:"recordIdentifier" validate:"required"`
 
 	// Contains the total number of Base Segments being reported.

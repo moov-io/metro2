@@ -17,7 +17,7 @@ import (
 // J2Segment holds the j2 segment
 type J2Segment struct {
 	// Contains a constant of J2.
-	SegmentIdentifier string `json:"segmentIdentifier"  validate:"required"`
+	SegmentIdentifier string `json:"segmentIdentifier" validate:"required"`
 
 	// Report the last name of the associated consumer. Titles and prefixes should not be reported.
 	// If the surname contains multiple names, such as Paternal Name-Maternal Name, hyphenate the surnames.
@@ -36,7 +36,7 @@ type J2Segment struct {
 	//  Security Number, and Date of Birth within the J2
 	//  Segment fields. Do not report the name of the
 	//  trust.
-	Surname string `json:"surname"  validate:"required"`
+	Surname string `json:"surname" validate:"required"`
 
 	// Report the full first name of the associated consumer. Names should not be abbreviated.
 	// Examples: Report first name “JUNIOR” (not “JR”); report “ROBERT” (not “ROBT”).
@@ -46,7 +46,7 @@ type J2Segment struct {
 	//  should be reported in the First Name field
 	//  (e.g., A) and the middle initial should be reported
 	//  in the Middle Name field (e.g., J).
-	FirstName string `json:"firstName"  validate:"required"`
+	FirstName string `json:"firstName" validate:"required"`
 
 	// Report the middle name or middle initial of the associated consumer, if available.
 	// If reporting multiple middle names, hyphenate the middle names.
@@ -70,7 +70,7 @@ type J2Segment struct {
 	//   per the Social Security Administration.
 	//  Do not report Credit Profile Numbers (CPNs) in this field.
 	//  The CPN should not be used for credit reporting purposes and does not replace the Social Security Number.
-	SocialSecurityNumber int `json:"socialSecurityNumber"  validate:"required"`
+	SocialSecurityNumber int `json:"socialSecurityNumber" validate:"required"`
 
 	// Report the full Date of Birth of the associated consumer, including the month, day and year.
 	// Reporting of this information is required as the Date of Birth greatly enhances accuracy in matching to the correct consumer.
@@ -80,7 +80,7 @@ type J2Segment struct {
 	//  When reporting Authorized Users (ECOA Code 3), the full Date of Birth (MMDDYYYY) must be reported for all newly-added
 	//  Authorized Users on all pre-existing and newly-opened accounts, even if the Social Security Number is reported.
 	//  Do not report accounts of consumers who are too young to enter into a binding contract.
-	DateBirth time.Time `json:"dateBirth"  validate:"required"`
+	DateBirth time.Time `json:"dateBirth" validate:"required"`
 
 	// Contains the telephone number of the associated consumer (Area Code + 7 digits).
 	TelephoneNumber int64 `json:"telephoneNumber"`
@@ -93,7 +93,7 @@ type J2Segment struct {
 	// • Usage guidelines on ECOA Codes T (Terminated) and Z (Delete Consumer)
 	// Note:
 	//   Codes 0 (Undesignated), 4 (Joint) and 6 (On-Behalf-Of) are obsolete as of September 2003 and may no longer be reported.
-	ECOACode string `json:"ecoaCode"  validate:"required"`
+	ECOACode string `json:"ecoaCode" validate:"required"`
 
 	// Contains a value that indicates a special condition of the account that applies to the associated consumer.
 	// This special condition may be that a bankruptcy was filed, discharged, dismissed or withdrawn; a debt was reaffirmed; or the consumer cannot be located or is now located.
@@ -118,11 +118,11 @@ type J2Segment struct {
 	// As an alternative, the entire address can be reported in the First Line of Address; for example, 5678 Main Street PMB 1234.
 	// Eliminate internal messages such as: “Do not mail”, “Attorney”, “Charge-off”, “Chapter 13”, “Fraud”, “Trustee”, “Estate of”, “Care of”, “M/R” (Mail Returned), etc.
 	// Do not enter data furnisher's address in this field.
-	FirstLineAddress string `json:"firstLineAddress"  validate:"required"`
+	FirstLineAddress string `json:"firstLineAddress" validate:"required"`
 
 	// Contains second line of address, if needed, such as apartment or unit number, or private mailbox number (PMB).
 	// Eliminate internal messages such as: “Do not mail”, “Attorney”, “Charge-off”, “Chapter 13”, “Fraud”, “Trustee”, “Estate of”, “Care of”, “M/R” (Mail Returned), etc.
-	SecondLineAddress string `json:"secondLineAddress,omitempty"  validate:"required"`
+	SecondLineAddress string `json:"secondLineAddress,omitempty"`
 
 	// Contains city name for address of associated consumer.
 	// Truncate rightmost positions if city name is greater than 20 characters or use standard 13-character U.S. Postal Service city abbreviations.
@@ -133,7 +133,7 @@ type J2Segment struct {
 
 	// Report the Zip Code of the associated consumer’s address.
 	// Use entire field if reporting 9-digit zip codes. Otherwise, leftjustify and blank fill.
-	ZipCode string `json:"sipCode"  validate:"required"`
+	ZipCode string `json:"zipCode"  validate:"required"`
 
 	// Contains one of the following values for the address
 	// C = Confirmed/Verified address

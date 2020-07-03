@@ -1,3 +1,7 @@
+// Copyright 2020 The Moov Authors
+// Use of this source code is governed by an Apache License
+// license that can be found in the LICENSE file.
+
 package server
 
 import (
@@ -42,7 +46,7 @@ func (t *ServerTest) makeRequest(method, url, body string, c *check.C) (*httptes
 }
 
 func (t *ServerTest) getWriter(name string, c *check.C) (*multipart.Writer, *bytes.Buffer) {
-	path := filepath.Join("..", "..", "testdata", name)
+	path := filepath.Join("..", "..", "test", "testdata", name)
 	file, err := os.Open(path)
 	c.Assert(err, check.IsNil)
 	defer file.Close()
@@ -56,7 +60,7 @@ func (t *ServerTest) getWriter(name string, c *check.C) (*multipart.Writer, *byt
 }
 
 func (t *ServerTest) getErrWriter(name string, c *check.C) (*multipart.Writer, *bytes.Buffer) {
-	path := filepath.Join("..", "..", "testdata", name)
+	path := filepath.Join("..", "..", "test", "testdata", name)
 	file, err := os.Open(path)
 	c.Assert(err, check.IsNil)
 	defer file.Close()

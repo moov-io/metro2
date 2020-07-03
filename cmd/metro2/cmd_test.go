@@ -1,3 +1,7 @@
+// Copyright 2020 The Moov Authors
+// Use of this source code is governed by an Apache License
+// license that can be found in the LICENSE file.
+
 package main
 
 import (
@@ -14,7 +18,7 @@ var testJsonFilePath = ""
 
 func TestMain(m *testing.M) {
 	initRootCmd()
-	testJsonFilePath = filepath.Join("../../", "testdata", "packed_file.json")
+	testJsonFilePath = filepath.Join("..", "..", "test", "testdata", "packed_file.json")
 	os.Exit(m.Run())
 }
 

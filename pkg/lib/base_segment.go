@@ -462,7 +462,7 @@ type BaseSegment struct {
 	// Report the Zip Code of the primary consumer’s address.
 	// Use entire field if reporting 9-digit zip codes.
 	// Otherwise, leftjustify and blank fill.
-	ZipCode string `json:"sipCode" validate:"required"`
+	ZipCode string `json:"zipCode" validate:"required"`
 
 	// Contains one of the following values for the address reported in fields 40-44:
 	//

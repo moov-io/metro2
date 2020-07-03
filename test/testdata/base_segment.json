@@ -34,7 +34,7 @@
     "secondLineAddress": "United States",
     "city": "U.S. Postal",
     "state": "MI",
-    "sipCode": "72654",
+    "zipCode": "72654",
     "addressIndicator": "Y",
     "residenceCode": "O"
   },
@@ -67,7 +67,7 @@
       "secondLineAddress": "SUITE #305",
       "city": "LANSING",
       "state": "MI",
-      "sipCode": "72654",
+      "zipCode": "72654",
       "addressIndicator": "Y",
       "residenceCode": "O"
     },
@@ -86,7 +86,7 @@
       "secondLineAddress": "SUITE #305",
       "city": "LANSING",
       "state": "MI",
-      "sipCode": "72654",
+      "zipCode": "72654",
       "addressIndicator": "Y",
       "residenceCode": "O"
     }

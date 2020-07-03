@@ -1,7 +1,6 @@
 {
   "header": {
-    "blockDescriptorWord": 430,
-    "recordDescriptorWord": 426,
+    "recordDescriptorWord": 480,
     "recordIdentifier": "HEADER",
     "transUnionProgramIdentifier": "5555555555",
     "activityDate": "2002-08-20T00:00:00Z",
@@ -15,8 +14,7 @@
   "data": [
     {
       "base": {
-        "blockDescriptorWord": 910,
-        "recordDescriptorWord": 906,
+        "recordDescriptorWord": 1000,
         "processingIndicator": 1,
         "timeStamp": "2020-01-01T01:11:22Z",
         "identificationNumber": "6666666",
@@ -49,7 +47,7 @@
         "secondLineAddress": "United States",
         "city": "U.S. Postal",
         "state": "MI",
-        "sipCode": "72654",
+        "zipCode": "72654",
         "addressIndicator": "Y",
         "residenceCode": "O"
       },
@@ -82,15 +80,19 @@
           "secondLineAddress": "SUITE #305",
           "city": "LANSING",
           "state": "MI",
-          "sipCode": "72654",
+          "zipCode": "72654",
           "addressIndicator": "Y",
           "residenceCode": "O"
         }
       ],
-      "k1": {
-        "segmentIdentifier": "K1",
-        "originalCreditorName": "WETCOSAT INDUSTRIES LTD.",
-        "creditorClassification": 4
+      "k3": {
+        "segmentIdentifier": "K3",
+        "mortgageIdentificationNumber": "Mortgage Number"
+      },
+      "l1": {
+        "segmentIdentifier": "L1",
+        "changeIndicator": 1,
+        "newConsumerAccountNumber": "New Consumer Account Number"
       },
       "n1": {
         "segmentIdentifier": "N1",
@@ -105,8 +107,7 @@
     }
   ],
   "trailer": {
-    "blockDescriptorWord": 430,
-    "recordDescriptorWord": 426,
+    "recordDescriptorWord": 500,
     "recordIdentifier": "TRAILER",
     "totalBaseRecords": 1,
     "totalStatusCodeDF": 0,
