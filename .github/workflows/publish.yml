@@ -1,15 +1,16 @@
 name: Publish Release
 
 on:
-  tags:
-    - v1.*
+  push:
+    tags: [ "v*.*.*" ]
 
 jobs:
-  build:
-    name: Build
-    runs-on: self-hosted
+  create_release:
+    name: Linux
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
       with:
@@ -19,14 +20,70 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
-    - name: Build
-      run: make build
-
     - name: Check
       run: make check
+
+    - name: Create Binary
+      run: make dist
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        prerelease: true
+
+    - name: Upload Linux Binary
+      if: runner.os == 'Linux'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./bin/metro2-linux-amd64
+        asset_name: metro2-linux-amd64
+        asset_content_type: application/octet-stream
 
     - name: Docker
       run: make docker
 
     - name: Docker Push
-      run: make release-push
+      run: |+
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+          make release-push
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    needs: [create_release]
+    steps:
+    - name: Upload Windows Binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.jobs.create_release.outputs.upload_url }}
+        asset_path: ./bin/metro2.exe
+        asset_name: metro2.exe
+        asset_content_type: application/octet-stream
+
+  macos:
+    name: macOS
+    runs-on: macos-latest
+    needs: [create_release]
+    steps:
+    - name: Upload macOS Binary
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.jobs.create_release.outputs.upload_url }}
+        asset_path: ./bin/metro2-darwin-amd64
+        asset_name: metro2-darwin-amd64
+        asset_content_type: application/octet-stream
