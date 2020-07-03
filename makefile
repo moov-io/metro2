@@ -25,9 +25,13 @@ else
 	CGO_ENABLED=0 GOOS=$(PLATFORM) go build -o bin/metro2-$(PLATFORM)-amd64 github.com/moov-io/metro2/cmd/metro2
 endif
 
-docker:
+docker: clean
+# Docker image
 	docker build --pull -t moov/metro2:$(VERSION) -f Dockerfile .
 	docker tag moov/metro2:$(VERSION) moov/metro2:latest
+# OpenShift Docker image
+	docker build --pull -t quay.io/moov/metro2:$(VERSION) -f Dockerfile-openshift --build-arg VERSION=$(VERSION) .
+	docker tag quay.io/moov/metro2:$(VERSION) quay.io/moov/metro2:latest
 
 .PHONY: clean
 clean:
