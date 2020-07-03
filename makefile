@@ -56,3 +56,7 @@ release: docker AUTHORS
 release-push:
 	docker push moov/metro2:$(VERSION)
 	docker push moov/metro2:latest
+
+quay-push:
+	docker push quay.io/moov/metro2:$(VERSION)
+	docker push quay.io/moov/metro2:latest

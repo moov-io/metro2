@@ -1,4 +1,4 @@
-name: Publish Release
+name: Create Release
 
 on:
   push:
@@ -7,7 +7,10 @@ on:
 jobs:
   create_release:
     name: Linux
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
@@ -28,6 +31,7 @@ jobs:
 
     - name: Create Release
       id: create_release
+      if: runner.os == 'Linux'
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -47,10 +51,34 @@ jobs:
         asset_name: metro2-linux-amd64
         asset_content_type: application/octet-stream
 
+    - name: Upload macOS Binary
+      if: runner.os == 'macOS'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./bin/metro2-darwin-amd64
+        asset_name: metro2-darwin-amd64
+        asset_content_type: application/octet-stream
+
+    - name: Upload Windows Binary
+      if: runner.os == 'Windows'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./bin/metro2.exe
+        asset_name: metro2.exe
+        asset_content_type: application/octet-stream
+
     - name: Docker
+      if: runner.os == 'Linux'
       run: make docker
 
     - name: Docker Push
+      if: runner.os == 'Linux'
       run: |+
           echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
           make release-push
@@ -58,32 +86,11 @@ jobs:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-  windows:
-    name: Windows
-    runs-on: windows-latest
-    needs: [create_release]
-    steps:
-    - name: Upload Windows Binary
-      uses: actions/upload-release-asset@v1
+    - name: Quay.io Push
+      if: runner.os == 'Linux'
+      run: |+
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin quay.io
+          make quay-push
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.jobs.create_release.outputs.upload_url }}
-        asset_path: ./bin/metro2.exe
-        asset_name: metro2.exe
-        asset_content_type: application/octet-stream
-
-  macos:
-    name: macOS
-    runs-on: macos-latest
-    needs: [create_release]
-    steps:
-    - name: Upload macOS Binary
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.jobs.create_release.outputs.upload_url }}
-        asset_path: ./bin/metro2-darwin-amd64
-        asset_name: metro2-darwin-amd64
-        asset_content_type: application/octet-stream
+        DOCKER_USERNAME: ${{ secrets.QUAY_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
