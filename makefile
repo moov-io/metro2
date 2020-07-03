@@ -38,7 +38,7 @@ clean:
 ifeq ($(OS),Windows_NT)
 	@echo "Skipping cleanup on Windows, currently unsupported."
 else
-	@rm -rf coverage.txt misspell* staticcheck
+	@rm -rf cover.out coverage.txt misspell* staticcheck*
 	@rm -rf ./bin/ openapi-generator-cli-*.jar metro2.db ./storage/ lint-project.sh
 endif
 
