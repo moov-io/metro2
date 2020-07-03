@@ -10,7 +10,13 @@ Metro2 is an open-source consumer credit history report for credit report file c
 
 ## Getting Started
 
-Metro2 is primarily a Go library which can read and write credit reporting specifications. We write unit tests and fuzz the code to help ensure our code is production ready for everyone. Metro2 uses [Go Modules](https://github.com/golang/go/wiki/Modules) to manage dependencies and suggests Go 1.14 or greater.
+### Docker Image
+
+You can run  [our docker image `moov/metro2`](https://hub.docker.com/r/moov/metro2/) from Docker Hub or use this repository. No configuration is required to serve on `:8080` with metrics in Prometheus format. We also have docker images for [OpenShift](https://quay.io/repository/moov/metro2?tab=tags).
+
+### Go Library
+
+There is a Go library which can read and write credit reporting specifications. We write unit tests and fuzz the code to help ensure our code is production ready for everyone. Metro2 uses [Go Modules](https://github.com/golang/go/wiki/Modules) to manage dependencies and suggests Go 1.14 or greater.
 
 To clone our code and verify our tests on your system run:
 

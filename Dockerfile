@@ -8,10 +8,14 @@ RUN make build
 USER moov
 
 FROM scratch
+LABEL maintainer="Moov <support@moov.io>"
+
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=builder /go/src/github.com/moov-io/metro2/bin/server /bin/server
+COPY --from=builder /go/src/github.com/moov-io/metro2/bin/metro2 /bin/metro2
 COPY --from=builder /etc/passwd /etc/passwd
+
 USER moov
 EXPOSE 8080
 EXPOSE 9090
-ENTRYPOINT ["/bin/server"]
+ENTRYPOINT ["/bin/metro2"]
+CMD ["web"]
