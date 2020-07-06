@@ -1,6 +1,7 @@
 {
   "header": {
-    "recordDescriptorWord": 480,
+    "blockDescriptorWord": 430,
+    "recordDescriptorWord": 426,
     "recordIdentifier": "HEADER",
     "transUnionProgramIdentifier": "5555555555",
     "activityDate": "2002-08-20T00:00:00Z",
@@ -14,7 +15,8 @@
   "data": [
     {
       "base": {
-        "recordDescriptorWord": 1098,
+        "blockDescriptorWord": 910,
+        "recordDescriptorWord": 906,
         "processingIndicator": 1,
         "timeStamp": "2020-01-01T01:11:22Z",
         "identificationNumber": "6666666",
@@ -47,7 +49,7 @@
         "secondLineAddress": "United States",
         "city": "U.S. Postal",
         "state": "MI",
-        "sipCode": "72654",
+        "zipCode": "72654",
         "addressIndicator": "Y",
         "residenceCode": "O"
       },
@@ -80,7 +82,7 @@
           "secondLineAddress": "SUITE #305",
           "city": "LANSING",
           "state": "MI",
-          "sipCode": "72654",
+          "zipCode": "72654",
           "addressIndicator": "Y",
           "residenceCode": "O"
         }
@@ -89,27 +91,6 @@
         "segmentIdentifier": "K1",
         "originalCreditorName": "WETCOSAT INDUSTRIES LTD.",
         "creditorClassification": 4
-      },
-      "k2": {
-        "segmentIdentifier": "K2",
-        "purchasedIndicator": 1,
-        "purchasedName": "Purchased From Name"
-      },
-      "k3": {
-        "segmentIdentifier": "K3",
-        "mortgageIdentificationNumber": "Mortgage Number"
-      },
-      "k4": {
-        "segmentIdentifier": "K4",
-        "specializedPaymentIndicator": 1,
-        "deferredPaymentStartDate": "2020-01-20T00:00:00Z",
-        "balloonPaymentDueDate": "2020-01-20T00:00:00Z",
-        "balloonPaymentAmount": 1234
-      },
-      "l1": {
-        "segmentIdentifier": "L1",
-        "changeIndicator": 1,
-        "newConsumerAccountNumber": "New Consumer Account Number"
       },
       "n1": {
         "segmentIdentifier": "N1",
@@ -124,19 +105,18 @@
     }
   ],
   "trailer": {
-    "recordDescriptorWord": 366,
+    "blockDescriptorWord": 430,
+    "recordDescriptorWord": 426,
     "recordIdentifier": "TRAILER",
     "totalBaseRecords": 1,
     "totalStatusCodeDF": 0,
-    "totalConsumerSegmentsJ1": 2,
-    "totalConsumerSegmentsJ2": 1,
-    "blockCount": 3,
+    "blockCount": 1,
     "totalStatusCodeDA": 0,
     "totalStatusCode05": 0,
     "totalStatusCode11": 0,
     "totalStatusCode13": 0,
     "totalStatusCode61": 0,
-    "totalStatusCode62": 1,
+    "totalStatusCode62": 0,
     "totalStatusCode63": 0,
     "totalStatusCode64": 0,
     "totalStatusCode65": 0,
@@ -146,28 +126,28 @@
     "totalStatusCode82": 0,
     "totalStatusCode83": 0,
     "totalStatusCode84": 0,
-    "totalStatusCode88": 0,
-    "totalStatusCode89": 0,
-    "totalStatusCode93": 0,
+    "totalStatusCode88": 1,
+    "totalStatusCode89": 1,
+    "totalStatusCode93": 1,
     "totalStatusCode94": 0,
-    "totalStatusCode95": 0,
+    "totalStatusCode95": 1,
     "totalStatusCode96": 0,
-    "totalStatusCode97": 0,
-    "totalECOACodeZ": 0,
+    "totalStatusCode97": 1,
+    "totalECOACodeZ": 1,
     "totalEmploymentSegments": 1,
     "totalOriginalCreditorSegments": 1,
     "totalPurchasedToSegments": 1,
     "totalMortgageInformationSegments": 1,
-    "totalPaymentInformationSegments": 1,
+    "totalPaymentInformationSegments": 0,
     "totalChangeSegments": 1,
-    "totalSocialNumbersAllSegments": 2,
-    "totalSocialNumbersBaseSegments": 0,
+    "totalSocialNumbersAllSegments": 1,
+    "totalSocialNumbersBaseSegments": 1,
     "totalSocialNumbersJ1Segments": 1,
     "totalSocialNumbersJ2Segments": 1,
-    "totalDatesBirthAllSegments": 3,
+    "totalDatesBirthAllSegments": 1,
     "totalDatesBirthBaseSegments": 1,
     "totalDatesBirthJ1Segments": 1,
     "totalDatesBirthJ2Segments": 1,
-    "totalTelephoneNumbersAllSegments": 3
+    "totalTelephoneNumbersAllSegments": 1
   }
 }
