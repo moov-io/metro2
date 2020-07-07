@@ -1,3 +1,9 @@
+## v0.2.2 (Released 2020-07-07)
+
+IMPROVEMENTS
+
+- Small tweaks to fuzzing container
+
 ## v0.2.1 (Released 2020-07-07)
 
 ADDITIONS
