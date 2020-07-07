@@ -30,6 +30,28 @@ ok   	github.com/moov-io/metro2	0.710s	coverage: 98.1% of statements
 
 ## Commands
 
+Metro2 has command line interface to manage metro2 files and to lunch web service.
+
+```
+metro2 --help
+
+Usage:
+   [command]
+
+Available Commands:
+  convert     Convert metro file format
+  help        Help about any command
+  print       Print metro file
+  validator   Validate metro file
+  web         Launches web server
+
+Flags:
+  -h, --help           help for this command
+      --input string   input file (default is $PWD/metro.json)
+
+Use " [command] --help" for more information about a command.
+```
+
 Each interaction that the library supports is exposed in a command-line option:
 
  Command | Info
@@ -37,9 +59,125 @@ Each interaction that the library supports is exposed in a command-line option:
 `convert` | The convert command allows users to convert from a metro file to another format file. Result will create a metro file.
 `print` | The print command allows users to print a metro file with special file format (json, metro).
 `validator` | The validator command allows users to validate a metro file.
-`web` | The web command will launch a web server with endpoints to management metro files.
+`web` | The web command will launch a web server with endpoints to manage metro files.
 
-### Web server endpoints
+### file convert
+
+```
+metro2 convert --help
+
+Usage:
+   convert [output] [flags]
+
+Flags:
+      --format string   format of metro file(required) (default "json")
+  -g, --generate        generate trailer record
+  -h, --help            help for convert
+
+Global Flags:
+      --input string   input file (default is $PWD/metro.json)
+```
+
+The output parameter is the full path name to convert new metro2 file.
+The format parameter is supported 2 types, "json" and  "metro".
+The generate parameter will replace new generated trailer record in the file.
+The input parameter is source metro2 file, supported raw type file and json type file.
+
+example:
+```
+metro2 convert output/output.json --input testdata/packed_file.json --format json
+```
+
+### file print
+
+```
+metro2 print --help
+
+Usage:
+   print [flags]
+
+Flags:
+      --format string   print format (default "json")
+  -h, --help            help for print
+
+Global Flags:
+      --input string   input file (default is $PWD/metro.json)
+```
+
+The format parameter is supported 2 types, "json" and  "metro".
+The input parameter is source metro2 file, supported raw type file and json type file.
+
+example:
+```
+metro2 print --input testdata/packed_file.dat --format json
+{
+  "header": {
+    "blockDescriptorWord": 370,
+    "recordDescriptorWord": 366,
+    "recordIdentifier": "HEADER",
+    "transUnionProgramIdentifier": "5555555555",
+    "activityDate": "2002-08-20T00:00:00Z",
+    "dateCreated": "1999-05-10T00:00:00Z",
+    "programDate": "1999-05-10T00:00:00Z",
+    "programRevisionDate": "1999-05-10T00:00:00Z",
+    "reporterName": "YOUR BUSINESS NAME HERE",
+    "reporterAddress": "LINE ONE OF YOUR ADDRESS LINE TWO OF YOUR ADDRESS LINE THERE OF YOUR ADDRESS",
+    "reporterTelephoneNumber": 1234567890
+  },
+  ...
+}
+```
+
+### file validate
+
+```
+metro2 validator --help
+
+Usage:
+   validator [flags]
+
+Flags:
+  -h, --help   help for validator
+
+Global Flags:
+      --input string   input file (default is $PWD/metro.json)
+```
+
+The input parameter is source metro2 file, supported raw type file and json type file.
+
+example:
+```
+metro2 validator --input testdata/packed_file.dat
+Error: is an invalid value of TotalConsumerSegmentsJ1
+
+metro2 validator --input testdata/packed_file.json
+```
+
+### web server
+
+```
+metro2 web --help
+
+Usage:
+   web [flags]
+
+Flags:
+  -h, --help          help for web
+      --port string   port of the web server (default "8080")
+  -t, --test          test server
+
+Global Flags:
+      --input string   input file (default is $PWD/metro.json)
+```
+
+The port parameter is port number of web service.
+
+example:
+```
+metro2 web
+```
+
+Web server have some endpoints to manage metro2 file
 
 Method | Endpoint | Content-Type | Info
  ------- | ------- | ------- | -------
@@ -47,6 +185,27 @@ Method | Endpoint | Content-Type | Info
  `GET` | `/health` | text/plain | check web server.
  `POST` | `/print` | multipart/form-data | print metro file.
  `POST` | `/validator` | multipart/form-data | validate metro file.
+
+web page example to use metro2 web server:
+
+```
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Single file upload</title>
+</head>
+<body>
+<h1>Upload single file with fields</h1>
+
+<form action="http://localhost:8080/convert" method="post" enctype="multipart/form-data">
+    Format: <input type="text" name="format"><br>
+    Files: <input type="file" name="file"><br><br>
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>
+```
 
 ## Getting Help
 
