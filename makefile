@@ -32,6 +32,13 @@ docker: clean
 # OpenShift Docker image
 	docker build --pull -t quay.io/moov/metro2:$(VERSION) -f Dockerfile-openshift --build-arg VERSION=$(VERSION) .
 	docker tag quay.io/moov/metro2:$(VERSION) quay.io/moov/metro2:latest
+# ACH Fuzzing Docker image
+	docker build --pull -t moov/metro2fuzz:$(VERSION) . -f Dockerfile-fuzz
+	docker tag moov/metro2fuzz:$(VERSION) moov/metro2fuzz:latest
+
+.PHONY: fuzz
+fuzz:
+	docker run moov/metro2fuzz:latest
 
 .PHONY: clean
 clean:
@@ -56,6 +63,7 @@ release: docker AUTHORS
 release-push:
 	docker push moov/metro2:$(VERSION)
 	docker push moov/metro2:latest
+	docker push moov/metro2fuzz:$(VERSION)
 
 quay-push:
 	docker push quay.io/moov/metro2:$(VERSION)

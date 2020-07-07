@@ -20,24 +20,24 @@ To load all test files we read run: `ln -s ../../../test/testdata/* .` from the 
 
 ### Downloading crashers from Kubernetes cluster
 
-If the [`moov/metrofuzz`](https://hub.docker.com/r/moov/metrofuzz) Docker image is running in a Kubernetes cluster you can download the crashers from a mounted volume by executing the following commands.
+If the [`moov/metro2fuzz`](https://hub.docker.com/r/moov/metro2fuzz) Docker image is running in a Kubernetes cluster you can download the crashers from a mounted volume by executing the following commands.
 
 ```
 # Get current pod name
-$ kubectl get pods -n apps | grep metrofuzz
-metrofuzz-6bbdc574f5-pl2zm        1/1       Running     0          1h
+$ kubectl get pods -n apps | grep metro2fuzz
+metro2fuzz-6bbdc574f5-pl2zm        1/1       Running     0          1h
 ```
 
 Then using the [volume's mount path](https://github.com/moov-io/infra/blob/master/lib/apps/10-achfuzz.yml#L43) select any crasher files.
 
 ```
-$ kubectl exec -n apps metrofuzz-6bbdc574f5-pl2zm -- ls -la /go/src/github.com/moov-io/metro2/test/fuzz-reader/crashers/
+$ kubectl exec -n apps metro2fuzz-6bbdc574f5-pl2zm -- ls -la /go/src/github.com/moov-io/metro2/test/fuzz-reader/crashers/
 total 28
 drwxr-xr-x    3 root     root          4096 Jan 30 00:26 .
 drwxr-xr-x    1 root     root          4096 Jan 14 17:30 ..
 
 # Download files, replace <file> with a crasher file
-$ kubectl cp 'apps/metrofuzz-6bbdc574f5-pl2zm:/go/src/github.com/moov-io/metro2/test/fuzz-reader/crashers/<file>' ./
+$ kubectl cp 'apps/metro2fuzz-6bbdc574f5-pl2zm:/go/src/github.com/moov-io/metro2/test/fuzz-reader/crashers/<file>' ./
 ```
 
 ### fuzzit integration
@@ -48,7 +48,7 @@ We need to then copy down their bash script (`fuzzit completion > fuzzit.sh && c
 
 ```
 # In test/fuzz-reader/
-$ fuzzit create job --type=fuzzing metrofuzz fuzzit.sh
+$ fuzzit create job --type=fuzzing metro2fuzz fuzzit.sh
 2019/08/19 10:38:59 Creating job...
 2019/08/19 10:38:59 Uploading fuzzer...
 2019/08/19 10:39:01 Starting job
