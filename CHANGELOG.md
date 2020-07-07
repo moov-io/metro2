@@ -1,3 +1,11 @@
+## v0.2.1 (Released 2020-07-07)
+
+ADDITIONS
+
+- Created fuzzing container (`docker run moov/metro2fuzz:v0.2.1`)
+- Added OpenAPI specification
+- Added generated Go client (`github.com/moov-io/metro2/pkg/client`)
+
 ## v0.2.0 (Released 2020-07-03)
 
 ADDITIONS
