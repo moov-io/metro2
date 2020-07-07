@@ -20,11 +20,10 @@ import (
 func Fuzz(data []byte) int {
 	f, err := file.NewFile(string(data))
 	if err != nil {
-		return 0
+		return -1
 	}
 
-	err = f.Validate()
-	if err != nil {
+	if err := f.Validate(); err != nil {
 		return 0
 	}
 
@@ -33,5 +32,18 @@ func Fuzz(data []byte) int {
 		return 0
 	}
 
+	// If we're missing a record the file is close, but we should continue around
+	// that input value.
+	if record, _ := f.GetRecord(file.HeaderRecordName); record == nil {
+		return 0
+	}
+	if record, _ := f.GetRecord(file.TrailerRecordName); record == nil {
+		return 0
+	}
+	if records := f.GetDataRecords(); len(records) == 0 {
+		return 0
+	}
+
+	// Prioritize generated files with header, trailer, and data records.
 	return 1
 }
