@@ -187,6 +187,10 @@ func (f *fileInstance) Parse(record string) error {
 			base = lib.NewBaseSegment()
 		}
 
+		if len(record) <= offset {
+			return utils.ErrShortRecord
+		}
+
 		read, err := base.Parse(record[offset:])
 		if err != nil {
 			break

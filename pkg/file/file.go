@@ -53,7 +53,7 @@ func NewFile(format string) (File, error) {
 	return nil, utils.NewErrValidFileFormat(format)
 }
 
-// CreateFile
+// CreateFile attempts to parse raw metro2 file contents
 func CreateFile(buf []byte) (File, error) {
 	fileFormat, dataType, err := getFileInformation(buf)
 	if err != nil {
