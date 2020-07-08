@@ -7,11 +7,51 @@ package file
 import (
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
+	"path/filepath"
 	"strings"
+	"testing"
 
 	"github.com/moov-io/metro2/pkg/lib"
 	"gopkg.in/check.v1"
 )
+
+func TestFile__Crashers(t *testing.T) {
+	paths := readCrasherInputFilepaths(t)
+	for i := range paths {
+		bs, err := ioutil.ReadFile(paths[i])
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if _, err := CreateFile(bs); err == nil {
+			t.Error("expected error")
+		}
+
+		if testing.Verbose() {
+			t.Logf("read %s without crashing", paths[i])
+		}
+	}
+}
+
+func readCrasherInputFilepaths(t *testing.T) []string {
+	t.Helper()
+
+	basePath := filepath.Join("testdata", "crashers")
+	fds, err := ioutil.ReadDir(basePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var out []string
+	for i := range fds {
+		if strings.HasSuffix(fds[i].Name(), ".output") {
+			continue
+		}
+		out = append(out, filepath.Join(basePath, fds[i].Name()))
+	}
+	return out
+}
 
 func (t *FileTest) TestJsonWithUnpackedVariableBlocked(c *check.C) {
 	f, err := NewFile(CharacterFileFormat)
