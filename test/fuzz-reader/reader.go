@@ -5,8 +5,6 @@
 package fuzzreader
 
 import (
-	"reflect"
-
 	"github.com/moov-io/metro2/pkg/file"
 )
 
@@ -18,29 +16,24 @@ import (
 // added to corpus even if gives new coverage; and 0 otherwise; other values are
 // reserved for future use.
 func Fuzz(data []byte) int {
-	f, err := file.NewFile(string(data))
+	f, err := file.CreateFile(data)
 	if err != nil {
-		return -1
-	}
-
-	if err := f.Validate(); err != nil {
-		return 0
-	}
-
-	gendata := []byte(f.String())
-	if !reflect.DeepEqual(data, gendata) {
 		return 0
 	}
 
 	// If we're missing a record the file is close, but we should continue around
 	// that input value.
 	if record, _ := f.GetRecord(file.HeaderRecordName); record == nil {
-		return 0
+		return -1
 	}
 	if record, _ := f.GetRecord(file.TrailerRecordName); record == nil {
-		return 0
+		return -1
 	}
 	if records := f.GetDataRecords(); len(records) == 0 {
+		return -1
+	}
+
+	if err := f.Validate(); err != nil {
 		return 0
 	}
 
