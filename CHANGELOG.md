@@ -1,3 +1,10 @@
+## v0.2.3 (Released 2020-07-08)
+
+IMPROVEMENTS
+
+- file: fix panic from out of range lookup
+- fuzz: improve detection to collect files into the corpus
+
 ## v0.2.2 (Released 2020-07-07)
 
 IMPROVEMENTS
