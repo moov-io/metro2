@@ -196,10 +196,15 @@ func (r *TrailerRecord) Parse(record string) (int, error) {
 		if !ok || !field.IsValid() {
 			return 0, utils.ErrValidField
 		}
+
+		if len(record) < spec.Start+spec.Length+offset {
+			return 0, utils.ErrShortRecord
+		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
 		if err := r.isValidType(spec, data); err != nil {
 			return 0, err
 		}
+
 		value, err := r.parseValue(spec, data)
 		if err != nil {
 			return 0, err
