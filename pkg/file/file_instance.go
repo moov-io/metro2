@@ -200,6 +200,9 @@ func (f *fileInstance) Parse(record string) error {
 	}
 
 	// Trailer Record
+	if len(record) < offset {
+		return utils.ErrShortRecord
+	}
 	tread, err := f.Trailer.Parse(record[offset:])
 	if err != nil {
 		return err

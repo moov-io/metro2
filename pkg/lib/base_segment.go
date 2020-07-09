@@ -546,10 +546,15 @@ func (r *BaseSegment) Parse(record string) (int, error) {
 		if !ok || !field.IsValid() {
 			return 0, utils.ErrValidField
 		}
+
+		if len(record) < spec.Start+spec.Length+offset {
+			return 0, utils.ErrShortRecord
+		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
 		if err := r.isValidType(spec, data); err != nil {
 			return 0, err
 		}
+
 		value, err := r.parseValue(spec, data)
 		if err != nil {
 			return 0, err
@@ -580,6 +585,9 @@ func (r *BaseSegment) Parse(record string) (int, error) {
 	r.j1Segments = []Segment{}
 	r.j2Segments = []Segment{}
 
+	if len(record) < offset {
+		return 0, utils.ErrShortRecord
+	}
 	read, err := readApplicableSegments(record[offset:], r)
 	if err != nil {
 		return 0, err
@@ -979,10 +987,15 @@ func (r *PackedBaseSegment) Parse(record string) (int, error) {
 		if !ok || !field.IsValid() {
 			return 0, utils.ErrValidField
 		}
+
+		if len(record) < spec.Start+spec.Length+offset {
+			return 0, utils.ErrShortRecord
+		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
 		if err := r.isValidType(spec, data); err != nil {
 			return 0, err
 		}
+
 		value, err := r.parseValue(spec, data)
 		if err != nil {
 			return 0, err
@@ -1010,6 +1023,9 @@ func (r *PackedBaseSegment) Parse(record string) (int, error) {
 	r.j1Segments = []Segment{}
 	r.j2Segments = []Segment{}
 
+	if len(record) < offset {
+		return 0, utils.ErrShortRecord
+	}
 	read, err := readApplicableSegments(record[offset:], r)
 	if err != nil {
 		return 0, err
@@ -1379,7 +1395,7 @@ func readApplicableSegments(record string, f Record) (int, error) {
 	var segment Segment
 	offset := 0
 
-	for offset < len(record) {
+	for offset+2 < len(record) {
 		switch record[offset : offset+2] {
 		case J1SegmentIdentifier:
 			segment = NewJ1Segment()

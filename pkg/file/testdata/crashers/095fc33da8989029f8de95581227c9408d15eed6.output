@@ -1,0 +1,18 @@
+panic: runtime error: slice bounds out of range [:742] with length 741
+
+goroutine 1 [running]:
+github.com/moov-io/metro2/pkg/lib.readApplicableSegments(0xc0003874e4, 0x2e5, 0x5fa4c0, 0xc00038a000, 0x9, 0x20, 0x5facc0)
+	/go/src/github.com/moov-io/metro2/pkg/lib/base_segment.go:1383 +0x6f1
+github.com/moov-io/metro2/pkg/lib.(*PackedBaseSegment).Parse(0xc00038a000, 0xc000387372, 0x457, 0x172, 0x0, 0x0)
+	/go/src/github.com/moov-io/metro2/pkg/lib/base_segment.go:1013 +0xd37
+github.com/moov-io/metro2/pkg/file.(*fileInstance).Parse(0xc0000c6f00, 0xc000387200, 0x5c9, 0x5c9, 0xc000387200)
+	/go/src/github.com/moov-io/metro2/pkg/file/file_instance.go:194 +0x21c
+github.com/moov-io/metro2/pkg/file.CreateFile(0x7fb3cc639000, 0x5c9, 0x5c9, 0x5f076a93, 0xc0000cde98, 0x47b916, 0x5f076a93)
+	/go/src/github.com/moov-io/metro2/pkg/file/file.go:69 +0x255
+github.com/moov-io/metro2/test/fuzz-reader.Fuzz(0x7fb3cc639000, 0x5c9, 0x5c9, 0x3)
+	/go/src/github.com/moov-io/metro2/test/fuzz-reader/reader.go:19 +0x5b
+go-fuzz-dep.Main(0xc0000cdf70, 0x1, 0x1)
+	go-fuzz-dep/main.go:36 +0x1ad
+main.main()
+	github.com/moov-io/metro2/test/fuzz-reader/go.fuzz.main/main.go:15 +0x52
+exit status 2

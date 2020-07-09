@@ -68,6 +68,9 @@ func (s *L1Segment) Parse(record string) (int, error) {
 			return 0, utils.ErrValidField
 		}
 
+		if len(record) < spec.Start+spec.Length {
+			return 0, utils.ErrShortRecord
+		}
 		data := record[spec.Start : spec.Start+spec.Length]
 		if err := s.isValidType(spec, data); err != nil {
 			return 0, err
