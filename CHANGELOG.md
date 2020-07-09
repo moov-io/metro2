@@ -1,3 +1,9 @@
+## v0.2.4 (Released 2020-07-09)
+
+BUG FIXES
+
+- lib: fix common out-of-bounds error checks
+
 ## v0.2.3 (Released 2020-07-08)
 
 IMPROVEMENTS
