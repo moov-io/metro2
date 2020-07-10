@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/moov-io/metro2/pkg/file"
@@ -87,9 +88,9 @@ func print(w http.ResponseWriter, r *http.Request) {
 	}
 
 	format := r.FormValue("format")
-	if format == utils.OutputMetroFormat {
+	if strings.EqualFold(format, utils.OutputMetroFormat) {
 		outputString(w, mf.String())
-	} else if format == utils.OutputJsonFormat || len(format) == 0 {
+	} else if strings.EqualFold(format, utils.OutputJsonFormat) || len(format) == 0 {
 		outputJson(w, mf)
 	} else {
 		http.Error(w, "invalid print format", http.StatusBadRequest)
@@ -112,7 +113,7 @@ func convert(w http.ResponseWriter, r *http.Request) {
 	}
 
 	generate := r.FormValue("generate")
-	if generate == "true" {
+	if strings.EqualFold(generate, "true") {
 		trailer, err := mf.GeneratorTrailer()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusNotImplemented)
@@ -134,7 +135,7 @@ func convert(w http.ResponseWriter, r *http.Request) {
 
 	filename := "metro.json"
 	output := string(buf)
-	if format == utils.OutputMetroFormat {
+	if strings.EqualFold(format, utils.OutputMetroFormat) {
 		output = mf.String()
 		filename = "metro"
 	}
