@@ -16,6 +16,5 @@ COPY --from=builder /etc/passwd /etc/passwd
 
 USER moov
 EXPOSE 8080
-EXPOSE 9090
 ENTRYPOINT ["/bin/metro2"]
 CMD ["web"]

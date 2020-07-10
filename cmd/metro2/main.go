@@ -35,7 +35,7 @@ var WebCmd = &cobra.Command{
 			return err
 		}
 		fmt.Println("Starting web server on port ", port)
-		listen := "localhost:" + port
+		listen := "0.0.0.0:" + port
 		h, err := server.ConfigureHandlers()
 		if err != nil {
 			return err
