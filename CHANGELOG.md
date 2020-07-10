@@ -1,3 +1,14 @@
+## v0.2.5 (Released 2020-07-10)
+
+BUG FIXES
+
+- cmd/metro2: bind to all interfaces
+- server: check 'true' better
+
+BUILD
+
+- build: add maintainer label
+
 ## v0.2.4 (Released 2020-07-09)
 
 BUG FIXES
