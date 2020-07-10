@@ -6,13 +6,34 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/moov-io/metro2)](https://goreportcard.com/report/github.com/moov-io/metro2)
 [![Apache 2 licensed](https://img.shields.io/badge/license-Apache2-blue.svg)](https://raw.githubusercontent.com/moov-io/metro2/master/LICENSE)
 
-Metro2 is an open-source consumer credit history report for credit report file creation and validation.
+Metro2 implements a reader, writer, and validator for consumer credit history reports in an HTTP server and Go library. The HTTP server is available in a [Docker image](#docker) and the Go package `github.com/moov-io/metro2` is available.
 
 ## Getting Started
 
-### Docker Image
+### Docker
 
-You can run  [our docker image `moov/metro2`](https://hub.docker.com/r/moov/metro2/) from Docker Hub or use this repository. No configuration is required to serve on `:8080` with metrics in Prometheus format. We also have docker images for [OpenShift](https://quay.io/repository/moov/metro2?tab=tags).
+We publish a [public Docker image `moov/metro2`](https://hub.docker.com/r/moov/metro2/tags) on Docker Hub with emetro2 tagged release of Wire. No configuration is required to serve on `:8080`. We also have docker images for [OpenShift](https://quay.io/repository/moov/metro2?tab=tags).
+
+Start the Docker image:
+```
+docker run -p 8080:8080 moov/metro2:latest
+```
+
+Upload a file and validate it
+```
+curl -XPOST --form "file=@./test/testdata/packed_file.json" http://localhost:8080/validator
+```
+```
+valid file
+```
+
+Convert a file between formats
+```
+curl -XPOST --form "file=@./test/testdata/packed_file.json" http://localhost:8080/convert -v
+```
+```
+{"header":{"recordDescriptorWord":480,"recordIdentifier":"HEADER","transUnionProgramIdentifier":"5555555555","activityDate":"2002-08-20T00:00:00Z", ...
+```
 
 ### Go Library
 
