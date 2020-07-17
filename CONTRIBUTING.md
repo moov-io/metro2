@@ -1,6 +1,6 @@
 # Contributing
 
-Wow, we really appreciate that you even looked at this section! We are trying to make the worlds best atomic building blocks for financial services that accelerate innovation in banking and we need your help!
+Wow, we really appreciate that you even looked at this section! We are trying to make the world's best atomic building blocks for financial services that accelerate innovation in banking and we need your help!
 
 You only have a fresh set of eyes once! The easiest way to contribute is to give feedback on the documentation that you are reading right now. This can be as simple as sending a message to our Google Group with your feedback or updating the markdown in this documentation and issuing a pull request.
 
