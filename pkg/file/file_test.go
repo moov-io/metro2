@@ -24,6 +24,8 @@ func TestFile__Crashers(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		t.Logf("parsing %s", paths[i])
+
 		if _, err := CreateFile(bs); err == nil {
 			t.Error("expected error")
 		}
@@ -37,7 +39,7 @@ func TestFile__Crashers(t *testing.T) {
 func readCrasherInputFilepaths(t *testing.T) []string {
 	t.Helper()
 
-	basePath := filepath.Join("testdata", "crashers")
+	basePath := filepath.Join("..", "..", "test", "testdata", "crashers")
 	fds, err := ioutil.ReadDir(basePath)
 	if err != nil {
 		t.Fatal(err)
