@@ -187,7 +187,7 @@ func (f *fileInstance) Parse(record string) error {
 			base = lib.NewBaseSegment()
 		}
 
-		if len(record) <= offset {
+		if offset <= 0 || len(record) <= offset {
 			return utils.ErrShortRecord
 		}
 
@@ -200,7 +200,7 @@ func (f *fileInstance) Parse(record string) error {
 	}
 
 	// Trailer Record
-	if len(record) < offset {
+	if offset <= 0 || len(record) <= offset {
 		return utils.ErrShortRecord
 	}
 	tread, err := f.Trailer.Parse(record[offset:])
