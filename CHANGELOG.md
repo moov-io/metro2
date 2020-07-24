@@ -1,3 +1,13 @@
+## v0.2.6 (Released 2020-07-24)
+
+BUG FIXES
+
+- file: fix crash from negative offsets
+
+BUILD
+
+- chore(deps): update golang.org/x/oauth2 commit hash to bf48bf1
+
 ## v0.2.5 (Released 2020-07-10)
 
 BUG FIXES
