@@ -228,6 +228,14 @@ web page example to use metro2 web server:
 </html>
 ```
 
+## Docker
+
+You can run the [moov/metro2 Docker image](https://hub.docker.com/r/moov/metro2) which defaults to starting the HTTP server.
+
+```
+docker run -p 8080:8080 moov/metro2:latest
+```
+
 ## Getting Help
 
  channel | info
