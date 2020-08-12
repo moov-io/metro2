@@ -8,13 +8,14 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/moov-io/metro2/pkg/utils"
 	"reflect"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 type converter struct{}

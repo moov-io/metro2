@@ -6,10 +6,11 @@ package lib
 
 import (
 	"fmt"
-	"github.com/moov-io/metro2/pkg/utils"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 type validator struct{}
