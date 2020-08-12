@@ -534,51 +534,12 @@ func (r *BaseSegment) Parse(record string) (int, error) {
 		return 0, utils.ErrValidField
 	}
 
-	offset := 0
-	for i := 0; i < fields.NumField(); i++ {
-		fieldName := fields.Type().Field(i).Name
-		// skip local variable
-		if !unicode.IsUpper([]rune(fieldName)[0]) {
-			continue
-		}
-		field := fields.FieldByName(fieldName)
-		spec, ok := baseSegmentCharacterFormat[fieldName]
-		if !ok || !field.IsValid() {
-			return 0, utils.ErrValidField
-		}
-
-		if len(record) < spec.Start+spec.Length+offset {
-			return 0, utils.ErrShortRecord
-		}
-		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		if err := r.isValidType(spec, data); err != nil {
-			return 0, err
-		}
-
-		value, err := r.parseValue(spec, data)
-		if err != nil {
-			return 0, err
-		}
-		// set value
-		if value.IsValid() && field.CanSet() {
-			switch value.Interface().(type) {
-			case int, int64:
-				if fieldName == "BlockDescriptorWord" {
-					if !utils.IsVariableLength(record) {
-						continue
-					}
-					offset += 4
-				}
-				field.SetInt(value.Interface().(int64))
-			case string:
-				field.SetString(value.Interface().(string))
-			case time.Time:
-				field.Set(value)
-			}
-		}
+	length, err := r.parseRecordValues(fields, baseSegmentCharacterFormat, record, &r.validator)
+	if err != nil {
+		return length, err
 	}
 
-	offset = UnpackedRecordLength
+	offset := UnpackedRecordLength
 	if r.BlockDescriptorWord > 0 {
 		offset = UnpackedRecordLength + 4
 	}
@@ -661,38 +622,7 @@ func (r *BaseSegment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (r *BaseSegment) Validate() error {
-	fields := reflect.ValueOf(r).Elem()
-	for i := 0; i < fields.NumField(); i++ {
-		fieldName := fields.Type().Field(i).Name
-		if !fields.IsValid() {
-			return utils.ErrValidField
-		}
-
-		if spec, ok := baseSegmentCharacterFormat[fieldName]; ok {
-			if spec.Required == required {
-				fieldValue := fields.FieldByName(fieldName)
-				if fieldValue.IsZero() {
-					return utils.ErrFieldRequired
-				}
-			}
-		}
-
-		funcName := r.validateFuncName(fieldName)
-		method := reflect.ValueOf(r).MethodByName(funcName)
-		if method.IsValid() {
-			response := method.Call(nil)
-			if len(response) == 0 {
-				continue
-			}
-
-			err := method.Call(nil)[0]
-			if !err.IsNil() {
-				return err.Interface().(error)
-			}
-		}
-	}
-
-	return nil
+	return r.validateRecord(r, baseSegmentCharacterFormat)
 }
 
 // BlockSize returns size of block

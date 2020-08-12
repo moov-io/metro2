@@ -3,7 +3,6 @@ package lib
 import (
 	"reflect"
 	"strings"
-	"unicode"
 	"unicode/utf8"
 
 	"github.com/moov-io/metro2/pkg/utils"
@@ -58,39 +57,9 @@ func (s *N1Segment) Parse(record string) (int, error) {
 		return 0, utils.ErrValidField
 	}
 
-	for i := 0; i < fields.NumField(); i++ {
-		fieldName := fields.Type().Field(i).Name
-		// skip local variable
-		if !unicode.IsUpper([]rune(fieldName)[0]) {
-			continue
-		}
-
-		field := fields.FieldByName(fieldName)
-		spec, ok := n1SegmentFormat[fieldName]
-		if !ok || !field.IsValid() {
-			return 0, utils.ErrValidField
-		}
-
-		if len(record) < spec.Start+spec.Length {
-			return 0, utils.ErrShortRecord
-		}
-		data := record[spec.Start : spec.Start+spec.Length]
-		if err := s.isValidType(spec, data); err != nil {
-			return 0, err
-		}
-
-		value, err := s.parseValue(spec, data)
-		if err != nil {
-			return 0, err
-		}
-
-		// set value
-		if value.IsValid() && field.CanSet() {
-			switch value.Interface().(type) {
-			case string:
-				field.SetString(value.Interface().(string))
-			}
-		}
+	length, err := s.parseRecordValues(fields, n1SegmentFormat, record, &s.validator)
+	if err != nil {
+		return length, err
 	}
 
 	return N1SegmentLength, nil
@@ -116,24 +85,7 @@ func (s *N1Segment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (s *N1Segment) Validate() error {
-	fields := reflect.ValueOf(s).Elem()
-	for i := 0; i < fields.NumField(); i++ {
-		fieldName := fields.Type().Field(i).Name
-		if !fields.IsValid() {
-			return utils.ErrValidField
-		}
-
-		if spec, ok := n1SegmentFormat[fieldName]; ok {
-			if spec.Required == required {
-				fieldValue := fields.FieldByName(fieldName)
-				if fieldValue.IsZero() {
-					return utils.ErrFieldRequired
-				}
-			}
-		}
-	}
-
-	return nil
+	return s.validateRecord(s, n1SegmentFormat)
 }
 
 // Length returns size of segment
