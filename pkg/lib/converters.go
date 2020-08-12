@@ -8,13 +8,13 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"github.com/moov-io/metro2/pkg/utils"
 	"reflect"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/moov-io/metro2/pkg/utils"
+	"unicode"
 )
 
 type converter struct{}
@@ -105,6 +105,54 @@ func (c *converter) toSpecifications(fieldsFormat map[string]field) []specificat
 		return specifications[i].Key < specifications[j].Key
 	})
 	return specifications
+}
+
+// parse field with string
+func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]field, record string, v *validator) (int, error) {
+	offset := 0
+	for i := 0; i < fields.NumField(); i++ {
+		fieldName := fields.Type().Field(i).Name
+		// skip local variable
+		if !unicode.IsUpper([]rune(fieldName)[0]) {
+			continue
+		}
+		field := fields.FieldByName(fieldName)
+		spec, ok := spec[fieldName]
+		if !ok || !field.IsValid() {
+			return 0, utils.ErrValidField
+		}
+
+		if len(record) < spec.Start+spec.Length+offset {
+			return 0, utils.ErrShortRecord
+		}
+		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
+		if err := v.isValidType(spec, data); err != nil {
+			return 0, err
+		}
+
+		value, err := c.parseValue(spec, data)
+		if err != nil {
+			return 0, err
+		}
+		// set value
+		if value.IsValid() && field.CanSet() {
+			switch value.Interface().(type) {
+			case int, int64:
+				if fieldName == "BlockDescriptorWord" {
+					if !utils.IsVariableLength(record) {
+						continue
+					}
+					offset += 4
+				}
+				field.SetInt(value.Interface().(int64))
+			case string:
+				field.SetString(value.Interface().(string))
+			case time.Time:
+				field.Set(value)
+			}
+		}
+	}
+	return 0, nil
 }
 
 // convert functions

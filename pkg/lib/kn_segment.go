@@ -8,7 +8,6 @@ import (
 	"reflect"
 	"strings"
 	"time"
-	"unicode"
 	"unicode/utf8"
 
 	"github.com/moov-io/metro2/pkg/utils"
@@ -75,41 +74,9 @@ func (s *K1Segment) Parse(record string) (int, error) {
 		return 0, utils.ErrValidField
 	}
 
-	for i := 0; i < fields.NumField(); i++ {
-		fieldName := fields.Type().Field(i).Name
-		// skip local variable
-		if !unicode.IsUpper([]rune(fieldName)[0]) {
-			continue
-		}
-
-		field := fields.FieldByName(fieldName)
-		spec, ok := k1SegmentFormat[fieldName]
-		if !ok || !field.IsValid() {
-			return 0, utils.ErrValidField
-		}
-
-		if len(record) < spec.Start+spec.Length {
-			return 0, utils.ErrShortRecord
-		}
-		data := record[spec.Start : spec.Start+spec.Length]
-		if err := s.isValidType(spec, data); err != nil {
-			return 0, err
-		}
-
-		value, err := s.parseValue(spec, data)
-		if err != nil {
-			return 0, err
-		}
-
-		// set value
-		if value.IsValid() && field.CanSet() {
-			switch value.Interface().(type) {
-			case int, int64:
-				field.SetInt(value.Interface().(int64))
-			case string:
-				field.SetString(value.Interface().(string))
-			}
-		}
+	length, err := s.parseRecordValues(fields, k1SegmentFormat, record, &s.validator)
+	if err != nil {
+		return length, err
 	}
 
 	return K1SegmentLength, nil
@@ -135,38 +102,7 @@ func (s *K1Segment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (s *K1Segment) Validate() error {
-	fields := reflect.ValueOf(s).Elem()
-	for i := 0; i < fields.NumField(); i++ {
-		fieldName := fields.Type().Field(i).Name
-		if !fields.IsValid() {
-			return utils.ErrValidField
-		}
-
-		if spec, ok := k1SegmentFormat[fieldName]; ok {
-			if spec.Required == required {
-				fieldValue := fields.FieldByName(fieldName)
-				if fieldValue.IsZero() {
-					return utils.ErrFieldRequired
-				}
-			}
-		}
-
-		funcName := s.validateFuncName(fieldName)
-		method := reflect.ValueOf(s).MethodByName(funcName)
-		if method.IsValid() {
-			response := method.Call(nil)
-			if len(response) == 0 {
-				continue
-			}
-
-			err := method.Call(nil)[0]
-			if !err.IsNil() {
-				return err.Interface().(error)
-			}
-		}
-	}
-
-	return nil
+	return s.validateRecord(s, k1SegmentFormat)
 }
 
 // Length returns size of segment
@@ -222,41 +158,9 @@ func (s *K2Segment) Parse(record string) (int, error) {
 		return 0, utils.ErrValidField
 	}
 
-	for i := 0; i < fields.NumField(); i++ {
-		fieldName := fields.Type().Field(i).Name
-		// skip local variable
-		if !unicode.IsUpper([]rune(fieldName)[0]) {
-			continue
-		}
-
-		field := fields.FieldByName(fieldName)
-		spec, ok := k2SegmentFormat[fieldName]
-		if !ok || !field.IsValid() {
-			return 0, utils.ErrValidField
-		}
-
-		if len(record) < spec.Start+spec.Length {
-			return 0, utils.ErrShortRecord
-		}
-		data := record[spec.Start : spec.Start+spec.Length]
-		if err := s.isValidType(spec, data); err != nil {
-			return 0, err
-		}
-
-		value, err := s.parseValue(spec, data)
-		if err != nil {
-			return 0, err
-		}
-
-		// set value
-		if value.IsValid() && field.CanSet() {
-			switch value.Interface().(type) {
-			case int, int64:
-				field.SetInt(value.Interface().(int64))
-			case string:
-				field.SetString(value.Interface().(string))
-			}
-		}
+	length, err := s.parseRecordValues(fields, k2SegmentFormat, record, &s.validator)
+	if err != nil {
+		return length, err
 	}
 
 	return K2SegmentLength, nil
@@ -282,38 +186,7 @@ func (s *K2Segment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (s *K2Segment) Validate() error {
-	fields := reflect.ValueOf(s).Elem()
-	for i := 0; i < fields.NumField(); i++ {
-		fieldName := fields.Type().Field(i).Name
-		if !fields.IsValid() {
-			return utils.ErrValidField
-		}
-
-		if spec, ok := k2SegmentFormat[fieldName]; ok {
-			if spec.Required == required {
-				fieldValue := fields.FieldByName(fieldName)
-				if fieldValue.IsZero() {
-					return utils.ErrFieldRequired
-				}
-			}
-		}
-
-		funcName := s.validateFuncName(fieldName)
-		method := reflect.ValueOf(s).MethodByName(funcName)
-		if method.IsValid() {
-			response := method.Call(nil)
-			if len(response) == 0 {
-				continue
-			}
-
-			err := method.Call(nil)[0]
-			if !err.IsNil() {
-				return err.Interface().(error)
-			}
-		}
-	}
-
-	return nil
+	return s.validateRecord(s, k2SegmentFormat)
 }
 
 // Length returns size of segment
@@ -381,41 +254,9 @@ func (s *K3Segment) Parse(record string) (int, error) {
 		return 0, utils.ErrValidField
 	}
 
-	for i := 0; i < fields.NumField(); i++ {
-		fieldName := fields.Type().Field(i).Name
-		// skip local variable
-		if !unicode.IsUpper([]rune(fieldName)[0]) {
-			continue
-		}
-
-		field := fields.FieldByName(fieldName)
-		spec, ok := k3SegmentFormat[fieldName]
-		if !ok || !field.IsValid() {
-			return 0, utils.ErrValidField
-		}
-
-		if len(record) < spec.Start+spec.Length {
-			return 0, utils.ErrShortRecord
-		}
-		data := record[spec.Start : spec.Start+spec.Length]
-		if err := s.isValidType(spec, data); err != nil {
-			return 0, err
-		}
-
-		value, err := s.parseValue(spec, data)
-		if err != nil {
-			return 0, err
-		}
-
-		// set value
-		if value.IsValid() && field.CanSet() {
-			switch value.Interface().(type) {
-			case int, int64:
-				field.SetInt(value.Interface().(int64))
-			case string:
-				field.SetString(value.Interface().(string))
-			}
-		}
+	length, err := s.parseRecordValues(fields, k3SegmentFormat, record, &s.validator)
+	if err != nil {
+		return length, err
 	}
 
 	return K3SegmentLength, nil
@@ -441,38 +282,7 @@ func (s *K3Segment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (s *K3Segment) Validate() error {
-	fields := reflect.ValueOf(s).Elem()
-	for i := 0; i < fields.NumField(); i++ {
-		fieldName := fields.Type().Field(i).Name
-		if !fields.IsValid() {
-			return utils.ErrValidField
-		}
-
-		if spec, ok := k3SegmentFormat[fieldName]; ok {
-			if spec.Required == required {
-				fieldValue := fields.FieldByName(fieldName)
-				if fieldValue.IsZero() {
-					return utils.ErrFieldRequired
-				}
-			}
-		}
-
-		funcName := s.validateFuncName(fieldName)
-		method := reflect.ValueOf(s).MethodByName(funcName)
-		if method.IsValid() {
-			response := method.Call(nil)
-			if len(response) == 0 {
-				continue
-			}
-
-			err := method.Call(nil)[0]
-			if !err.IsNil() {
-				return err.Interface().(error)
-			}
-		}
-	}
-
-	return nil
+	return s.validateRecord(s, k3SegmentFormat)
 }
 
 // Length returns size of segment
@@ -541,43 +351,9 @@ func (s *K4Segment) Parse(record string) (int, error) {
 		return 0, utils.ErrValidField
 	}
 
-	for i := 0; i < fields.NumField(); i++ {
-		fieldName := fields.Type().Field(i).Name
-		// skip local variable
-		if !unicode.IsUpper([]rune(fieldName)[0]) {
-			continue
-		}
-
-		field := fields.FieldByName(fieldName)
-		spec, ok := k4SegmentFormat[fieldName]
-		if !ok || !field.IsValid() {
-			return 0, utils.ErrValidField
-		}
-
-		if len(record) < spec.Start+spec.Length {
-			return 0, utils.ErrShortRecord
-		}
-		data := record[spec.Start : spec.Start+spec.Length]
-		if err := s.isValidType(spec, data); err != nil {
-			return 0, err
-		}
-
-		value, err := s.parseValue(spec, data)
-		if err != nil {
-			return 0, err
-		}
-
-		// set value
-		if value.IsValid() && field.CanSet() {
-			switch value.Interface().(type) {
-			case int, int64:
-				field.SetInt(value.Interface().(int64))
-			case string:
-				field.SetString(value.Interface().(string))
-			case time.Time:
-				field.Set(value)
-			}
-		}
+	length, err := s.parseRecordValues(fields, k4SegmentFormat, record, &s.validator)
+	if err != nil {
+		return length, err
 	}
 
 	return K4SegmentLength, nil
@@ -603,38 +379,7 @@ func (s *K4Segment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (s *K4Segment) Validate() error {
-	fields := reflect.ValueOf(s).Elem()
-	for i := 0; i < fields.NumField(); i++ {
-		fieldName := fields.Type().Field(i).Name
-		if !fields.IsValid() {
-			return utils.ErrValidField
-		}
-
-		if spec, ok := k4SegmentFormat[fieldName]; ok {
-			if spec.Required == required {
-				fieldValue := fields.FieldByName(fieldName)
-				if fieldValue.IsZero() {
-					return utils.ErrFieldRequired
-				}
-			}
-		}
-
-		funcName := s.validateFuncName(fieldName)
-		method := reflect.ValueOf(s).MethodByName(funcName)
-		if method.IsValid() {
-			response := method.Call(nil)
-			if len(response) == 0 {
-				continue
-			}
-
-			err := method.Call(nil)[0]
-			if !err.IsNil() {
-				return err.Interface().(error)
-			}
-		}
-	}
-
-	return nil
+	return s.validateRecord(s, k4SegmentFormat)
 }
 
 // Length returns size of segment

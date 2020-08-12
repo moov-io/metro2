@@ -6,10 +6,10 @@ package lib
 
 import (
 	"fmt"
+	"github.com/moov-io/metro2/pkg/utils"
+	"reflect"
 	"strconv"
 	"strings"
-
-	"github.com/moov-io/metro2/pkg/utils"
 )
 
 type validator struct{}
@@ -79,6 +79,42 @@ func (v *validator) isValidType(elm field, data string) error {
 
 func (v *validator) validateFuncName(name string) string {
 	return "Validate" + name
+}
+
+// to validate fields of record
+func (v *validator) validateRecord(r interface{}, spec map[string]field) error {
+	fields := reflect.ValueOf(r).Elem()
+	for i := 0; i < fields.NumField(); i++ {
+		fieldName := fields.Type().Field(i).Name
+		if !fields.IsValid() {
+			return utils.ErrValidField
+		}
+
+		if spec, ok := spec[fieldName]; ok {
+			if spec.Required == required {
+				fieldValue := fields.FieldByName(fieldName)
+				if fieldValue.IsZero() {
+					return utils.ErrFieldRequired
+				}
+			}
+		}
+
+		funcName := v.validateFuncName(fieldName)
+		method := reflect.ValueOf(r).MethodByName(funcName)
+		if method.IsValid() {
+			response := method.Call(nil)
+			if len(response) == 0 {
+				continue
+			}
+
+			err := method.Call(nil)[0]
+			if !err.IsNil() {
+				return err.Interface().(error)
+			}
+		}
+	}
+
+	return nil
 }
 
 func validFilledString(s string) bool {
