@@ -23,13 +23,14 @@ func TestFile__Crashers(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
-		t.Logf("parsing %s", paths[i])
-
-		if _, err := CreateFile(bs); err == nil {
-			t.Error("expected error")
+		if testing.Verbose() {
+			t.Logf("parsing %s", paths[i])
 		}
-
+		if _, err := CreateFile(bs); err == nil {
+			t.Errorf("expected error with %s", paths[i])
+		} else {
+			t.Logf("error with %s\n  %#v", paths[i], err)
+		}
 		if testing.Verbose() {
 			t.Logf("read %s without crashing", paths[i])
 		}
