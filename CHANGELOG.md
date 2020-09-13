@@ -1,3 +1,15 @@
+## v0.2.7 (Released 2020-09-13)
+
+IMPROVEMENTS
+
+- docs: include section for the docker image
+- file: print filepaths with error
+
+BUILD
+
+- chore(deps): update golang docker tag to v1.15
+- chore(deps): update module gorilla/mux to v1.8.0
+
 ## v0.2.6 (Released 2020-07-24)
 
 BUG FIXES
