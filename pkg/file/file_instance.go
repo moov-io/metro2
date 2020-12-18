@@ -157,10 +157,10 @@ func (f *fileInstance) Validate() error {
 		fromField := fromFields.FieldByName(fieldName)
 		toField := toFields.FieldByName(fieldName)
 		if !fromField.IsValid() || !toField.IsValid() {
-			return utils.NewErrValidValue(fieldName)
+			return utils.NewErrValidValue(fieldName + " in Trailer record")
 		}
 		if fromField.Interface() != toField.Convert(fromField.Type()).Interface() {
-			return utils.NewErrValidValue(fieldName)
+			return utils.NewErrValidValue(fieldName + " in Trailer record")
 		}
 	}
 	return nil

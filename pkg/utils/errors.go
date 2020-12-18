@@ -24,6 +24,10 @@ var (
 	ErrValidField = errors.New("is an invalid field")
 	// ErrShortRecord is given when the record is too short
 	ErrShortRecord = errors.New("is too short / missing data")
+	// ErrValidFile is given when there's an invalid file
+	ErrValidFile = errors.New("the file isn't metro file")
+	// ErrNonHeaderRecord is given when there isn't header record
+	ErrNonHeaderRecord = errors.New("the file isn't header record")
 )
 
 // NewErrValidValue returns a error that has invalid value

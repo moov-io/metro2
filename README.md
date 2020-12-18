@@ -173,7 +173,6 @@ example:
 metro2 validator --input testdata/packed_file.dat
 Error: is an invalid value of TotalConsumerSegmentsJ1
 
-metro2 validator --input testdata/packed_file.json
 ```
 
 ### web server
