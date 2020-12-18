@@ -50,10 +50,6 @@ func (s *L1Segment) Parse(record string) (int, error) {
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	if !fields.IsValid() {
-		return 0, utils.ErrValidField
-	}
-
 	length, err := s.parseRecordValues(fields, l1SegmentFormat, record, &s.validator)
 	if err != nil {
 		return length, err
@@ -67,10 +63,6 @@ func (s *L1Segment) String() string {
 	var buf strings.Builder
 	specifications := s.toSpecifications(l1SegmentFormat)
 	fields := reflect.ValueOf(s).Elem()
-	if !fields.IsValid() {
-		return ""
-	}
-
 	buf.Grow(L1SegmentLength)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))

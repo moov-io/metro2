@@ -530,10 +530,6 @@ func (r *BaseSegment) Parse(record string) (int, error) {
 	}
 
 	fields := reflect.ValueOf(r).Elem()
-	if !fields.IsValid() {
-		return 0, utils.ErrValidField
-	}
-
 	length, err := r.parseRecordValues(fields, baseSegmentCharacterFormat, record, &r.validator)
 	if err != nil {
 		return length, err
@@ -572,10 +568,6 @@ func (r *BaseSegment) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(baseSegmentCharacterFormat)
 	fields := reflect.ValueOf(r).Elem()
-	if !fields.IsValid() {
-		return ""
-	}
-
 	blockSize := r.RecordDescriptorWord
 	if r.BlockDescriptorWord > 0 {
 		blockSize += 4
@@ -901,10 +893,6 @@ func (r *PackedBaseSegment) Parse(record string) (int, error) {
 	}
 
 	fields := reflect.ValueOf(r).Elem()
-	if !fields.IsValid() {
-		return 0, utils.ErrValidField
-	}
-
 	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
@@ -973,10 +961,6 @@ func (r *PackedBaseSegment) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(baseSegmentPackedFormat)
 	fields := reflect.ValueOf(r).Elem()
-	if !fields.IsValid() {
-		return ""
-	}
-
 	blockSize := r.RecordDescriptorWord
 	if r.BlockDescriptorWord > 0 {
 		blockSize += 4

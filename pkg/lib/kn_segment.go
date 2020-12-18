@@ -70,10 +70,6 @@ func (s *K1Segment) Parse(record string) (int, error) {
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	if !fields.IsValid() {
-		return 0, utils.ErrValidField
-	}
-
 	length, err := s.parseRecordValues(fields, k1SegmentFormat, record, &s.validator)
 	if err != nil {
 		return length, err
@@ -87,10 +83,6 @@ func (s *K1Segment) String() string {
 	var buf strings.Builder
 	specifications := s.toSpecifications(k1SegmentFormat)
 	fields := reflect.ValueOf(s).Elem()
-	if !fields.IsValid() {
-		return ""
-	}
-
 	buf.Grow(K1SegmentLength)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
@@ -154,10 +146,6 @@ func (s *K2Segment) Parse(record string) (int, error) {
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	if !fields.IsValid() {
-		return 0, utils.ErrValidField
-	}
-
 	length, err := s.parseRecordValues(fields, k2SegmentFormat, record, &s.validator)
 	if err != nil {
 		return length, err
@@ -171,10 +159,6 @@ func (s *K2Segment) String() string {
 	var buf strings.Builder
 	specifications := s.toSpecifications(k2SegmentFormat)
 	fields := reflect.ValueOf(s).Elem()
-	if !fields.IsValid() {
-		return ""
-	}
-
 	buf.Grow(K2SegmentLength)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
@@ -250,10 +234,6 @@ func (s *K3Segment) Parse(record string) (int, error) {
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	if !fields.IsValid() {
-		return 0, utils.ErrValidField
-	}
-
 	length, err := s.parseRecordValues(fields, k3SegmentFormat, record, &s.validator)
 	if err != nil {
 		return length, err
@@ -267,10 +247,6 @@ func (s *K3Segment) String() string {
 	var buf strings.Builder
 	specifications := s.toSpecifications(k3SegmentFormat)
 	fields := reflect.ValueOf(s).Elem()
-	if !fields.IsValid() {
-		return ""
-	}
-
 	buf.Grow(K3SegmentLength)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
