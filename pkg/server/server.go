@@ -78,8 +78,6 @@ func outputBufferToWriter(w http.ResponseWriter, metroFile file.File, format str
 	case utils.OutputMetroFormat:
 		w.Header().Set("Content-Type", "application/octet-stream; charset=utf-8")
 		w.Write([]byte(metroFile.String()))
-	default:
-		http.Error(w, "invalid print format", http.StatusBadRequest)
 	}
 }
 
@@ -92,13 +90,13 @@ func outputBufferToWriter(w http.ResponseWriter, metroFile file.File, format str
 //   400: Bad Request
 //   501: Not Implemented
 func validator(w http.ResponseWriter, r *http.Request) {
-	mf, err := parseInputFromRequest(r)
+	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = mf.Validate()
+	err = metroFile.Validate()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotImplemented)
 		return
