@@ -50,7 +50,6 @@ func IsVariableLength(s string) bool {
 
 const (
 	packedRecordLength = 366
-	trailerIdentifier  = "TRAILER"
 	headerIdentifier   = "HEADER"
 )
 
