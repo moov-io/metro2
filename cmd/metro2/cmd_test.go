@@ -121,3 +121,10 @@ func TestWeb(t *testing.T) {
 		t.Errorf(err.Error())
 	}
 }
+
+func TestWebWithInvalidPort(t *testing.T) {
+	_, err := executeCommand(rootCmd, "web", "--port", "unknown", "--test=false")
+	if err == nil {
+		t.Errorf("Starting web server with unknown port")
+	}
+}

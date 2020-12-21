@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -30,19 +29,16 @@ var WebCmd = &cobra.Command{
 	Short: "Launches web server",
 	Long:  "Launches web server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		port, err := cmd.Flags().GetString("port")
-		if err != nil {
-			return err
-		}
+		port, _ := cmd.Flags().GetString("port")
 		fmt.Println("Starting web server on port ", port)
 		listen := "0.0.0.0:" + port
-		h, err := server.ConfigureHandlers()
-		if err != nil {
-			return err
-		}
+		h, _ := server.ConfigureHandlers()
 		test, _ := cmd.Flags().GetBool("test")
 		if !test {
-			log.Println(http.ListenAndServe(listen, h))
+			err := http.ListenAndServe(listen, h)
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	},
@@ -66,10 +62,7 @@ var Print = &cobra.Command{
 	Short: "Print metro file",
 	Long:  "Print an incoming metro file with special format (options: metro, json)",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		format, err := cmd.Flags().GetString("format")
-		if err != nil {
-			return err
-		}
+		format, _ := cmd.Flags().GetString("format")
 		if format != utils.OutputJsonFormat && format != utils.OutputMetroFormat {
 			return errors.New("don't support the format")
 		}
@@ -110,10 +103,7 @@ var Convert = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		format, err := cmd.Flags().GetString("format")
-		if err != nil {
-			return err
-		}
+		format, _ := cmd.Flags().GetString("format")
 		if format != utils.OutputJsonFormat && format != utils.OutputMetroFormat {
 			return errors.New("don't support the format")
 		}
@@ -182,10 +172,7 @@ var rootCmd = &cobra.Command{
 
 		if !isWeb {
 			if inputFile == "" {
-				path, err := os.Getwd()
-				if err != nil {
-					log.Fatal(err)
-				}
+				path, _ := os.Getwd()
 				inputFile = filepath.Join(path, "metro.json")
 			}
 			_, err := os.Stat(inputFile)

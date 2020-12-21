@@ -112,10 +112,6 @@ func (r *HeaderRecord) Parse(record string) (int, error) {
 	}
 
 	fields := reflect.ValueOf(r).Elem()
-	if !fields.IsValid() {
-		return 0, utils.ErrValidField
-	}
-
 	length, err := r.parseRecordValues(fields, headerRecordCharacterFormat, record, &r.validator)
 	if err != nil {
 		return length, err
@@ -132,10 +128,6 @@ func (r *HeaderRecord) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(headerRecordCharacterFormat)
 	fields := reflect.ValueOf(r).Elem()
-	if !fields.IsValid() {
-		return ""
-	}
-
 	blockSize := r.BlockDescriptorWord
 	if blockSize == 0 {
 		blockSize = r.RecordDescriptorWord
@@ -189,10 +181,6 @@ func (r *PackedHeaderRecord) Parse(record string) (int, error) {
 	}
 
 	fields := reflect.ValueOf(r).Elem()
-	if !fields.IsValid() {
-		return 0, utils.ErrValidField
-	}
-
 	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
@@ -248,10 +236,6 @@ func (r *PackedHeaderRecord) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(headerRecordPackedFormat)
 	fields := reflect.ValueOf(r).Elem()
-	if !fields.IsValid() {
-		return ""
-	}
-
 	blockSize := r.BlockDescriptorWord
 	if blockSize == 0 {
 		blockSize = r.RecordDescriptorWord
@@ -273,10 +257,6 @@ func (r *PackedHeaderRecord) Validate() error {
 	fields := reflect.ValueOf(r).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
-		if !fields.IsValid() {
-			return utils.ErrValidField
-		}
-
 		if spec, ok := headerRecordPackedFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)

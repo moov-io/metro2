@@ -157,10 +157,10 @@ func (f *fileInstance) Validate() error {
 		fromField := fromFields.FieldByName(fieldName)
 		toField := toFields.FieldByName(fieldName)
 		if !fromField.IsValid() || !toField.IsValid() {
-			return utils.NewErrValidValue(fieldName)
+			return utils.NewErrValidValue(fieldName + " in Trailer record")
 		}
 		if fromField.Interface() != toField.Convert(fromField.Type()).Interface() {
-			return utils.NewErrValidValue(fieldName)
+			return utils.NewErrValidValue(fieldName + " in Trailer record")
 		}
 	}
 	return nil
@@ -242,7 +242,6 @@ func (f *fileInstance) String() string {
 
 // UnmarshalJSON parses a JSON blob
 func (f *fileInstance) UnmarshalJSON(data []byte) error {
-
 	dummy := make(map[string]interface{})
 	err := json.Unmarshal(data, &dummy)
 	if err != nil {

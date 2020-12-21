@@ -109,6 +109,18 @@ func (t *ServerTest) TestMetroPrint(c *check.C) {
 	c.Assert(recorder.Code, check.Equals, http.StatusOK)
 }
 
+func (t *ServerTest) TestUnknownPrint(c *check.C) {
+	writer, body := t.getWriter("packed_file.json", c)
+	err := writer.WriteField("format", "unknown")
+	c.Assert(err, check.IsNil)
+	err = writer.Close()
+	c.Assert(err, check.IsNil)
+	recorder, request := t.makeRequest(http.MethodPost, "/print", body.String(), c)
+	request.Header.Set("Content-Type", writer.FormDataContentType())
+	t.testServer.ServeHTTP(recorder, request)
+	c.Assert(recorder.Code, check.Equals, http.StatusNotImplemented)
+}
+
 func (t *ServerTest) TestJsonConvert(c *check.C) {
 	writer, body := t.getWriter("packed_file.json", c)
 	err := writer.WriteField("format", "json")
@@ -131,6 +143,18 @@ func (t *ServerTest) TestMetroConvert(c *check.C) {
 	request.Header.Set("Content-Type", writer.FormDataContentType())
 	t.testServer.ServeHTTP(recorder, request)
 	c.Assert(recorder.Code, check.Equals, http.StatusOK)
+}
+
+func (t *ServerTest) TestUnknownConvert(c *check.C) {
+	writer, body := t.getWriter("packed_file.json", c)
+	err := writer.WriteField("format", "unknown")
+	c.Assert(err, check.IsNil)
+	err = writer.Close()
+	c.Assert(err, check.IsNil)
+	recorder, request := t.makeRequest(http.MethodPost, "/convert", body.String(), c)
+	request.Header.Set("Content-Type", writer.FormDataContentType())
+	t.testServer.ServeHTTP(recorder, request)
+	c.Assert(recorder.Code, check.Equals, http.StatusNotImplemented)
 }
 
 func (t *ServerTest) TestJsonConvertWithGenerate(c *check.C) {
@@ -194,7 +218,7 @@ func (t *ServerTest) TestConvertWithInvalidData(c *check.C) {
 }
 
 func (t *ServerTest) TestValidateWithInvalidData(c *check.C) {
-	writer, body := t.getWriter("base_segment.json", c)
+	writer, body := t.getWriter("unpacked_variable_file.dat", c)
 	err := writer.WriteField("format", "json")
 	c.Assert(err, check.IsNil)
 	err = writer.Close()

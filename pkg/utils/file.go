@@ -50,7 +50,6 @@ func IsVariableLength(s string) bool {
 
 const (
 	packedRecordLength = 366
-	trailerIdentifier  = "TRAILER"
 	headerIdentifier   = "HEADER"
 )
 
@@ -64,7 +63,7 @@ func IsMetroFile(s string) bool {
 	if len(s) < packedRecordLength {
 		return false
 	}
-	if s[4:10] == trailerIdentifier || s[8:14] == headerIdentifier {
+	if s[4:10] == headerIdentifier || s[8:14] == headerIdentifier {
 		return true
 	}
 	return false

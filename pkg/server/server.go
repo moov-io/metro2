@@ -7,6 +7,7 @@ package server
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"regexp"
@@ -38,14 +39,46 @@ func parseInputFromRequest(r *http.Request) (file.File, error) {
 	return mf, nil
 }
 
-func outputString(w http.ResponseWriter, output string) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(output))
+func outputError(w http.ResponseWriter, code int, err error) {
+	w.WriteHeader(code)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"error": err.Error(),
+	})
 }
 
-func outputJson(w http.ResponseWriter, output interface{}) {
+func outputSuccess(w http.ResponseWriter, output string) {
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(output)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status": output,
+	})
+}
+
+func messageToBuf(format string, metroFile file.File) ([]byte, error) {
+	var output []byte
+	var err error
+	switch format {
+	case utils.OutputJsonFormat:
+		output, err = json.MarshalIndent(metroFile, "", "\t")
+	case utils.OutputMetroFormat:
+		output = []byte(metroFile.String())
+	default:
+		return nil, errors.New("invalid format")
+	}
+	return output, err
+}
+
+func outputBufferToWriter(w http.ResponseWriter, metroFile file.File, format string) {
+	w.WriteHeader(http.StatusOK)
+	switch format {
+	case utils.OutputJsonFormat:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		json.NewEncoder(w).Encode(metroFile)
+	case utils.OutputMetroFormat:
+		w.Header().Set("Content-Type", "application/octet-stream; charset=utf-8")
+		w.Write([]byte(metroFile.String()))
+	}
 }
 
 // title: validate metro file
@@ -57,19 +90,19 @@ func outputJson(w http.ResponseWriter, output interface{}) {
 //   400: Bad Request
 //   501: Not Implemented
 func validator(w http.ResponseWriter, r *http.Request) {
-	mf, err := parseInputFromRequest(r)
+	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = mf.Validate()
+	err = metroFile.Validate()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotImplemented)
 		return
 	}
 
-	outputString(w, "valid file")
+	outputSuccess(w, "valid file")
 }
 
 // title: print metro file
@@ -81,20 +114,20 @@ func validator(w http.ResponseWriter, r *http.Request) {
 //   400: Bad Request
 //   501: Not Implemented
 func print(w http.ResponseWriter, r *http.Request) {
-	mf, err := parseInputFromRequest(r)
+	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	format := r.FormValue("format")
-	if strings.EqualFold(format, utils.OutputMetroFormat) {
-		outputString(w, mf.String())
-	} else if strings.EqualFold(format, utils.OutputJsonFormat) || len(format) == 0 {
-		outputJson(w, mf)
-	} else {
-		http.Error(w, "invalid print format", http.StatusBadRequest)
+	_, err = messageToBuf(format, metroFile)
+	if err != nil {
+		outputError(w, http.StatusNotImplemented, err)
+		return
 	}
+
+	outputBufferToWriter(w, metroFile, format)
 }
 
 // title: convert metro file
@@ -106,7 +139,7 @@ func print(w http.ResponseWriter, r *http.Request) {
 //   400: Bad Request
 //   501: Not Implemented
 func convert(w http.ResponseWriter, r *http.Request) {
-	mf, err := parseInputFromRequest(r)
+	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -114,12 +147,12 @@ func convert(w http.ResponseWriter, r *http.Request) {
 
 	generate := r.FormValue("generate")
 	if strings.EqualFold(generate, "true") {
-		trailer, err := mf.GeneratorTrailer()
+		trailer, err := metroFile.GeneratorTrailer()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusNotImplemented)
 			return
 		}
-		err = mf.SetRecord(trailer)
+		err = metroFile.SetRecord(trailer)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusNotImplemented)
 			return
@@ -127,17 +160,11 @@ func convert(w http.ResponseWriter, r *http.Request) {
 	}
 
 	format := r.FormValue("format")
-	buf, err := json.Marshal(mf)
+	filename := "converted_file"
+	output, err := messageToBuf(format, metroFile)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotImplemented)
+		outputError(w, http.StatusNotImplemented, err)
 		return
-	}
-
-	filename := "metro.json"
-	output := string(buf)
-	if strings.EqualFold(format, utils.OutputMetroFormat) {
-		output = mf.String()
-		filename = "metro"
 	}
 
 	w.Header().Set("Content-Type", "application/octet-stream")
@@ -154,7 +181,7 @@ func convert(w http.ResponseWriter, r *http.Request) {
 // responses:
 //   200: OK
 func health(w http.ResponseWriter, r *http.Request) {
-	outputJson(w, map[string]bool{"health": true})
+	outputSuccess(w, "alive")
 }
 
 func ConfigureHandlers() (http.Handler, error) {

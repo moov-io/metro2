@@ -19,9 +19,7 @@ func (t *SegmentTest) TestN1SegmentWithInvalidData(c *check.C) {
 	segment := NewN1Segment()
 	_, err := segment.Parse(t.sampleN1Segment[2:])
 	c.Assert(err, check.Not(check.IsNil))
-}
 
-func (t *SegmentTest) TestN1SegmentWithInvalidData2(c *check.C) {
-	_, err := NewN1Segment().Parse(t.sampleN1Segment[:16])
+	_, err = segment.Parse(t.sampleN1Segment[:16])
 	c.Assert(err, check.Not(check.IsNil))
 }

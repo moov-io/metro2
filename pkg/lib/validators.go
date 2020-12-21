@@ -57,7 +57,7 @@ func (v *validator) isValidType(elm field, data string) error {
 				return utils.ErrFieldRequired
 			}
 		} else if elm.Type&timestamp > 0 || elm.Type&date > 0 {
-			if validFilledString(data) {
+			if validFilledString(data) && len(data) == elm.Length {
 				return utils.ErrFieldRequired
 			}
 		}
@@ -87,10 +87,6 @@ func (v *validator) validateRecord(r interface{}, spec map[string]field) error {
 	fields := reflect.ValueOf(r).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
-		if !fields.IsValid() {
-			return utils.ErrValidField
-		}
-
 		if spec, ok := spec[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)

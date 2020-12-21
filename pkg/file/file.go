@@ -59,10 +59,7 @@ func CreateFile(buf []byte) (File, error) {
 	if err != nil {
 		return nil, err
 	}
-	f, err := NewFile(*fileFormat)
-	if err != nil {
-		return nil, err
-	}
+	f, _ := NewFile(*fileFormat)
 	if *dataType == JsonData {
 		err = json.Unmarshal(buf, f)
 	} else {
@@ -78,7 +75,7 @@ func getFileInformation(buf []byte) (*string, *string, error) {
 	err := json.Unmarshal(buf, dummy)
 	if err != nil {
 		if !utils.IsMetroFile(string(buf)) {
-			return nil, nil, utils.ErrValidField
+			return nil, nil, utils.ErrValidFile
 		}
 		dataType = MetroData
 		if utils.IsVariableLength(string(buf)) {
@@ -86,7 +83,7 @@ func getFileInformation(buf []byte) (*string, *string, error) {
 		}
 	} else {
 		if dummy.Header == nil {
-			return nil, nil, utils.ErrValidField
+			return nil, nil, utils.ErrNonHeaderRecord
 		}
 		if dummy.Header.BlockDescriptorWord > 0 {
 			fileFormat = PackedFileFormat

@@ -39,3 +39,38 @@ func TestCorpusSymlinks(t *testing.T) {
 		}
 	}
 }
+
+func TestFuzzWithValidData(t *testing.T) {
+	{
+		byteData, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", "packed_file.json"))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if ret := Fuzz(byteData); ret != 1 {
+			t.Errorf("Expected value is 1 (got %v)", ret)
+		}
+	}
+
+	samples := []string{
+		"base_segment.dat",
+		"base_segment.json",
+		"header_record.dat",
+		"packed_base_segment.dat",
+		"packed_file.dat",
+		"unpacked_fixed_file.dat",
+		"unpacked_fixed_file.json",
+		"unpacked_variable_file.dat",
+		"unpacked_variable_file.json",
+	}
+	for _, sample := range samples {
+		byteData, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", sample))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if ret := Fuzz(byteData); ret != 0 {
+			t.Errorf("Expected value is 0 (got %v)", ret)
+		}
+	}
+}

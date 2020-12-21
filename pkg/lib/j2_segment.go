@@ -174,10 +174,6 @@ func (s *J2Segment) Parse(record string) (int, error) {
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	if !fields.IsValid() {
-		return 0, utils.ErrValidField
-	}
-
 	length, err := s.parseRecordValues(fields, j2SegmentFormat, record, &s.validator)
 	if err != nil {
 		return length, err
@@ -191,10 +187,6 @@ func (s *J2Segment) String() string {
 	var buf strings.Builder
 	specifications := s.toSpecifications(j2SegmentFormat)
 	fields := reflect.ValueOf(s).Elem()
-	if !fields.IsValid() {
-		return ""
-	}
-
 	buf.Grow(J2SegmentLength)
 	for _, spec := range specifications {
 		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
