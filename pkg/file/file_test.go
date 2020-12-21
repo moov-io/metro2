@@ -311,3 +311,8 @@ func (t *FileTest) TestCreateFileFailed(c *check.C) {
 	_, err = CreateFile([]byte(data))
 	c.Assert(err, check.NotNil)
 }
+
+func (t *FileTest) TestWithUnknownFileType(c *check.C) {
+	_, err := NewFile("unknown")
+	c.Assert(err, check.NotNil)
+}

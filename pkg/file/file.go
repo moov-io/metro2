@@ -59,10 +59,7 @@ func CreateFile(buf []byte) (File, error) {
 	if err != nil {
 		return nil, err
 	}
-	f, err := NewFile(*fileFormat)
-	if err != nil {
-		return nil, err
-	}
+	f, _ := NewFile(*fileFormat)
 	if *dataType == JsonData {
 		err = json.Unmarshal(buf, f)
 	} else {

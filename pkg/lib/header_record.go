@@ -257,10 +257,6 @@ func (r *PackedHeaderRecord) Validate() error {
 	fields := reflect.ValueOf(r).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
-		if !fields.IsValid() {
-			return utils.ErrValidField
-		}
-
 		if spec, ok := headerRecordPackedFormat[fieldName]; ok {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)

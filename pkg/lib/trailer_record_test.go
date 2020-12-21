@@ -15,6 +15,10 @@ func TestTrailerRecordErr(t *testing.T) {
 	if _, err := record.Parse("12345"); err == nil {
 		t.Error("expected error")
 	}
+	packedRecord := &PackedTrailerRecord{}
+	if _, err := packedRecord.Parse("12345"); err == nil {
+		t.Error("expected error")
+	}
 }
 
 func (t *SegmentTest) TestTrailerRecord(c *check.C) {

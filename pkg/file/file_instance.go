@@ -242,7 +242,6 @@ func (f *fileInstance) String() string {
 
 // UnmarshalJSON parses a JSON blob
 func (f *fileInstance) UnmarshalJSON(data []byte) error {
-
 	dummy := make(map[string]interface{})
 	err := json.Unmarshal(data, &dummy)
 	if err != nil {

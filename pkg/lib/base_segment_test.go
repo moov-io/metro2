@@ -30,6 +30,25 @@ func (t *SegmentTest) TestBaseSegment(c *check.C) {
 	c.Assert(segment.Name(), check.Equals, BaseSegmentName)
 	c.Assert(segment.Length(), check.Equals, 1264)
 	c.Assert(segment.BlockSize(), check.Equals, 1268)
+
+	list := segment.GetSegments(J1SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+	list = segment.GetSegments(J2SegmentName)
+	c.Assert(len(list), check.Equals, 2)
+	list = segment.GetSegments(K1SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+	list = segment.GetSegments(K2SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+	list = segment.GetSegments(K3SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+	list = segment.GetSegments(K4SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+	list = segment.GetSegments(L1SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+	list = segment.GetSegments(N1SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+	list = segment.GetSegments("unknown")
+	c.Assert(len(list), check.Equals, 0)
 }
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidData(c *check.C) {
@@ -107,6 +126,25 @@ func (t *SegmentTest) TestPackedBaseSegment(c *check.C) {
 	c.Assert(segment.Name(), check.Equals, PackedBaseSegmentName)
 	c.Assert(segment.Length(), check.Equals, 1106)
 	c.Assert(segment.BlockSize(), check.Equals, 1110)
+
+	list := segment.GetSegments(J1SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+	list = segment.GetSegments(J2SegmentName)
+	c.Assert(len(list), check.Equals, 2)
+	list = segment.GetSegments(K1SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = segment.GetSegments(K2SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = segment.GetSegments(K3SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+	list = segment.GetSegments(K4SegmentName)
+	c.Assert(len(list), check.Equals, 0)
+	list = segment.GetSegments(L1SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+	list = segment.GetSegments(N1SegmentName)
+	c.Assert(len(list), check.Equals, 1)
+	list = segment.GetSegments("unknown")
+	c.Assert(len(list), check.Equals, 0)
 }
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidData(c *check.C) {
