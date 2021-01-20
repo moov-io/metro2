@@ -1,16 +1,37 @@
-# metro2
+[![Moov Banner Logo](https://user-images.githubusercontent.com/20115216/104214617-885b3c80-53ec-11eb-8ce0-9fc745fb5bfc.png)](https://github.com/moov-io)
+
+<p align="center">
+  <a href="https://moov-io.github.io/metro2/">Project Documentation</a>
+  ·
+  <a href="https://moov-io.github.io/metro2/api/#overview">API Endpoints</a>
+  ·
+  <a href="https://slack.moov.io/">Community</a>
+  ·
+  <a href="https://moov.io/blog/">Blog</a>
+  <br>
+  <br>
+</p>
 
 [![GoDoc](https://godoc.org/github.com/moov-io/metro2?status.svg)](https://godoc.org/github.com/moov-io/metro2)
 [![Build Status](https://github.com/moov-io/metro2/workflows/Go/badge.svg)](https://github.com/moov-io/metro2/actions)
 [![Coverage Status](https://codecov.io/gh/moov-io/metro2/branch/master/graph/badge.svg)](https://codecov.io/gh/moov-io/metro2)
 [![Go Report Card](https://goreportcard.com/badge/github.com/moov-io/metro2)](https://goreportcard.com/report/github.com/moov-io/metro2)
-[![Apache 2 licensed](https://img.shields.io/badge/license-Apache2-blue.svg)](https://raw.githubusercontent.com/moov-io/metro2/master/LICENSE)
+[![Repo Size](https://img.shields.io/github/languages/code-size/moov-io/metro2?label=project%20size)](https://github.com/moov-io/metro2)
+[![Apache 2 License](https://img.shields.io/badge/license-Apache2-blue.svg)](https://raw.githubusercontent.com/moov-io/metro2/master/LICENSE)
+[![Slack Channel](https://slack.moov.io/badge.svg?bg=e01563&fgColor=fffff)](https://slack.moov.io/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/moov/metro2)](https://hub.docker.com/r/moov/metro2)
+[![GitHub Stars](https://img.shields.io/github/stars/moov-io/metro2)](https://github.com/moov-io/metro2)
+[![Twitter](https://img.shields.io/twitter/follow/moov_io?style=social)](https://twitter.com/moov_io?lang=en)
+
+# moov-io/metro2
+
+Moov's mission is to give developers an easy way to create and integrate bank processing into their own software products. Our open source projects are each focused on solving a single responsibility in financial services and designed around performance, scalability, and ease-of-use.
 
 Metro2 implements a reader, writer, and validator for consumer credit history reports in an HTTP server and Go library. The HTTP server is available in a [Docker image](#docker) and the Go package `github.com/moov-io/metro2` is available.
 
-Docs: [API Endpoints](https://moov-io.github.io/metro2/api/)
+## Project Status
 
-## Getting Started
+Moov Metro2 is actively used in multiple production environments. Please star the project if you are interested in its progress. If you have layers above Metro2 to simplify tasks, perform business operations, or found bugs we would appreciate an issue or pull request. Thanks!
 
 ### Docker
 
