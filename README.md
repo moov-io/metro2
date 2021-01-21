@@ -33,48 +33,91 @@ Metro2 implements a reader, writer, and validator for consumer credit history re
 
 Moov Metro2 is actively used in multiple production environments. Please star the project if you are interested in its progress. If you have layers above Metro2 to simplify tasks, perform business operations, or found bugs we would appreciate an issue or pull request. Thanks!
 
+## Usage
+The Metro2 project implements an HTTP server and [Go library](https://pkg.go.dev/github.com/moov-io/metro2) for creating and modifying files in Metro 2 format, which is used for consumer credit history reporting by U.S. credit bureaus.
+
 ### Docker
 
-We publish a [public Docker image `moov/metro2`](https://hub.docker.com/r/moov/metro2/tags) on Docker Hub with emetro2 tagged release of Wire. No configuration is required to serve on `:8080`. We also have docker images for [OpenShift](https://quay.io/repository/moov/metro2?tab=tags).
+We publish a [public Docker image `moov/metro2`](https://hub.docker.com/r/moov/metro2/) on Docker Hub with each tagged release of Metro2. No configuration is required to serve on `:8080`. We also have Docker images for [OpenShift](https://quay.io/repository/moov/metro2?tab=tags) published as `quay.io/moov/metro2`.
 
-Start the Docker image:
+Pull & start the Docker image:
 ```
+docker pull moov/metro2:latest
 docker run -p 8080:8080 moov/metro2:latest
 ```
 
-Upload a file and validate it
+Upload a file and validate it:
 ```
-curl -XPOST --form "file=@./test/testdata/packed_file.json" http://localhost:8080/validator
+curl -X POST --form "file=@./test/testdata/packed_file.json" http://localhost:8080/validator
 ```
 ```
 valid file
 ```
 
-Convert a file between formats
+Convert a file between formats:
 ```
-curl -XPOST --form "file=@./test/testdata/packed_file.json" http://localhost:8080/convert -v
+curl -X POST --form "file=@./test/testdata/packed_file.json" http://localhost:8080/convert
 ```
 ```
 {"header":{"recordDescriptorWord":480,"recordIdentifier":"HEADER","transUnionProgramIdentifier":"5555555555","activityDate":"2002-08-20T00:00:00Z", ...
 ```
 
+### Google Cloud Run
+
+To get started in a hosted environment you can deploy this project to the Google Cloud Platform.
+
+From your [Google Cloud dashboard](https://console.cloud.google.com/home/dashboard) create a new project and call it:
+```
+moov-metro2-demo
+```
+
+Enable the [Container Registry](https://cloud.google.com/container-registry) API for your project and associate a [billing account](https://cloud.google.com/billing/docs/how-to/manage-billing-account) if needed. Then, open the Cloud Shell terminal and run the following Docker commands, substituting your unique project ID:
+
+```
+docker pull moov/metro2
+docker tag moov/metro2 gcr.io/<PROJECT-ID>/metro2
+docker push gcr.io/<PROJECT-ID>/metro2
+```
+
+Deploy the container to Cloud Run:
+```
+gcloud run deploy --image gcr.io/<PROJECT-ID>/metro2 --port 8080
+```
+
+Select your target platform to `1`, service name to `metro2`, and region to the one closest to you (enable Google API service if a prompt appears). Upon a successful build you will be given a URL where the API has been deployed:
+
+```
+https://YOUR-METRO2-APP-URL.a.run.app
+```
+
+Now you can complete a health check:
+```
+curl https://YOUR-METRO2-APP-URL.a.run.app/health
+```
+You should get this response:
+```
+{"health":true}
+```
+
+### Data Persistence
+By design, Metro2  **does not persist** (save) any data about the files or entry details created. The only storage occurs in memory of the process and upon restart Metro2 will have no files or data saved. Also, no in-memory encryption of the data is performed.
+
 ### Go Library
 
-There is a Go library which can read and write credit reporting specifications. We write unit tests and fuzz the code to help ensure our code is production ready for everyone. Metro2 uses [Go Modules](https://github.com/golang/go/wiki/Modules) to manage dependencies and suggests Go 1.14 or greater.
-
-To clone our code and verify our tests on your system run:
+This project uses [Go Modules](https://github.com/golang/go/wiki/Modules) and uses Go v1.14 or higher. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
 
 ```
-$ git clone git@github.com:moov-io/metro2.git
-$ cd metro2
+$ git@github.com:moov-io/metro2.git
 
-$ go test ./...
-ok   	github.com/moov-io/metro2	0.710s	coverage: 98.1% of statements
+# Pull down into the Go Module cache
+$ go get -u github.com/moov-io/metro2
+
+$ go doc github.com/moov-io/metro2
 ```
 
-## Commands
+### Command Line
 
-Metro2 has command line interface to manage metro2 files and to lunch web service.
+Metro2 has a command line interface to manage Metro 2 files and launch a web service.
 
 ```
 metro2 --help
@@ -100,8 +143,8 @@ Each interaction that the library supports is exposed in a command-line option:
 
  Command | Info
  ------- | -------
-`convert` | The convert command allows users to convert from a metro file to another format file. Result will create a metro file.
-`print` | The print command allows users to print a metro file with special file format (json, metro).
+`convert` | The convert command allows users to convert a metro file to a specified file format (json, metro). The result will create a new file.
+`print` | The print command allows users to print a metro file in a specified file format (json, metro).
 `validator` | The validator command allows users to validate a metro file.
 `web` | The web command will launch a web server with endpoints to manage metro files.
 
@@ -122,12 +165,9 @@ Global Flags:
       --input string   input file (default is $PWD/metro.json)
 ```
 
-The output parameter is the full path name to convert new metro2 file.
-The format parameter is supported 2 types, "json" and  "metro".
-The generate parameter will replace new generated trailer record in the file.
-The input parameter is source metro2 file, supported raw type file and json type file.
+The output parameter represents the full path name for the new metro2 file. The format parameter supports two types, "json" and "metro". The generate parameter will replace new generated trailer record in the file. The input parameter is the source metro2 file to be converted, and can be raw or json.
 
-example:
+Example:
 ```
 metro2 convert output/output.json --input testdata/packed_file.json --format json
 ```
@@ -148,10 +188,10 @@ Global Flags:
       --input string   input file (default is $PWD/metro.json)
 ```
 
-The format parameter is supported 2 types, "json" and  "metro".
-The input parameter is source metro2 file, supported raw type file and json type file.
+The format parameter supports two types, "json" and "metro".
+The input parameter is the source metro2 file to be printed, and can be raw or json.
 
-example:
+Example:
 ```
 metro2 print --input testdata/packed_file.dat --format json
 {
@@ -187,13 +227,12 @@ Global Flags:
       --input string   input file (default is $PWD/metro.json)
 ```
 
-The input parameter is source metro2 file, supported raw type file and json type file.
+The input parameter is the source metro2 file to be validated, and can be raw or json.
 
-example:
+Example:
 ```
 metro2 validator --input testdata/packed_file.dat
 Error: is an invalid value of TotalConsumerSegmentsJ1
-
 ```
 
 ### web server
@@ -213,23 +252,23 @@ Global Flags:
       --input string   input file (default is $PWD/metro.json)
 ```
 
-The port parameter is port number of web service.
+The port parameter is the port number for the web service.
 
-example:
+Example:
 ```
 metro2 web
 ```
 
-Web server have some endpoints to manage metro2 file
+The web server has some endpoints to manage metro2 files:
 
 Method | Endpoint | Content-Type | Info
  ------- | ------- | ------- | -------
- `POST` | `/convert` | multipart/form-data | convert metro file. will download new file.
- `GET` | `/health` | text/plain | check web server.
- `POST` | `/print` | multipart/form-data | print metro file.
- `POST` | `/validator` | multipart/form-data | validate metro file.
+ `POST` | `/convert` | multipart/form-data | Convert metro file, will download new file.
+ `GET` | `/health` | text/plain | Check web server status.
+ `POST` | `/print` | multipart/form-data | Print metro file.
+ `POST` | `/validator` | multipart/form-data | Validate metro file.
 
-web page example to use metro2 web server:
+Web page example of the metro2 web server:
 
 ```
 <!doctype html>
@@ -248,14 +287,6 @@ web page example to use metro2 web server:
 </form>
 </body>
 </html>
-```
-
-## Docker
-
-You can run the [moov/metro2 Docker image](https://hub.docker.com/r/moov/metro2) which defaults to starting the HTTP server.
-
-```
-docker run -p 8080:8080 moov/metro2:latest
 ```
 
 ## Getting Help
