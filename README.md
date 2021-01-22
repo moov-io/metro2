@@ -70,12 +70,21 @@ curl -X POST --form "file=@./test/testdata/packed_file.json" http://localhost:80
 valid file
 ```
 
-Convert a file between formats:
+Convert a file from JSON to raw Metro format:
 ```
-curl -X POST --form "file=@./test/testdata/packed_file.json" http://localhost:8080/convert
+curl -X POST --form "file=@./test/testdata/packed_file.json" --form "format=metro" http://localhost:8080/convert
 ```
 ```
-{"header":{"recordDescriptorWord":480,"recordIdentifier":"HEADER","transUnionProgramIdentifier":"5555555555","activityDate":"2002-08-20T00:00:00Z", ...
+0480HEADER                           555555555508202002051019990510199905101999YOUR BUSINESS NAME HERE                 LINE ONE OF YOUR ADDRESS LINE TWO OF YOUR ADDRESS LINE THERE OF YOUR ADDRESS                    1234567890
+...
+```
+
+Convert a file from raw Metro format to JSON:
+```
+curl -X POST --form "file=@./test/testdata/packed_file.dat" --form "format=json" http://localhost:8080/convert
+```
+```
+{"header": {"blockDescriptorWord": 370,"recordDescriptorWord": 366,"recordIdentifier": "HEADER","transUnionProgramIdentifier": "5555555555","activityDate": "2002-08-20T00:00:00Z", ...
 ```
 
 ### Google Cloud Run
