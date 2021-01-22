@@ -45,7 +45,7 @@ func (t *FileTest) SetUpSuite(c *check.C) {
 	c.Assert(err, check.IsNil)
 	t.unpackedVariableBlockedJson = utils.ReadFile(f)
 
-	f, err = os.Open(filepath.Join("..", "..", "test", "testdata", "packed_file.dat"))
+	f, err = os.Open(filepath.Join("..", "..", "test", "testdata", "valid_packed_file.dat"))
 	c.Assert(err, check.IsNil)
 	t.packedFile = utils.ReadFile(f)
 

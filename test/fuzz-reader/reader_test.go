@@ -57,7 +57,7 @@ func TestFuzzWithValidData(t *testing.T) {
 		"base_segment.json",
 		"header_record.dat",
 		"packed_base_segment.dat",
-		"packed_file.dat",
+		"valid_packed_file.dat",
 		"unpacked_fixed_file.dat",
 		"unpacked_fixed_file.json",
 		"unpacked_variable_file.dat",
