@@ -64,7 +64,7 @@ docker run -p 8080:8080 moov/metro2:latest
 
 Upload a file and validate it:
 ```
-curl -X POST --form "file=@./test/testdata/valid_packed_file.json" http://localhost:8080/validator
+curl -X POST --form "file=@./test/testdata/valid_packed_file.dat" http://localhost:8080/validator
 ```
 ```
 valid file
