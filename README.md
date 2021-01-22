@@ -64,18 +64,18 @@ docker run -p 8080:8080 moov/metro2:latest
 
 Upload a file and validate it:
 ```
-curl -X POST --form "file=@./test/testdata/packed_file.json" http://localhost:8080/validator
+curl -X POST --form "file=@./test/testdata/valid_packed_file.json" http://localhost:8080/validator
 ```
 ```
 valid file
 ```
 
-Convert a file between formats:
+Convert a file from raw metro format to JSON:
 ```
-curl -X POST --form "file=@./test/testdata/packed_file.json" http://localhost:8080/convert
+curl -X POST --form "file=@./test/testdata/valid_packed_file.dat" --form "format=json" http://localhost:8080/convert
 ```
 ```
-{"header":{"recordDescriptorWord":480,"recordIdentifier":"HEADER","transUnionProgramIdentifier":"5555555555","activityDate":"2002-08-20T00:00:00Z", ...
+{"header":{"blockDescriptorWord:370","recordDescriptorWord":366,"recordIdentifier":"HEADER","transUnionProgramIdentifier":"5555555555","activityDate":"2002-08-20T00:00:00Z", ...
 ```
 
 ### Google Cloud Run
@@ -188,7 +188,7 @@ Global Flags:
 
 Example:
 ```
-metro2 convert output/output.json --input testdata/packed_file.json --format json
+metro2 convert output/output.json --input test/testdata/valid_packed_file.dat --format json
 ```
 
 ### file print
@@ -212,7 +212,7 @@ Global Flags:
 
 Example:
 ```
-metro2 print --input testdata/packed_file.dat --format json
+metro2 print --input test/testdata/valid_packed_file.dat --format json
 {
   "header": {
     "blockDescriptorWord": 370,
@@ -250,8 +250,8 @@ Global Flags:
 
 Example:
 ```
-metro2 validator --input testdata/packed_file.dat
-Error: is an invalid value of TotalConsumerSegmentsJ1
+metro2 validator --input test/testdata/invalid_packed_file.dat
+Error: is an invalid value of TotalConsumerSegmentsJ1 in Trailer record
 ```
 
 ### web server
