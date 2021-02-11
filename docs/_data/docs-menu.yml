@@ -2,6 +2,8 @@
   items:
     - name: Overview
       link: /
+    - name: What is Metro 2?
+      link: /intro/
 
 - label: Usage
   items:
