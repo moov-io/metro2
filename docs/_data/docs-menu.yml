@@ -1,0 +1,22 @@
+- label: Getting Started
+  items:
+    - name: Overview
+      link: /
+    - name: What is Metro 2?
+      link: /intro/
+
+- label: Usage
+  items:
+    - name: Docker
+      link: /usage-docker/
+    - name: Google Cloud Run
+      link: /usage-google-cloud/
+    - name: Go Library
+      link: /usage-go/
+    - name: Command Line
+      link: /usage-command-line/
+
+- label: Metro 2 File Setup
+  items:
+    - name: File Structure
+      link: /file-structure/
