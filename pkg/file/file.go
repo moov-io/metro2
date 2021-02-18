@@ -37,20 +37,20 @@ type dummyFile struct {
 // NewFile constructs a file template.
 func NewFile(format string) (File, error) {
 	switch format {
-	case CharacterFileFormat:
+	case utils.CharacterFileFormat:
 		return &fileInstance{
-			format:  CharacterFileFormat,
+			format:  utils.CharacterFileFormat,
 			Header:  lib.NewHeaderRecord(),
 			Trailer: lib.NewTrailerRecord(),
 		}, nil
-	case PackedFileFormat:
+	case utils.PackedFileFormat:
 		return &fileInstance{
-			format:  PackedFileFormat,
+			format:  utils.PackedFileFormat,
 			Header:  lib.NewPackedHeaderRecord(),
 			Trailer: lib.NewPackedTrailerRecord(),
 		}, nil
 	}
-	return nil, utils.NewErrValidFileFormat(format)
+	return nil, utils.NewErrInvalidSegment(format)
 }
 
 // CreateFile attempts to parse raw metro2 file contents
@@ -60,7 +60,7 @@ func CreateFile(buf []byte) (File, error) {
 		return nil, err
 	}
 	f, _ := NewFile(*fileFormat)
-	if *dataType == JsonData {
+	if *dataType == utils.MessageJsonFormat {
 		err = json.Unmarshal(buf, f)
 	} else {
 		err = f.Parse(string(buf))
@@ -69,24 +69,24 @@ func CreateFile(buf []byte) (File, error) {
 }
 
 func getFileInformation(buf []byte) (*string, *string, error) {
-	fileFormat := CharacterFileFormat
-	dataType := JsonData
+	fileFormat := utils.CharacterFileFormat
+	dataType := utils.MessageJsonFormat
 	dummy := &dummyFile{}
 	err := json.Unmarshal(buf, dummy)
 	if err != nil {
 		if !utils.IsMetroFile(string(buf)) {
-			return nil, nil, utils.ErrValidFile
+			return nil, nil, utils.ErrInvalidMetroFile
 		}
-		dataType = MetroData
+		dataType = utils.MessageMetroFormat
 		if utils.IsVariableLength(string(buf)) {
-			fileFormat = PackedFileFormat
+			fileFormat = utils.PackedFileFormat
 		}
 	} else {
 		if dummy.Header == nil {
 			return nil, nil, utils.ErrNonHeaderRecord
 		}
 		if dummy.Header.BlockDescriptorWord > 0 {
-			fileFormat = PackedFileFormat
+			fileFormat = utils.PackedFileFormat
 		}
 	}
 	return &fileFormat, &dataType, nil

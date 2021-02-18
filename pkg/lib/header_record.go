@@ -108,11 +108,11 @@ func (r *HeaderRecord) Name() string {
 // Parse takes the input record string and parses the header record values
 func (r *HeaderRecord) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < UnpackedRecordLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("header record")
 	}
 
 	fields := reflect.ValueOf(r).Elem()
-	length, err := r.parseRecordValues(fields, headerRecordCharacterFormat, record, &r.validator)
+	length, err := r.parseRecordValues(fields, headerRecordCharacterFormat, record, &r.validator, "header record")
 	if err != nil {
 		return length, err
 	}
@@ -146,7 +146,7 @@ func (r *HeaderRecord) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (r *HeaderRecord) Validate() error {
-	return r.validateRecord(r, headerRecordCharacterFormat)
+	return r.validateRecord(r, headerRecordCharacterFormat, "header record")
 }
 
 // BlockSize returns size of block
@@ -166,7 +166,7 @@ func (r *HeaderRecord) GetSegments(string) []Segment {
 
 // AddApplicableSegment will add new applicable segment into record
 func (r *HeaderRecord) AddApplicableSegment(s Segment) error {
-	return utils.NewErrApplicableSegment(s.Name())
+	return utils.NewErrApplicableSegment("header record", s.Name())
 }
 
 // Name returns name of packed header record
@@ -177,7 +177,7 @@ func (r *PackedHeaderRecord) Name() string {
 // Parse takes the input record string and parses the packed header record values
 func (r *PackedHeaderRecord) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < PackedRecordLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("packed header record")
 	}
 
 	fields := reflect.ValueOf(r).Elem()
@@ -191,18 +191,18 @@ func (r *PackedHeaderRecord) Parse(record string) (int, error) {
 		field := fields.FieldByName(fieldName)
 		spec, ok := headerRecordPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return 0, utils.ErrValidField
+			return 0, utils.NewErrInvalidValueOfField(fieldName, "packed header record")
 		}
 
 		if len(record) < spec.Start+spec.Length+offset {
-			return 0, utils.ErrShortRecord
+			return 0, utils.NewErrSegmentLength("packed header record")
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		if err := r.isValidType(spec, data); err != nil {
+		if err := r.isValidType(spec, data, fieldName, "packed header record"); err != nil {
 			return 0, err
 		}
 
-		value, err := r.parseValue(spec, data)
+		value, err := r.parseValue(spec, data, fieldName, "packed header record")
 		if err != nil {
 			return 0, err
 		}
@@ -261,7 +261,7 @@ func (r *PackedHeaderRecord) Validate() error {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return utils.ErrFieldRequired
+					return utils.NewErrFieldRequired(fieldName, "packed header record")
 				}
 			}
 		}
@@ -287,5 +287,5 @@ func (r *PackedHeaderRecord) GetSegments(string) []Segment {
 
 // AddApplicableSegment will add new applicable segment into record
 func (r *PackedHeaderRecord) AddApplicableSegment(s Segment) error {
-	return utils.NewErrApplicableSegment(s.Name())
+	return utils.NewErrApplicableSegment("packed header record", s.Name())
 }

@@ -33,7 +33,7 @@ func (t *SegmentTest) TestL1SegmentWithInvalidNewConsumerAccountNumber(c *check.
 	segment.ChangeIndicator = ChangeIndicatorIdentificationNumber
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of new consumer account number")
+	c.Assert(err.Error(), check.DeepEquals, "new consumer account number in l1 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestL1SegmentWithInvalidNewIdentificationNumber(c *check.C) {
@@ -44,7 +44,7 @@ func (t *SegmentTest) TestL1SegmentWithInvalidNewIdentificationNumber(c *check.C
 	segment.ChangeIndicator = ChangeIndicatorAccountNumber
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of new identification number")
+	c.Assert(err.Error(), check.DeepEquals, "new identification number in l1 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestL1SegmentWithInvalidChangeIndicator(c *check.C) {
@@ -54,7 +54,7 @@ func (t *SegmentTest) TestL1SegmentWithInvalidChangeIndicator(c *check.C) {
 	segment.ChangeIndicator = 5
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of change indicator")
+	c.Assert(err.Error(), check.DeepEquals, "change indicator in l1 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestL1SegmentWithInvalidData2(c *check.C) {

@@ -32,7 +32,7 @@ func (t *SegmentTest) TestJ2SegmentWithInvalidGenerationCode(c *check.C) {
 	segment.GenerationCode = "0"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of generation code")
+	c.Assert(err.Error(), check.DeepEquals, "generation code in j1 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestJ2SegmentWithInvalidTelephoneNumber(c *check.C) {
@@ -51,7 +51,7 @@ func (t *SegmentTest) TestJ2SegmentWithInvalidAddressIndicator(c *check.C) {
 	segment.AddressIndicator = "0"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of address indicator")
+	c.Assert(err.Error(), check.DeepEquals, "address indicator in j2 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestJ2SegmentWithInvalidResidenceCode(c *check.C) {
@@ -61,7 +61,7 @@ func (t *SegmentTest) TestJ2SegmentWithInvalidResidenceCode(c *check.C) {
 	segment.ResidenceCode = "0"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of residence code")
+	c.Assert(err.Error(), check.DeepEquals, "residence code in j2 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestJ2SegmentWithInvalidData2(c *check.C) {

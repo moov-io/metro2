@@ -62,9 +62,15 @@ var Print = &cobra.Command{
 	Short: "Print metro file",
 	Long:  "Print an incoming metro file with special format (options: metro, json)",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		format, _ := cmd.Flags().GetString("format")
-		if format != utils.OutputJsonFormat && format != utils.OutputMetroFormat {
+		format, err := cmd.Flags().GetString("format")
+		if err != nil {
+			return err
+		}
+
+		if format != "" && (format != utils.MessageJsonFormat && format != utils.MessageMetroFormat) {
 			return errors.New("don't support the format")
+		} else {
+			format = utils.MessageJsonFormat
 		}
 
 		f, err := file.CreateFile([]byte(rawData))
@@ -73,7 +79,7 @@ var Print = &cobra.Command{
 		}
 
 		output := ""
-		if format == utils.OutputJsonFormat {
+		if format == utils.MessageJsonFormat {
 			buf, err := json.Marshal(f)
 			if err != nil {
 				return err
@@ -84,7 +90,7 @@ var Print = &cobra.Command{
 				return err
 			}
 			output = pretty.String()
-		} else if format == utils.OutputMetroFormat {
+		} else if format == utils.MessageMetroFormat {
 			output = f.String()
 		}
 		fmt.Println(output)
@@ -103,9 +109,15 @@ var Convert = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		format, _ := cmd.Flags().GetString("format")
-		if format != utils.OutputJsonFormat && format != utils.OutputMetroFormat {
+		format, err := cmd.Flags().GetString("format")
+		if err != nil {
+			return err
+		}
+
+		if format != "" && (format != utils.MessageJsonFormat && format != utils.MessageMetroFormat) {
 			return errors.New("don't support the format")
+		} else {
+			format = utils.MessageJsonFormat
 		}
 
 		mf, err := file.CreateFile([]byte(rawData))
@@ -126,7 +138,7 @@ var Convert = &cobra.Command{
 		}
 
 		output := ""
-		if format == utils.OutputJsonFormat {
+		if format == utils.MessageJsonFormat {
 			buf, err := json.Marshal(mf)
 			if err != nil {
 				return err
@@ -137,9 +149,10 @@ var Convert = &cobra.Command{
 				return err
 			}
 			output = pretty.String()
-		} else if format == utils.OutputMetroFormat {
+		} else if format == utils.MessageMetroFormat {
 			output = mf.String()
 		}
+
 		f, err := os.Create(args[0])
 		if err != nil {
 			return err
@@ -195,7 +208,6 @@ func initRootCmd() {
 	WebCmd.Flags().BoolP("test", "t", false, "test server")
 	Convert.Flags().String("format", "json", "format of metro file(required)")
 	Convert.Flags().BoolP("generate", "g", false, "generate trailer record")
-	Convert.MarkFlagRequired("format")
 	Print.Flags().String("format", "json", "print format")
 
 	rootCmd.SilenceUsage = true
