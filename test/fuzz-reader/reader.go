@@ -6,6 +6,7 @@ package fuzzreader
 
 import (
 	"github.com/moov-io/metro2/pkg/file"
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 // Return codes (from go-fuzz docs)
@@ -23,10 +24,10 @@ func Fuzz(data []byte) int {
 
 	// If we're missing a record the file is close, but we should continue around
 	// that input value.
-	if record, _ := f.GetRecord(file.HeaderRecordName); record == nil {
+	if record, _ := f.GetRecord(utils.HeaderRecordName); record == nil {
 		return -1
 	}
-	if record, _ := f.GetRecord(file.TrailerRecordName); record == nil {
+	if record, _ := f.GetRecord(utils.TrailerRecordName); record == nil {
 		return -1
 	}
 	if records := f.GetDataRecords(); len(records) == 0 {
