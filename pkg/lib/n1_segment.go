@@ -49,11 +49,11 @@ func (s *N1Segment) Name() string {
 // Parse takes the input record string and parses the n1 segment values
 func (s *N1Segment) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < N1SegmentLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("n1 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, n1SegmentFormat, record, &s.validator)
+	length, err := s.parseRecordValues(fields, n1SegmentFormat, record, &s.validator, "n1 segment")
 	if err != nil {
 		return length, err
 	}
@@ -77,7 +77,7 @@ func (s *N1Segment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (s *N1Segment) Validate() error {
-	return s.validateRecord(s, n1SegmentFormat)
+	return s.validateRecord(s, n1SegmentFormat, "n1 segment")
 }
 
 // Length returns size of segment

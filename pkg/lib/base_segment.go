@@ -526,11 +526,11 @@ func (r *BaseSegment) Name() string {
 // Parse takes the input record string and parses the base segment values
 func (r *BaseSegment) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < UnpackedRecordLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("base segment")
 	}
 
 	fields := reflect.ValueOf(r).Elem()
-	length, err := r.parseRecordValues(fields, baseSegmentCharacterFormat, record, &r.validator)
+	length, err := r.parseRecordValues(fields, baseSegmentCharacterFormat, record, &r.validator, "base segment")
 	if err != nil {
 		return length, err
 	}
@@ -543,7 +543,7 @@ func (r *BaseSegment) Parse(record string) (int, error) {
 	r.j2Segments = []Segment{}
 
 	if len(record) < offset {
-		return 0, utils.ErrShortRecord
+		return 0, utils.NewErrSegmentLength("base segment")
 	}
 	read, err := readApplicableSegments(record[offset:], r)
 	if err != nil {
@@ -551,10 +551,10 @@ func (r *BaseSegment) Parse(record string) (int, error) {
 	}
 
 	if r.BlockDescriptorWord > 0 && read+offset > r.BlockDescriptorWord {
-		return 0, utils.NewErrParse()
+		return 0, utils.NewErrFailedParsing()
 	}
 	if r.BlockDescriptorWord == 0 && read+offset > r.RecordDescriptorWord {
-		return 0, utils.NewErrParse()
+		return 0, utils.NewErrFailedParsing()
 	}
 
 	if r.BlockDescriptorWord > 0 {
@@ -614,7 +614,7 @@ func (r *BaseSegment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (r *BaseSegment) Validate() error {
-	return r.validateRecord(r, baseSegmentCharacterFormat)
+	return r.validateRecord(r, baseSegmentCharacterFormat, "base segment")
 }
 
 // BlockSize returns size of block
@@ -796,7 +796,7 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 
 func (r *BaseSegment) ValidateIdentificationNumber() error {
 	if validFilledString(r.IdentificationNumber) {
-		return utils.NewErrValidValue("identification number")
+		return utils.NewErrInvalidValueOfField("identification number", "base segment")
 	}
 	return nil
 }
@@ -806,7 +806,7 @@ func (r *BaseSegment) ValidatePortfolioType() error {
 	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
 		return nil
 	}
-	return utils.NewErrValidValue("portfolio type")
+	return utils.NewErrInvalidValueOfField("portfolio type", "base segment")
 }
 
 func (r *BaseSegment) ValidateTermsDuration() error {
@@ -816,7 +816,7 @@ func (r *BaseSegment) ValidateTermsDuration() error {
 	}
 	_, err := strconv.Atoi(r.TermsDuration)
 	if err != nil {
-		return utils.NewErrValidValue("terms duration")
+		return utils.NewErrInvalidValueOfField("terms duration", "base segment")
 	}
 	return nil
 }
@@ -828,7 +828,7 @@ func (r *BaseSegment) ValidateTermsFrequency() error {
 		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, "":
 		return nil
 	}
-	return utils.NewErrValidValue("terms frequency")
+	return utils.NewErrInvalidValueOfField("terms frequency", "base segment")
 }
 
 func (r *BaseSegment) ValidatePaymentRating() error {
@@ -839,18 +839,18 @@ func (r *BaseSegment) ValidatePaymentRating() error {
 			PaymentRatingPast120, PaymentRatingPast150, PaymentRatingPast180, PaymentRatingCollection, PaymentRatingChargeOff:
 			return nil
 		}
-		return utils.NewErrValidValue("payment rating")
+		return utils.NewErrInvalidValueOfField("payment rating", "base segment")
 	}
 
 	if r.PaymentRating == "" {
 		return nil
 	}
-	return utils.NewErrValidValue("payment rating")
+	return utils.NewErrInvalidValueOfField("payment rating", "base segment")
 }
 
 func (r *BaseSegment) ValidatePaymentHistoryProfile() error {
 	if len(r.PaymentHistoryProfile) != 24 {
-		return utils.NewErrValidValue("payment history profile")
+		return utils.NewErrInvalidValueOfField("payment history profile", "base segment")
 	}
 	for i := 0; i < len(r.PaymentHistoryProfile); i++ {
 		switch r.PaymentHistoryProfile[i] {
@@ -861,7 +861,7 @@ func (r *BaseSegment) ValidatePaymentHistoryProfile() error {
 			PaymentHistoryChargeOff:
 			continue
 		}
-		return utils.NewErrValidValue("payment history profile")
+		return utils.NewErrInvalidValueOfField("payment history profile", "base segment")
 	}
 	return nil
 }
@@ -871,11 +871,11 @@ func (r *BaseSegment) ValidateInterestTypeIndicator() error {
 	case InterestIndicatorFixed, InterestIndicatorVariable, "":
 		return nil
 	}
-	return utils.NewErrValidValue("interest type indicator")
+	return utils.NewErrInvalidValueOfField("interest type indicator", "base segment")
 }
 
 func (r *BaseSegment) ValidateTelephoneNumber() error {
-	if err := r.isPhoneNumber(r.TelephoneNumber); err != nil {
+	if err := r.isPhoneNumber(r.TelephoneNumber, "base segment"); err != nil {
 		return err
 	}
 	return nil
@@ -889,7 +889,7 @@ func (r *PackedBaseSegment) Name() string {
 // Parse takes the input record string and parses the packed base segment values
 func (r *PackedBaseSegment) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < PackedRecordLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("packed base segment")
 	}
 
 	fields := reflect.ValueOf(r).Elem()
@@ -903,18 +903,18 @@ func (r *PackedBaseSegment) Parse(record string) (int, error) {
 		field := fields.FieldByName(fieldName)
 		spec, ok := baseSegmentPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return 0, utils.ErrValidField
+			return 0, utils.NewErrInvalidValueOfField(fieldName, "packed base segment")
 		}
 
 		if len(record) < spec.Start+spec.Length+offset {
-			return 0, utils.ErrShortRecord
+			return 0, utils.NewErrSegmentLength("packed base segment")
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		if err := r.isValidType(spec, data); err != nil {
+		if err := r.isValidType(spec, data, fieldName, "packed base segment"); err != nil {
 			return 0, err
 		}
 
-		value, err := r.parseValue(spec, data)
+		value, err := r.parseValue(spec, data, fieldName, "packed base segment")
 		if err != nil {
 			return 0, err
 		}
@@ -942,7 +942,7 @@ func (r *PackedBaseSegment) Parse(record string) (int, error) {
 	r.j2Segments = []Segment{}
 
 	if len(record) < offset {
-		return 0, utils.ErrShortRecord
+		return 0, utils.NewErrSegmentLength("packed base segment")
 	}
 	read, err := readApplicableSegments(record[offset:], r)
 	if err != nil {
@@ -950,7 +950,7 @@ func (r *PackedBaseSegment) Parse(record string) (int, error) {
 	}
 
 	if read+offset > r.BlockDescriptorWord {
-		return 0, utils.NewErrParse()
+		return 0, utils.NewErrFailedParsing()
 	}
 
 	return r.BlockDescriptorWord, nil
@@ -1014,7 +1014,7 @@ func (r *PackedBaseSegment) Validate() error {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return utils.ErrFieldRequired
+					return utils.NewErrFieldRequired(fieldName, "packed base segment")
 				}
 			}
 		}
@@ -1216,7 +1216,7 @@ func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
 
 func (r *PackedBaseSegment) ValidateIdentificationNumber() error {
 	if validFilledString(r.IdentificationNumber) {
-		return utils.NewErrValidValue("identification number")
+		return utils.NewErrInvalidValueOfField("identification number", "packed base segment")
 	}
 	return nil
 }
@@ -1226,7 +1226,7 @@ func (r *PackedBaseSegment) ValidatePortfolioType() error {
 	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
 		return nil
 	}
-	return utils.NewErrValidValue("portfolio type")
+	return utils.NewErrInvalidValueOfField("portfolio type", "packed base segment")
 }
 
 func (r *PackedBaseSegment) ValidateTermsDuration() error {
@@ -1236,7 +1236,7 @@ func (r *PackedBaseSegment) ValidateTermsDuration() error {
 	}
 	_, err := strconv.Atoi(r.TermsDuration)
 	if err != nil {
-		return utils.NewErrValidValue("terms duration")
+		return utils.NewErrInvalidValueOfField("terms duration", "packed base segment")
 	}
 	return nil
 }
@@ -1248,7 +1248,7 @@ func (r *PackedBaseSegment) ValidateTermsFrequency() error {
 		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, "":
 		return nil
 	}
-	return utils.NewErrValidValue("terms frequency")
+	return utils.NewErrInvalidValueOfField("terms frequency", "packed base segment")
 }
 
 func (r *PackedBaseSegment) ValidatePaymentRating() error {
@@ -1259,18 +1259,18 @@ func (r *PackedBaseSegment) ValidatePaymentRating() error {
 			PaymentRatingPast120, PaymentRatingPast150, PaymentRatingPast180, PaymentRatingCollection, PaymentRatingChargeOff:
 			return nil
 		}
-		return utils.NewErrValidValue("payment rating")
+		return utils.NewErrInvalidValueOfField("payment rating", "packed base segment")
 	}
 
 	if r.PaymentRating == "" {
 		return nil
 	}
-	return utils.NewErrValidValue("payment rating")
+	return utils.NewErrInvalidValueOfField("payment rating", "packed base segment")
 }
 
 func (r *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
 	if len(r.PaymentHistoryProfile) != 24 {
-		return utils.NewErrValidValue("payment history profile")
+		return utils.NewErrInvalidValueOfField("payment history profile", "packed base segment")
 	}
 	for i := 0; i < len(r.PaymentHistoryProfile); i++ {
 		switch r.PaymentHistoryProfile[i] {
@@ -1281,7 +1281,7 @@ func (r *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
 			PaymentHistoryChargeOff:
 			continue
 		}
-		return utils.NewErrValidValue("payment history profile")
+		return utils.NewErrInvalidValueOfField("payment history profile", "packed base segment")
 	}
 	return nil
 }
@@ -1291,11 +1291,11 @@ func (r *PackedBaseSegment) ValidateInterestTypeIndicator() error {
 	case InterestIndicatorFixed, InterestIndicatorVariable, "":
 		return nil
 	}
-	return utils.NewErrValidValue("interest type indicator")
+	return utils.NewErrInvalidValueOfField("interest type indicator", "packed base segment")
 }
 
 func (r *PackedBaseSegment) ValidateTelephoneNumber() error {
-	if err := r.isPhoneNumber(r.TelephoneNumber); err != nil {
+	if err := r.isPhoneNumber(r.TelephoneNumber, "packed base segment"); err != nil {
 		return err
 	}
 	return nil

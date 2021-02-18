@@ -59,9 +59,9 @@ func messageToBuf(format string, metroFile file.File) ([]byte, error) {
 	var output []byte
 	var err error
 	switch format {
-	case utils.OutputJsonFormat:
+	case utils.MessageJsonFormat:
 		output, err = json.MarshalIndent(metroFile, "", "\t")
-	case utils.OutputMetroFormat:
+	case utils.MessageMetroFormat:
 		output = []byte(metroFile.String())
 	default:
 		return nil, errors.New("invalid format")
@@ -72,13 +72,24 @@ func messageToBuf(format string, metroFile file.File) ([]byte, error) {
 func outputBufferToWriter(w http.ResponseWriter, metroFile file.File, format string) {
 	w.WriteHeader(http.StatusOK)
 	switch format {
-	case utils.OutputJsonFormat:
+	case utils.MessageJsonFormat:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		json.NewEncoder(w).Encode(metroFile)
-	case utils.OutputMetroFormat:
+	case utils.MessageMetroFormat:
 		w.Header().Set("Content-Type", "application/octet-stream; charset=utf-8")
 		w.Write([]byte(metroFile.String()))
 	}
+}
+
+func getFormat(r *http.Request) (string, error) {
+	format := r.FormValue("format")
+	if format == "" {
+		format = utils.MessageJsonFormat
+	}
+	if format != utils.MessageMetroFormat && format != utils.MessageJsonFormat {
+		return format, errors.New("invalid format")
+	}
+	return format, nil
 }
 
 // title: validate metro file
@@ -120,7 +131,11 @@ func print(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	format := r.FormValue("format")
+	format, err := getFormat(r)
+	if err != nil {
+		outputError(w, http.StatusNotImplemented, err)
+		return
+	}
 	_, err = messageToBuf(format, metroFile)
 	if err != nil {
 		outputError(w, http.StatusNotImplemented, err)
@@ -159,8 +174,11 @@ func convert(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	format := r.FormValue("format")
-	filename := "converted_file"
+	format, err := getFormat(r)
+	if err != nil {
+		outputError(w, http.StatusNotImplemented, err)
+		return
+	}
 	output, err := messageToBuf(format, metroFile)
 	if err != nil {
 		outputError(w, http.StatusNotImplemented, err)
@@ -168,7 +186,7 @@ func convert(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/octet-stream")
-	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
+	w.Header().Set("Content-Disposition", "attachment; filename=converted_file")
 	w.Header().Set("Content-Transfer-Encoding", "binary")
 	w.Header().Set("Expires", "0")
 	w.WriteHeader(http.StatusOK)

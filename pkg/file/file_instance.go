@@ -30,14 +30,14 @@ func (f *fileInstance) SetRecord(r lib.Record) error {
 		return err
 	}
 
-	if (f.format == PackedFileFormat && r.Name() == lib.PackedHeaderRecordName) ||
-		(f.format == CharacterFileFormat && r.Name() == lib.HeaderRecordName) {
+	if (f.format == utils.PackedFileFormat && r.Name() == lib.PackedHeaderRecordName) ||
+		(f.format == utils.CharacterFileFormat && r.Name() == lib.HeaderRecordName) {
 		f.Header = r
-	} else if (f.format == PackedFileFormat && r.Name() == lib.PackedTrailerRecordName) ||
-		(f.format == CharacterFileFormat && r.Name() == lib.TrailerRecordName) {
+	} else if (f.format == utils.PackedFileFormat && r.Name() == lib.PackedTrailerRecordName) ||
+		(f.format == utils.CharacterFileFormat && r.Name() == lib.TrailerRecordName) {
 		f.Trailer = r
 	} else {
-		return utils.NewErrValidRecord(r.Name())
+		return utils.NewErrInvalidRecord(r.Name())
 	}
 
 	return nil
@@ -50,12 +50,12 @@ func (f *fileInstance) AddDataRecord(r lib.Record) error {
 		return err
 	}
 
-	if f.format == PackedFileFormat && r.Name() == lib.PackedBaseSegmentName {
+	if f.format == utils.PackedFileFormat && r.Name() == lib.PackedBaseSegmentName {
 		f.Bases = append(f.Bases, r)
-	} else if f.format == CharacterFileFormat && r.Name() == lib.BaseSegmentName {
+	} else if f.format == utils.CharacterFileFormat && r.Name() == lib.BaseSegmentName {
 		f.Bases = append(f.Bases, r)
 	} else {
-		return utils.NewErrValidRecord(r.Name())
+		return utils.NewErrInvalidRecord(r.Name())
 	}
 
 	return nil
@@ -64,12 +64,12 @@ func (f *fileInstance) AddDataRecord(r lib.Record) error {
 // GetRecord returns single record like as header, trailer.
 func (f *fileInstance) GetRecord(name string) (lib.Record, error) {
 	switch name {
-	case HeaderRecordName:
+	case utils.HeaderRecordName:
 		return f.Header, nil
-	case TrailerRecordName:
+	case utils.TrailerRecordName:
 		return f.Trailer, nil
 	default:
-		return nil, utils.NewErrValidRecord(name)
+		return nil, utils.NewErrInvalidRecord(name)
 	}
 }
 
@@ -83,7 +83,8 @@ func (f *fileInstance) GeneratorTrailer() (lib.Record, error) {
 	var trailer lib.Record
 	var information *lib.TrailerInformation
 	var err error
-	if f.format == PackedFileFormat {
+
+	if f.format == utils.PackedFileFormat {
 		trailer = lib.NewPackedTrailerRecord()
 		information, err = f.generatorPackedTrailer()
 		if err != nil {
@@ -108,7 +109,7 @@ func (f *fileInstance) GeneratorTrailer() (lib.Record, error) {
 		}
 	}
 
-	if f.format == PackedFileFormat {
+	if f.format == utils.PackedFileFormat {
 		if segment, ok := trailer.(*lib.PackedTrailerRecord); ok {
 			segment.BlockDescriptorWord = lib.PackedRecordLength + 4
 			segment.RecordDescriptorWord = lib.PackedRecordLength
@@ -127,8 +128,30 @@ func (f *fileInstance) GeneratorTrailer() (lib.Record, error) {
 // Validate performs some checks on the file and returns an error if not Validated
 func (f *fileInstance) Validate() error {
 	var err error
+
+	if f.Header != nil {
+		err = f.Header.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
+	if f.Trailer != nil {
+		err = f.Trailer.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, baseSegment := range f.Bases {
+		err = baseSegment.Validate()
+		if err != nil {
+			return err
+		}
+	}
+
 	var information *lib.TrailerInformation
-	if f.format == PackedFileFormat {
+	if f.format == utils.PackedFileFormat {
 		information, err = f.generatorPackedTrailer()
 		if err != nil {
 			return err
@@ -157,10 +180,10 @@ func (f *fileInstance) Validate() error {
 		fromField := fromFields.FieldByName(fieldName)
 		toField := toFields.FieldByName(fieldName)
 		if !fromField.IsValid() || !toField.IsValid() {
-			return utils.NewErrValidValue(fieldName + " in Trailer record")
+			return utils.NewErrInvalidValueOfField(fieldName, "trailer record")
 		}
 		if fromField.Interface() != toField.Convert(fromField.Type()).Interface() {
-			return utils.NewErrValidValue(fieldName + " in Trailer record")
+			return utils.NewErrInvalidValueOfField(fieldName, "trailer record")
 		}
 	}
 	return nil
@@ -172,23 +195,23 @@ func (f *fileInstance) Parse(record string) error {
 	offset := 0
 
 	// Header Record
-	hread, err := f.Header.Parse(record)
+	head, err := f.Header.Parse(record)
 	if err != nil {
 		return err
 	}
-	offset += hread
+	offset += head
 
 	// Data Record
 	for err == nil {
 		var base lib.Record
-		if f.format == PackedFileFormat {
+		if f.format == utils.PackedFileFormat {
 			base = lib.NewPackedBaseSegment()
 		} else {
 			base = lib.NewBaseSegment()
 		}
 
 		if offset <= 0 || len(record) <= offset {
-			return utils.ErrShortRecord
+			return utils.NewErrSegmentLength("base record")
 		}
 
 		read, err := base.Parse(record[offset:])
@@ -201,7 +224,7 @@ func (f *fileInstance) Parse(record string) error {
 
 	// Trailer Record
 	if offset <= 0 || len(record) <= offset {
-		return utils.ErrShortRecord
+		return utils.NewErrSegmentLength("trailer record")
 	}
 	tread, err := f.Trailer.Parse(record[offset:])
 	if err != nil {
@@ -210,7 +233,7 @@ func (f *fileInstance) Parse(record string) error {
 	offset += tread
 
 	if offset != len(record) {
-		return utils.NewErrParse()
+		return utils.NewErrFailedParsing()
 	}
 
 	return nil
@@ -255,17 +278,17 @@ func (f *fileInstance) UnmarshalJSON(data []byte) error {
 		}
 
 		switch name {
-		case HeaderRecordName:
+		case utils.HeaderRecordName:
 			err = json.Unmarshal(buf, f.Header)
 			if err != nil {
 				return err
 			}
-		case TrailerRecordName:
+		case utils.TrailerRecordName:
 			err = json.Unmarshal(buf, f.Trailer)
 			if err != nil {
 				return err
 			}
-		case DataRecordName:
+		case utils.DataRecordName:
 			var list []interface{}
 			err = json.Unmarshal(buf, &list)
 			if err != nil {
@@ -276,7 +299,7 @@ func (f *fileInstance) UnmarshalJSON(data []byte) error {
 				if err != nil {
 					return err
 				}
-				if f.format == CharacterFileFormat {
+				if f.format == utils.CharacterFileFormat {
 					base := lib.NewBaseSegment()
 					err = json.Unmarshal(subBuf, base)
 					if err != nil {
@@ -306,7 +329,7 @@ func (f *fileInstance) generatorTrailer() (*lib.TrailerInformation, error) {
 	for _, base := range f.Bases {
 		base, ok := base.(*lib.BaseSegment)
 		if !ok && base.Validate() != nil {
-			return nil, utils.NewErrValidFileFormat(base.Name())
+			return nil, utils.NewErrInvalidSegment(base.Name())
 		}
 
 		trailer.TotalConsumerSegmentsJ1++
@@ -332,7 +355,7 @@ func (f *fileInstance) generatorPackedTrailer() (*lib.TrailerInformation, error)
 	for _, base := range f.Bases {
 		base, ok := base.(*lib.PackedBaseSegment)
 		if !ok && base.Validate() != nil {
-			return nil, utils.NewErrValidFileFormat(base.Name())
+			return nil, utils.NewErrInvalidSegment(base.Name())
 		}
 
 		trailer.TotalConsumerSegmentsJ1++

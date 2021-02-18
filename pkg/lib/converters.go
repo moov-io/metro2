@@ -20,7 +20,7 @@ import (
 
 type converter struct{}
 
-func (c *converter) parseValue(elm field, data string) (reflect.Value, error) {
+func (c *converter) parseValue(elm field, data, fieldName, recordName string) (reflect.Value, error) {
 	if elm.Type&numeric > 0 {
 		value, err := strconv.ParseInt(data, 10, 64)
 		return reflect.ValueOf(value), err
@@ -48,7 +48,7 @@ func (c *converter) parseValue(elm field, data string) (reflect.Value, error) {
 		return reflect.ValueOf(packedNumberFromString(data)), nil
 	}
 
-	return reflect.Value{}, utils.ErrValidField
+	return reflect.Value{}, utils.NewErrInvalidValueOfField(fieldName, recordName)
 }
 
 func (c *converter) fillString(elm field) string {
@@ -109,7 +109,7 @@ func (c *converter) toSpecifications(fieldsFormat map[string]field) []specificat
 }
 
 // parse field with string
-func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]field, record string, v *validator) (int, error) {
+func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]field, record string, v *validator, recordName string) (int, error) {
 	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
@@ -120,18 +120,18 @@ func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]fiel
 		field := fields.FieldByName(fieldName)
 		spec, ok := spec[fieldName]
 		if !ok || !field.IsValid() {
-			return 0, utils.ErrValidField
+			return 0, utils.NewErrInvalidValueOfField(fieldName, recordName)
 		}
 
 		if len(record) < spec.Start+spec.Length+offset {
-			return 0, utils.ErrShortRecord
+			return 0, utils.NewErrSegmentLength(recordName)
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		if err := v.isValidType(spec, data); err != nil {
+		if err := v.isValidType(spec, data, fieldName, recordName); err != nil {
 			return 0, err
 		}
 
-		value, err := c.parseValue(spec, data)
+		value, err := c.parseValue(spec, data, fieldName, recordName)
 		if err != nil {
 			return 0, err
 		}

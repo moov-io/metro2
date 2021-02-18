@@ -1,3 +1,7 @@
+// Copyright 2020 The Moov Authors
+// Use of this source code is governed by an Apache License
+// license that can be found in the LICENSE file.
+
 package utils
 
 import (
@@ -47,16 +51,6 @@ func IsVariableLength(s string) bool {
 
 	return false
 }
-
-const (
-	packedRecordLength = 366
-	headerIdentifier   = "HEADER"
-)
-
-const (
-	OutputJsonFormat  = "json"
-	OutputMetroFormat = "metro"
-)
 
 // Metro file check
 func IsMetroFile(s string) bool {

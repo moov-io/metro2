@@ -176,11 +176,11 @@ func (r *TrailerRecord) Name() string {
 // Parse takes the input record string and parses the trailer record values
 func (r *TrailerRecord) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < UnpackedRecordLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("trailer record")
 	}
 
 	fields := reflect.ValueOf(r).Elem()
-	length, err := r.parseRecordValues(fields, trailerRecordCharacterFormat, record, &r.validator)
+	length, err := r.parseRecordValues(fields, trailerRecordCharacterFormat, record, &r.validator, "trailer record")
 	if err != nil {
 		return length, err
 	}
@@ -214,7 +214,7 @@ func (r *TrailerRecord) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (r *TrailerRecord) Validate() error {
-	return r.validateRecord(r, trailerRecordCharacterFormat)
+	return r.validateRecord(r, trailerRecordCharacterFormat, "trailer record")
 }
 
 // BlockSize returns size of block
@@ -234,7 +234,7 @@ func (r *TrailerRecord) GetSegments(string) []Segment {
 
 // AddApplicableSegment will add new applicable segment into record
 func (r *TrailerRecord) AddApplicableSegment(s Segment) error {
-	return utils.NewErrApplicableSegment(s.Name())
+	return utils.NewErrApplicableSegment("trailer record", s.Name())
 }
 
 // PackedTrailerRecord holds the packed trailer record
@@ -248,7 +248,7 @@ func (r *PackedTrailerRecord) Name() string {
 // Parse takes the input record string and parses the packed trailer record values
 func (r *PackedTrailerRecord) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < PackedRecordLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("packed trailer record")
 	}
 
 	fields := reflect.ValueOf(r).Elem()
@@ -262,13 +262,13 @@ func (r *PackedTrailerRecord) Parse(record string) (int, error) {
 		field := fields.FieldByName(fieldName)
 		spec, ok := trailerRecordPackedFormat[fieldName]
 		if !ok || !field.IsValid() {
-			return 0, utils.ErrValidField
+			return 0, utils.NewErrInvalidValueOfField(fieldName, "packed trailer record")
 		}
 		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
-		if err := r.isValidType(spec, data); err != nil {
+		if err := r.isValidType(spec, data, fieldName, "packed trailer record"); err != nil {
 			return 0, err
 		}
-		value, err := r.parseValue(spec, data)
+		value, err := r.parseValue(spec, data, fieldName, "packed trailer record")
 		if err != nil {
 			return 0, err
 		}
@@ -325,7 +325,7 @@ func (r *PackedTrailerRecord) Validate() error {
 			if spec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
-					return utils.ErrFieldRequired
+					return utils.NewErrFieldRequired(fieldName, "packed trailer record")
 				}
 			}
 		}
@@ -351,5 +351,5 @@ func (r *PackedTrailerRecord) GetSegments(string) []Segment {
 
 // AddApplicableSegment will add new applicable segment into record
 func (r *PackedTrailerRecord) AddApplicableSegment(s Segment) error {
-	return utils.NewErrApplicableSegment(s.Name())
+	return utils.NewErrApplicableSegment("packed header record", s.Name())
 }

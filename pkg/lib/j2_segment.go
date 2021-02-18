@@ -170,11 +170,11 @@ func (s *J2Segment) Name() string {
 // Parse takes the input record string and parses the j2 segment values
 func (s *J2Segment) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < J2SegmentLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("j2 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, j2SegmentFormat, record, &s.validator)
+	length, err := s.parseRecordValues(fields, j2SegmentFormat, record, &s.validator, "j2 segment")
 	if err != nil {
 		return length, err
 	}
@@ -198,7 +198,7 @@ func (s *J2Segment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (s *J2Segment) Validate() error {
-	return s.validateRecord(s, j2SegmentFormat)
+	return s.validateRecord(s, j2SegmentFormat, "j2 segment")
 }
 
 // Length returns size of segment
@@ -213,12 +213,12 @@ func (s *J2Segment) ValidateGenerationCode() error {
 		GenerationCode5, GenerationCode6, GenerationCode7, GenerationCode8, GenerationCode9:
 		return nil
 	}
-	return utils.NewErrValidValue("generation code")
+	return utils.NewErrInvalidValueOfField("generation code", "j1 segment")
 }
 
 // validation of telephone number
 func (s *J2Segment) ValidateTelephoneNumber() error {
-	if err := s.isPhoneNumber(s.TelephoneNumber); err != nil {
+	if err := s.isPhoneNumber(s.TelephoneNumber, "j2 segment"); err != nil {
 		return err
 	}
 	return nil
@@ -232,7 +232,7 @@ func (s *J2Segment) ValidateAddressIndicator() error {
 		AddressIndicatorData, AddressIndicatorBill, blankString:
 		return nil
 	}
-	return utils.NewErrValidValue("address indicator")
+	return utils.NewErrInvalidValueOfField("address indicator", "j2 segment")
 }
 
 // validation of residence code
@@ -241,5 +241,5 @@ func (s *J2Segment) ValidateResidenceCode() error {
 	case ResidenceCodeOwns, ResidenceCodeRents, blankString:
 		return nil
 	}
-	return utils.NewErrValidValue("residence code")
+	return utils.NewErrInvalidValueOfField("residence code", "j2 segment")
 }

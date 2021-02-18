@@ -33,37 +33,45 @@ func executeCommandC(root *cobra.Command, args ...string) (c *cobra.Command, out
 	return c, buf.String(), err
 }
 
+func deleteFile() {
+	// delete file
+	os.Remove("output")
+}
+
 func executeCommand(root *cobra.Command, args ...string) (output string, err error) {
 	_, output, err = executeCommandC(root, args...)
 	return output, err
 }
 
 func TestConvertWithoutInput(t *testing.T) {
-	_, err := executeCommand(rootCmd, "convert", "output", "--format", utils.OutputJsonFormat)
+	_, err := executeCommand(rootCmd, "convert", "output", "--format", utils.MessageJsonFormat)
 	if err == nil {
 		t.Errorf("invalid input file")
 	}
+	deleteFile()
 }
 
 func TestConvertWithInvalidParam(t *testing.T) {
-	_, err := executeCommand(rootCmd, "convert", "--input", testJsonFilePath, "--format", utils.OutputJsonFormat)
+	_, err := executeCommand(rootCmd, "convert", "--input", testJsonFilePath, "--format", utils.MessageJsonFormat)
 	if err == nil {
 		t.Errorf("requires output argument")
 	}
 }
 
 func TestConvertJson(t *testing.T) {
-	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", utils.OutputJsonFormat)
+	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", utils.MessageJsonFormat)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
+	deleteFile()
 }
 
 func TestConvertMetro(t *testing.T) {
-	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", utils.OutputMetroFormat)
+	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", utils.MessageMetroFormat)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
+	deleteFile()
 }
 
 func TestConvertUnknown(t *testing.T) {
@@ -71,24 +79,26 @@ func TestConvertUnknown(t *testing.T) {
 	if err == nil {
 		t.Errorf("don't support the format")
 	}
+	deleteFile()
 }
 
 func TestConvertMetroWithGenerate(t *testing.T) {
-	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", utils.OutputMetroFormat, "--generate=true")
+	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", utils.MessageMetroFormat, "--generate=true")
 	if err != nil {
 		t.Errorf(err.Error())
 	}
+	deleteFile()
 }
 
 func TestPrintMetro(t *testing.T) {
-	_, err := executeCommand(rootCmd, "print", "--input", testJsonFilePath, "--format", utils.OutputMetroFormat)
+	_, err := executeCommand(rootCmd, "print", "--input", testJsonFilePath, "--format", utils.MessageMetroFormat)
 	if err != nil {
 		t.Errorf(err.Error())
 	}
 }
 
 func TestPrintJson(t *testing.T) {
-	_, err := executeCommand(rootCmd, "print", "--input", testJsonFilePath, "--format", utils.OutputJsonFormat)
+	_, err := executeCommand(rootCmd, "print", "--input", testJsonFilePath, "--format", utils.MessageJsonFormat)
 	if err != nil {
 		t.Errorf(err.Error())
 	}

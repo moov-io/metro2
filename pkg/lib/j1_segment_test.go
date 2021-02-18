@@ -32,7 +32,7 @@ func (t *SegmentTest) TestJ1SegmentWithInvalidGenerationCode(c *check.C) {
 	segment.GenerationCode = "0"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of generation code")
+	c.Assert(err.Error(), check.DeepEquals, "generation code in j1 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestJ1SegmentWithInvalidTelephoneNumber(c *check.C) {

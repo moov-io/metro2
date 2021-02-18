@@ -66,11 +66,11 @@ func (s *K1Segment) Name() string {
 // Parse takes the input record string and parses the k1 segment values
 func (s *K1Segment) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < K1SegmentLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("k1 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, k1SegmentFormat, record, &s.validator)
+	length, err := s.parseRecordValues(fields, k1SegmentFormat, record, &s.validator, "k1 segment")
 	if err != nil {
 		return length, err
 	}
@@ -94,7 +94,7 @@ func (s *K1Segment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (s *K1Segment) Validate() error {
-	return s.validateRecord(s, k1SegmentFormat)
+	return s.validateRecord(s, k1SegmentFormat, "k1 segment")
 }
 
 // Length returns size of segment
@@ -112,7 +112,7 @@ func (s *K1Segment) ValidateCreditorClassification() error {
 		CreditorClassificationCredit, CreditorClassificationAutomotive, CreditorClassificationGuarantee:
 		return nil
 	}
-	return utils.NewErrValidValue("creditor classification")
+	return utils.NewErrInvalidValueOfField("creditor classification", "k1 segment")
 }
 
 // K2Segment holds the k2 segment
@@ -142,11 +142,11 @@ func (s *K2Segment) Name() string {
 // Parse takes the input record string and parses the k2 segment values
 func (s *K2Segment) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < K2SegmentLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("k2 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, k2SegmentFormat, record, &s.validator)
+	length, err := s.parseRecordValues(fields, k2SegmentFormat, record, &s.validator, "k2 segment")
 	if err != nil {
 		return length, err
 	}
@@ -170,7 +170,7 @@ func (s *K2Segment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (s *K2Segment) Validate() error {
-	return s.validateRecord(s, k2SegmentFormat)
+	return s.validateRecord(s, k2SegmentFormat, "k2 segment")
 }
 
 // Length returns size of segment
@@ -184,14 +184,14 @@ func (s *K2Segment) ValidatePurchasedIndicator() error {
 	case PurchasedIndicatorFromName, PurchasedIndicatorToName, PurchasedIndicatorRemove:
 		return nil
 	}
-	return utils.NewErrValidValue("purchased indicator")
+	return utils.NewErrInvalidValueOfField("purchased indicator", "k2 segment")
 }
 
 // validation of purchased name
 func (s *K2Segment) ValidatePurchasedName() error {
 	if s.PurchasedIndicator == PurchasedIndicatorRemove {
 		if !validFilledString(s.PurchasedName) {
-			return utils.NewErrValidValue("purchased name")
+			return utils.NewErrInvalidValueOfField("purchased name", "k2 segment")
 		}
 	}
 	return nil
@@ -230,11 +230,11 @@ func (s *K3Segment) Name() string {
 // Parse takes the input record string and parses the k3 segment values
 func (s *K3Segment) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < K3SegmentLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("k3 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, k3SegmentFormat, record, &s.validator)
+	length, err := s.parseRecordValues(fields, k3SegmentFormat, record, &s.validator, "k3 segment")
 	if err != nil {
 		return length, err
 	}
@@ -258,7 +258,7 @@ func (s *K3Segment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (s *K3Segment) Validate() error {
-	return s.validateRecord(s, k3SegmentFormat)
+	return s.validateRecord(s, k3SegmentFormat, "k3 segment")
 }
 
 // Length returns size of segment
@@ -272,14 +272,14 @@ func (s *K3Segment) ValidateAgencyIdentifier() error {
 	case AgencyIdentifierNotApplicable, AgencyIdentifierFannieMae, AgencyIdentifierFreddieMac:
 		return nil
 	}
-	return utils.NewErrValidValue("agency identifier")
+	return utils.NewErrInvalidValueOfField("agency identifier", "k3 segment")
 }
 
 // validation of account number
 func (s *K3Segment) ValidateAccountNumber() error {
 	if s.AgencyIdentifier == AgencyIdentifierNotApplicable {
 		if !validFilledString(s.AccountNumber) {
-			return utils.NewErrValidValue("account number")
+			return utils.NewErrInvalidValueOfField("account number", "k3 segment")
 		}
 	}
 	return nil
@@ -319,11 +319,11 @@ func (s *K4Segment) Name() string {
 // Parse takes the input record string and parses the k4 segment values
 func (s *K4Segment) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < K4SegmentLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("k4 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, k4SegmentFormat, record, &s.validator)
+	length, err := s.parseRecordValues(fields, k4SegmentFormat, record, &s.validator, "k4 segment")
 	if err != nil {
 		return length, err
 	}
@@ -347,7 +347,7 @@ func (s *K4Segment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (s *K4Segment) Validate() error {
-	return s.validateRecord(s, k4SegmentFormat)
+	return s.validateRecord(s, k4SegmentFormat, "k4 segment")
 }
 
 // Length returns size of segment
@@ -361,5 +361,5 @@ func (s *K4Segment) ValidateSpecializedPaymentIndicator() error {
 	case SpecializedBalloonPayment, SpecializedDeferredPayment:
 		return nil
 	}
-	return utils.NewErrValidValue("specialized payment indicator")
+	return utils.NewErrInvalidValueOfField("specialized payment indicator", "k4 segment")
 }

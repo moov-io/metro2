@@ -12,8 +12,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/moov-io/metro2/pkg/lib"
 	"gopkg.in/check.v1"
+
+	"github.com/moov-io/metro2/pkg/lib"
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 func TestFile__Crashers(t *testing.T) {
@@ -57,7 +59,7 @@ func readCrasherInputFilepaths(t *testing.T) []string {
 }
 
 func (t *FileTest) TestJsonWithUnpackedVariableBlocked(c *check.C) {
-	f, err := NewFile(CharacterFileFormat)
+	f, err := NewFile(utils.CharacterFileFormat)
 	c.Assert(err, check.IsNil)
 	err = json.Unmarshal([]byte(t.unpackedVariableBlockedJson), f)
 	c.Assert(err, check.IsNil)
@@ -73,14 +75,14 @@ func (t *FileTest) TestJsonWithUnpackedVariableBlocked(c *check.C) {
 }
 
 func (t *FileTest) TestParseWithUnpackedVariableBlockedFileParse(c *check.C) {
-	f, err := NewFile(CharacterFileFormat)
+	f, err := NewFile(utils.CharacterFileFormat)
 	c.Assert(err, check.IsNil)
 	err = f.Parse(t.unpackedVariableBlockedFile)
 	c.Assert(err, check.IsNil)
 }
 
 func (t *FileTest) TestJsonWithUnpackedFixedLength(c *check.C) {
-	f, err := NewFile(CharacterFileFormat)
+	f, err := NewFile(utils.CharacterFileFormat)
 	c.Assert(err, check.IsNil)
 	err = json.Unmarshal([]byte(t.unpackedFixedLengthJson), f)
 	c.Assert(err, check.IsNil)
@@ -95,7 +97,7 @@ func (t *FileTest) TestJsonWithUnpackedFixedLength(c *check.C) {
 }
 
 func (t *FileTest) TestParseWithUnpackedFixedLength(c *check.C) {
-	f, err := NewFile(CharacterFileFormat)
+	f, err := NewFile(utils.CharacterFileFormat)
 	c.Assert(err, check.IsNil)
 	err = f.Parse(t.unpackedFixedLengthFile)
 	c.Assert(err, check.IsNil)
@@ -133,7 +135,7 @@ func (t *FileTest) TestParseWithUnpackedFixedLength(c *check.C) {
 }
 
 func (t *FileTest) TestParseWithUnpackedFixedLength2(c *check.C) {
-	f, err := NewFile(CharacterFileFormat)
+	f, err := NewFile(utils.CharacterFileFormat)
 	c.Assert(err, check.IsNil)
 	err = f.Parse(t.unpackedFixedLengthFile)
 	c.Assert(err, check.IsNil)
@@ -183,7 +185,7 @@ func (t *FileTest) TestParseWithUnpackedFixedLength2(c *check.C) {
 }
 
 func (t *FileTest) TestJsonWithPackedBlocked(c *check.C) {
-	f, err := NewFile(PackedFileFormat)
+	f, err := NewFile(utils.PackedFileFormat)
 	c.Assert(err, check.IsNil)
 	err = json.Unmarshal([]byte(t.packedJson), f)
 	c.Assert(err, check.IsNil)
@@ -198,14 +200,14 @@ func (t *FileTest) TestJsonWithPackedBlocked(c *check.C) {
 }
 
 func (t *FileTest) TestParseWithPackedFileParse(c *check.C) {
-	f, err := NewFile(PackedFileFormat)
+	f, err := NewFile(utils.PackedFileFormat)
 	c.Assert(err, check.IsNil)
 	err = f.Parse(t.packedFile)
 	c.Assert(err, check.IsNil)
 }
 
 func (t *FileTest) TestFileSetBlock(c *check.C) {
-	f, err := NewFile(CharacterFileFormat)
+	f, err := NewFile(utils.CharacterFileFormat)
 	c.Assert(err, check.IsNil)
 	jsonStr := `{
 		"blockDescriptorWord": 430,
@@ -223,18 +225,18 @@ func (t *FileTest) TestFileSetBlock(c *check.C) {
 	newSegment := lib.HeaderRecord{}
 	err = json.Unmarshal([]byte(jsonStr), &newSegment)
 	c.Assert(err, check.IsNil)
-	orgHeader, err := f.GetRecord(HeaderRecordName)
+	orgHeader, err := f.GetRecord(utils.HeaderRecordName)
 	c.Assert(err, check.IsNil)
 	origin := orgHeader.BlockSize()
 	err = f.SetRecord(&newSegment)
 	c.Assert(err, check.IsNil)
-	newHeader, err := f.GetRecord(HeaderRecordName)
+	newHeader, err := f.GetRecord(utils.HeaderRecordName)
 	c.Assert(err, check.IsNil)
 	c.Assert(origin, check.Not(check.Equals), newHeader.BlockSize())
 }
 
 func (t *FileTest) TestFileDataRecord(c *check.C) {
-	f, err := NewFile(CharacterFileFormat)
+	f, err := NewFile(utils.CharacterFileFormat)
 	c.Assert(err, check.IsNil)
 	segment := lib.NewBaseSegment()
 	err = json.Unmarshal([]byte(t.baseSegmentJson), segment)
@@ -246,7 +248,7 @@ func (t *FileTest) TestFileDataRecord(c *check.C) {
 }
 
 func (t *FileTest) TestGeneratorTrailer(c *check.C) {
-	f, err := NewFile(CharacterFileFormat)
+	f, err := NewFile(utils.CharacterFileFormat)
 	c.Assert(err, check.IsNil)
 	err = json.Unmarshal([]byte(t.unpackedFixedLengthJson), f)
 	c.Assert(err, check.IsNil)
@@ -259,7 +261,7 @@ func (t *FileTest) TestGeneratorTrailer(c *check.C) {
 }
 
 func (t *FileTest) TestGeneratorPackedTrailer(c *check.C) {
-	f, err := NewFile(PackedFileFormat)
+	f, err := NewFile(utils.PackedFileFormat)
 	c.Assert(err, check.IsNil)
 	err = json.Unmarshal([]byte(t.packedJson), f)
 	c.Assert(err, check.IsNil)
@@ -272,7 +274,7 @@ func (t *FileTest) TestGeneratorPackedTrailer(c *check.C) {
 }
 
 func (t *FileTest) TestFileValidate(c *check.C) {
-	f, err := NewFile(PackedFileFormat)
+	f, err := NewFile(utils.PackedFileFormat)
 	c.Assert(err, check.IsNil)
 	err = json.Unmarshal([]byte(t.packedJson), f)
 	c.Assert(err, check.IsNil)
@@ -281,7 +283,7 @@ func (t *FileTest) TestFileValidate(c *check.C) {
 }
 
 func (t *FileTest) TestGetRecord(c *check.C) {
-	f, err := NewFile(PackedFileFormat)
+	f, err := NewFile(utils.PackedFileFormat)
 	c.Assert(err, check.IsNil)
 	err = json.Unmarshal([]byte(t.packedJson), f)
 	c.Assert(err, check.IsNil)

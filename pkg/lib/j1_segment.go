@@ -114,11 +114,11 @@ func (s *J1Segment) Name() string {
 // Parse takes the input record string and parses the j1 segment values
 func (s *J1Segment) Parse(record string) (int, error) {
 	if utf8.RuneCountInString(record) < J1SegmentLength {
-		return 0, utils.ErrSegmentLength
+		return 0, utils.NewErrSegmentLength("j1 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, j1SegmentFormat, record, &s.validator)
+	length, err := s.parseRecordValues(fields, j1SegmentFormat, record, &s.validator, "j1 segment")
 	if err != nil {
 		return length, err
 	}
@@ -142,7 +142,7 @@ func (s *J1Segment) String() string {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (s *J1Segment) Validate() error {
-	return s.validateRecord(s, j1SegmentFormat)
+	return s.validateRecord(s, j1SegmentFormat, "j1 segment")
 }
 
 // Length returns size of segment
@@ -157,12 +157,12 @@ func (s *J1Segment) ValidateGenerationCode() error {
 		GenerationCode5, GenerationCode6, GenerationCode7, GenerationCode8, GenerationCode9:
 		return nil
 	}
-	return utils.NewErrValidValue("generation code")
+	return utils.NewErrInvalidValueOfField("generation code", "j1 segment")
 }
 
 // validation of telephone number
 func (s *J1Segment) ValidateTelephoneNumber() error {
-	if err := s.isPhoneNumber(s.TelephoneNumber); err != nil {
+	if err := s.isPhoneNumber(s.TelephoneNumber, "j1 segment"); err != nil {
 		return err
 	}
 	return nil

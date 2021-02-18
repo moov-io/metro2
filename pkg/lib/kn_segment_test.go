@@ -32,7 +32,7 @@ func (t *SegmentTest) TestPackedK1SegmentWithInvalidCreditorClassification(c *ch
 	segment.CreditorClassification = 22
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of creditor classification")
+	c.Assert(err.Error(), check.DeepEquals, "creditor classification in k1 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestK2Segment(c *check.C) {
@@ -59,7 +59,7 @@ func (t *SegmentTest) TestK2SegmentWithInvalidPurchasedIndicator(c *check.C) {
 	segment.PurchasedIndicator = 3
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of purchased indicator")
+	c.Assert(err.Error(), check.DeepEquals, "purchased indicator in k2 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestK2SegmentWithInvalidPurchasedName(c *check.C) {
@@ -70,7 +70,7 @@ func (t *SegmentTest) TestK2SegmentWithInvalidPurchasedName(c *check.C) {
 	segment.PurchasedIndicator = PurchasedIndicatorRemove
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of purchased name")
+	c.Assert(err.Error(), check.DeepEquals, "purchased name in k2 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestK3Segment(c *check.C) {
@@ -97,7 +97,7 @@ func (t *SegmentTest) TestK3SegmentWithInvalidAgencyIdentifier(c *check.C) {
 	segment.AgencyIdentifier = 5
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of agency identifier")
+	c.Assert(err.Error(), check.DeepEquals, "agency identifier in k3 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestK3SegmentWithInvalidAccountNumber(c *check.C) {
@@ -108,7 +108,7 @@ func (t *SegmentTest) TestK3SegmentWithInvalidAccountNumber(c *check.C) {
 	segment.AgencyIdentifier = AgencyIdentifierNotApplicable
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of account number")
+	c.Assert(err.Error(), check.DeepEquals, "account number in k3 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestK4Segment(c *check.C) {
@@ -135,7 +135,7 @@ func (t *SegmentTest) TestK4SegmentWithInvalidSpecializedPaymentIndicator(c *che
 	segment.SpecializedPaymentIndicator = 3
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "is an invalid value of specialized payment indicator")
+	c.Assert(err.Error(), check.DeepEquals, "specialized payment indicator in k4 segment has an invalid value")
 }
 
 func (t *SegmentTest) TestNSegmentWithInvalidData(c *check.C) {
