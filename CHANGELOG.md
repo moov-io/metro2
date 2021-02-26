@@ -1,3 +1,15 @@
+## v0.3.0 (Released 2021-02-26)
+
+IMPROVEMENTS
+
+- docs: lots of improvements across the Go types, markdown, etc
+- pkg: improved error messages
+- site: Create GitHub Pages documentation site with Jekyll (#46)
+
+BUILD
+
+- chore(deps): update golang docker tag to v1.16
+
 ## v0.2.7 (Released 2020-09-13)
 
 IMPROVEMENTS
