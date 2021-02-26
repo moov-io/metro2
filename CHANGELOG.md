@@ -1,3 +1,9 @@
+## v0.3.1 (Released 2021-02-26)
+
+BUILD
+
+- build: fix Docker build issue in v0.3.0 while deploying
+
 ## v0.3.0 (Released 2021-02-26)
 
 IMPROVEMENTS
