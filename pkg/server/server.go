@@ -10,7 +10,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"regexp"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -30,9 +29,7 @@ func parseInputFromRequest(r *http.Request) (file.File, error) {
 		return nil, err
 	}
 
-	space := regexp.MustCompile(`\s+`)
-	buf := space.ReplaceAllString(input.String(), " ")
-	mf, err := file.CreateFile([]byte(buf))
+	mf, err := file.CreateFile(input.Bytes())
 	if err != nil {
 		return nil, err
 	}

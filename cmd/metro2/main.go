@@ -67,10 +67,12 @@ var Print = &cobra.Command{
 			return err
 		}
 
-		if format != "" && (format != utils.MessageJsonFormat && format != utils.MessageMetroFormat) {
-			return errors.New("don't support the format")
-		} else {
-			format = utils.MessageJsonFormat
+		if format != utils.MessageJsonFormat && format != utils.MessageMetroFormat {
+			if format == "" {
+				format = utils.MessageJsonFormat
+			} else {
+				return errors.New("don't support the format")
+			}
 		}
 
 		f, err := file.CreateFile([]byte(rawData))
@@ -114,10 +116,12 @@ var Convert = &cobra.Command{
 			return err
 		}
 
-		if format != "" && (format != utils.MessageJsonFormat && format != utils.MessageMetroFormat) {
-			return errors.New("don't support the format")
-		} else {
-			format = utils.MessageJsonFormat
+		if format != utils.MessageJsonFormat && format != utils.MessageMetroFormat {
+			if format == "" {
+				format = utils.MessageJsonFormat
+			} else {
+				return errors.New("don't support the format")
+			}
 		}
 
 		mf, err := file.CreateFile([]byte(rawData))

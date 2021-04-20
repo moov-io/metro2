@@ -252,7 +252,7 @@ type BaseSegment struct {
 	//
 	// This amount, which should be reported in whole dollars only, may increase or decline from month to month.
 	// Credit balances (negative balances) should be reported as zero.
-	CurrentBalance int `json:"currentBalance" validate:"required"`
+	CurrentBalance int `json:"currentBalance" validate:"omitempty"`
 
 	// Report the total amount of payments that are 30 days or more past due in whole dollars only.
 	// This field should include late charges and fees, if applicable.

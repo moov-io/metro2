@@ -1,6 +1,6 @@
 {
   "header": {
-    "blockDescriptorWord": 430,
+    "blockDescriptorWord": 496,
     "recordDescriptorWord": 426,
     "recordIdentifier": "HEADER",
     "transUnionProgramIdentifier": "5555555555",
@@ -15,8 +15,7 @@
   "data": [
     {
       "base": {
-        "blockDescriptorWord": 910,
-        "recordDescriptorWord": 906,
+        "recordDescriptorWord": 1000,
         "processingIndicator": 1,
         "timeStamp": "2020-01-01T01:11:22Z",
         "identificationNumber": "6666666",
@@ -87,10 +86,14 @@
           "residenceCode": "O"
         }
       ],
-      "k1": {
-        "segmentIdentifier": "K1",
-        "originalCreditorName": "WETCOSAT INDUSTRIES LTD.",
-        "creditorClassification": 4
+      "k3": {
+        "segmentIdentifier": "K3",
+        "mortgageIdentificationNumber": "Mortgage Number"
+      },
+      "l1": {
+        "segmentIdentifier": "L1",
+        "changeIndicator": 1,
+        "newConsumerAccountNumber": "New Consumer Account Number"
       },
       "n1": {
         "segmentIdentifier": "N1",
@@ -105,18 +108,19 @@
     }
   ],
   "trailer": {
-    "blockDescriptorWord": 430,
     "recordDescriptorWord": 426,
     "recordIdentifier": "TRAILER",
     "totalBaseRecords": 1,
     "totalStatusCodeDF": 0,
-    "blockCount": 1,
+    "totalConsumerSegmentsJ1": 2,
+    "totalConsumerSegmentsJ2": 1,
+    "blockCount": 3,
     "totalStatusCodeDA": 0,
     "totalStatusCode05": 0,
     "totalStatusCode11": 0,
     "totalStatusCode13": 0,
     "totalStatusCode61": 0,
-    "totalStatusCode62": 0,
+    "totalStatusCode62": 1,
     "totalStatusCode63": 0,
     "totalStatusCode64": 0,
     "totalStatusCode65": 0,
@@ -126,28 +130,28 @@
     "totalStatusCode82": 0,
     "totalStatusCode83": 0,
     "totalStatusCode84": 0,
-    "totalStatusCode88": 1,
-    "totalStatusCode89": 1,
-    "totalStatusCode93": 1,
+    "totalStatusCode88": 0,
+    "totalStatusCode89": 0,
+    "totalStatusCode93": 0,
     "totalStatusCode94": 0,
-    "totalStatusCode95": 1,
+    "totalStatusCode95": 0,
     "totalStatusCode96": 0,
-    "totalStatusCode97": 1,
-    "totalECOACodeZ": 1,
+    "totalStatusCode97": 0,
+    "totalECOACodeZ": 0,
     "totalEmploymentSegments": 1,
-    "totalOriginalCreditorSegments": 1,
-    "totalPurchasedToSegments": 1,
+    "totalOriginalCreditorSegments": 0,
+    "totalPurchasedToSegments": 0,
     "totalMortgageInformationSegments": 1,
     "totalPaymentInformationSegments": 0,
     "totalChangeSegments": 1,
-    "totalSocialNumbersAllSegments": 1,
-    "totalSocialNumbersBaseSegments": 1,
+    "totalSocialNumbersAllSegments": 2,
+    "totalSocialNumbersBaseSegments": 0,
     "totalSocialNumbersJ1Segments": 1,
     "totalSocialNumbersJ2Segments": 1,
-    "totalDatesBirthAllSegments": 1,
+    "totalDatesBirthAllSegments": 3,
     "totalDatesBirthBaseSegments": 1,
     "totalDatesBirthJ1Segments": 1,
     "totalDatesBirthJ2Segments": 1,
-    "totalTelephoneNumbersAllSegments": 1
+    "totalTelephoneNumbersAllSegments": 3
   }
 }

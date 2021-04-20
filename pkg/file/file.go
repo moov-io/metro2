@@ -78,14 +78,16 @@ func getFileInformation(buf []byte) (*string, *string, error) {
 			return nil, nil, utils.ErrInvalidMetroFile
 		}
 		dataType = utils.MessageMetroFormat
-		if utils.IsVariableLength(string(buf)) {
+		if utils.IsPacked(string(buf)) {
 			fileFormat = utils.PackedFileFormat
 		}
 	} else {
 		if dummy.Header == nil {
 			return nil, nil, utils.ErrNonHeaderRecord
 		}
-		if dummy.Header.BlockDescriptorWord > 0 {
+		if dummy.Header.RecordDescriptorWord == lib.UnpackedRecordLength {
+			fileFormat = utils.CharacterFileFormat
+		} else if dummy.Header.BlockDescriptorWord > 0 {
 			fileFormat = utils.PackedFileFormat
 		}
 	}

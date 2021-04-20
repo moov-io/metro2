@@ -7,7 +7,6 @@ package utils
 import (
 	"bufio"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -25,27 +24,31 @@ func ReadFile(f *os.File) string {
 
 // Variable block check
 func IsVariableLength(s string) bool {
-	// check record identifier for header, trailer record
-	if s[4] > 0x40 {
-		return false
-	}
 
-	// packed format
-	if s[6] == 0x00 && s[7] == 0x00 {
+	// Checking header record identifier
+	if len(s) > 15 && strings.ToUpper(s[8:14]) == "HEADER" {
 		return true
 	}
 
-	// unpacked format
-	bdw, err := strconv.Atoi(s[0:4])
-	if err != nil {
-		return false
-	}
-	rdw, err := strconv.Atoi(s[4:8])
-	if err != nil {
-		return false
+	// Checking base record field 4
+	//  Field formerly used for Correction Indicator.
+	if s[17] == 0x30 {
+		return true
 	}
 
-	if rdw+4 == bdw {
+	return false
+}
+
+// IsPacked packed format check
+func IsPacked(s string) bool {
+
+	// fix packed format
+	if s[2] == 0x00 && s[3] == 0x00 {
+		return true
+	}
+
+	// variable packed format
+	if s[6] == 0x00 && s[7] == 0x00 {
 		return true
 	}
 
