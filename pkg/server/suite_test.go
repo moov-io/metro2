@@ -226,5 +226,5 @@ func (t *ServerTest) TestValidateWithInvalidData(c *check.C) {
 	recorder, request := t.makeRequest(http.MethodPost, "/validator", body.String(), c)
 	request.Header.Set("Content-Type", writer.FormDataContentType())
 	t.testServer.ServeHTTP(recorder, request)
-	c.Assert(recorder.Code, check.Equals, http.StatusBadRequest)
+	c.Assert(recorder.Code, check.Equals, http.StatusOK)
 }
