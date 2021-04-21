@@ -1,6 +1,10 @@
 module github.com/moov-io/metro2
 
-go 1.14
+go 1.16
+
+replace (
+	github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.2
+)
 
 require (
 	github.com/antihax/optional v1.0.0
