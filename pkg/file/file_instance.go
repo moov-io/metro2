@@ -111,13 +111,12 @@ func (f *fileInstance) GeneratorTrailer() (lib.Record, error) {
 
 	if f.format == utils.PackedFileFormat {
 		if segment, ok := trailer.(*lib.PackedTrailerRecord); ok {
-			segment.BlockDescriptorWord = lib.PackedRecordLength + 4
 			segment.RecordDescriptorWord = lib.PackedRecordLength
 			segment.RecordIdentifier = lib.TrailerIdentifier
 		}
 	} else {
 		if segment, ok := trailer.(*lib.TrailerRecord); ok {
-			segment.RecordDescriptorWord = lib.PackedRecordLength
+			segment.RecordDescriptorWord = lib.UnpackedRecordLength
 			segment.RecordIdentifier = lib.TrailerIdentifier
 		}
 	}

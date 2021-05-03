@@ -41,8 +41,17 @@ func TestCorpusSymlinks(t *testing.T) {
 }
 
 func TestFuzzWithValidData(t *testing.T) {
-	{
-		byteData, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", "packed_file.json"))
+
+	validFileSamples := []string{
+		"packed_file.json",
+		"packed_file.dat",
+		"unpacked_fixed_file.dat",
+		"unpacked_fixed_file.json",
+		"unpacked_variable_file.dat",
+		"unpacked_variable_file.json",
+	}
+	for _, sample := range validFileSamples {
+		byteData, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", sample))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -52,18 +61,13 @@ func TestFuzzWithValidData(t *testing.T) {
 		}
 	}
 
-	samples := []string{
+	segmentSamples := []string{
 		"base_segment.dat",
 		"base_segment.json",
 		"header_record.dat",
 		"packed_base_segment.dat",
-		"packed_file.dat",
-		"unpacked_fixed_file.dat",
-		"unpacked_fixed_file.json",
-		"unpacked_variable_file.dat",
-		"unpacked_variable_file.json",
 	}
-	for _, sample := range samples {
+	for _, sample := range segmentSamples {
 		byteData, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", sample))
 		if err != nil {
 			t.Fatal(err)
@@ -73,4 +77,5 @@ func TestFuzzWithValidData(t *testing.T) {
 			t.Errorf("Expected value is 0 (got %v)", ret)
 		}
 	}
+
 }

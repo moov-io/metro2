@@ -91,7 +91,7 @@ var (
 		"PaymentHistoryProfile":         {101, 24, alphanumeric, required},
 		"SpecialComment":                {125, 2, alphanumeric, applicable},
 		"ComplianceConditionCode":       {127, 2, alphanumeric, applicable},
-		"CurrentBalance":                {129, 5, packedNumber, required},
+		"CurrentBalance":                {129, 5, packedNumber, applicable},
 		"AmountPastDue":                 {134, 5, packedNumber, applicable},
 		"OriginalChargeOffAmount":       {139, 5, packedNumber, applicable},
 		"DateAccountInformation":        {144, 5, packedDate, required},
@@ -161,7 +161,6 @@ var (
 		"Reserved":                    {280, 86, alphanumeric, nullable},
 	}
 	trailerRecordCharacterFormat = map[string]field{
-		"BlockDescriptorWord":              {0, 4, numeric | omitted, applicable},
 		"RecordDescriptorWord":             {0, 4, numeric, required},
 		"RecordIdentifier":                 {4, 7, alphanumeric, required},
 		"TotalBaseRecords":                 {11, 9, numeric, required},
@@ -211,7 +210,6 @@ var (
 		"Reserved2":                        {407, 19, numeric, nullable},
 	}
 	trailerRecordPackedFormat = map[string]field{
-		"BlockDescriptorWord":              {0, 4, descriptor | omitted, applicable},
 		"RecordDescriptorWord":             {0, 4, descriptor, required},
 		"RecordIdentifier":                 {4, 7, alphanumeric, required},
 		"TotalBaseRecords":                 {11, 5, packedNumber, required},

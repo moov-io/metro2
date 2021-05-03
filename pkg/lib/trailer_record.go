@@ -15,12 +15,6 @@ import (
 
 // TrailerRecord holds the trailer record
 type TrailerRecord struct {
-	// Contains a value equal to the length of the block of data and must be reported when using the packed format or
-	// when reporting variable length records.  This value includes the four bytes reserved for this field.
-	// Report the standard IBM variable record length conventions.
-	//
-	// This field is not required when reporting fixed length, fixed block records.
-	BlockDescriptorWord int `json:"blockDescriptorWord,omitempty"`
 
 	// Contains a value equal to the length of the physical record. This value includes the four bytes reserved for this field.
 	// If fixed-length records are being reported, the Trailer Record should be the same length as all the data records.
@@ -185,9 +179,6 @@ func (r *TrailerRecord) Parse(record string) (int, error) {
 		return length, err
 	}
 
-	if r.BlockDescriptorWord > 0 {
-		return r.BlockDescriptorWord, nil
-	}
 	return r.RecordDescriptorWord, nil
 }
 
@@ -196,7 +187,7 @@ func (r *TrailerRecord) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(trailerRecordCharacterFormat)
 	fields := reflect.ValueOf(r).Elem()
-	blockSize := r.BlockDescriptorWord
+	blockSize := r.RecordDescriptorWord
 	if blockSize == 0 {
 		blockSize = r.RecordDescriptorWord
 	}
@@ -219,7 +210,7 @@ func (r *TrailerRecord) Validate() error {
 
 // BlockSize returns size of block
 func (r *TrailerRecord) BlockSize() int {
-	return r.BlockDescriptorWord
+	return r.RecordDescriptorWord
 }
 
 // Length returns size of record
@@ -276,12 +267,6 @@ func (r *PackedTrailerRecord) Parse(record string) (int, error) {
 		if value.IsValid() && field.CanSet() {
 			switch value.Interface().(type) {
 			case int, int64:
-				if fieldName == "BlockDescriptorWord" {
-					if !utils.IsVariableLength(record) {
-						return 0, utils.NewErrBlockDescriptorWord()
-					}
-					offset += 4
-				}
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
@@ -289,9 +274,6 @@ func (r *PackedTrailerRecord) Parse(record string) (int, error) {
 		}
 	}
 
-	if r.BlockDescriptorWord > 0 {
-		return r.BlockDescriptorWord, nil
-	}
 	return r.RecordDescriptorWord, nil
 }
 
@@ -300,7 +282,7 @@ func (r *PackedTrailerRecord) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(trailerRecordPackedFormat)
 	fields := reflect.ValueOf(r).Elem()
-	blockSize := r.BlockDescriptorWord
+	blockSize := r.RecordDescriptorWord
 	if blockSize == 0 {
 		blockSize = r.RecordDescriptorWord
 	}
@@ -336,7 +318,7 @@ func (r *PackedTrailerRecord) Validate() error {
 
 // BlockSize returns size of block
 func (r *PackedTrailerRecord) BlockSize() int {
-	return r.BlockDescriptorWord
+	return r.RecordDescriptorWord
 }
 
 // Length returns size of record
