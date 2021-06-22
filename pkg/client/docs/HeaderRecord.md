@@ -18,7 +18,7 @@ Name | Type | Description | Notes
 **ProgramRevisionDate** | [**time.Time**](time.Time.md) |  | [optional] 
 **ReporterName** | **string** |  | 
 **ReporterAddress** | **string** |  | 
-**ReporterTelephoneNumber** | **int32** |  | [optional] 
+**ReporterTelephoneNumber** | **int64** |  | [optional] 
 **SoftwareVendorName** | **string** |  | [optional] 
 **SoftwareVersionNumber** | **string** |  | [optional] 
 **PrbcProgramIdentifier** | **string** |  | [optional] 

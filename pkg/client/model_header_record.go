@@ -29,7 +29,7 @@ type HeaderRecord struct {
 	ProgramRevisionDate         time.Time `json:"programRevisionDate,omitempty"`
 	ReporterName                string    `json:"reporterName"`
 	ReporterAddress             string    `json:"reporterAddress"`
-	ReporterTelephoneNumber     int32     `json:"reporterTelephoneNumber,omitempty"`
+	ReporterTelephoneNumber     int64     `json:"reporterTelephoneNumber,omitempty"`
 	SoftwareVendorName          string    `json:"softwareVendorName,omitempty"`
 	SoftwareVersionNumber       string    `json:"softwareVersionNumber,omitempty"`
 	PrbcProgramIdentifier       string    `json:"prbcProgramIdentifier,omitempty"`

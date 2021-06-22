@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 **GenerationCode** | **string** |  | [optional] 
 **SocialSecurityNumber** | **int32** |  | 
 **DateBirth** | [**time.Time**](time.Time.md) |  | 
-**TelephoneNumber** | **int32** |  | [optional] 
+**TelephoneNumber** | **int64** |  | [optional] 
 **EcoaCode** | **string** |  | 
 **ConsumerInformationIndicator** | **string** |  | [optional] 
 **CountryCode** | **string** |  | [optional] 

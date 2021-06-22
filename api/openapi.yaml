@@ -217,7 +217,7 @@ components:
           type: string
         reporterTelephoneNumber:
           type: integer
-          format: int32
+          format: int64
         softwareVendorName:
           type: string
         softwareVersionNumber:
@@ -569,7 +569,7 @@ components:
           format: date-time
         telephoneNumber:
           type: integer
-          format: int32
+          format: int64
         ecoaCode:
           type: string
         consumerInformationIndicator:
@@ -648,7 +648,7 @@ components:
           format: date-time
         telephoneNumber:
           type: integer
-          format: int32
+          format: int64
         ecoaCode:
           type: string
         consumerInformationIndicator:
@@ -686,7 +686,7 @@ components:
           format: date-time
         telephoneNumber:
           type: integer
-          format: int32
+          format: int64
         ecoaCode:
           type: string
         consumerInformationIndicator:
