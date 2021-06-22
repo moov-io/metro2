@@ -1,3 +1,20 @@
+## v0.3.2 (Released 2021-06-22)
+
+BUG FIXES
+
+- client: expand telephone numbers to int64
+- header: expand reporter telephone number to int64
+
+IMPROVEMENTS
+
+- client: rengerate, fix bugs and issues
+- fix some errors, replace test files with valid files
+
+BUILD
+
+- build: upgrade github.com/gogo/protobuf to v1.3.2
+- fix(deps): update golang.org/x/oauth2 commit hash to d040287
+
 ## v0.3.1 (Released 2021-02-26)
 
 BUILD
