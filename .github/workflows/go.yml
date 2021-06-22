@@ -28,6 +28,7 @@ jobs:
       run: choco install -y make mingw
 
     - name: Verify OpenAPI
+      if: runner.os == 'Linux'
       run: make check-openapi
 
     - name: Check
