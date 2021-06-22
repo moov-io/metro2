@@ -82,7 +82,7 @@ type HeaderRecord struct {
 	ReporterAddress string `json:"reporterAddress" validate:"required"`
 
 	// Contains the telephone number (Area Code + number) of the company sending the data; i.e., data furnisher or processor.
-	ReporterTelephoneNumber int `json:"reporterTelephoneNumber"`
+	ReporterTelephoneNumber int64 `json:"reporterTelephoneNumber"`
 
 	// Contains the name of the software vendor that provided the Metro 2® Format software.
 	SoftwareVendorName string `json:"softwareVendorName,omitempty"`
