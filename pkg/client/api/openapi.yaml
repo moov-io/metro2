@@ -1,0 +1,878 @@
+openapi: 3.0.2
+info:
+  contact:
+    url: https://github.com/moov-io/metro2
+  description: Moov Metro2 ([Automated Clearing House](https://en.wikipedia.org/wiki/Automated_Clearing_House))
+    implements an HTTP API for creating, parsing and validating Metro2 files. Metro2
+    is an open-source consumer credit history report for credit report file creation
+    and validation.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: METRO2 API
+  version: v1
+servers:
+- description: Local development
+  url: http://localhost:8080
+tags:
+- description: |
+    File contains the structures of a Metro2 File. It contains one header record block, one trailer record block, multiple data blocks.
+    File have 2 types such as json and metro2.
+  name: Metro2 Files
+paths:
+  /health:
+    get:
+      description: Check the metro2 service to check if running
+      operationId: health
+      responses:
+        200:
+          content:
+            text/plain:
+              schema:
+                example: 'health: true'
+                type: string
+          description: successful operation
+      summary: health metro2 service
+      tags:
+      - Metro2 Files
+  /print:
+    post:
+      description: Print metro2 file with requested file format.
+      operationId: print
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                format:
+                  default: json
+                  description: print metro2 file type
+                  enum:
+                  - json
+                  - metro2
+                  type: string
+                file:
+                  description: metro2 file to upload
+                  format: binary
+                  type: string
+      responses:
+        200:
+          content:
+            text/plain:
+              schema:
+                example: '0480HEADER                           555555555508202002051019990510199905101999YOUR
+                  BUSINESS NAME HERE                 LINE ONE OF YOUR ADDRESS LINE
+                  TWO OF YOUR ADDRESS LINE THERE OF YOUR ADDRESS                    1234567890                                                                                                                                                                                                                                                               109810101202001112206666666               553723456                     M4811222019000000000000002438LOC
+                  00000000000000010062 BBBBBBBBBBBBBBBBBBBBBBBBASXA00000223300000000000000000009202002071920010802200208022002                  SMITH-JONES              JUNIOR                                  S1593287590318197251755555551  USRMXH+6W
+                  Casper, Wyoming,        United States                   U.S. Postal         MI72654    YOJ1
+                  BEAUCHAMP                KEVIN                                   S4451128770102202043355523332R  J2
+                  BEAUCHAMP                KEVIN                                   S4451128770102202043355523332R
+                  US234 HARRISON PLACE              SUITE #305                      LANSING             MI72654    YO  K1WETCOSAT
+                  INDUSTRIES LTD.      04K21Purchased From Name            K300                  Mortgage
+                  Number   K4010120202001202020000001234 L11New Consumer Account Number                        N1Employer
+                  Name                 First Line of Employer Address  Second Line
+                  of Employer Address Employer City       MI23456    Occupation                                           0500TRAILER000000001         000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000001000000001000000000000000001000000000000000001000000001000000001000000001000000001000000001000000000000000001000000001000000001000000001000000001000000001000000001000000001000000001000000001                                                                                             '
+                type: string
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+          description: successful operation
+        400:
+          content:
+            text/plain:
+              schema:
+                example: invalid metro2 file
+                type: string
+          description: request
+      summary: Print metro2 file with specific format
+      tags:
+      - Metro2 Files
+  /validator:
+    post:
+      description: Validation of metro2 file.
+      operationId: validator
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file:
+                  description: metro2 file to upload
+                  format: binary
+                  type: string
+      responses:
+        200:
+          content:
+            text/plain:
+              schema:
+                example: valid file
+                type: string
+          description: successful operation
+        400:
+          content:
+            text/plain:
+              schema:
+                example: bad request
+                type: string
+          description: bad request
+        501:
+          content:
+            text/plain:
+              schema:
+                example: invalid metro2 file
+                type: string
+          description: failed operation
+      summary: Validate metro2 file
+      tags:
+      - Metro2 Files
+  /convert:
+    post:
+      description: Convert from original metro2 file to new metro2 file
+      operationId: convert
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                format:
+                  default: json
+                  description: print metro2 file type
+                  enum:
+                  - json
+                  - metro2
+                  type: string
+                generate:
+                  default: false
+                  description: generate new trailer record
+                  type: boolean
+                file:
+                  description: metro2 file to upload
+                  format: binary
+                  type: string
+      responses:
+        200:
+          content:
+            application/octet-stream:
+              schema:
+                description: new metro2 file
+                format: binary
+                type: string
+          description: successful operation
+        400:
+          content:
+            text/plain:
+              schema:
+                example: bad request
+                type: string
+          description: bad request
+        501:
+          content:
+            text/plain:
+              schema:
+                example: faile metro2 convert
+                type: string
+          description: failed operation
+      summary: Convert metro2 file
+      tags:
+      - Metro2 Files
+components:
+  schemas:
+    File:
+      properties:
+        header:
+          $ref: '#/components/schemas/HeaderRecord'
+        data:
+          items:
+            $ref: '#/components/schemas/DataRecord'
+          type: array
+        trailer:
+          $ref: '#/components/schemas/TrailerRecord'
+      required:
+      - header
+      - trailer
+    HeaderRecord:
+      properties:
+        blockDescriptorWord:
+          format: int32
+          type: integer
+        recordDescriptorWord:
+          format: int32
+          type: integer
+        recordIdentifier:
+          enum:
+          - HEADER
+          type: string
+        cycleIdentifier:
+          type: string
+        innovisProgramIdentifier:
+          type: string
+        equifaxProgramIdentifier:
+          type: string
+        experianProgramIdentifier:
+          type: string
+        transUnionProgramIdentifier:
+          type: string
+        activityDate:
+          format: date-time
+          type: string
+        dateCreated:
+          format: date-time
+          type: string
+        programDate:
+          format: date-time
+          type: string
+        programRevisionDate:
+          format: date-time
+          type: string
+        reporterName:
+          type: string
+        reporterAddress:
+          type: string
+        reporterTelephoneNumber:
+          format: int64
+          type: integer
+        softwareVendorName:
+          type: string
+        softwareVersionNumber:
+          type: string
+        prbcProgramIdentifier:
+          type: string
+      required:
+      - activityDate
+      - dateCreated
+      - recordDescriptorWord
+      - recordIdentifier
+      - reporterAddress
+      - reporterName
+    TrailerRecord:
+      properties:
+        blockDescriptorWord:
+          format: int32
+          type: integer
+        recordDescriptorWord:
+          format: int32
+          type: integer
+        recordIdentifier:
+          enum:
+          - TRAILER
+          type: string
+        totalBaseRecords:
+          format: int32
+          type: integer
+        totalStatusCodeDF:
+          format: int32
+          type: integer
+        totalConsumerSegmentsJ1:
+          format: int32
+          type: integer
+        totalConsumerSegmentsJ2:
+          format: int32
+          type: integer
+        blockCount:
+          format: int32
+          type: integer
+        totalStatusCodeDA:
+          format: int32
+          type: integer
+        totalStatusCode05:
+          format: int32
+          type: integer
+        totalStatusCode11:
+          format: int32
+          type: integer
+        totalStatusCode13:
+          format: int32
+          type: integer
+        totalStatusCode61:
+          format: int32
+          type: integer
+        totalStatusCode62:
+          format: int32
+          type: integer
+        totalStatusCode63:
+          format: int32
+          type: integer
+        totalStatusCode64:
+          format: int32
+          type: integer
+        totalStatusCode65:
+          format: int32
+          type: integer
+        totalStatusCode71:
+          format: int32
+          type: integer
+        totalStatusCode78:
+          format: int32
+          type: integer
+        totalStatusCode80:
+          format: int32
+          type: integer
+        totalStatusCode82:
+          format: int32
+          type: integer
+        totalStatusCode83:
+          format: int32
+          type: integer
+        totalStatusCode84:
+          format: int32
+          type: integer
+        totalStatusCode88:
+          format: int32
+          type: integer
+        totalStatusCode89:
+          format: int32
+          type: integer
+        totalStatusCode93:
+          format: int32
+          type: integer
+        totalStatusCode94:
+          format: int32
+          type: integer
+        totalStatusCode95:
+          format: int32
+          type: integer
+        totalStatusCode96:
+          format: int32
+          type: integer
+        totalStatusCode97:
+          format: int32
+          type: integer
+        totalECOACodeZ:
+          format: int32
+          type: integer
+        totalEmploymentSegments:
+          format: int32
+          type: integer
+        totalOriginalCreditorSegments:
+          format: int32
+          type: integer
+        totalPurchasedToSegments:
+          format: int32
+          type: integer
+        totalMortgageInformationSegments:
+          format: int32
+          type: integer
+        totalPaymentInformationSegments:
+          format: int32
+          type: integer
+        totalChangeSegments:
+          format: int32
+          type: integer
+        totalSocialNumbersAllSegments:
+          format: int32
+          type: integer
+        totalSocialNumbersBaseSegments:
+          format: int32
+          type: integer
+        totalSocialNumbersJ1Segments:
+          format: int32
+          type: integer
+        totalSocialNumbersJ2Segments:
+          format: int32
+          type: integer
+        totalDatesBirthAllSegments:
+          format: int32
+          type: integer
+        totalDatesBirthBaseSegments:
+          format: int32
+          type: integer
+        totalDatesBirthJ1Segments:
+          format: int32
+          type: integer
+        totalDatesBirthJ2Segments:
+          format: int32
+          type: integer
+        totalTelephoneNumbersAllSegments:
+          format: int32
+          type: integer
+      required:
+      - recordDescriptorWord
+      - recordIdentifier
+    DataRecord:
+      properties:
+        base:
+          $ref: '#/components/schemas/BaseSegment'
+        j1:
+          items:
+            $ref: '#/components/schemas/J1Segment'
+          type: array
+        j2:
+          items:
+            $ref: '#/components/schemas/J2Segment'
+          type: array
+        k1:
+          $ref: '#/components/schemas/K1Segment'
+        k2:
+          $ref: '#/components/schemas/K2Segment'
+        k3:
+          $ref: '#/components/schemas/K3Segment'
+        k4:
+          $ref: '#/components/schemas/K4Segment'
+        l1:
+          $ref: '#/components/schemas/L1Segment'
+        n1:
+          $ref: '#/components/schemas/N1Segment'
+      required:
+      - base
+    BaseSegment:
+      properties:
+        blockDescriptorWord:
+          format: int32
+          type: integer
+        recordDescriptorWord:
+          format: int32
+          type: integer
+        timeStamp:
+          format: date-time
+          type: string
+        identificationNumber:
+          type: string
+        cycleIdentifier:
+          type: string
+        consumerAccountNumber:
+          type: string
+        portfolioType:
+          enum:
+          - C
+          - I
+          - M
+          - O
+          - R
+          type: string
+        accountType:
+          type: string
+        dateOpened:
+          format: date-time
+          type: string
+        creditLimit:
+          format: int32
+          type: integer
+        highestCredit:
+          format: int32
+          type: integer
+        termsDuration:
+          type: string
+        termsFrequency:
+          enum:
+          - D
+          - P
+          - W
+          - B
+          - E
+          - M
+          - L
+          - Q
+          - T
+          - S
+          - Y
+          type: string
+        scheduledMonthlyPaymentAmount:
+          format: int32
+          type: integer
+        actualPaymentAmount:
+          format: int32
+          type: integer
+        accountStatus:
+          enum:
+          - DF
+          - DA
+          - "11"
+          - "61"
+          - "62"
+          - "63"
+          - "64"
+          - "71"
+          - "78"
+          - "80"
+          - "82"
+          - "83"
+          - "84"
+          - "93"
+          - "96"
+          - "97"
+          - "5"
+          - "13"
+          - "65"
+          - "88"
+          - "89"
+          - "94"
+          - "95"
+          type: string
+        paymentRating:
+          enum:
+          - "0"
+          - "1"
+          - "2"
+          - "3"
+          - "4"
+          - "5"
+          - "6"
+          - G
+          - L
+          type: string
+        paymentHistoryProfile:
+          enum:
+          - "0"
+          - "1"
+          - "2"
+          - "3"
+          - "4"
+          - "5"
+          - "6"
+          - B
+          - D
+          - E
+          - G
+          - H
+          - J
+          - K
+          - L
+          type: string
+        specialComment:
+          type: string
+        complianceConditionCode:
+          type: string
+        currentBalance:
+          format: int32
+          type: integer
+        amountPastDue:
+          format: int32
+          type: integer
+        originalChargeOffAmount:
+          format: int32
+          type: integer
+        dateAccountInformation:
+          format: date-time
+          type: string
+        dateFirstDelinquency:
+          format: date-time
+          type: string
+        dateClosed:
+          format: date-time
+          type: string
+        dateLastPayment:
+          format: date-time
+          type: string
+        interestTypeIndicator:
+          type: string
+        surname:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        generationCode:
+          enum:
+          - J
+          - "3"
+          - "6"
+          - "9"
+          - S
+          - "4"
+          - "7"
+          - "2"
+          - "5"
+          - "8"
+          type: string
+        socialSecurityNumber:
+          format: int32
+          type: integer
+        dateBirth:
+          format: date-time
+          type: string
+        telephoneNumber:
+          format: int64
+          type: integer
+        ecoaCode:
+          type: string
+        consumerInformationIndicator:
+          type: string
+        countryCode:
+          type: string
+        firstLineAddress:
+          type: string
+        secondLineAddress:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        addressIndicator:
+          enum:
+          - C
+          - Y
+          - N
+          - M
+          - S
+          - B
+          - U
+          - D
+          - P
+          type: string
+        residenceCode:
+          enum:
+          - O
+          - R
+          type: string
+      required:
+      - accountStatus
+      - accountType
+      - consumerAccountNumber
+      - currentBalance
+      - dateAccountInformation
+      - dateBirth
+      - ecoaCode
+      - firstLineAddress
+      - firstName
+      - highestCredit
+      - identificationNumber
+      - paymentHistoryProfile
+      - recordDescriptorWord
+      - socialSecurityNumber
+      - state
+      - surname
+      - termsDuration
+      - zipCode
+    J1Segment:
+      properties:
+        segmentIdentifier:
+          enum:
+          - J1
+          type: string
+        surname:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        generationCode:
+          enum:
+          - J
+          - S
+          - "2"
+          type: string
+        socialSecurityNumber:
+          format: int32
+          type: integer
+        dateBirth:
+          format: date-time
+          type: string
+        telephoneNumber:
+          format: int64
+          type: integer
+        ecoaCode:
+          type: string
+        consumerInformationIndicator:
+          type: string
+      required:
+      - dateBirth
+      - ecoaCode
+      - firstName
+      - segmentIdentifier
+      - socialSecurityNumber
+      - surname
+    J2Segment:
+      properties:
+        segmentIdentifier:
+          enum:
+          - J2
+          type: string
+        surname:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        generationCode:
+          enum:
+          - J
+          - S
+          - "2"
+          type: string
+        socialSecurityNumber:
+          format: int32
+          type: integer
+        dateBirth:
+          format: date-time
+          type: string
+        telephoneNumber:
+          format: int64
+          type: integer
+        ecoaCode:
+          type: string
+        consumerInformationIndicator:
+          type: string
+        countryCode:
+          type: string
+        firstLineAddress:
+          type: string
+        secondLineAddress:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        addressIndicator:
+          enum:
+          - C
+          - Y
+          - N
+          - M
+          - S
+          - B
+          - U
+          - D
+          - P
+          type: string
+        residenceCode:
+          enum:
+          - O
+          - R
+          type: string
+      required:
+      - city
+      - dateBirth
+      - ecoaCode
+      - firstLineAddress
+      - firstName
+      - segmentIdentifier
+      - socialSecurityNumber
+      - state
+      - surname
+      - zipCode
+    K1Segment:
+      properties:
+        segmentIdentifier:
+          enum:
+          - K1
+          type: string
+        originalCreditorName:
+          type: string
+        creditorClassification:
+          enum:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+          - 9
+          - 10
+          - 11
+          - 12
+          - 13
+          - 14
+          - 15
+          format: int32
+          type: integer
+      required:
+      - creditorClassification
+      - originalCreditorName
+      - segmentIdentifier
+    K2Segment:
+      properties:
+        segmentIdentifier:
+          enum:
+          - K2
+          type: string
+        purchasedIndicator:
+          enum:
+          - 1
+          - 2
+          - 9
+          format: int32
+          type: integer
+        purchasedName:
+          type: string
+      required:
+      - purchasedIndicator
+      - purchasedName
+      - segmentIdentifier
+    K3Segment:
+      properties:
+        segmentIdentifier:
+          enum:
+          - K3
+          type: string
+        agencyIdentifier:
+          enum:
+          - 0
+          - 1
+          - 2
+          format: int32
+          type: integer
+        accountNumber:
+          type: string
+        mortgageIdentificationNumber:
+          type: string
+      required:
+      - segmentIdentifier
+    K4Segment:
+      properties:
+        segmentIdentifier:
+          enum:
+          - K4
+          type: string
+        specializedPaymentIndicator:
+          enum:
+          - 1
+          - 2
+          format: int32
+          type: integer
+        deferredPaymentStartDate:
+          format: date-time
+          type: string
+        balloonPaymentDueDate:
+          format: date-time
+          type: string
+        balloonPaymentAmount:
+          format: int32
+          type: integer
+      required:
+      - segmentIdentifier
+      - specializedPaymentIndicator
+    L1Segment:
+      properties:
+        segmentIdentifier:
+          enum:
+          - L1
+          type: string
+        changeIndicator:
+          format: int32
+          type: integer
+        newConsumerAccountNumber:
+          type: string
+        balloonPaymentDueDate:
+          type: string
+      required:
+      - changeIndicator
+      - segmentIdentifier
+    N1Segment:
+      properties:
+        segmentIdentifier:
+          enum:
+          - N1
+          type: string
+        employerName:
+          type: string
+        firstLineEmployerAddress:
+          type: string
+        secondLineEmployerAddress:
+          type: string
+        employerCity:
+          type: string
+        employerState:
+          type: string
+        zipCode:
+          type: string
+        occupation:
+          type: string
+      required:
+      - employerName
+      - segmentIdentifier

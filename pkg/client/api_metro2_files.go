@@ -55,6 +55,7 @@ func (a *Metro2FilesApiService) Convert(ctx _context.Context, localVarOptionals 
 
 	// create path and map variables
 	localVarPath := a.client.cfg.BasePath + "/convert"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
@@ -180,6 +181,7 @@ func (a *Metro2FilesApiService) Health(ctx _context.Context) (string, *_nethttp.
 
 	// create path and map variables
 	localVarPath := a.client.cfg.BasePath + "/health"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
@@ -273,6 +275,7 @@ func (a *Metro2FilesApiService) Print(ctx _context.Context, localVarOptionals *P
 
 	// create path and map variables
 	localVarPath := a.client.cfg.BasePath + "/print"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
@@ -392,6 +395,7 @@ func (a *Metro2FilesApiService) Validator(ctx _context.Context, localVarOptional
 
 	// create path and map variables
 	localVarPath := a.client.cfg.BasePath + "/validator"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}

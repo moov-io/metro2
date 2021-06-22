@@ -18,6 +18,26 @@ else
 	IGNORED_CVES=CVE-2020-26160 time ./lint-project.sh
 endif
 
+check-openapi:
+	docker run \
+	-v ${PWD}/api/openapi.yaml:/projects/openapi.yaml \
+	wework/speccy lint --verbose /projects/openapi.yaml
+
+.PHONY: client
+client:
+ifeq ($(OS),Windows_NT)
+	@echo "Please generate client on macOS or Linux, currently unsupported on windows."
+else
+# Versions from https://github.com/OpenAPITools/openapi-generator/releases
+	@chmod +x ./openapi-generator
+	@rm -rf ./client
+	OPENAPI_GENERATOR_VERSION=4.2.2 ./openapi-generator generate --package-name client -i ./api/openapi.yaml -g go -o ./pkg/client
+	rm -f ./pkg/client/go.mod ./pkg/client/go.sum
+	go fmt ./...
+	go build github.com/moov-io/metro2/pkg/client
+	go test ./pkg/client
+endif
+
 dist: clean build
 ifeq ($(OS),Windows_NT)
 	CGO_ENABLED=1 GOOS=windows go build -o bin/metro2.exe github.com/moov-io/metro2/cmd/metro2
