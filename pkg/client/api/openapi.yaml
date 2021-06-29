@@ -438,6 +438,7 @@ components:
           - M
           - O
           - R
+          - L
           type: string
         accountType:
           type: string

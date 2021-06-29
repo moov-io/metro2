@@ -426,6 +426,7 @@ components:
             - M
             - O
             - R
+            - L
         accountType:
           type: string
         dateOpened:
