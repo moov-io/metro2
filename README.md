@@ -21,7 +21,7 @@
 [![Slack Channel](https://slack.moov.io/badge.svg?bg=e01563&fgColor=fffff)](https://slack.moov.io/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/moov/metro2)](https://hub.docker.com/r/moov/metro2)
 [![GitHub Stars](https://img.shields.io/github/stars/moov-io/metro2)](https://github.com/moov-io/metro2)
-[![Twitter](https://img.shields.io/twitter/follow/moov_io?style=social)](https://twitter.com/moov_io?lang=en)
+[![Twitter](https://img.shields.io/twitter/follow/moov?style=social)](https://twitter.com/moov?lang=en)
 
 # moov-io/metro2
 
@@ -29,27 +29,28 @@ Moov's mission is to give developers an easy way to create and integrate bank pr
 
 Metro2 implements a reader, writer, and validator for consumer credit history reports in an HTTP server and Go library. The HTTP server is available in a [Docker image](#docker) and the Go package `github.com/moov-io/metro2` is available.
 
-## Table of Contents
+## Table of contents
 
-- [Project Status](#project-status)
+- [Project status](#project-status)
 - [Usage](#usage)
   - As an API
     - [Docker](#docker)
     - [Google Cloud](#google-cloud-run)
-    - [Data Persistence](#data-persistence)
-  - [As a Go Module](#go-library)
-  - [As a Command Line Tool](#command-line)
-- [Learn About Metro 2](#learn-about-metro-2)
-- [Getting Help](#getting-help)
-- [Supported and Tested Platforms](#supported-and-tested-platforms)
+    - [Data persistence](#data-persistence)
+  - [As a Go module](#go-library)
+  - [As a command line tool](#command-line)
+- [Learn about Metro 2](#learn-about-metro-2)
+- [Getting help](#getting-help)
+- [Supported and tested platforms](#supported-and-tested-platforms)
 - [Contributing](#contributing)
-- [Related Projects](#related-projects)
+- [Related projects](#related-projects)
 
-## Project Status
+## Project status
 
 Moov Metro2 is actively used in multiple production environments. Please star the project if you are interested in its progress. If you have layers above Metro2 to simplify tasks, perform business operations, or found bugs we would appreciate an issue or pull request. Thanks!
 
 ## Usage
+
 The Metro2 project implements an HTTP server and [Go library](https://pkg.go.dev/github.com/moov-io/metro2) for creating and modifying files in Metro 2 format, which is used for consumer credit history reporting by U.S. credit bureaus.
 
 ### Docker
@@ -124,10 +125,10 @@ You should get this response:
 {"health":true}
 ```
 
-### Data Persistence
+### Data persistence
 By design, Metro2  **does not persist** (save) any data about the files or entry details created. The only storage occurs in memory of the process and upon restart Metro2 will have no files or data saved. Also, no in-memory encryption of the data is performed.
 
-### Go Library
+### Go library
 
 This project uses [Go Modules](https://github.com/golang/go/wiki/Modules) and uses Go v1.14 or higher. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
 
@@ -140,7 +141,7 @@ $ go get -u github.com/moov-io/metro2
 $ go doc github.com/moov-io/metro2
 ```
 
-### Command Line
+### Command line
 
 Metro2 has a command line interface to manage Metro 2 files and launch a web service.
 
@@ -173,19 +174,19 @@ Each interaction that the library supports is exposed in a command-line option:
 `validator` | The validator command allows users to validate a metro file.
 `web` | The web command will launch a web server with endpoints to manage metro files.
 
-## Learn About Metro 2
+## Learn about Metro 2
 - [Intro to Metro 2](https://www.cdiaonline.org/resources/furnishers-of-data-overview/metro2-information/)
 - [Metro 2 File Structure](https://www.collect.org/cv11/Help/metro2format.html)
 
-## Getting Help
+## Getting help
 
  channel | info
  ------- | -------
-Twitter [@moov_io](https://twitter.com/moov_io)	| You can follow Moov.IO's Twitter feed to get updates on our project(s). You can also tweet us questions or just share blogs or stories.
+Twitter [@moov](https://twitter.com/moov)	| You can follow Moov.io's Twitter feed to get updates on our project(s). You can also tweet us questions or just share blogs or stories.
 [GitHub Issue](https://github.com/moov-io) | If you are able to reproduce a problem please open a GitHub Issue under the specific project that caused the error.
 [moov-io slack](https://slack.moov.io/) | Join our slack channel to have an interactive discussion about the development of the project.
 
-## Supported and Tested Platforms
+## Supported and tested platforms
 
 - 64-bit Linux (Ubuntu, Debian), macOS, and Windows
 
@@ -207,7 +208,7 @@ We maintain a comprehensive suite of unit tests and recommend table-driven testi
 
 We currently run fuzzing over ImageCashLetter in the form of a [`moov/metro2`](https://hub.docker.com/r/moov/metro2fuzz) Docker image. You can [read more](./test/fuzz-reader/README.md) or run the image and report crasher examples to [`security@moov.io`](mailto:security@moov.io). Thanks!
 
-## Related Projects
+## Related projects
 As part of Moov's initiative to offer open source fintech infrastructure, we have a large collection of active projects you may find useful:
 
 - [Moov Watchman](https://github.com/moov-io/watchman) offers search functions over numerous trade sanction lists from the United States and European Union.

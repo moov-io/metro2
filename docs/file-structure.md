@@ -1,12 +1,12 @@
 ---
 layout: page
-title: File Structure
+title: File structure
 hide_hero: true
 show_sidebar: false
 menubar: docs-menu
 ---
 
-# File Structure
+# File structure
 
 A Metro 2 credit reporting file consists of a single Header Record, Data Record, and Trailer Record. The Data Record includes a Base Segment followed by several optional appended segments. There can be multiple occurences of an optional segment type as needed, except for L1. The Header Record, Base Segment, and Trailer Record can be in either unpacked (character) or packed format, while the optional segments must be unpacked.
 
