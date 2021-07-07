@@ -1,4 +1,4 @@
-- label: Getting Started
+- label: Getting started
   items:
     - name: Overview
       link: /
@@ -11,12 +11,12 @@
       link: /usage-docker/
     - name: Google Cloud Run
       link: /usage-google-cloud/
-    - name: Go Library
+    - name: Go library
       link: /usage-go/
-    - name: Command Line
+    - name: Command line
       link: /usage-command-line/
 
-- label: Metro 2 File Setup
+- label: Metro 2 file setup
   items:
-    - name: File Structure
+    - name: File structure
       link: /file-structure/

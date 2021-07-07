@@ -1,12 +1,12 @@
 ---
 layout: page
-title: Command Line
+title: Command line
 hide_hero: true
 show_sidebar: false
 menubar: docs-menu
 ---
 
-# Command Line
+# Command line
 
 Metro2 has a command line interface to manage Metro 2 files and launch a web service.
 
@@ -129,7 +129,7 @@ metro2 validator --input testdata/packed_file.dat
 Error: is an invalid value of TotalConsumerSegmentsJ1
 ```
 
-### web server
+### Web server
 
 ```
 metro2 web --help
