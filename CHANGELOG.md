@@ -1,3 +1,15 @@
+## v0.3.3 (Released 2021-07-16)
+
+IMPROVEMENTS
+
+- Update schema to support leases
+
+BUILD
+
+- fix(deps): update golang.org/x/oauth2 commit hash to a41e5a7
+- fix(deps): update module github.com/spf13/cobra to v1.2.1
+- fix: Dockerfile-fuzz to reduce vulnerabilities
+
 ## v0.3.2 (Released 2021-06-22)
 
 BUG FIXES
