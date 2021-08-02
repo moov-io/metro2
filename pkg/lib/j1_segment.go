@@ -7,7 +7,6 @@ package lib
 import (
 	"reflect"
 	"strings"
-	"time"
 	"unicode/utf8"
 
 	"github.com/moov-io/metro2/pkg/utils"
@@ -79,7 +78,7 @@ type J1Segment struct {
 	//  When reporting Authorized Users (ECOA Code 3), the full Date of Birth (MMDDYYYY) must be reported for all newly-added
 	//  Authorized Users on all pre-existing and newly-opened accounts, even if the Social Security Number is reported.
 	//  Do not report accounts of consumers who are too young to enter into a binding contract.
-	DateBirth time.Time `json:"dateBirth"  validate:"required"`
+	DateBirth utils.Time `json:"dateBirth"  validate:"required"`
 
 	// Contains the telephone number of the associated consumer (Area Code + 7 digits).
 	TelephoneNumber int64 `json:"telephoneNumber"`

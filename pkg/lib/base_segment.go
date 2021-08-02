@@ -9,7 +9,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"time"
 	"unicode"
 	"unicode/utf8"
 
@@ -45,7 +44,7 @@ type BaseSegment struct {
 	// Contains date and time of actual account information update.
 	// Format for packed date is 0MMDDYYYYHHMMSSs — where s is the sign.
 	// Format is MMDDYYYYHHMMSS for character date.
-	TimeStamp time.Time `json:"timeStamp"`
+	TimeStamp utils.Time `json:"timeStamp"`
 
 	// Used to uniquely identify a data furnisher.
 	// Report your internal code to identify each branch, office, and/or credit central where information is verified.
@@ -95,7 +94,7 @@ type BaseSegment struct {
 	//
 	// Format for character date is MMDDYYYY.  Format for packed date is 0MMDDYYYYs — where s is the sign.
 	// If the day is not available, use 01.
-	DateOpened time.Time `json:"dateOpened"`
+	DateOpened utils.Time `json:"dateOpened"`
 
 	// Report the following values in whole dollars only:
 	//
@@ -281,7 +280,7 @@ type BaseSegment struct {
 	// Format for character date is MMDDYYYY.  Format for packed date is 0MMDDYYYYs – where s is the sign.
 	// Notes: This date must not reflect a future date.
 	// For guidelines on reporting paid, closed or inactive accounts, refer to FAQs 39, 40 and 41.
-	DateAccountInformation time.Time `json:"dateAccountInformation" validate:"required"`
+	DateAccountInformation utils.Time `json:"dateAccountInformation" validate:"required"`
 
 	// This date is used to ensure compliance with the Fair Credit Reporting Act.
 	// The date in the Date of First Delinquency field must be determined each reporting period based on the following hierarchy:
@@ -297,21 +296,21 @@ type BaseSegment struct {
 	// Notes:
 	// • Refer to Exhibit 9 for detailed reporting instructions, examples and excerpts from the Fair Credit Reporting Act.
 	// • First-time reporters should refer to Frequently Asked Question 22 for important information.
-	DateFirstDelinquency time.Time `json:"dateFirstDelinquency,omitempty"`
+	DateFirstDelinquency utils.Time `json:"dateFirstDelinquency,omitempty"`
 
 	// For all portfolio types, contains the date the account was closed to further purchases, paid in full, transferred or sold.  For Line of Credit, Open or Revolving accounts, there may be a balance due.
 	//
 	// Format for character date is MMDDYYYY.
 	// Format for packed date is 0MMDDYYYYs — where s is the sign.
 	// If not applicable, zero fill.
-	DateClosed time.Time `json:"dateClosed,omitempty"`
+	DateClosed utils.Time `json:"dateClosed,omitempty"`
 
 	// Report the date the most recent payment was received, whether full or partial payment is made.
 	//
 	// Format for character date is MMDDYYYY.
 	// Format for packed date is 0MMDDYYYYs — where s is the sign.
 	// If the day is not available, use 01.
-	DateLastPayment time.Time `json:"dateLastPayment,omitempty"`
+	DateLastPayment utils.Time `json:"dateLastPayment,omitempty"`
 
 	// Contains one of the following values that designates the interest type:
 	//
@@ -389,7 +388,7 @@ type BaseSegment struct {
 	// Notes:  If the Date of Birth is not reported, the Social Security Number is required to be reported.
 	//         When reporting Authorized Users (ECOA Code 3), the full Date of Birth (MMDDYYYY) must be reported for all newly-added Authorized Users on all pre-existing and newly-opened accounts, even if the Social Security Number is reported.
 	//         Do not report accounts of consumers who are too young to enter into a binding contract.
-	DateBirth time.Time `json:"dateBirth" validate:"required"`
+	DateBirth utils.Time `json:"dateBirth" validate:"required"`
 
 	// Contains the telephone number of the primary consumer (Area Code + 7 digits).
 	TelephoneNumber int64 `json:"telephoneNumber"`
@@ -753,6 +752,7 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 			if err != nil {
 				return err
 			}
+
 			fromFields := reflect.ValueOf(&base).Elem()
 			toFields := reflect.ValueOf(r).Elem()
 			for i := 0; i < fromFields.NumField(); i++ {
@@ -931,7 +931,7 @@ func (r *PackedBaseSegment) Parse(record string) (int, error) {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-			case time.Time:
+			case utils.Time:
 				field.Set(value)
 			}
 		}
