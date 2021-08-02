@@ -129,12 +129,12 @@ func GetValidDate(timeString string) (time.Time, error) {
 		return date, nil
 	}
 
-	return time.Time{}, errors.New("Date is not parseable or not valid or not existant")
+	return time.Time{}, errors.New("Date is not parseable or not valid")
 }
 
 func ParseDate(dateLayout, timeString string) (time.Time, error) {
 	if dateLayout == "" || timeString == "" {
-		return time.Time{}, errors.New("Date is not parseable or not valid or not existant")
+		return time.Time{}, errors.New("Date is not parseable or not valid")
 	}
 	dateMarker := time.Now().AddDate(-200, 0, 0)
 
@@ -170,5 +170,5 @@ func ParseDate(dateLayout, timeString string) (time.Time, error) {
 		}
 	}
 
-	return time.Time{}, errors.New("Date is not parseable or not valid or not existant")
+	return time.Time{}, errors.New("Date is not parseable or not valid")
 }
