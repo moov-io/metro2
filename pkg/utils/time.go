@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"strings"
@@ -13,7 +12,7 @@ type Time time.Time
 // UnmarshalJSON Parses the json string in the custom format
 func (ct *Time) UnmarshalJSON(b []byte) (err error) {
 	s := strings.Trim(string(b), `"`)
-	nt, err := GetValidDate(s)
+	nt, err := parseDate(s)
 	*ct = Time(nt)
 	return
 }
@@ -30,145 +29,192 @@ func (ct *Time) String() string {
 	return fmt.Sprintf("%q", t.Format(time.RFC3339))
 }
 
-func GetValidDate(timeString string) (time.Time, error) {
-
-	date, err := ParseDate("01/02/2006", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("01/02/06", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("2006-01-02", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("1-02-2006", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("01-2-2006", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("1-2-2006", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("1/02/06", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("01/2/06", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("1/2/06", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("1/02/2006", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("01/2/2006", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("1/2/2006", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("02/01/2006", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	// "2006-01-02T15:04:05Z"
-	date, err = ParseDate(time.RFC3339, timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	//2020-06-01T14:49-06:00
-	date, err = ParseDate("2006-01-02T15:04-07:00", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("2006-01", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("2006/01", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("Monday, January 02, 2006", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	date, err = ParseDate("1/2/2006 15:04", timeString)
-	if err == nil {
-		return date, nil
-	}
-
-	return time.Time{}, errors.New("Date is not parseable or not valid")
+var dateFormats = []string{
+	"01-02-2006",
+	"01/02/2006",
+	"01/02/2006 - 15:04",
+	"01/02/2006 15:04:05 MST",
+	"01/02/2006 3:04 PM",
+	"02-01-2006",
+	"02/01/2006",
+	"02.01.2006 -0700",
+	"02/01/2006 - 15:04",
+	"02.01.2006 15:04",
+	"02/01/2006 15:04:05",
+	"02.01.2006 15:04:05",
+	"02-01-2006 15:04:05 MST",
+	"02/01/2006 15:04 MST",
+	"02 Jan 2006",
+	"02 Jan 2006 15:04:05",
+	"02 Jan 2006 15:04:05 -0700",
+	"02 Jan 2006 15:04:05 MST",
+	"02 Jan 2006 15:04:05 UT",
+	"02 Jan 2006 15:04 MST",
+	"02 Monday, Jan 2006 15:04",
+	"06-1-2 15:04",
+	"06/1/2 15:04",
+	"1/2/2006",
+	"1/2/2006 15:04:05 MST",
+	"1/2/2006 3:04:05 PM",
+	"1/2/2006 3:04:05 PM MST",
+	"15:04 02.01.2006 -0700",
+	"2006-01-02",
+	"2006/01/02",
+	"2006-01-02 00:00:00.0 15:04:05.0 -0700",
+	"2006-01-02 15:04",
+	"2006-01-02 15:04:05 -0700",
+	"2006-01-02 15:04:05-07:00",
+	"2006-01-02 15:04:05-0700",
+	"2006-01-02 15:04:05 MST",
+	"2006-01-02 15:04:05Z",
+	"2006-01-02 at 15:04:05",
+	"2006-01-02T15:04:05",
+	"2006-01-02T15:04:05:00",
+	"2006-01-02T15:04:05 -0700",
+	"2006-01-02T15:04:05-07:00",
+	"2006-01-02T15:04:05-0700",
+	"2006-01-02T15:04:05:-0700",
+	"2006-01-02T15:04:05-07:00:00",
+	"2006-01-02T15:04:05Z",
+	"2006-01-02T15:04-07:00",
+	"2006-01-02T15:04Z",
+	"2006-1-02T15:04:05Z",
+	"2006-1-2",
+	"2006-1-2 15:04:05",
+	"2006-1-2T15:04:05Z",
+	"2006 January 02",
+	"2-1-2006",
+	"2/1/2006",
+	"2.1.2006 15:04:05",
+	"2 Jan 2006",
+	"2 Jan 2006 15:04:05 -0700",
+	"2 Jan 2006 15:04:05 MST",
+	"2 Jan 2006 15:04:05 Z",
+	"2 January 2006",
+	"2 January 2006 15:04:05 -0700",
+	"2 January 2006 15:04:05 MST",
+	"6-1-2 15:04",
+	"6/1/2 15:04",
+	"Jan 02, 2006",
+	"Jan 02 2006 03:04:05PM",
+	"Jan 2, 2006",
+	"Jan 2, 2006 15:04:05 MST",
+	"Jan 2, 2006 3:04:05 PM",
+	"Jan 2, 2006 3:04:05 PM MST",
+	"January 02, 2006",
+	"January 02, 2006 03:04 PM",
+	"January 02, 2006 15:04",
+	"January 02, 2006 15:04:05 MST",
+	"January 2, 2006",
+	"January 2, 2006 03:04 PM",
+	"January 2, 2006 15:04:05",
+	"January 2, 2006 15:04:05 MST",
+	"January 2, 2006, 3:04 p.m.",
+	"January 2, 2006 3:04 PM",
+	"Mon, 02 Jan 06 15:04:05 MST",
+	"Mon, 02 Jan 2006",
+	"Mon, 02 Jan 2006 15:04:05",
+	"Mon, 02 Jan 2006 15:04:05 00",
+	"Mon, 02 Jan 2006 15:04:05 -07",
+	"Mon 02 Jan 2006 15:04:05 -0700",
+	"Mon, 02 Jan 2006 15:04:05 --0700",
+	"Mon, 02 Jan 2006 15:04:05 -07:00",
+	"Mon, 02 Jan 2006 15:04:05 -0700",
+	"Mon,02 Jan 2006 15:04:05 -0700",
+	"Mon, 02 Jan 2006 15:04:05 GMT-0700",
+	"Mon , 02 Jan 2006 15:04:05 MST",
+	"Mon, 02 Jan 2006 15:04:05 MST",
+	"Mon, 02 Jan 2006 15:04:05MST",
+	"Mon, 02 Jan 2006, 15:04:05 MST",
+	"Mon, 02 Jan 2006 15:04:05 MST -0700",
+	"Mon, 02 Jan 2006 15:04:05 MST-07:00",
+	"Mon, 02 Jan 2006 15:04:05 UT",
+	"Mon, 02 Jan 2006 15:04:05 Z",
+	"Mon, 02 Jan 2006 15:04 -0700",
+	"Mon, 02 Jan 2006 15:04 MST",
+	"Mon,02 Jan 2006 15:04 MST",
+	"Mon, 02 Jan 2006 15 -0700",
+	"Mon, 02 Jan 2006 3:04:05 PM MST",
+	"Mon, 02 January 2006",
+	"Mon,02 January 2006 14:04:05 MST",
+	"Mon, 2006-01-02 15:04",
+	"Mon, 2 Jan 06 15:04:05 -0700",
+	"Mon, 2 Jan 06 15:04:05 MST",
+	"Mon, 2 Jan 15:04:05 MST",
+	"Mon, 2 Jan 2006",
+	"Mon,2 Jan 2006",
+	"Mon, 2 Jan 2006 15:04",
+	"Mon, 2 Jan 2006 15:04:05",
+	"Mon, 2 Jan 2006 15:04:05 -0700",
+	"Mon, 2 Jan 2006 15:04:05-0700",
+	"Mon, 2 Jan 2006 15:04:05 -0700 MST",
+	"mon,2 Jan 2006 15:04:05 MST",
+	"Mon 2 Jan 2006 15:04:05 MST",
+	"Mon, 2 Jan 2006 15:04:05 MST",
+	"Mon, 2 Jan 2006 15:04:05MST",
+	"Mon, 2 Jan 2006 15:04:05 UT",
+	"Mon, 2 Jan 2006 15:04 -0700",
+	"Mon, 2 Jan 2006, 15:04 -0700",
+	"Mon, 2 Jan 2006 15:04 MST",
+	"Mon, 2, Jan 2006 15:4",
+	"Mon, 2 Jan 2006 15:4:5 -0700 GMT",
+	"Mon, 2 Jan 2006 15:4:5 MST",
+	"Mon, 2 Jan 2006 3:04:05 PM -0700",
+	"Mon, 2 January 2006",
+	"Mon, 2 January 2006 15:04:05 -0700",
+	"Mon, 2 January 2006 15:04:05 MST",
+	"Mon, 2 January 2006, 15:04:05 MST",
+	"Mon, 2 January 2006, 15:04 -0700",
+	"Mon, 2 January 2006 15:04 MST",
+	"Monday, 02 January 2006 15:04:05",
+	"Monday, 02 January 2006 15:04:05 -0700",
+	"Monday, 02 January 2006 15:04:05 MST",
+	"Monday, 2 Jan 2006 15:04:05 -0700",
+	"Monday, 2 Jan 2006 15:04:05 MST",
+	"Monday, 2 January 2006 15:04:05 -0700",
+	"Monday, 2 January 2006 15:04:05 MST",
+	"Monday, January 02, 2006",
+	"Monday, January 2, 2006",
+	"Monday, January 2, 2006 03:04 PM",
+	"Monday, January 2, 2006 15:04:05 MST",
+	"Mon Jan 02 2006 15:04:05 -0700",
+	"Mon, Jan 02,2006 15:04:05 MST",
+	"Mon Jan 02, 2006 3:04 pm",
+	"Mon Jan 2 15:04:05 2006 MST",
+	"Mon Jan 2 15:04 2006",
+	"Mon, Jan 2 2006 15:04:05 -0700",
+	"Mon, Jan 2 2006 15:04:05 -700",
+	"Mon, Jan 2, 2006 15:04:05 MST",
+	"Mon, Jan 2 2006 15:04 MST",
+	"Mon, Jan 2, 2006 15:04 MST",
+	"Mon, January 02, 2006 15:04:05 MST",
+	"Mon, January 02, 2006, 15:04:05 MST",
+	"Mon, January 2 2006 15:04:05 -0700",
+	"Updated January 2, 2006",
+	time.ANSIC,
+	time.RFC1123,
+	time.RFC1123Z,
+	time.RFC3339,
+	time.RFC822,
+	time.RFC822Z,
+	time.RFC850,
+	time.RubyDate,
+	time.UnixDate,
 }
 
-func ParseDate(dateLayout, timeString string) (time.Time, error) {
-	if dateLayout == "" || timeString == "" {
-		return time.Time{}, errors.New("Date is not parseable or not valid")
-	}
-	dateMarker := time.Now().AddDate(-200, 0, 0)
+func parseDate(timeString string) (t time.Time, err error) {
 
-	// First try just using the provided date layout
-	try1, err := time.Parse(dateLayout, timeString)
-	if err == nil && try1.After(dateMarker) {
-		return try1, nil
+	timeString = strings.TrimSpace(timeString)
+	if timeString == "" {
+		return time.Time{}, errors.New("date string is not pass or not valid")
 	}
 
-	// Next try appending a common time layout
-	timeLayout1 := "15:04:05 MST"
-	try2, err := time.Parse(dateLayout+" "+timeLayout1, timeString)
-	if err == nil && try2.After(dateMarker) {
-		return try2, nil
-	}
-
-	// Next try appending another common time layout
-	timeLayout2 := "03:04:05 PM"
-	try3, err := time.Parse(dateLayout+" "+timeLayout2, timeString)
-	if err == nil && try3.After(dateMarker) {
-		return try3, nil
-	}
-
-	// If the time string has a space, split the time string so we can
-	// check if the timeString has a null time at the end throwing off the parse
-	if bytes.Contains([]byte(timeString), []byte(" ")) {
-		pieces := strings.Split(timeString, " ")
-		if len(pieces) > 0 {
-			try4, err := time.Parse(dateLayout, strings.TrimSpace(pieces[0]))
-			if err == nil && try4.After(dateMarker) {
-				return try4, nil
-			}
+	for _, f := range dateFormats {
+		if t, err = time.Parse(f, timeString); err == nil {
+			return
 		}
 	}
 
-	return time.Time{}, errors.New("Date is not parseable or not valid")
+	err = fmt.Errorf("could not parse dates: %v", timeString)
+	return
 }
