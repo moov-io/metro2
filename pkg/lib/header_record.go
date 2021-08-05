@@ -7,7 +7,6 @@ package lib
 import (
 	"reflect"
 	"strings"
-	"time"
 	"unicode"
 	"unicode/utf8"
 
@@ -57,22 +56,22 @@ type HeaderRecord struct {
 	// If accounts are updated on different dates, use most recent.
 	// A future date should not be reported.
 	// Format is MMDDYYYY.
-	ActivityDate time.Time `json:"activityDate" validate:"required"`
+	ActivityDate utils.Time `json:"activityDate" validate:"required"`
 
 	// Contains the date the media was generated.
 	// A future date should not be reported.
 	// Format is MMDDYYYY.
-	DateCreated time.Time `json:"dateCreated" validate:"required"`
+	DateCreated utils.Time `json:"dateCreated" validate:"required"`
 
 	// Contains the date your reporting format was developed.
 	// Format is MMDDYYYY.
 	// If the day is not available, use 01.
-	ProgramDate time.Time `json:"programDate"`
+	ProgramDate utils.Time `json:"programDate"`
 
 	// Contains the last date your reporting format was revised.
 	// Format is MMDDYYYY.
 	// If the day is not available, use 01.
-	ProgramRevisionDate time.Time `json:"programRevisionDate"`
+	ProgramRevisionDate utils.Time `json:"programRevisionDate"`
 
 	// Contains the name of the processing company sending the data; i.e., data furnisher or processor.
 	// If multiple Header Records are provided, the Reporter Name on the second and subsequent Headers may be repeated or blank filled.
@@ -219,7 +218,7 @@ func (r *PackedHeaderRecord) Parse(record string) (int, error) {
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-			case time.Time:
+			case utils.Time:
 				field.Set(value)
 			}
 		}

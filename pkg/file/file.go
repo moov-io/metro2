@@ -7,6 +7,7 @@ package file
 import (
 	"encoding/json"
 
+	"github.com/moov-io/base/log"
 	"github.com/moov-io/metro2/pkg/lib"
 	"github.com/moov-io/metro2/pkg/utils"
 )
@@ -39,12 +40,14 @@ func NewFile(format string) (File, error) {
 	switch format {
 	case utils.CharacterFileFormat:
 		return &fileInstance{
+			logger:  log.NewDefaultLogger(),
 			format:  utils.CharacterFileFormat,
 			Header:  lib.NewHeaderRecord(),
 			Trailer: lib.NewTrailerRecord(),
 		}, nil
 	case utils.PackedFileFormat:
 		return &fileInstance{
+			logger:  log.NewDefaultLogger(),
 			format:  utils.PackedFileFormat,
 			Header:  lib.NewPackedHeaderRecord(),
 			Trailer: lib.NewPackedTrailerRecord(),

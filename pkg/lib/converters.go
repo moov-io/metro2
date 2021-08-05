@@ -70,13 +70,17 @@ func (c *converter) toString(elm field, data reflect.Value) string {
 	if elm.Type&numeric > 0 {
 		return fmt.Sprintf("%0"+sizeStr+"d", data)
 	} else if elm.Type&timestamp > 0 {
-		if datatime, ok := data.Interface().(time.Time); ok && !datatime.IsZero() {
-			return datatime.Format(timestampFormat)
+		if datatime, ok := data.Interface().(utils.Time); ok {
+			if t := time.Time(datatime); !t.IsZero() {
+				return t.Format(timestampFormat)
+			}
 		}
 		return strings.Repeat(zeroString, elm.Length)
 	} else if elm.Type&date > 0 {
-		if datatime, ok := data.Interface().(time.Time); ok && !datatime.IsZero() {
-			return datatime.Format(dateFormat)
+		if datatime, ok := data.Interface().(utils.Time); ok {
+			if t := time.Time(datatime); !t.IsZero() {
+				return t.Format(dateFormat)
+			}
 		}
 		return strings.Repeat(zeroString, elm.Length)
 	} else if elm.Type&alphanumeric > 0 || elm.Type&alpha > 0 {
@@ -148,7 +152,7 @@ func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]fiel
 				field.SetInt(value.Interface().(int64))
 			case string:
 				field.SetString(value.Interface().(string))
-			case time.Time:
+			case utils.Time:
 				field.Set(value)
 			}
 		}
@@ -157,21 +161,23 @@ func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]fiel
 }
 
 // convert functions
-func timeFromTimestampString(date string) (time.Time, error) {
+func timeFromTimestampString(date string) (utils.Time, error) {
 	if strings.Count(date, "0") != len(date) {
-		return time.Parse(timestampFormat, date)
+		time, err := time.Parse(timestampFormat, date)
+		return utils.Time(time), err
 	}
-	return time.Time{}, nil
+	return utils.Time{}, nil
 }
 
-func timeFromDateString(date string) (time.Time, error) {
+func timeFromDateString(date string) (utils.Time, error) {
 	if strings.Count(date, "0") != len(date) {
-		return time.Parse(dateFormat, date)
+		time, err := time.Parse(dateFormat, date)
+		return utils.Time(time), err
 	}
-	return time.Time{}, nil
+	return utils.Time{}, nil
 }
 
-func timeFromPackedTimestampString(date string) (time.Time, error) {
+func timeFromPackedTimestampString(date string) (utils.Time, error) {
 	value := int64(0)
 	bin := []byte(date)
 	if bin[0] == 0x00 && bin[packedTimestampSize-1] == 0x73 {
@@ -188,7 +194,7 @@ func timeFromPackedTimestampString(date string) (time.Time, error) {
 	return timeFromTimestampString(datestr)
 }
 
-func timeFromPackedDateString(date string) (time.Time, error) {
+func timeFromPackedDateString(date string) (utils.Time, error) {
 	value := int64(0)
 	bin := []byte(date)
 	if bin[0] == 0x00 && bin[packedDateSize-1] == 0x73 {
@@ -220,9 +226,13 @@ func packedNumberFromString(data string) int64 {
 
 func packedTimeString(data reflect.Value, format string, length int, size int) string {
 	value := int64(0)
-	if data.Type() == reflect.TypeOf(time.Time{}) {
-		f := data.MethodByName("Format").Interface().(func(string) string)
-		value, _ = strconv.ParseInt(f(format), 10, 64)
+	if data.Type() == reflect.TypeOf(utils.Time{}) {
+		if data.Interface() == nil {
+			return ""
+		}
+
+		newTime := data.Interface().(utils.Time)
+		value, _ = strconv.ParseInt(time.Time(newTime).Format(format), 10, 64)
 	}
 
 	var out bytes.Buffer

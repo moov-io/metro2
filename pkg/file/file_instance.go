@@ -6,10 +6,12 @@ package file
 
 import (
 	"encoding/json"
+	"errors"
 	"reflect"
 	"strings"
 	"unicode"
 
+	"github.com/moov-io/base/log"
 	"github.com/moov-io/metro2/pkg/lib"
 	"github.com/moov-io/metro2/pkg/utils"
 )
@@ -21,6 +23,7 @@ type fileInstance struct {
 	Trailer lib.Record   `json:"trailer"`
 
 	format string
+	logger log.Logger
 }
 
 // SetRecord can set block record like as header, trailer
@@ -280,18 +283,21 @@ func (f *fileInstance) UnmarshalJSON(data []byte) error {
 		case utils.HeaderRecordName:
 			err = json.Unmarshal(buf, f.Header)
 			if err != nil {
-				return err
+				f.logger.Error().LogErrorf(err.Error())
+				return errors.New("Unable to parse input json file")
 			}
 		case utils.TrailerRecordName:
 			err = json.Unmarshal(buf, f.Trailer)
 			if err != nil {
-				return err
+				f.logger.Error().LogErrorf(err.Error())
+				return errors.New("Unable to parse input json file")
 			}
 		case utils.DataRecordName:
 			var list []interface{}
 			err = json.Unmarshal(buf, &list)
 			if err != nil {
-				return nil
+				f.logger.Error().LogErrorf(err.Error())
+				return errors.New("Unable to parse input json file")
 			}
 			for _, subSegment := range list {
 				subBuf, err := json.Marshal(subSegment)
@@ -302,14 +308,16 @@ func (f *fileInstance) UnmarshalJSON(data []byte) error {
 					base := lib.NewBaseSegment()
 					err = json.Unmarshal(subBuf, base)
 					if err != nil {
-						return nil
+						f.logger.Error().LogErrorf(err.Error())
+						return errors.New("Unable to parse input json file")
 					}
 					f.Bases = append(f.Bases, base)
 				} else {
 					base := lib.NewPackedBaseSegment()
 					err = json.Unmarshal(subBuf, base)
 					if err != nil {
-						return nil
+						f.logger.Error().LogErrorf(err.Error())
+						return errors.New("Unable to parse input json file")
 					}
 					f.Bases = append(f.Bases, base)
 				}

@@ -7,7 +7,6 @@ package lib
 import (
 	"reflect"
 	"strings"
-	"time"
 	"unicode/utf8"
 
 	"github.com/moov-io/metro2/pkg/utils"
@@ -298,11 +297,11 @@ type K4Segment struct {
 
 	// Report the date the first payment is due for deferred loans.
 	// Format is MMDDYYYY. If the day is not available, use 01.
-	DeferredPaymentStartDate time.Time `json:"deferredPaymentStartDate,omitempty"`
+	DeferredPaymentStartDate utils.Time `json:"deferredPaymentStartDate,omitempty"`
 
 	// Report the date the balloon payment is due, if applicable.
 	// Format is MMDDYYYY. If the day is not available, use 01.
-	BalloonPaymentDueDate time.Time `json:"balloonPaymentDueDate,omitempty"`
+	BalloonPaymentDueDate utils.Time `json:"balloonPaymentDueDate,omitempty"`
 
 	// Report the amount of the balloon payment in whole dollars only.
 	BalloonPaymentAmount int `json:"balloonPaymentAmount"`
