@@ -33,6 +33,9 @@ jobs:
 
     - name: Check
       run: make check
+      env:
+        COVER_THRESHOLD: 85.0
+        GOLANGCI_LINTERS: gosec
 
     - name: Upload Code Coverage
       if: runner.os == 'Linux'
