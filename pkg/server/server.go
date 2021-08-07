@@ -17,48 +17,45 @@ import (
 	"github.com/moov-io/metro2/pkg/utils"
 )
 
-func parseInputFromRequest(r *http.Request) (file.File, string, error) {
+func parseInputFromRequest(r *http.Request) (file.File, error) {
 	if r.Header.Get("Content-Type") == "application/json" {
-		var body struct {
-			Format string                 `json:"format"`
-			Data   map[string]interface{} `json:"data"`
-		}
+		var body map[string]interface{}
 
 		decoder := json.NewDecoder(r.Body)
 		if err := decoder.Decode(&body); err != nil {
-			return nil, "", err
+			return nil, err
 		}
 		defer r.Body.Close()
 
-		str, err := json.Marshal(body.Data)
+		str, err := json.Marshal(body)
 		if err != nil {
-			return nil, "", err
+			return nil, err
 		}
 
 		mf, err := file.CreateFile(str)
 		if err != nil {
-			return nil, "", err
+			return nil, err
 		}
 
-		return mf, body.Format, nil
+		return mf, nil
 	}
 
 	src, _, err := r.FormFile("file")
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
 	defer src.Close()
 
 	var input bytes.Buffer
 	if _, err = io.Copy(&input, src); err != nil {
-		return nil, "", err
+		return nil, err
 	}
 
 	mf, err := file.CreateFile(input.Bytes())
 	if err != nil {
-		return nil, "", err
+		return nil, err
 	}
-	return mf, "", nil
+	return mf, nil
 }
 
 func outputError(w http.ResponseWriter, code int, err error) {
@@ -104,7 +101,13 @@ func outputBufferToWriter(w http.ResponseWriter, metroFile file.File, format str
 }
 
 func getFormat(r *http.Request) (string, error) {
-	format := r.FormValue("format")
+	var format string
+	if r.Header.Get("Content-Type") == "application/json" {
+		format = r.URL.Query().Get("format")
+	} else {
+		format = r.FormValue("format")
+	}
+
 	if format == "" {
 		format = utils.MessageJsonFormat
 	}
@@ -123,7 +126,7 @@ func getFormat(r *http.Request) (string, error) {
 //   400: Bad Request
 //   501: Not Implemented
 func validator(w http.ResponseWriter, r *http.Request) {
-	metroFile, _, err := parseInputFromRequest(r)
+	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -147,18 +150,16 @@ func validator(w http.ResponseWriter, r *http.Request) {
 //   400: Bad Request
 //   501: Not Implemented
 func print(w http.ResponseWriter, r *http.Request) {
-	metroFile, format, err := parseInputFromRequest(r)
+	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if format == "" {
-		format, err = getFormat(r)
-		if err != nil {
-			outputError(w, http.StatusNotImplemented, err)
-			return
-		}
+	format, err := getFormat(r)
+	if err != nil {
+		outputError(w, http.StatusNotImplemented, err)
+		return
 	}
 
 	_, err = messageToBuf(format, metroFile)
@@ -179,7 +180,7 @@ func print(w http.ResponseWriter, r *http.Request) {
 //   400: Bad Request
 //   501: Not Implemented
 func convert(w http.ResponseWriter, r *http.Request) {
-	metroFile, format, err := parseInputFromRequest(r)
+	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -199,12 +200,10 @@ func convert(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if format == "" {
-		format, err = getFormat(r)
-		if err != nil {
-			outputError(w, http.StatusNotImplemented, err)
-			return
-		}
+	format, err := getFormat(r)
+	if err != nil {
+		outputError(w, http.StatusNotImplemented, err)
+		return
 	}
 
 	output, err := messageToBuf(format, metroFile)

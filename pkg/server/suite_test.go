@@ -131,6 +131,20 @@ func (t *ServerTest) TestUnknownPrint(c *check.C) {
 	c.Assert(recorder.Code, check.Equals, http.StatusNotImplemented)
 }
 
+func (t *ServerTest) TestJsonRequestPrint(c *check.C) {
+	body, expected := t.readFiles("unpacked_fixed_file.json", "unpacked_fixed_request.dat", c)
+	recorder, request := t.makeRequest(http.MethodPost, "/print", string(body), c)
+	request.Header.Set("Content-Type", "application/json")
+
+	q := request.URL.Query()
+	q.Add("format", "metro")
+	request.URL.RawQuery = q.Encode()
+
+	t.testServer.ServeHTTP(recorder, request)
+	c.Assert(recorder.Code, check.Equals, http.StatusOK)
+	c.Assert(recorder.Body.String(), check.Equals, string(expected))
+}
+
 func (t *ServerTest) TestJsonConvert(c *check.C) {
 	writer, body := t.getWriter("packed_file.json", c)
 	err := writer.WriteField("format", "json")
@@ -228,9 +242,14 @@ func (t *ServerTest) TestConvertWithInvalidData(c *check.C) {
 }
 
 func (t *ServerTest) TestConvertWithValidJsonRequest(c *check.C) {
-	body, expected := t.readFiles("unpacked_fixed_request.json", "unpacked_fixed_request.dat", c)
+	body, expected := t.readFiles("unpacked_fixed_file.json", "unpacked_fixed_request.dat", c)
 	recorder, request := t.makeRequest(http.MethodPost, "/convert", string(body), c)
 	request.Header.Set("Content-Type", "application/json")
+
+	q := request.URL.Query()
+	q.Add("format", "metro")
+	request.URL.RawQuery = q.Encode()
+
 	t.testServer.ServeHTTP(recorder, request)
 	c.Assert(recorder.Code, check.Equals, http.StatusOK)
 	c.Assert(recorder.Body.String(), check.Equals, string(expected))
