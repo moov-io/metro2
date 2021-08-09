@@ -8,7 +8,7 @@ require (
 	github.com/antihax/optional v1.0.0
 	github.com/gorilla/mux v1.8.0
 	github.com/kr/text v0.2.0 // indirect
-	github.com/moov-io/base v0.21.1
+	github.com/moov-io/base v0.22.0
 	github.com/spf13/cobra v1.2.1
 	golang.org/x/net v0.0.0-20210503060351-7fd8e65b6420 // indirect
 	golang.org/x/oauth2 v0.0.0-20210805134026-6f1e6394065a
