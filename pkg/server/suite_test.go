@@ -66,6 +66,7 @@ func (t *ServerTest) readFiles(f1 string, f2 string, c *check.C) ([]byte, []byte
 
 	p2 := filepath.Join("..", "..", "test", "testdata", f2)
 	data2, err := os.ReadFile(p2)
+	c.Assert(err, check.IsNil)
 	return data1, data2
 }
 
