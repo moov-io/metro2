@@ -56,6 +56,19 @@ paths:
                   type: string
                   description: metro2 file to upload
                   format: binary
+          application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+      parameters:
+        - in: query
+          name: format
+          description: print metro2 file type
+          schema:
+            type: string
+            default: json
+            enum:
+              - json
+              - metro2
       responses:
         '200':
           description: successful operation
@@ -137,6 +150,19 @@ paths:
                   type: string
                   description: metro2 file to upload
                   format: binary
+          application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+      parameters:
+        - in: query
+          name: format
+          description: print metro2 file type
+          schema:
+            type: string
+            default: json
+            enum:
+              - json
+              - metro2
       responses:
         '200':
           description: successful operation

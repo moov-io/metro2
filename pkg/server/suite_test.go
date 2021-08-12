@@ -59,6 +59,17 @@ func (t *ServerTest) getWriter(name string, c *check.C) (*multipart.Writer, *byt
 	return writer, body
 }
 
+func (t *ServerTest) readFiles(f1 string, f2 string, c *check.C) ([]byte, []byte) {
+	p1 := filepath.Join("..", "..", "test", "testdata", f1)
+	data1, err := os.ReadFile(p1)
+	c.Assert(err, check.IsNil)
+
+	p2 := filepath.Join("..", "..", "test", "testdata", f2)
+	data2, err := os.ReadFile(p2)
+	c.Assert(err, check.IsNil)
+	return data1, data2
+}
+
 func (t *ServerTest) getErrWriter(name string, c *check.C) (*multipart.Writer, *bytes.Buffer) {
 	path := filepath.Join("..", "..", "test", "testdata", name)
 	file, err := os.Open(path)
@@ -119,6 +130,20 @@ func (t *ServerTest) TestUnknownPrint(c *check.C) {
 	request.Header.Set("Content-Type", writer.FormDataContentType())
 	t.testServer.ServeHTTP(recorder, request)
 	c.Assert(recorder.Code, check.Equals, http.StatusNotImplemented)
+}
+
+func (t *ServerTest) TestJsonRequestPrint(c *check.C) {
+	body, expected := t.readFiles("unpacked_fixed_file.json", "unpacked_fixed_request.dat", c)
+	recorder, request := t.makeRequest(http.MethodPost, "/print", string(body), c)
+	request.Header.Set("Content-Type", "application/json")
+
+	q := request.URL.Query()
+	q.Add("format", "metro")
+	request.URL.RawQuery = q.Encode()
+
+	t.testServer.ServeHTTP(recorder, request)
+	c.Assert(recorder.Code, check.Equals, http.StatusOK)
+	c.Assert(recorder.Body.String(), check.Equals, string(expected))
 }
 
 func (t *ServerTest) TestJsonConvert(c *check.C) {
@@ -215,6 +240,20 @@ func (t *ServerTest) TestConvertWithInvalidData(c *check.C) {
 	request.Header.Set("Content-Type", writer.FormDataContentType())
 	t.testServer.ServeHTTP(recorder, request)
 	c.Assert(recorder.Code, check.Equals, http.StatusBadRequest)
+}
+
+func (t *ServerTest) TestConvertWithValidJsonRequest(c *check.C) {
+	body, expected := t.readFiles("unpacked_fixed_file.json", "unpacked_fixed_request.dat", c)
+	recorder, request := t.makeRequest(http.MethodPost, "/convert", string(body), c)
+	request.Header.Set("Content-Type", "application/json")
+
+	q := request.URL.Query()
+	q.Add("format", "metro")
+	request.URL.RawQuery = q.Encode()
+
+	t.testServer.ServeHTTP(recorder, request)
+	c.Assert(recorder.Code, check.Equals, http.StatusOK)
+	c.Assert(recorder.Body.String(), check.Equals, string(expected))
 }
 
 func (t *ServerTest) TestValidateWithInvalidData(c *check.C) {

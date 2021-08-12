@@ -18,6 +18,28 @@ import (
 )
 
 func parseInputFromRequest(r *http.Request) (file.File, error) {
+	if r.Header.Get("Content-Type") == "application/json" {
+		var body map[string]interface{}
+
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&body); err != nil {
+			return nil, err
+		}
+		defer r.Body.Close()
+
+		str, err := json.Marshal(body)
+		if err != nil {
+			return nil, err
+		}
+
+		mf, err := file.CreateFile(str)
+		if err != nil {
+			return nil, err
+		}
+
+		return mf, nil
+	}
+
 	src, _, err := r.FormFile("file")
 	if err != nil {
 		return nil, err
@@ -79,7 +101,13 @@ func outputBufferToWriter(w http.ResponseWriter, metroFile file.File, format str
 }
 
 func getFormat(r *http.Request) (string, error) {
-	format := r.FormValue("format")
+	var format string
+	if r.Header.Get("Content-Type") == "application/json" {
+		format = r.URL.Query().Get("format")
+	} else {
+		format = r.FormValue("format")
+	}
+
 	if format == "" {
 		format = utils.MessageJsonFormat
 	}
@@ -133,6 +161,7 @@ func print(w http.ResponseWriter, r *http.Request) {
 		outputError(w, http.StatusNotImplemented, err)
 		return
 	}
+
 	_, err = messageToBuf(format, metroFile)
 	if err != nil {
 		outputError(w, http.StatusNotImplemented, err)
@@ -176,6 +205,7 @@ func convert(w http.ResponseWriter, r *http.Request) {
 		outputError(w, http.StatusNotImplemented, err)
 		return
 	}
+
 	output, err := messageToBuf(format, metroFile)
 	if err != nil {
 		outputError(w, http.StatusNotImplemented, err)
