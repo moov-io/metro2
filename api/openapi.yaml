@@ -62,9 +62,9 @@ paths:
       parameters:
         - in: query
           name: format
+          description: print metro2 file type
           schema:
             type: string
-            description: print metro2 file type
             default: json
             enum:
               - json
@@ -156,9 +156,9 @@ paths:
       parameters:
         - in: query
           name: format
+          description: print metro2 file type
           schema:
             type: string
-            description: print metro2 file type
             default: json
             enum:
               - json
