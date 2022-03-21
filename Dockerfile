@@ -1,6 +1,6 @@
 FROM golang:1.17-alpine as builder
 WORKDIR /go/src/github.com/moov-io/metro2
-RUN apk add -U make
+RUN apk add -U git make
 RUN adduser -D -g '' --shell /bin/false moov
 COPY . .
 RUN go mod download
