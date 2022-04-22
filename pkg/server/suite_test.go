@@ -253,7 +253,9 @@ func (t *ServerTest) TestConvertWithValidJsonRequest(c *check.C) {
 
 	t.testServer.ServeHTTP(recorder, request)
 	c.Assert(recorder.Code, check.Equals, http.StatusOK)
-	c.Assert(recorder.Body.String(), check.Equals, string(expected))
+
+	rawStr := strings.ReplaceAll(string(expected), "\r\n", "\n")
+	c.Assert(strings.Compare(recorder.Body.String(), rawStr), check.Equals, 0)
 }
 
 func (t *ServerTest) TestValidateWithInvalidData(c *check.C) {

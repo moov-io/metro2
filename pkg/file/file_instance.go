@@ -193,6 +193,10 @@ func (f *fileInstance) Validate() error {
 
 // Parse attempts to initialize a *File object assuming the input is valid raw data.
 func (f *fileInstance) Parse(record string) error {
+
+	// remove new lines
+	record = strings.ReplaceAll(strings.ReplaceAll(record, "\r\n", ""), "\n", "")
+
 	f.Bases = []lib.Record{}
 	offset := 0
 
@@ -246,12 +250,15 @@ func (f *fileInstance) String() string {
 	var buf strings.Builder
 
 	// Header Block
-	header := f.Header.String()
+	header := f.Header.String() + "\n"
 
 	// Data Block
 	data := ""
 	for _, base := range f.Bases {
 		data += base.String()
+	}
+	if len(data) > 0 {
+		data += "\n"
 	}
 
 	// Trailer Block

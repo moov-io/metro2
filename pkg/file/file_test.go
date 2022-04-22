@@ -63,7 +63,13 @@ func (t *FileTest) TestJsonWithUnpackedVariableBlocked(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = json.Unmarshal([]byte(t.unpackedVariableBlockedJson), f)
 	c.Assert(err, check.IsNil)
-	c.Assert(f.String(), check.Equals, t.unpackedVariableBlockedFile)
+
+	raw, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", "unpacked_variable_file.dat"))
+	c.Assert(err, check.IsNil)
+
+	rawStr := strings.ReplaceAll(string(raw), "\r\n", "\n")
+	c.Assert(strings.Compare(f.String(), rawStr), check.Equals, 0)
+
 	buf, err := json.Marshal(f)
 	c.Assert(err, check.IsNil)
 	var out bytes.Buffer
@@ -298,7 +304,12 @@ func (t *FileTest) TestCreateFile(c *check.C) {
 	c.Assert(err, check.IsNil)
 	f, err := CreateFile([]byte(t.packedFile))
 	c.Assert(err, check.IsNil)
-	c.Assert(f.String(), check.Equals, t.packedFile)
+
+	raw, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", "packed_file.dat"))
+	c.Assert(err, check.IsNil)
+
+	rawStr := strings.ReplaceAll(string(raw), "\r\n", "\n")
+	c.Assert(strings.Compare(f.String(), rawStr), check.Equals, 0)
 }
 
 func (t *FileTest) TestCreateFileFailed(c *check.C) {

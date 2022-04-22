@@ -6,7 +6,6 @@ package file
 
 import (
 	"encoding/json"
-
 	"github.com/moov-io/base/log"
 	"github.com/moov-io/metro2/pkg/lib"
 	"github.com/moov-io/metro2/pkg/utils"
@@ -68,6 +67,7 @@ func CreateFile(buf []byte) (File, error) {
 	} else {
 		err = f.Parse(string(buf))
 	}
+
 	return f, err
 }
 
