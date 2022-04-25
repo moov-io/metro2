@@ -255,10 +255,7 @@ func (f *fileInstance) String() string {
 	// Data Block
 	data := ""
 	for _, base := range f.Bases {
-		data += base.String()
-	}
-	if len(data) > 0 {
-		data += "\n"
+		data += base.String() + "\n"
 	}
 
 	// Trailer Block
