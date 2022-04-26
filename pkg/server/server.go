@@ -74,21 +74,21 @@ func outputSuccess(w http.ResponseWriter, output string) {
 	})
 }
 
-func messageToBuf(format string, metroFile file.File) ([]byte, error) {
+func messageToBuf(format string, metroFile file.File, newline bool) ([]byte, error) {
 	var output []byte
 	var err error
 	switch format {
 	case utils.MessageJsonFormat:
 		output, err = json.MarshalIndent(metroFile, "", "\t")
 	case utils.MessageMetroFormat:
-		output = []byte(metroFile.String())
+		output = []byte(metroFile.String(newline))
 	default:
 		return nil, errors.New("invalid format")
 	}
 	return output, err
 }
 
-func outputBufferToWriter(w http.ResponseWriter, metroFile file.File, format string) {
+func outputBufferToWriter(w http.ResponseWriter, metroFile file.File, format string, newline bool) {
 	w.WriteHeader(http.StatusOK)
 	switch format {
 	case utils.MessageJsonFormat:
@@ -96,7 +96,7 @@ func outputBufferToWriter(w http.ResponseWriter, metroFile file.File, format str
 		json.NewEncoder(w).Encode(metroFile)
 	case utils.MessageMetroFormat:
 		w.Header().Set("Content-Type", "application/octet-stream; charset=utf-8")
-		w.Write([]byte(metroFile.String()))
+		w.Write([]byte(metroFile.String(newline)))
 	}
 }
 
@@ -115,6 +115,15 @@ func getFormat(r *http.Request) (string, error) {
 		return format, errors.New("invalid format")
 	}
 	return format, nil
+}
+
+func getIsNewLine(r *http.Request) bool {
+	newline := true
+	newlineStr := r.FormValue("newline")
+	if strings.EqualFold(newlineStr, "false") {
+		newline = false
+	}
+	return newline
 }
 
 // title: validate metro file
@@ -162,13 +171,14 @@ func print(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = messageToBuf(format, metroFile)
+	newline := getIsNewLine(r)
+	_, err = messageToBuf(format, metroFile, newline)
 	if err != nil {
 		outputError(w, http.StatusNotImplemented, err)
 		return
 	}
 
-	outputBufferToWriter(w, metroFile, format)
+	outputBufferToWriter(w, metroFile, format, newline)
 }
 
 // title: convert metro file
@@ -206,7 +216,12 @@ func convert(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	output, err := messageToBuf(format, metroFile)
+	newType := r.FormValue("type")
+	if newType == utils.CharacterFileFormat || newType == utils.PackedFileFormat {
+		metroFile.SetType(newType)
+	}
+
+	output, err := messageToBuf(format, metroFile, getIsNewLine(r))
 	if err != nil {
 		outputError(w, http.StatusNotImplemented, err)
 		return

@@ -13,6 +13,8 @@ import (
 
 // General file interface
 type File interface {
+	GetType() string
+	SetType(string) error
 	SetRecord(lib.Record) error
 	AddDataRecord(lib.Record) error
 	GetRecord(string) (lib.Record, error)
@@ -20,7 +22,7 @@ type File interface {
 	GeneratorTrailer() (lib.Record, error)
 
 	Parse(record string) error
-	String() string
+	String(newline bool) string
 	Validate() error
 }
 

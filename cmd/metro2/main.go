@@ -53,7 +53,15 @@ var Validate = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		return f.Validate()
+
+		err = f.Validate()
+		if err != nil {
+			return err
+		}
+
+		fmt.Println("the file is valid")
+
+		return nil
 	},
 }
 
@@ -80,7 +88,9 @@ var Print = &cobra.Command{
 			return err
 		}
 
+		newline, _ := cmd.Flags().GetBool("newline")
 		output := ""
+
 		if format == utils.MessageJsonFormat {
 			buf, err := json.Marshal(f)
 			if err != nil {
@@ -93,7 +103,7 @@ var Print = &cobra.Command{
 			}
 			output = pretty.String()
 		} else if format == utils.MessageMetroFormat {
-			output = f.String()
+			output = f.String(newline)
 		}
 		fmt.Println(output)
 		return nil
@@ -141,6 +151,13 @@ var Convert = &cobra.Command{
 			}
 		}
 
+		newline, _ := cmd.Flags().GetBool("newline")
+		if newType, tErr := cmd.Flags().GetString("type"); tErr == nil {
+			if newType == utils.PackedFileFormat || newType == utils.CharacterFileFormat {
+				mf.SetType(newType)
+			}
+		}
+
 		output := ""
 		if format == utils.MessageJsonFormat {
 			buf, err := json.Marshal(mf)
@@ -154,7 +171,7 @@ var Convert = &cobra.Command{
 			}
 			output = pretty.String()
 		} else if format == utils.MessageMetroFormat {
-			output = mf.String()
+			output = mf.String(newline)
 		}
 
 		f, err := os.Create(args[0])
@@ -210,9 +227,14 @@ var rootCmd = &cobra.Command{
 func initRootCmd() {
 	WebCmd.Flags().String("port", "8080", "port of the web server")
 	WebCmd.Flags().BoolP("test", "t", false, "test server")
+
 	Convert.Flags().String("format", "json", "format of metro file(required)")
+	Convert.Flags().String("type", "", "file type (character or packed)")
 	Convert.Flags().BoolP("generate", "g", false, "generate trailer record")
+	Convert.Flags().BoolP("newline", "n", false, "has new line")
+
 	Print.Flags().String("format", "json", "print format")
+	Print.Flags().BoolP("newline", "n", false, "has new line")
 
 	rootCmd.SilenceUsage = true
 	rootCmd.PersistentFlags().StringVar(&inputFile, "input", "", "input file (default is $PWD/metro.json)")

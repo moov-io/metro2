@@ -68,7 +68,7 @@ func (t *FileTest) TestJsonWithUnpackedVariableBlocked(c *check.C) {
 	c.Assert(err, check.IsNil)
 
 	rawStr := strings.ReplaceAll(string(raw), "\r\n", "\n")
-	c.Assert(strings.Compare(f.String(), rawStr), check.Equals, 0)
+	c.Assert(strings.Compare(f.String(true), rawStr), check.Equals, 0)
 
 	buf, err := json.Marshal(f)
 	c.Assert(err, check.IsNil)
@@ -309,7 +309,7 @@ func (t *FileTest) TestCreateFile(c *check.C) {
 	c.Assert(err, check.IsNil)
 
 	rawStr := strings.ReplaceAll(string(raw), "\r\n", "\n")
-	c.Assert(strings.Compare(f.String(), rawStr), check.Equals, 0)
+	c.Assert(strings.Compare(f.String(true), rawStr), check.Equals, 0)
 }
 
 func (t *FileTest) TestCreateFileFailed(c *check.C) {
