@@ -1,3 +1,14 @@
+## v0.4.0 (Released 2022-04-27)
+
+IMPROVEMENTS
+
+- file: support creating files with one record per line
+
+BUG FIXES
+
+- file: fix character encoding issue when converting json to metro2
+- file: fix file size string format when converting metro2 back to json
+
 ## v0.3.3 (Released 2021-07-16)
 
 IMPROVEMENTS
