@@ -137,15 +137,24 @@ paths:
               properties:
                 format:
                   type: string
-                  description: print metro2 file type
+                  description: format of metro file
                   default: json
                   enum:
                     - json
                     - metro2
+                type:
+                  type: string
+                  description: metro file type
+                  enum:
+                    - character
+                    - packed
                 generate:
                   type: boolean
                   description: generate new trailer record
                   default: false
+                newline:
+                  type: boolean
+                  description: has new line
                 file:
                   type: string
                   description: metro2 file to upload

@@ -25,7 +25,7 @@ paths:
       description: Check the metro2 service to check if running
       operationId: health
       responses:
-        200:
+        "200":
           content:
             text/plain:
               schema:
@@ -39,6 +39,19 @@ paths:
     post:
       description: Print metro2 file with requested file format.
       operationId: print
+      parameters:
+      - description: print metro2 file type
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          default: json
+          enum:
+          - json
+          - metro2
+          type: string
+        style: form
       requestBody:
         content:
           multipart/form-data:
@@ -55,8 +68,11 @@ paths:
                   description: metro2 file to upload
                   format: binary
                   type: string
+          application/json:
+            schema:
+              $ref: '#/components/schemas/File'
       responses:
-        200:
+        "200":
           content:
             text/plain:
               schema:
@@ -77,7 +93,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/File'
           description: successful operation
-        400:
+        "400":
           content:
             text/plain:
               schema:
@@ -101,21 +117,21 @@ paths:
                   format: binary
                   type: string
       responses:
-        200:
+        "200":
           content:
             text/plain:
               schema:
                 example: valid file
                 type: string
           description: successful operation
-        400:
+        "400":
           content:
             text/plain:
               schema:
                 example: bad request
                 type: string
           description: bad request
-        501:
+        "501":
           content:
             text/plain:
               schema:
@@ -129,6 +145,19 @@ paths:
     post:
       description: Convert from original metro2 file to new metro2 file
       operationId: convert
+      parameters:
+      - description: print metro2 file type
+        explode: true
+        in: query
+        name: format
+        required: false
+        schema:
+          default: json
+          enum:
+          - json
+          - metro2
+          type: string
+        style: form
       requestBody:
         content:
           multipart/form-data:
@@ -136,21 +165,33 @@ paths:
               properties:
                 format:
                   default: json
-                  description: print metro2 file type
+                  description: format of metro file
                   enum:
                   - json
                   - metro2
+                  type: string
+                type:
+                  description: metro file type
+                  enum:
+                  - character
+                  - packed
                   type: string
                 generate:
                   default: false
                   description: generate new trailer record
                   type: boolean
+                newline:
+                  description: has new line
+                  type: boolean
                 file:
                   description: metro2 file to upload
                   format: binary
                   type: string
+          application/json:
+            schema:
+              $ref: '#/components/schemas/File'
       responses:
-        200:
+        "200":
           content:
             application/octet-stream:
               schema:
@@ -158,14 +199,14 @@ paths:
                 format: binary
                 type: string
           description: successful operation
-        400:
+        "400":
           content:
             text/plain:
               schema:
                 example: bad request
                 type: string
           description: bad request
-        501:
+        "501":
           content:
             text/plain:
               schema:
@@ -465,7 +506,7 @@ components:
           - Q
           - T
           - S
-          - Y
+          - "Y"
           type: string
         scheduledMonthlyPaymentAmount:
           format: int32
@@ -603,8 +644,8 @@ components:
         addressIndicator:
           enum:
           - C
-          - Y
-          - N
+          - "Y"
+          - "N"
           - M
           - S
           - B
@@ -720,8 +761,8 @@ components:
         addressIndicator:
           enum:
           - C
-          - Y
-          - N
+          - "Y"
+          - "N"
           - M
           - S
           - B

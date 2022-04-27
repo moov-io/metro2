@@ -215,6 +215,6 @@ func parseDate(timeString string) (t time.Time, err error) {
 		}
 	}
 
-	err = fmt.Errorf("could not parse dates: %v", timeString)
+	err = fmt.Errorf("invalid date format: %v", timeString)
 	return
 }

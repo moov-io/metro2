@@ -79,7 +79,7 @@ func NewErrValidDate(fieldName, recordName string) error {
 
 // NewErrFieldRequired is given when a field is required
 func NewErrFieldRequired(fieldName, recordName string) error {
-	return fmt.Errorf("%s in %s has a required field", toSnakeCase(fieldName), recordName)
+	return fmt.Errorf("%s in %s is a required field", toSnakeCase(fieldName), recordName)
 }
 
 // NewErrPhoneNumber is given when a field is an invalid phone number

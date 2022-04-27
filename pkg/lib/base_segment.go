@@ -6,6 +6,7 @@ package lib
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
@@ -733,7 +734,7 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 	dummy := make(map[string]interface{})
 	err := json.Unmarshal(data, &dummy)
 	if err != nil {
-		return nil
+		return fmt.Errorf("invalid json format (%s)", err.Error())
 	}
 
 	r.j1Segments = []Segment{}
@@ -742,7 +743,7 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 	for key, record := range dummy {
 		buf, err := json.Marshal(record)
 		if err != nil {
-			return err
+			return fmt.Errorf("invalid %s segment (%s)", key, err.Error())
 		}
 
 		switch key {
@@ -750,7 +751,7 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 			base := baseJson{}
 			err := json.Unmarshal(buf, &base)
 			if err != nil {
-				return err
+				return fmt.Errorf("unabled to parse %s segment (%s)", key, err.Error())
 			}
 
 			fromFields := reflect.ValueOf(&base).Elem()
@@ -767,8 +768,9 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 			var list []interface{}
 			err := json.Unmarshal(buf, &list)
 			if err != nil {
-				return nil
+				return fmt.Errorf("unabled to parse %s segment (%s)", key, err.Error())
 			}
+
 			for _, subSegment := range list {
 				subBuf, err := json.Marshal(subSegment)
 				if err != nil {
@@ -1154,7 +1156,7 @@ func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
 	dummy := make(map[string]interface{})
 	err := json.Unmarshal(data, &dummy)
 	if err != nil {
-		return err
+		return fmt.Errorf("invalid json format (%s)", err.Error())
 	}
 
 	r.j1Segments = []Segment{}
@@ -1163,7 +1165,7 @@ func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
 	for key, record := range dummy {
 		buf, err := json.Marshal(record)
 		if err != nil {
-			return err
+			return fmt.Errorf("invalid %s segment (%s)", key, err.Error())
 		}
 
 		switch key {
@@ -1171,7 +1173,7 @@ func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
 			base := baseJson{}
 			err := json.Unmarshal(buf, &base)
 			if err != nil {
-				return err
+				return fmt.Errorf("unabled to parse %s segment (%s)", key, err.Error())
 			}
 			fromFields := reflect.ValueOf(&base).Elem()
 			toFields := reflect.ValueOf(r).Elem()
@@ -1187,7 +1189,7 @@ func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
 			var list []interface{}
 			err := json.Unmarshal(buf, &list)
 			if err != nil {
-				return err
+				return fmt.Errorf("unabled to parse %s segment (%s)", key, err.Error())
 			}
 			for _, subSegment := range list {
 				subBuf, err := json.Marshal(subSegment)
@@ -1366,7 +1368,7 @@ func unmarshalApplicableSegments(description string, data []byte, r Record) erro
 
 	err := json.Unmarshal(data, segment)
 	if err != nil {
-		return err
+		return fmt.Errorf("unabled to parse %s segment (%s)", description, err.Error())
 	}
 	return r.AddApplicableSegment(segment)
 }

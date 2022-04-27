@@ -13,30 +13,61 @@ Method | HTTP request | Description
 
 ## Convert
 
-> *os.File Convert(ctx, optional)
+> *os.File Convert(ctx).Format(format).Format2(format2).Type_(type_).Generate(generate).Newline(newline).File(file).Execute()
 
 Convert metro2 file
 
-Convert from original metro2 file to new metro2 file
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    format := "format_example" // string | print metro2 file type (optional) (default to "json")
+    format2 := "format_example" // string | format of metro file (optional) (default to "json")
+    type_ := "type__example" // string | metro file type (optional)
+    generate := true // bool | generate new trailer record (optional) (default to false)
+    newline := true // bool | has new line (optional)
+    file := os.NewFile(1234, "some_file") // *os.File | metro2 file to upload (optional)
+
+    configuration := openapiclient.NewConfiguration()
+    apiClient := openapiclient.NewAPIClient(configuration)
+    resp, r, err := apiClient.Metro2FilesApi.Convert(context.Background()).Format(format).Format2(format2).Type_(type_).Generate(generate).Newline(newline).File(file).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `Metro2FilesApi.Convert``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `Convert`: *os.File
+    fmt.Fprintf(os.Stdout, "Response from `Metro2FilesApi.Convert`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiConvertRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
- **optional** | ***ConvertOpts** | optional parameters | nil if no parameters
-
-### Optional Parameters
-
-Optional parameters are passed through a pointer to a ConvertOpts struct
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **format** | **optional.String**| print metro2 file type | [default to json]
- **generate** | **optional.Bool**| generate new trailer record | [default to false]
- **file** | **optional.Interface of *os.File****optional.*os.File**| metro2 file to upload | 
+ **format** | **string** | print metro2 file type | [default to &quot;json&quot;]
+ **format2** | **string** | format of metro file | [default to &quot;json&quot;]
+ **type_** | **string** | metro file type | 
+ **generate** | **bool** | generate new trailer record | [default to false]
+ **newline** | **bool** | has new line | 
+ **file** | ***os.File** | metro2 file to upload | 
 
 ### Return type
 
@@ -48,7 +79,7 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: multipart/form-data
+- **Content-Type**: multipart/form-data, application/json
 - **Accept**: application/octet-stream, text/plain
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
@@ -58,15 +89,46 @@ No authorization required
 
 ## Health
 
-> string Health(ctx, )
+> string Health(ctx).Execute()
 
 health metro2 service
 
-Check the metro2 service to check if running
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+
+    configuration := openapiclient.NewConfiguration()
+    apiClient := openapiclient.NewAPIClient(configuration)
+    resp, r, err := apiClient.Metro2FilesApi.Health(context.Background()).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `Metro2FilesApi.Health``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `Health`: string
+    fmt.Fprintf(os.Stdout, "Response from `Metro2FilesApi.Health`: %v\n", resp)
+}
+```
+
+### Path Parameters
 
 This endpoint does not need any parameter.
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiHealthRequest struct via the builder pattern
+
 
 ### Return type
 
@@ -88,29 +150,55 @@ No authorization required
 
 ## Print
 
-> string Print(ctx, optional)
+> string Print(ctx).Format(format).Format2(format2).File(file).Execute()
 
 Print metro2 file with specific format
 
-Print metro2 file with requested file format.
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    format := "format_example" // string | print metro2 file type (optional) (default to "json")
+    format2 := "format_example" // string | print metro2 file type (optional) (default to "json")
+    file := os.NewFile(1234, "some_file") // *os.File | metro2 file to upload (optional)
+
+    configuration := openapiclient.NewConfiguration()
+    apiClient := openapiclient.NewAPIClient(configuration)
+    resp, r, err := apiClient.Metro2FilesApi.Print(context.Background()).Format(format).Format2(format2).File(file).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `Metro2FilesApi.Print``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `Print`: string
+    fmt.Fprintf(os.Stdout, "Response from `Metro2FilesApi.Print`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiPrintRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
- **optional** | ***PrintOpts** | optional parameters | nil if no parameters
-
-### Optional Parameters
-
-Optional parameters are passed through a pointer to a PrintOpts struct
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **format** | **optional.String**| print metro2 file type | [default to json]
- **file** | **optional.Interface of *os.File****optional.*os.File**| metro2 file to upload | 
+ **format** | **string** | print metro2 file type | [default to &quot;json&quot;]
+ **format2** | **string** | print metro2 file type | [default to &quot;json&quot;]
+ **file** | ***os.File** | metro2 file to upload | 
 
 ### Return type
 
@@ -122,7 +210,7 @@ No authorization required
 
 ### HTTP request headers
 
-- **Content-Type**: multipart/form-data
+- **Content-Type**: multipart/form-data, application/json
 - **Accept**: text/plain, application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
@@ -132,28 +220,51 @@ No authorization required
 
 ## Validator
 
-> string Validator(ctx, optional)
+> string Validator(ctx).File(file).Execute()
 
 Validate metro2 file
 
-Validation of metro2 file.
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    file := os.NewFile(1234, "some_file") // *os.File | metro2 file to upload (optional)
+
+    configuration := openapiclient.NewConfiguration()
+    apiClient := openapiclient.NewAPIClient(configuration)
+    resp, r, err := apiClient.Metro2FilesApi.Validator(context.Background()).File(file).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `Metro2FilesApi.Validator``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `Validator`: string
+    fmt.Fprintf(os.Stdout, "Response from `Metro2FilesApi.Validator`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiValidatorRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
- **optional** | ***ValidatorOpts** | optional parameters | nil if no parameters
-
-### Optional Parameters
-
-Optional parameters are passed through a pointer to a ValidatorOpts struct
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **file** | **optional.Interface of *os.File****optional.*os.File**| metro2 file to upload | 
+ **file** | ***os.File** | metro2 file to upload | 
 
 ### Return type
 

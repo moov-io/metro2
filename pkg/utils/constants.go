@@ -6,9 +6,9 @@ package utils
 
 const (
 	// Character Format (Fixed or variable blocked)
-	CharacterFileFormat = "Character"
+	CharacterFileFormat = "character"
 	// Packed Format (Variable blocked)
-	PackedFileFormat = "Packed"
+	PackedFileFormat = "packed"
 	// Name of header record
 	HeaderRecordName = "header"
 	// Name of trailer record

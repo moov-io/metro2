@@ -193,6 +193,10 @@ func (f *fileInstance) Validate() error {
 
 // Parse attempts to initialize a *File object assuming the input is valid raw data.
 func (f *fileInstance) Parse(record string) error {
+
+	// remove new lines
+	record = strings.ReplaceAll(strings.ReplaceAll(record, "\r\n", ""), "\n", "")
+
 	f.Bases = []lib.Record{}
 	offset := 0
 
@@ -242,16 +246,21 @@ func (f *fileInstance) Parse(record string) error {
 }
 
 // String writes the File struct to raw string.
-func (f *fileInstance) String() string {
+func (f *fileInstance) String(isNewLine bool) string {
 	var buf strings.Builder
 
+	newLine := ""
+	if isNewLine {
+		newLine = "\n"
+	}
+
 	// Header Block
-	header := f.Header.String()
+	header := f.Header.String() + newLine
 
 	// Data Block
 	data := ""
 	for _, base := range f.Bases {
-		data += base.String()
+		data += base.String() + newLine
 	}
 
 	// Trailer Block
@@ -325,6 +334,67 @@ func (f *fileInstance) UnmarshalJSON(data []byte) error {
 		}
 	}
 
+	return nil
+}
+
+// GetType returns type of the file
+func (f *fileInstance) GetType() string {
+	return f.format
+}
+
+// GetType returns type of the file
+func (f *fileInstance) SetType(newType string) error {
+	if newType != utils.CharacterFileFormat && newType != utils.PackedFileFormat {
+		return errors.New("invalid type")
+	}
+
+	if f.format == newType {
+		return nil
+	}
+
+	if newType == utils.CharacterFileFormat {
+		// convert header
+		if f.Header != nil {
+			newHeader := lib.HeaderRecord(*f.Header.(*lib.PackedHeaderRecord))
+			f.Header = &newHeader
+		}
+
+		// convert bases
+		var bases []lib.Record
+		for _, _base := range f.Bases {
+			newBase := lib.BaseSegment(*_base.(*lib.PackedBaseSegment))
+			bases = append(bases, &newBase)
+		}
+		f.Bases = bases
+
+		// convert trailer
+		if f.Trailer != nil {
+			newTrailer := lib.TrailerRecord(*f.Trailer.(*lib.PackedTrailerRecord))
+			f.Trailer = &newTrailer
+		}
+	} else if newType == utils.PackedFileFormat {
+		// convert header
+		if f.Header != nil {
+			newHeader := lib.PackedHeaderRecord(*f.Header.(*lib.HeaderRecord))
+			f.Header = &newHeader
+		}
+
+		// convert bases
+		var bases []lib.Record
+		for _, _base := range f.Bases {
+			newBase := lib.PackedBaseSegment(*_base.(*lib.BaseSegment))
+			bases = append(bases, &newBase)
+		}
+		f.Bases = bases
+
+		// convert trailer
+		if f.Trailer != nil {
+			newTrailer := lib.PackedTrailerRecord(*f.Trailer.(*lib.TrailerRecord))
+			f.Trailer = &newTrailer
+		}
+	}
+
+	f.format = newType
 	return nil
 }
 

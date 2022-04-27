@@ -6,7 +6,6 @@ package file
 
 import (
 	"encoding/json"
-
 	"github.com/moov-io/base/log"
 	"github.com/moov-io/metro2/pkg/lib"
 	"github.com/moov-io/metro2/pkg/utils"
@@ -14,6 +13,8 @@ import (
 
 // General file interface
 type File interface {
+	GetType() string
+	SetType(string) error
 	SetRecord(lib.Record) error
 	AddDataRecord(lib.Record) error
 	GetRecord(string) (lib.Record, error)
@@ -21,7 +22,7 @@ type File interface {
 	GeneratorTrailer() (lib.Record, error)
 
 	Parse(record string) error
-	String() string
+	String(newline bool) string
 	Validate() error
 }
 
@@ -68,6 +69,7 @@ func CreateFile(buf []byte) (File, error) {
 	} else {
 		err = f.Parse(string(buf))
 	}
+
 	return f, err
 }
 

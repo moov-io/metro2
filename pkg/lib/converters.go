@@ -68,7 +68,7 @@ func (c *converter) toString(elm field, data reflect.Value) string {
 
 	sizeStr := strconv.Itoa(elm.Length)
 	if elm.Type&numeric > 0 {
-		return fmt.Sprintf("%0"+sizeStr+"d", data)
+		return fmt.Sprintf("%0"+sizeStr+"."+sizeStr+"v", fmt.Sprintf("%v", data))
 	} else if elm.Type&timestamp > 0 {
 		if datatime, ok := data.Interface().(utils.Time); ok {
 			if t := time.Time(datatime); !t.IsZero() {
@@ -84,7 +84,7 @@ func (c *converter) toString(elm field, data reflect.Value) string {
 		}
 		return strings.Repeat(zeroString, elm.Length)
 	} else if elm.Type&alphanumeric > 0 || elm.Type&alpha > 0 {
-		return fmt.Sprintf("%-"+sizeStr+"s", data)
+		return fmt.Sprintf("%-"+sizeStr+"."+sizeStr+"s", data)
 	} else if elm.Type&descriptor > 0 {
 		return descriptorString(data)
 	} else if elm.Type&packedTimestamp > 0 {
