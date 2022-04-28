@@ -409,7 +409,6 @@ func (f *fileInstance) generatorTrailer() (*lib.TrailerInformation, error) {
 			return nil, utils.NewErrInvalidSegment(base.Name())
 		}
 
-		trailer.TotalConsumerSegmentsJ1++
 		trailer.TotalDatesBirthAllSegments++
 		trailer.TotalDatesBirthBaseSegments++
 		if base.ECOACode == lib.ECOACodeZ {
@@ -435,7 +434,6 @@ func (f *fileInstance) generatorPackedTrailer() (*lib.TrailerInformation, error)
 			return nil, utils.NewErrInvalidSegment(base.Name())
 		}
 
-		trailer.TotalConsumerSegmentsJ1++
 		trailer.TotalDatesBirthAllSegments++
 		trailer.TotalDatesBirthBaseSegments++
 		if base.ECOACode == lib.ECOACodeZ {
