@@ -1,3 +1,9 @@
+## v0.4.1 (Released 2022-02-28)
+
+BUG FIXES
+
+- file: fix `TrailerRecord.TotalConsumerSegmentsJ1` calculation
+
 ## v0.4.0 (Released 2022-04-27)
 
 IMPROVEMENTS
