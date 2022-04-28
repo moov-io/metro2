@@ -143,7 +143,7 @@ func (t *ServerTest) TestJsonRequestPrint(c *check.C) {
 
 	t.testServer.ServeHTTP(recorder, request)
 	c.Assert(recorder.Code, check.Equals, http.StatusOK)
-	c.Assert(recorder.Body.String(), check.Equals, string(expected))
+	c.Assert(recorder.Body.String(), check.Equals, strings.ReplaceAll(string(expected), "\r\n", "\n"))
 }
 
 func (t *ServerTest) TestJsonConvert(c *check.C) {
