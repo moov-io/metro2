@@ -7,7 +7,7 @@ else
 	@chmod +x ./openapi-generator
 	@rm -rf ../pkg/client/
 	OPENAPI_GENERATOR_VERSION=4.3.0 ./openapi-generator generate --package-name client -i openapi.yaml -g go -o ../pkg/client/
-	rm -rf ../pkg/client/go.mod ../pkg/client/go.sum ../pkg/client/api/
+	rm -rf ../pkg/client/go.mod ../pkg/client/go.sum ../pkg/client/api/ ../pkg/client/.travis.yml
 	go fmt ../...
 	go test ../pkg/client/
 endif
