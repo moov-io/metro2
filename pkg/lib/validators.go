@@ -19,20 +19,23 @@ func (v *validator) isUpperAlphanumeric(s, fieldName, recordName string) error {
 	if upperAlphanumericRegex.MatchString(s) {
 		return utils.NewErrUpperAlpha(fieldName, recordName)
 	}
+	fmt.Printf("%s in %s has uppercase A-Z or 0-9", fieldName, recordName)
 	return nil
 }
 
-func (v *validator) isAlphanumeric(s, filedName, recordName string) error {
+func (v *validator) isAlphanumeric(s, fieldName, recordName string) error {
 	if alphanumericRegex.MatchString(s) {
-		return utils.NewErrNonAlphanumeric(filedName, recordName)
+		return utils.NewErrNonAlphanumeric(fieldName, recordName)
 	}
+	fmt.Printf("%s in %s has alphanumeric characters", fieldName, recordName)
 	return nil
 }
 
-func (v *validator) isNumeric(s, filedName, recordName string) error {
+func (v *validator) isNumeric(s, fieldName, recordName string) error {
 	if !numericRegex.MatchString(s) {
-		return utils.NewErrNumeric(filedName, recordName)
+		return utils.NewErrNumeric(fieldName, recordName)
 	}
+	fmt.Printf("%s in %s has numeric characters", fieldName, recordName)
 	return nil
 }
 
@@ -41,6 +44,7 @@ func (v *validator) isPhoneNumber(number int64, recordName string) error {
 	if !phoneRegex.MatchString(phoneNumber) {
 		return utils.NewErrPhoneNumber(recordName)
 	}
+	fmt.Printf("telephone number in %s has a valid phone number", recordName)
 	return nil
 }
 
@@ -52,14 +56,17 @@ func (v *validator) isValidType(elm field, data, fieldName, recordName string) e
 			if val == 0 {
 				return utils.NewErrFieldRequired(fieldName, recordName)
 			}
+			fmt.Printf("%s in %s required field present", fieldName, recordName)
 		} else if elm.Type&alphanumeric > 0 || elm.Type&alpha > 0 || elm.Type&descriptor > 0 {
 			if len(data) == 0 {
 				return utils.NewErrFieldRequired(fieldName, recordName)
 			}
+			fmt.Printf("%s in %s required field present", fieldName, recordName)
 		} else if elm.Type&timestamp > 0 || elm.Type&date > 0 {
 			if validFilledString(data) && len(data) == elm.Length {
 				return utils.NewErrFieldRequired(fieldName, recordName)
 			}
+			fmt.Printf("%s in %s required field present", fieldName, recordName)
 		}
 	}
 
@@ -72,6 +79,7 @@ func (v *validator) isValidType(elm field, data, fieldName, recordName string) e
 		return v.isUpperAlphanumeric(data, fieldName, recordName)
 	} else if elm.Type&descriptor > 0 || elm.Type&packedDate > 0 || elm.Type&packedNumber > 0 ||
 		elm.Type&packedTimestamp > 0 || elm.Type&timestamp > 0 || elm.Type&date > 0 {
+		fmt.Printf("%s in %s has an invalid value", fieldName, recordName)
 		return nil
 	}
 
@@ -93,6 +101,7 @@ func (v *validator) validateRecord(r interface{}, spec map[string]field, recordN
 				if fieldValue.IsZero() {
 					return utils.NewErrFieldRequired(fieldName, recordName)
 				}
+				fmt.Printf("%s in %s required field present", fieldName, recordName)
 			}
 		}
 
