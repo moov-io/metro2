@@ -86,7 +86,7 @@ func (v *validator) isValidType(elm field, data, fieldName, recordName string) e
 		return v.isUpperAlphanumeric(data, fieldName, recordName)
 	} else if elm.Type&descriptor > 0 || elm.Type&packedDate > 0 || elm.Type&packedNumber > 0 ||
 		elm.Type&packedTimestamp > 0 || elm.Type&timestamp > 0 || elm.Type&date > 0 {
-		fmt.Printf("%s in %s has an invalid value", fieldName, recordName)
+		fmt.Printf("%s in %s has valid value", fieldName, recordName)
 		fmt.Println()
 		return nil
 	}
