@@ -25,4 +25,10 @@ const (
 	MessageJsonFormat = "json"
 	// Metro format
 	MessageMetroFormat = "metro"
+
+	// Logging formats
+	ColorRed   = "\033[31m"
+	ColorGreen = "\033[32m"
+	ColorBlue  = "\033[34m"
+	ColorCyan  = "\033[36m"
 )

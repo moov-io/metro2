@@ -6,6 +6,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -112,9 +113,10 @@ func TestPrintUnknown(t *testing.T) {
 }
 
 func TestValidator(t *testing.T) {
+	fmt.Println("File to be validated :: " + testJsonFilePath)
 	_, err := executeCommand(rootCmd, "validator", "--input", testJsonFilePath)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(utils.ColorRed, err.Error())
 	}
 }
 
