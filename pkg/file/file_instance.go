@@ -7,6 +7,7 @@ package file
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 	"unicode"
@@ -221,7 +222,12 @@ func (f *fileInstance) Parse(record string) error {
 		}
 
 		read, err := base.Parse(record[offset:])
-		if err != nil {
+
+		if err != nil && !utils.IsTrailerRecord(record[offset:]) {
+			fmt.Print("Data Record Number :: ", len(f.Bases)+1)
+			return err
+		}
+		if utils.IsTrailerRecord(record[offset:]) {
 			break
 		}
 		f.Bases = append(f.Bases, base)

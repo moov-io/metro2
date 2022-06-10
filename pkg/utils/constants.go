@@ -19,6 +19,8 @@ const (
 	packedRecordLength = 366
 	// Header identifier
 	headerIdentifier = "HEADER"
+	// Trailer identifier
+	Trailerdentifier = "TRAILER"
 	// Json format
 	MessageJsonFormat = "json"
 	// Metro format

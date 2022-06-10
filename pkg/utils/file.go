@@ -65,3 +65,14 @@ func IsMetroFile(s string) bool {
 	}
 	return false
 }
+
+// Pass the record offset to check its trailer or not
+func IsTrailerRecord(s string) bool {
+	if len(s) < packedRecordLength {
+		return false
+	}
+	if s[4:11] == Trailerdentifier || s[8:15] == Trailerdentifier {
+		return true
+	}
+	return false
+}
