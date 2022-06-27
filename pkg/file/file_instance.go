@@ -409,8 +409,16 @@ func (f *fileInstance) generatorTrailer() (*lib.TrailerInformation, error) {
 			return nil, utils.NewErrInvalidSegment(base.Name())
 		}
 
-		trailer.TotalDatesBirthAllSegments++
-		trailer.TotalDatesBirthBaseSegments++
+		if isValidSocialSecurityNumber(base.SocialSecurityNumber) {
+			trailer.TotalSocialNumbersAllSegments++
+			trailer.TotalSocialNumbersBaseSegments++
+		}
+
+		if !base.DateBirth.IsZero() {
+			trailer.TotalDatesBirthAllSegments++
+			trailer.TotalDatesBirthBaseSegments++
+		}
+
 		if base.ECOACode == lib.ECOACodeZ {
 			trailer.TotalECOACodeZ++
 		}
@@ -434,14 +442,24 @@ func (f *fileInstance) generatorPackedTrailer() (*lib.TrailerInformation, error)
 			return nil, utils.NewErrInvalidSegment(base.Name())
 		}
 
-		trailer.TotalDatesBirthAllSegments++
-		trailer.TotalDatesBirthBaseSegments++
+		if isValidSocialSecurityNumber(base.SocialSecurityNumber) {
+			trailer.TotalSocialNumbersAllSegments++
+			trailer.TotalSocialNumbersBaseSegments++
+		}
+
+		if !base.DateBirth.IsZero() {
+			trailer.TotalDatesBirthAllSegments++
+			trailer.TotalDatesBirthBaseSegments++
+		}
+
 		if base.ECOACode == lib.ECOACodeZ {
 			trailer.TotalECOACodeZ++
 		}
+
 		if base.TelephoneNumber > 0 {
 			trailer.TotalTelephoneNumbersAllSegments++
 		}
+
 		f.statisticAccountStatus(base.AccountStatus, trailer)
 		f.statisticPackedBase(base, trailer)
 	}
@@ -508,10 +526,17 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 		}
 		if sub.Validate() == nil {
 			trailer.TotalConsumerSegmentsJ1++
-			trailer.TotalSocialNumbersAllSegments++
-			trailer.TotalSocialNumbersJ1Segments++
-			trailer.TotalDatesBirthAllSegments++
-			trailer.TotalDatesBirthJ1Segments++
+
+			if isValidSocialSecurityNumber(sub.SocialSecurityNumber) {
+				trailer.TotalSocialNumbersAllSegments++
+				trailer.TotalSocialNumbersJ1Segments++
+			}
+
+			if !sub.DateBirth.IsZero() {
+				trailer.TotalDatesBirthAllSegments++
+				trailer.TotalDatesBirthJ1Segments++
+			}
+
 			if sub.TelephoneNumber > 0 {
 				trailer.TotalTelephoneNumbersAllSegments++
 			}
@@ -524,10 +549,17 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 		}
 		if sub.Validate() == nil {
 			trailer.TotalConsumerSegmentsJ2++
-			trailer.TotalSocialNumbersAllSegments++
-			trailer.TotalSocialNumbersJ2Segments++
-			trailer.TotalDatesBirthAllSegments++
-			trailer.TotalDatesBirthJ2Segments++
+
+			if isValidSocialSecurityNumber(sub.SocialSecurityNumber) {
+				trailer.TotalSocialNumbersAllSegments++
+				trailer.TotalSocialNumbersJ2Segments++
+			}
+
+			if !sub.DateBirth.IsZero() {
+				trailer.TotalDatesBirthAllSegments++
+				trailer.TotalDatesBirthJ2Segments++
+			}
+
 			if sub.TelephoneNumber > 0 {
 				trailer.TotalTelephoneNumbersAllSegments++
 			}
@@ -583,10 +615,17 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 		}
 		if sub.Validate() == nil {
 			trailer.TotalConsumerSegmentsJ1++
-			trailer.TotalSocialNumbersAllSegments++
-			trailer.TotalSocialNumbersJ1Segments++
-			trailer.TotalDatesBirthAllSegments++
-			trailer.TotalDatesBirthJ1Segments++
+
+			if isValidSocialSecurityNumber(sub.SocialSecurityNumber) {
+				trailer.TotalSocialNumbersAllSegments++
+				trailer.TotalSocialNumbersJ1Segments++
+			}
+
+			if !sub.DateBirth.IsZero() {
+				trailer.TotalDatesBirthAllSegments++
+				trailer.TotalDatesBirthJ1Segments++
+			}
+
 			if sub.TelephoneNumber > 0 {
 				trailer.TotalTelephoneNumbersAllSegments++
 			}
@@ -599,10 +638,17 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 		}
 		if sub.Validate() == nil {
 			trailer.TotalConsumerSegmentsJ2++
-			trailer.TotalSocialNumbersAllSegments++
-			trailer.TotalSocialNumbersJ2Segments++
-			trailer.TotalDatesBirthAllSegments++
-			trailer.TotalDatesBirthJ2Segments++
+
+			if isValidSocialSecurityNumber(sub.SocialSecurityNumber) {
+				trailer.TotalSocialNumbersAllSegments++
+				trailer.TotalSocialNumbersJ2Segments++
+			}
+
+			if !sub.DateBirth.IsZero() {
+				trailer.TotalDatesBirthAllSegments++
+				trailer.TotalDatesBirthJ2Segments++
+			}
+
 			if sub.TelephoneNumber > 0 {
 				trailer.TotalTelephoneNumbersAllSegments++
 			}
@@ -648,4 +694,11 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 			trailer.TotalEmploymentSegments++
 		}
 	}
+}
+
+func isValidSocialSecurityNumber(ssn int) bool {
+	if ssn < 100000000 || ssn == 999999999 {
+		return false
+	}
+	return true
 }
