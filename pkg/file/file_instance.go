@@ -698,7 +698,7 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 
 func isValidSocialSecurityNumber(ssn int) bool {
 	// Do not count zero- or 9-filled SSNs.
-	if ssn == 0 || ssn == 999999999 {
+	if ssn < 0 || ssn > 999999999 {
 		return false
 	}
 	return true
