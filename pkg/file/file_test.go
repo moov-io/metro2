@@ -308,8 +308,7 @@ func (t *FileTest) TestCreateFile(c *check.C) {
 	raw, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", "packed_file.dat"))
 	c.Assert(err, check.IsNil)
 
-	rawStr := strings.ReplaceAll(string(raw), "\r\n", "\n")
-	c.Assert(strings.Compare(f.String(true), rawStr), check.Equals, 0)
+	c.Assert(strings.Compare(f.String(false), string(raw)), check.Equals, 0)
 }
 
 func (t *FileTest) TestCreateFileFailed(c *check.C) {

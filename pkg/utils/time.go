@@ -29,6 +29,13 @@ func (ct *Time) String() string {
 	return fmt.Sprintf("%q", t.Format(time.RFC3339))
 }
 
+// IsZero reports whether t represents the zero time instant,
+func (ct *Time) IsZero() bool {
+	t := time.Time(*ct)
+
+	return t.IsZero()
+}
+
 var dateFormats = []string{
 	"01-02-2006",
 	"01/02/2006",
