@@ -13,6 +13,11 @@ import (
 	"github.com/moov-io/metro2/pkg/utils"
 )
 
+var _ Record = (*HeaderRecord)(nil)
+var _ Segment = (*HeaderRecord)(nil)
+var _ Record = (*PackedHeaderRecord)(nil)
+var _ Segment = (*PackedHeaderRecord)(nil)
+
 // HeaderRecord holds the header record
 type HeaderRecord struct {
 	// Contains a value equal to the length of the block of data and must be reported when using the packed format or

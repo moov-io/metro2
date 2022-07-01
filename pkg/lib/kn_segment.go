@@ -12,6 +12,11 @@ import (
 	"github.com/moov-io/metro2/pkg/utils"
 )
 
+var _ Segment = (*K1Segment)(nil)
+var _ Segment = (*K2Segment)(nil)
+var _ Segment = (*K3Segment)(nil)
+var _ Segment = (*K4Segment)(nil)
+
 // K1Segment holds the k1 segment
 type K1Segment struct {
 	// Contains a constant of K1.

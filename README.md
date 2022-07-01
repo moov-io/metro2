@@ -202,6 +202,22 @@ type File
 	Parse(record string) error
 	String(newline bool) string
 	Validate() error
+```
+
+File has some records for header, body, trailer
+
+Records have distinguished by file type
+
+```
+type Record
+	Name() string
+	Parse(string) (int, error)
+	String() string
+	Validate() error
+	Length() int
+	BlockSize() int
+	AddApplicableSegment(Segment) error
+	GetSegments(string) []Segment
 
 type BaseSegment        // for character file format
 
@@ -214,13 +230,33 @@ type PackedHeaderRecord // for packed file format
 type TrailerRecord      // for character file format
 
 type PackedTrailerRecord // for packed file format
+```
+
+Record has some segments to describe special form
+
+Base Record can use correctly the features of appendable segments  
+
+```
+type Record
+	Name() string
+	Parse(string) (int, error)
+	String() string
+	Validate() error
+	Length() int
+	BlockSize() int
+	AddApplicableSegment(Segment) error
+	GetSegments(string) []Segment
 
 type J1Segment
+
 type J2Segment
 
 type K1Segment
+
 type K2Segment
+
 type K3Segment
+
 type K4Segment
 
 type L1Segment
@@ -241,11 +277,9 @@ File object will create from metro file buffer directly, CreateFile function wil
 f, err := file.CreateFile([]byte(buf)) 
 ```
 
-File object will manage segments using member functions
+File object will manage records using member functions
 
-Please use exact segment struct that has same type (header, base, trailer)
-
-Data Records (Jn, Kn, ln, nn) haven't special type, can use for character file and packed file
+Please use exact record object that has same type (header, base, trailer)
 
 ```
 f, err := file.NewFile(utils.CharacterFileFormat)
@@ -255,6 +289,8 @@ exsitedHeader, err := f.GetRecord(utils.HeaderRecordName)
 newBase := lib.HeaderRecord{}
 ...
 ```
+
+Similarly, Record can manage the appendable segments 
 
 ## Learn about Metro 2
 - [Intro to Metro 2](https://www.cdiaonline.org/resources/furnishers-of-data-overview/metro2-information/)
