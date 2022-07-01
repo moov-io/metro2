@@ -16,6 +16,11 @@ import (
 	"github.com/moov-io/metro2/pkg/utils"
 )
 
+var _ Record = (*BaseSegment)(nil)
+var _ Segment = (*BaseSegment)(nil)
+var _ Record = (*PackedBaseSegment)(nil)
+var _ Segment = (*PackedBaseSegment)(nil)
+
 // BaseSegment holds the base segment
 type BaseSegment struct {
 	// Contains a value equal to the length of the block of data and must be reported when using the packed format or

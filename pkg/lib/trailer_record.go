@@ -13,6 +13,11 @@ import (
 	"github.com/moov-io/metro2/pkg/utils"
 )
 
+var _ Record = (*TrailerRecord)(nil)
+var _ Segment = (*TrailerRecord)(nil)
+var _ Record = (*PackedTrailerRecord)(nil)
+var _ Segment = (*PackedTrailerRecord)(nil)
+
 // TrailerRecord holds the trailer record
 type TrailerRecord struct {
 

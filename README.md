@@ -39,8 +39,12 @@ Metro2 implements a reader, writer, and validator for consumer credit history re
     - [Docker](#docker)
     - [Google Cloud](#google-cloud-run)
     - [Data persistence](#data-persistence)
-  - [As a Go module](#go-library)
   - [As a command line tool](#command-line)
+  - As a Package
+      - [Go Library](#go-library)
+      - [Installation](#package-installation)  
+      - [Overview](#package-overview)
+      - [Examples](#package-examples)
 - [Learn about Metro 2](#learn-about-metro-2)
 - [Getting help](#getting-help)
 - [Supported and tested platforms](#supported-and-tested-platforms)
@@ -130,19 +134,6 @@ You should get this response:
 ### Data persistence
 By design, Metro2  **does not persist** (save) any data about the files or entry details created. The only storage occurs in memory of the process and upon restart Metro2 will have no files or data saved. Also, no in-memory encryption of the data is performed.
 
-### Go library
-
-This project uses [Go Modules](https://github.com/golang/go/wiki/Modules) and uses Go v1.14 or higher. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
-
-```
-$ git@github.com:moov-io/metro2.git
-
-# Pull down into the Go Module cache
-$ go get -u github.com/moov-io/metro2
-
-$ go doc github.com/moov-io/metro2
-```
-
 ### Command line
 
 Metro2 has a command line interface to manage Metro 2 files and launch a web service.
@@ -175,6 +166,131 @@ Each interaction that the library supports is exposed in a command-line option:
 `print` | The print command allows users to print a metro file in a specified file format (json, metro).
 `validator` | The validator command allows users to validate a metro file.
 `web` | The web command will launch a web server with endpoints to manage metro files.
+
+
+### Go library
+
+This project uses [Go Modules](https://github.com/golang/go/wiki/Modules) and uses Go v1.14 or higher. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
+
+### Package Installation
+```
+$ git@github.com:moov-io/metro2.git
+
+# Pull down into the Go Module cache
+$ go get -u github.com/moov-io/metro2
+
+$ go doc github.com/moov-io/metro2
+```
+
+### Package Overview
+
+Package file defines main interfaces to a metro file.
+
+```
+func NewFile(format string) (File, error)
+
+func CreateFile(buf []byte) (File, error)
+
+type File
+	GetType() string
+	SetType(string) error
+	SetRecord(lib.Record) error
+	AddDataRecord(lib.Record) error
+	GetRecord(string) (lib.Record, error)
+	GetDataRecords() []lib.Record
+	GeneratorTrailer() (lib.Record, error)
+	Parse(record string) error
+	String(newline bool) string
+	Validate() error
+```
+
+File has some records for header, body, trailer
+
+Records have distinguished by file type
+
+```
+type Record
+	Name() string
+	Parse(string) (int, error)
+	String() string
+	Validate() error
+	Length() int
+	BlockSize() int
+	AddApplicableSegment(Segment) error
+	GetSegments(string) []Segment
+
+type BaseSegment        // for character file format
+
+type PackedBaseSegment  // for packed file format
+
+type HeaderRecord       // for character file format
+
+type PackedHeaderRecord // for packed file format
+
+type TrailerRecord      // for character file format
+
+type PackedTrailerRecord // for packed file format
+```
+
+Record has some segments to describe special form
+
+Base Record can use correctly the features of appendable segments  
+
+```
+type Record
+	Name() string
+	Parse(string) (int, error)
+	String() string
+	Validate() error
+	Length() int
+	BlockSize() int
+	AddApplicableSegment(Segment) error
+	GetSegments(string) []Segment
+
+type J1Segment
+
+type J2Segment
+
+type K1Segment
+
+type K2Segment
+
+type K3Segment
+
+type K4Segment
+
+type L1Segment
+
+type N1Segment
+```
+
+### Package Examples
+
+File object has type for metro packed file and metro character file, should specify file type when creating new file
+```
+f, err := file.NewFile(utils.PackedFileFormat) 
+err = json.Unmarshal([]byte(buf), f)
+```
+
+File object will create from metro file buffer directly, CreateFile function will create new file and will set file type based on metro file body
+```
+f, err := file.CreateFile([]byte(buf)) 
+```
+
+File object will manage records using member functions
+
+Please use exact record object that has same type (header, base, trailer)
+
+```
+f, err := file.NewFile(utils.CharacterFileFormat)
+newHeader := lib.HeaderRecord{}
+err = f.SetRecord(&newSegment)
+exsitedHeader, err := f.GetRecord(utils.HeaderRecordName)
+newBase := lib.HeaderRecord{}
+...
+```
+
+Similarly, Record can manage the appendable segments 
 
 ## Learn about Metro 2
 - [Intro to Metro 2](https://www.cdiaonline.org/resources/furnishers-of-data-overview/metro2-information/)

@@ -12,6 +12,8 @@ import (
 	"github.com/moov-io/metro2/pkg/utils"
 )
 
+var _ Segment = (*J2Segment)(nil)
+
 // J2Segment holds the j2 segment
 type J2Segment struct {
 	// Contains a constant of J2.
