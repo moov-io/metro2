@@ -9,6 +9,6 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/moov-io/base v0.31.1
 	github.com/spf13/cobra v1.5.0
-	golang.org/x/oauth2 v0.0.0-20220628200809-02e64fa58f26
+	golang.org/x/oauth2 v0.0.0-20220630143837-2104d58473e0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 )
