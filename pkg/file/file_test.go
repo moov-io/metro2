@@ -8,11 +8,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"gopkg.in/check.v1"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/moov-io/metro2/pkg/lib"
 	"github.com/moov-io/metro2/pkg/utils"
@@ -327,4 +330,55 @@ func (t *FileTest) TestCreateFileFailed(c *check.C) {
 func (t *FileTest) TestWithUnknownFileType(c *check.C) {
 	_, err := NewFile("unknown")
 	c.Assert(err, check.NotNil)
+}
+
+func TestFile__Reader(t *testing.T) {
+
+	t.Run("Read with unpacked fixed file", func(t *testing.T) {
+
+		fd, err := os.Open(filepath.Join("..", "..", "test", "testdata", "unpacked_fixed_file.dat"))
+		if err != nil {
+			t.Fatalf("Can not open local file: %s: \n", err)
+		}
+		defer fd.Close()
+
+		f, err := NewReader(fd).Read()
+		require.NoError(t, err)
+
+		// ensure we have a validated file structure
+		err = f.Validate()
+		require.NoError(t, err)
+	})
+
+	t.Run("Read with unpacked variable file", func(t *testing.T) {
+
+		fd, err := os.Open(filepath.Join("..", "..", "test", "testdata", "unpacked_variable_file.dat"))
+		if err != nil {
+			t.Fatalf("Can not open local file: %s: \n", err)
+		}
+		defer fd.Close()
+
+		f, err := NewReader(fd).Read()
+		require.NoError(t, err)
+
+		// ensure we have a validated file structure
+		err = f.Validate()
+		require.NoError(t, err)
+	})
+
+	t.Run("Read with packed file", func(t *testing.T) {
+
+		fd, err := os.Open(filepath.Join("..", "..", "test", "testdata", "packed_file.dat"))
+		if err != nil {
+			t.Fatalf("Can not open local file: %s: \n", err)
+		}
+		defer fd.Close()
+
+		f, err := NewReader(fd).Read()
+		require.NoError(t, err)
+
+		// ensure we have a validated file structure
+		err = f.Validate()
+		require.NoError(t, err)
+	})
 }

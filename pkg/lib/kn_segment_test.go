@@ -5,6 +5,7 @@
 package lib
 
 import (
+	"bytes"
 	"gopkg.in/check.v1"
 )
 
@@ -14,14 +15,14 @@ func (t *SegmentTest) TestK1Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.sampleK1Segment)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.sampleK1Segment))
 	c.Assert(segment.Name(), check.Equals, K1SegmentName)
 	c.Assert(segment.Length(), check.Equals, K1SegmentLength)
 }
 
 func (t *SegmentTest) TestK1SegmentWithInvalidData(c *check.C) {
 	segment := NewK1Segment()
-	_, err := segment.Parse("ERROR" + t.sampleK1Segment)
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleK1Segment...))
 	c.Assert(err, check.Not(check.IsNil))
 }
 
@@ -41,14 +42,14 @@ func (t *SegmentTest) TestK2Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.sampleK2Segment)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.sampleK2Segment))
 	c.Assert(segment.Name(), check.Equals, K2SegmentName)
 	c.Assert(segment.Length(), check.Equals, K2SegmentLength)
 }
 
 func (t *SegmentTest) TestK2SegmentWithInvalidData(c *check.C) {
 	segment := NewK2Segment()
-	_, err := segment.Parse("ERROR" + t.sampleK2Segment)
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleK2Segment...))
 	c.Assert(err, check.Not(check.IsNil))
 }
 
@@ -79,14 +80,14 @@ func (t *SegmentTest) TestK3Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.sampleK3Segment)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.sampleK3Segment))
 	c.Assert(segment.Name(), check.Equals, K3SegmentName)
 	c.Assert(segment.Length(), check.Equals, K3SegmentLength)
 }
 
 func (t *SegmentTest) TestK3SegmentWithInvalidData(c *check.C) {
 	segment := NewK3Segment()
-	_, err := segment.Parse("ERROR" + t.sampleK3Segment)
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleK3Segment...))
 	c.Assert(err, check.Not(check.IsNil))
 }
 
@@ -117,14 +118,14 @@ func (t *SegmentTest) TestK4Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.sampleK4Segment)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.sampleK4Segment))
 	c.Assert(segment.Name(), check.Equals, K4SegmentName)
 	c.Assert(segment.Length(), check.Equals, K4SegmentLength)
 }
 
 func (t *SegmentTest) TestK4SegmentWithInvalidData(c *check.C) {
 	segment := NewK4Segment()
-	_, err := segment.Parse("ERROR" + t.sampleK4Segment)
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleK4Segment...))
 	c.Assert(err, check.Not(check.IsNil))
 }
 

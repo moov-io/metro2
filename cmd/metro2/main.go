@@ -9,19 +9,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
-	"os"
-	"path/filepath"
-
 	"github.com/moov-io/metro2/pkg/file"
 	"github.com/moov-io/metro2/pkg/server"
 	"github.com/moov-io/metro2/pkg/utils"
 	"github.com/spf13/cobra"
+	"net/http"
+	"os"
+	"path/filepath"
 )
 
 var (
-	inputFile = ""
-	rawData   = ""
+	inputFile        = ""
+	rawData   []byte = nil
 )
 
 var WebCmd = &cobra.Command{
@@ -29,8 +28,10 @@ var WebCmd = &cobra.Command{
 	Short: "Launches web server",
 	Long:  "Launches web server",
 	RunE: func(cmd *cobra.Command, args []string) error {
+
 		port, _ := cmd.Flags().GetString("port")
-		fmt.Println("Starting web server on port ", port)
+		fmt.Fprintf(os.Stdout, "Starting web server on port %s\n\n", port)
+
 		listen := "0.0.0.0:" + port
 		h, _ := server.ConfigureHandlers()
 		test, _ := cmd.Flags().GetBool("test")
@@ -49,7 +50,8 @@ var Validate = &cobra.Command{
 	Short: "Validate metro file",
 	Long:  "Validate an incoming metro file",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		f, err := file.CreateFile([]byte(rawData))
+
+		f, err := file.CreateFile(rawData)
 		if err != nil {
 			return err
 		}
@@ -59,7 +61,7 @@ var Validate = &cobra.Command{
 			return err
 		}
 
-		fmt.Println("the file is valid")
+		fmt.Fprintf(os.Stdout, "the file is valid \n")
 
 		return nil
 	},
@@ -105,7 +107,9 @@ var Print = &cobra.Command{
 		} else if format == utils.MessageMetroFormat {
 			output = f.String(newline)
 		}
-		fmt.Println(output)
+
+		fmt.Fprintf(os.Stdout, output)
+
 		return nil
 	},
 }

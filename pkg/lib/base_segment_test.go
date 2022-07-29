@@ -5,6 +5,7 @@
 package lib
 
 import (
+	"bytes"
 	"encoding/json"
 	"testing"
 
@@ -13,7 +14,7 @@ import (
 
 func TestBaseSegmentErr(t *testing.T) {
 	record := &BaseSegment{}
-	if _, err := record.Parse("12345"); err == nil {
+	if _, err := record.Parse([]byte("12345")); err == nil {
 		t.Error("expected error")
 	}
 }
@@ -24,7 +25,7 @@ func (t *SegmentTest) TestBaseSegment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.sampleBaseSegment)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.sampleBaseSegment))
 	c.Assert(segment.Name(), check.Equals, BaseSegmentName)
 	c.Assert(segment.Length(), check.Equals, 1264)
 	c.Assert(segment.BlockSize(), check.Equals, 1268)
@@ -51,7 +52,7 @@ func (t *SegmentTest) TestBaseSegment(c *check.C) {
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidData(c *check.C) {
 	segment := NewBaseSegment()
-	_, err := segment.Parse("ERROR" + t.sampleBaseSegment)
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleBaseSegment...))
 	c.Assert(err, check.Not(check.IsNil))
 }
 
@@ -119,7 +120,7 @@ func (t *SegmentTest) TestPackedBaseSegment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.samplePackedBaseSegment)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.samplePackedBaseSegment))
 	c.Assert(segment.Name(), check.Equals, PackedBaseSegmentName)
 	c.Assert(segment.Length(), check.Equals, 1106)
 	c.Assert(segment.BlockSize(), check.Equals, 1110)
@@ -146,7 +147,7 @@ func (t *SegmentTest) TestPackedBaseSegment(c *check.C) {
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidData(c *check.C) {
 	segment := NewPackedBaseSegment()
-	_, err := segment.Parse("ERROR" + t.samplePackedBaseSegment)
+	_, err := segment.Parse(append([]byte("ERROR"), t.samplePackedBaseSegment...))
 	c.Assert(err, check.Not(check.IsNil))
 }
 
@@ -275,7 +276,7 @@ func (t *SegmentTest) TestBaseSegmentJson(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = json.Unmarshal(buf, segment)
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.sampleBaseSegment)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.sampleBaseSegment))
 	c.Assert(segment.Name(), check.Equals, BaseSegmentName)
 }
 
@@ -340,6 +341,6 @@ func (t *SegmentTest) TestPackedBaseSegmentJson(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = json.Unmarshal(buf, segment)
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.samplePackedBaseSegment)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.samplePackedBaseSegment))
 	c.Assert(segment.Name(), check.Equals, PackedBaseSegmentName)
 }

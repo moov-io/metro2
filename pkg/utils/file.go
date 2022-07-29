@@ -11,28 +11,28 @@ import (
 )
 
 // File Read
-func ReadFile(f *os.File) string {
+func ReadFile(f *os.File) []byte {
 	scanner := bufio.NewScanner(f)
 	scanner.Split(bufio.ScanLines)
-	var lines []string
+	var raw []byte
 	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
+		raw = append(raw, scanner.Bytes()...)
 	}
 
-	return strings.Join(lines, "")
+	return raw
 }
 
 // Variable block check
-func IsVariableLength(s string) bool {
+func IsVariableLength(data []byte) bool {
 
 	// Checking header record identifier
-	if len(s) > 15 && strings.ToUpper(s[8:14]) == "HEADER" {
+	if len(data) > 15 && strings.ToUpper(string(data[8:14])) == "HEADER" {
 		return true
 	}
 
 	// Checking base record field 4
 	//  Field formerly used for Correction Indicator.
-	if s[17] == 0x30 {
+	if len(data) > 18 && data[17] == 0x30 {
 		return true
 	}
 

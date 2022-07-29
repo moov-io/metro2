@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"bytes"
 	"gopkg.in/check.v1"
 )
 
@@ -10,7 +11,7 @@ func (t *SegmentTest) TestN1Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.sampleN1Segment)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.sampleN1Segment))
 	c.Assert(segment.Name(), check.Equals, N1SegmentName)
 	c.Assert(segment.Length(), check.Equals, N1SegmentLength)
 }

@@ -11,7 +11,6 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 
 	"github.com/moov-io/metro2/pkg/utils"
 )
@@ -529,8 +528,8 @@ func (r *BaseSegment) Name() string {
 }
 
 // Parse takes the input record string and parses the base segment values
-func (r *BaseSegment) Parse(record string) (int, error) {
-	if utf8.RuneCountInString(record) < UnpackedRecordLength {
+func (r *BaseSegment) Parse(record []byte) (int, error) {
+	if len(record) < UnpackedRecordLength {
 		return 0, utils.NewErrSegmentLength("base segment")
 	}
 
@@ -615,6 +614,11 @@ func (r *BaseSegment) String() string {
 	}
 
 	return buf.String()
+}
+
+// Bytes return raw byte array
+func (r *BaseSegment) Bytes() []byte {
+	return []byte(r.String())
 }
 
 // Validate performs some checks on the record and returns an error if not Validated
@@ -894,8 +898,8 @@ func (r *PackedBaseSegment) Name() string {
 }
 
 // Parse takes the input record string and parses the packed base segment values
-func (r *PackedBaseSegment) Parse(record string) (int, error) {
-	if utf8.RuneCountInString(record) < PackedRecordLength {
+func (r *PackedBaseSegment) Parse(record []byte) (int, error) {
+	if len(record) < PackedRecordLength {
 		return 0, utils.NewErrSegmentLength("packed base segment")
 	}
 
@@ -916,7 +920,7 @@ func (r *PackedBaseSegment) Parse(record string) (int, error) {
 		if len(record) < spec.Start+spec.Length+offset {
 			return 0, utils.NewErrSegmentLength("packed base segment")
 		}
-		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
+		data := string(record[spec.Start+offset : spec.Start+spec.Length+offset])
 		if err := r.isValidType(spec, data, fieldName, "packed base segment"); err != nil {
 			return 0, err
 		}
@@ -1010,6 +1014,11 @@ func (r *PackedBaseSegment) String() string {
 	}
 
 	return buf.String()
+}
+
+// Bytes return raw byte array
+func (r *PackedBaseSegment) Bytes() []byte {
+	return []byte(r.String())
 }
 
 // Validate performs some checks on the record and returns an error if not Validated
@@ -1308,12 +1317,12 @@ func (r *PackedBaseSegment) ValidateTelephoneNumber() error {
 	return nil
 }
 
-func readApplicableSegments(record string, f Record) (int, error) {
+func readApplicableSegments(record []byte, f Record) (int, error) {
 	var segment Segment
 	offset := 0
 
 	for offset+2 < len(record) {
-		switch record[offset : offset+2] {
+		switch string(record[offset : offset+2]) {
 		case J1SegmentIdentifier:
 			segment = NewJ1Segment()
 		case J2SegmentIdentifier:

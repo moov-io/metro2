@@ -5,12 +5,10 @@
 package lib
 
 import (
+	"github.com/moov-io/metro2/pkg/utils"
 	"reflect"
 	"strings"
 	"unicode"
-	"unicode/utf8"
-
-	"github.com/moov-io/metro2/pkg/utils"
 )
 
 var _ Record = (*TrailerRecord)(nil)
@@ -173,8 +171,8 @@ func (r *TrailerRecord) Name() string {
 }
 
 // Parse takes the input record string and parses the trailer record values
-func (r *TrailerRecord) Parse(record string) (int, error) {
-	if utf8.RuneCountInString(record) < UnpackedRecordLength {
+func (r *TrailerRecord) Parse(record []byte) (int, error) {
+	if len(record) < UnpackedRecordLength {
 		return 0, utils.NewErrSegmentLength("trailer record")
 	}
 
@@ -206,6 +204,11 @@ func (r *TrailerRecord) String() string {
 	}
 
 	return buf.String()
+}
+
+// Bytes return raw byte array
+func (r *TrailerRecord) Bytes() []byte {
+	return []byte(r.String())
 }
 
 // Validate performs some checks on the record and returns an error if not Validated
@@ -242,8 +245,8 @@ func (r *PackedTrailerRecord) Name() string {
 }
 
 // Parse takes the input record string and parses the packed trailer record values
-func (r *PackedTrailerRecord) Parse(record string) (int, error) {
-	if utf8.RuneCountInString(record) < PackedRecordLength {
+func (r *PackedTrailerRecord) Parse(record []byte) (int, error) {
+	if len(record) < PackedRecordLength {
 		return 0, utils.NewErrSegmentLength("packed trailer record")
 	}
 
@@ -260,7 +263,7 @@ func (r *PackedTrailerRecord) Parse(record string) (int, error) {
 		if !ok || !field.IsValid() {
 			return 0, utils.NewErrInvalidValueOfField(fieldName, "packed trailer record")
 		}
-		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
+		data := string(record[spec.Start+offset : spec.Start+spec.Length+offset])
 		if err := r.isValidType(spec, data, fieldName, "packed trailer record"); err != nil {
 			return 0, err
 		}
@@ -301,6 +304,11 @@ func (r *PackedTrailerRecord) String() string {
 	}
 
 	return buf.String()
+}
+
+// Bytes return raw byte array
+func (r *PackedTrailerRecord) Bytes() []byte {
+	return []byte(r.String())
 }
 
 // Validate performs some checks on the record and returns an error if not Validated

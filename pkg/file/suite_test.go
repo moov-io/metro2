@@ -17,11 +17,11 @@ import (
 func Test(t *testing.T) { check.TestingT(t) }
 
 type FileTest struct {
-	unpackedFixedLengthFile     string
+	unpackedFixedLengthFile     []byte
 	unpackedFixedLengthJson     string
-	unpackedVariableBlockedFile string
+	unpackedVariableBlockedFile []byte
 	unpackedVariableBlockedJson string
-	packedFile                  string
+	packedFile                  []byte
 	packedJson                  string
 	baseSegmentJson             string
 }
@@ -35,7 +35,7 @@ func (t *FileTest) SetUpSuite(c *check.C) {
 
 	f, err = os.Open(filepath.Join("..", "..", "test", "testdata", "unpacked_fixed_file.json"))
 	c.Assert(err, check.IsNil)
-	t.unpackedFixedLengthJson = utils.ReadFile(f)
+	t.unpackedFixedLengthJson = string(utils.ReadFile(f))
 
 	f, err = os.Open(filepath.Join("..", "..", "test", "testdata", "unpacked_variable_file.dat"))
 	c.Assert(err, check.IsNil)
@@ -43,7 +43,7 @@ func (t *FileTest) SetUpSuite(c *check.C) {
 
 	f, err = os.Open(filepath.Join("..", "..", "test", "testdata", "unpacked_variable_file.json"))
 	c.Assert(err, check.IsNil)
-	t.unpackedVariableBlockedJson = utils.ReadFile(f)
+	t.unpackedVariableBlockedJson = string(utils.ReadFile(f))
 
 	f, err = os.Open(filepath.Join("..", "..", "test", "testdata", "packed_file.dat"))
 	c.Assert(err, check.IsNil)
@@ -51,11 +51,11 @@ func (t *FileTest) SetUpSuite(c *check.C) {
 
 	f, err = os.Open(filepath.Join("..", "..", "test", "testdata", "packed_file.json"))
 	c.Assert(err, check.IsNil)
-	t.packedJson = utils.ReadFile(f)
+	t.packedJson = string(utils.ReadFile(f))
 
 	f, err = os.Open(filepath.Join("..", "..", "test", "testdata", "base_segment.json"))
 	c.Assert(err, check.IsNil)
-	t.baseSegmentJson = utils.ReadFile(f)
+	t.baseSegmentJson = string(utils.ReadFile(f))
 }
 
 func (t *FileTest) TearDownSuite(c *check.C) {}
