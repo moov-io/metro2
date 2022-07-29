@@ -9,13 +9,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/moov-io/metro2/pkg/file"
-	"github.com/moov-io/metro2/pkg/server"
-	"github.com/moov-io/metro2/pkg/utils"
-	"github.com/spf13/cobra"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/spf13/cobra"
+
+	"github.com/moov-io/metro2/pkg/file"
+	"github.com/moov-io/metro2/pkg/server"
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 var (
