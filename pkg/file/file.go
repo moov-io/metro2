@@ -9,12 +9,12 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
-	"io"
-	"strconv"
-
+	"errors"
 	"github.com/moov-io/base/log"
 	"github.com/moov-io/metro2/pkg/lib"
 	"github.com/moov-io/metro2/pkg/utils"
+	"io"
+	"strconv"
 )
 
 // General file interface
@@ -64,46 +64,56 @@ func NewFile(format string) (File, error) {
 	return nil, utils.NewErrInvalidSegment(format)
 }
 
-// CreateFile attempts to parse raw metro2 file or json file
-func CreateFile(buf []byte) (File, error) {
-	fileFormat, dataType, err := getFileInformation(buf)
+// NewFileFromReader attempts to parse raw metro2 file or json file
+func NewFileFromReader(r io.Reader) (File, error) {
+
+	if r == nil {
+		return nil, errors.New("invalid file reader")
+	}
+
+	defer r.(io.Seeker).Seek(0, io.SeekStart)
+
+	dummy := &dummyFile{}
+
+	decoder := json.NewDecoder(r)
+	jsonDecodeErr := decoder.Decode(dummy)
+
+	// reset file reader
+	r.(io.Seeker).Seek(0, io.SeekStart)
+
+	if jsonDecodeErr != nil {
+		// reset seek
+		if _, seekErr := r.(io.Seeker).Seek(0, io.SeekStart); seekErr != nil {
+			return nil, seekErr
+		}
+
+		// Parse Metro file
+		return NewReader(r).Read()
+	}
+
+	fileFormat := utils.CharacterFileFormat
+	if dummy.Header.RecordDescriptorWord == lib.UnpackedRecordLength {
+		fileFormat = utils.CharacterFileFormat
+	} else if dummy.Header.BlockDescriptorWord > 0 {
+		fileFormat = utils.PackedFileFormat
+	}
+
+	f, err := NewFile(fileFormat)
 	if err != nil {
 		return nil, err
 	}
-	f, _ := NewFile(*fileFormat)
-	if *dataType == utils.MessageJsonFormat {
-		err = json.Unmarshal(buf, f)
-	} else {
-		err = f.Parse(buf)
+
+	if err = decoder.Decode(f); err != nil {
+		return nil, err
 	}
 
-	return f, err
+	return f, nil
 }
 
-func getFileInformation(buf []byte) (*string, *string, error) {
-	fileFormat := utils.CharacterFileFormat
-	dataType := utils.MessageJsonFormat
-	dummy := &dummyFile{}
-	err := json.Unmarshal(buf, dummy)
-	if err != nil {
-		if !utils.IsMetroFile(string(buf)) {
-			return nil, nil, utils.ErrInvalidMetroFile
-		}
-		dataType = utils.MessageMetroFormat
-		if utils.IsPacked(string(buf)) {
-			fileFormat = utils.PackedFileFormat
-		}
-	} else {
-		if dummy.Header == nil {
-			return nil, nil, utils.ErrNonHeaderRecord
-		}
-		if dummy.Header.RecordDescriptorWord == lib.UnpackedRecordLength {
-			fileFormat = utils.CharacterFileFormat
-		} else if dummy.Header.BlockDescriptorWord > 0 {
-			fileFormat = utils.PackedFileFormat
-		}
-	}
-	return &fileFormat, &dataType, nil
+// Deprecated. Use NewFileFromReader intead.
+func CreateFile(buf []byte) (File, error) {
+	r := bytes.NewReader(buf)
+	return NewFileFromReader(r)
 }
 
 // Reader reads records from a metro2 encoded file.
@@ -130,16 +140,19 @@ func (r *Reader) Read() (File, error) {
 		r.line = r.scanner.Bytes()
 
 		// getting file type
-		fileFormat, _, err := getFileInformation([]byte(r.line))
-		if err != nil {
-			return nil, err
+		if !utils.IsMetroFile(r.line) {
+			return nil, utils.ErrInvalidMetroFile
 		}
 
-		f.SetType(*fileFormat)
+		fileFormat := utils.MessageMetroFormat
+		if utils.IsPacked(r.line) {
+			fileFormat = utils.PackedFileFormat
+		}
+
+		f.SetType(fileFormat)
 
 		// Header Record
-		_, err = f.Header.Parse(r.line)
-		if err != nil {
+		if _, err := f.Header.Parse(r.line); err != nil {
 			return nil, err
 		}
 	} else {

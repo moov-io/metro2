@@ -5,10 +5,8 @@
 package server
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
-	"io"
 	"net/http"
 	"strings"
 
@@ -18,21 +16,13 @@ import (
 )
 
 func parseInputFromRequest(r *http.Request) (file.File, error) {
-	if r.Header.Get("Content-Type") == "application/json" {
-		var body map[string]interface{}
 
-		decoder := json.NewDecoder(r.Body)
-		if err := decoder.Decode(&body); err != nil {
-			return nil, err
-		}
+	if r.Header.Get("Content-Type") == "application/json" ||
+		r.Header.Get("Content-Type") == "text/plain" {
+
 		defer r.Body.Close()
 
-		str, err := json.Marshal(body)
-		if err != nil {
-			return nil, err
-		}
-
-		mf, err := file.CreateFile(str)
+		mf, err := file.NewFileFromReader(r.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -46,12 +36,7 @@ func parseInputFromRequest(r *http.Request) (file.File, error) {
 	}
 	defer src.Close()
 
-	var input bytes.Buffer
-	if _, err = io.Copy(&input, src); err != nil {
-		return nil, err
-	}
-
-	mf, err := file.CreateFile(input.Bytes())
+	mf, err := file.NewFileFromReader(src)
 	if err != nil {
 		return nil, err
 	}

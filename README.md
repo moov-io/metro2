@@ -189,7 +189,7 @@ Package file defines main interfaces to a metro file.
 ```
 func NewFile(format string) (File, error)
 
-func CreateFile(buf []byte) (File, error)
+func NewFileFromReader(r io.Reader) (File, error)
 
 type File
 	GetType() string
@@ -274,7 +274,8 @@ err = json.Unmarshal([]byte(buf), f)
 
 File object will create from metro file buffer directly, CreateFile function will create new file and will set file type based on metro file body
 ```
-f, err := file.CreateFile([]byte(buf)) 
+r, _ = os.Open(filepath.Join("...))
+f, err := file.NewFileFromReader(r) 
 ```
 
 File object will manage records using member functions

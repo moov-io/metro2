@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -21,8 +22,8 @@ import (
 )
 
 var (
-	inputFile        = ""
-	rawData   []byte = nil
+	inputFile = ""
+	reader    io.Reader
 )
 
 var WebCmd = &cobra.Command{
@@ -53,7 +54,9 @@ var Validate = &cobra.Command{
 	Long:  "Validate an incoming metro file",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		f, err := file.CreateFile(rawData)
+		defer reader.(io.Closer).Close()
+
+		f, err := file.NewFileFromReader(reader)
 		if err != nil {
 			return err
 		}
@@ -74,6 +77,9 @@ var Print = &cobra.Command{
 	Short: "Print metro file",
 	Long:  "Print an incoming metro file with special format (options: metro, json)",
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		defer reader.(io.Closer).Close()
+
 		format, err := cmd.Flags().GetString("format")
 		if err != nil {
 			return err
@@ -87,7 +93,7 @@ var Print = &cobra.Command{
 			}
 		}
 
-		f, err := file.CreateFile([]byte(rawData))
+		f, err := file.NewFileFromReader(reader)
 		if err != nil {
 			return err
 		}
@@ -127,6 +133,9 @@ var Convert = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		defer reader.(io.Closer).Close()
+
 		format, err := cmd.Flags().GetString("format")
 		if err != nil {
 			return err
@@ -140,7 +149,7 @@ var Convert = &cobra.Command{
 			}
 		}
 
-		mf, err := file.CreateFile([]byte(rawData))
+		mf, err := file.NewFileFromReader(reader)
 		if err != nil {
 			return err
 		}
@@ -219,11 +228,10 @@ var rootCmd = &cobra.Command{
 			if os.IsNotExist(err) {
 				return errors.New("invalid input file")
 			}
-			f, err := os.Open(inputFile)
+			reader, err = os.Open(inputFile)
 			if err != nil {
 				return err
 			}
-			rawData = utils.ReadFile(f)
 		}
 
 		return nil

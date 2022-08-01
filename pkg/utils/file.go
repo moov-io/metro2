@@ -40,15 +40,15 @@ func IsVariableLength(data []byte) bool {
 }
 
 // IsPacked packed format check
-func IsPacked(s string) bool {
+func IsPacked(buf []byte) bool {
 
 	// fix packed format
-	if s[2] == 0x00 && s[3] == 0x00 {
+	if buf[2] == 0x00 && buf[3] == 0x00 {
 		return true
 	}
 
 	// variable packed format
-	if s[6] == 0x00 && s[7] == 0x00 {
+	if buf[6] == 0x00 && buf[7] == 0x00 {
 		return true
 	}
 
@@ -56,11 +56,11 @@ func IsPacked(s string) bool {
 }
 
 // Metro file check
-func IsMetroFile(s string) bool {
-	if len(s) < packedRecordLength {
+func IsMetroFile(buf []byte) bool {
+	if len(buf) < packedRecordLength {
 		return false
 	}
-	if s[4:10] == headerIdentifier || s[8:14] == headerIdentifier {
+	if string(buf[4:10]) == headerIdentifier || string(buf[8:14]) == headerIdentifier {
 		return true
 	}
 	return false
