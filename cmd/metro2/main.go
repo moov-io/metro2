@@ -116,7 +116,7 @@ var Print = &cobra.Command{
 			output = f.String(newline)
 		}
 
-		fmt.Fprintf(os.Stdout, output)
+		fmt.Fprintf(os.Stdout, "%s", output)
 
 		return nil
 	},
