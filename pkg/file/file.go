@@ -71,24 +71,24 @@ func NewFileFromReader(r io.Reader) (File, error) {
 		return nil, errors.New("invalid file reader")
 	}
 
-	defer r.(io.Seeker).Seek(0, io.SeekStart)
-
 	dummy := &dummyFile{}
 
 	decoder := json.NewDecoder(r)
 	jsonDecodeErr := decoder.Decode(dummy)
 
 	// reset file reader
-	r.(io.Seeker).Seek(0, io.SeekStart)
+	if _, ok := r.(io.Seeker); ok {
+		r.(io.Seeker).Seek(0, io.SeekStart)
+	}
 
 	if jsonDecodeErr != nil {
-		// reset seek
-		if _, seekErr := r.(io.Seeker).Seek(0, io.SeekStart); seekErr != nil {
-			return nil, seekErr
-		}
-
-		// Parse Metro file
+		// Parse metro file
 		return NewReader(r).Read()
+	}
+
+	// Parse json file
+	if dummy.Header == nil {
+		return nil, errors.New("invalid json file")
 	}
 
 	fileFormat := utils.CharacterFileFormat
