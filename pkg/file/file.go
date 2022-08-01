@@ -124,8 +124,6 @@ type Reader struct {
 	File File
 	// line is the current line being parsed from the input r
 	line []byte
-	// recordName holds the current record name being parsed.
-	recordName string
 }
 
 // Read reads each record of the metro file
@@ -239,7 +237,7 @@ func scanRecord(data []byte, atEOF bool) (advance int, token []byte, err error) 
 
 	_, bdw, _ := getStripedData(4)
 	// trying to read for unpacked format
-	size, readErr := strconv.ParseInt(string(bdw), 10, 64)
+	size, readErr := strconv.ParseInt(string(bdw), 10, 32)
 	if readErr == nil {
 		if size < lib.UnpackedRecordLength {
 			return 0, nil, io.ErrNoProgress
