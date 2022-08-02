@@ -7,14 +7,16 @@ package file
 import (
 	"bufio"
 	"bytes"
+	"errors"
+	"io"
+	"strconv"
+
 	"encoding/binary"
 	"encoding/json"
-	"errors"
+
 	"github.com/moov-io/base/log"
 	"github.com/moov-io/metro2/pkg/lib"
 	"github.com/moov-io/metro2/pkg/utils"
-	"io"
-	"strconv"
 )
 
 // General file interface
