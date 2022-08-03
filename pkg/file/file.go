@@ -112,7 +112,7 @@ func NewFileFromReader(r io.Reader) (File, error) {
 	return f, nil
 }
 
-// Deprecated. Use NewFileFromReader intead.
+// CreateFile attempts to parse raw metro2 or json
 func CreateFile(buf []byte) (File, error) {
 	r := bytes.NewReader(buf)
 	return NewFileFromReader(r)

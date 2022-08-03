@@ -22,27 +22,33 @@ import (
 )
 
 func TestFile__Crashers(t *testing.T) {
-	paths := readCrasherInputFilepaths(t)
+	paths := readCrasherInputFilePaths(t)
 	for i := range paths {
-		bs, err := ioutil.ReadFile(paths[i])
+
+		f, err := os.Open(paths[i])
 		if err != nil {
 			t.Fatal(err)
 		}
+
 		if testing.Verbose() {
 			t.Logf("parsing %s", paths[i])
 		}
-		if _, err := CreateFile(bs); err == nil {
+
+		if _, err := NewFileFromReader(f); err == nil {
 			t.Errorf("expected error with %s", paths[i])
 		} else {
 			t.Logf("error with %s\n  %#v", paths[i], err)
 		}
+
 		if testing.Verbose() {
 			t.Logf("read %s without crashing", paths[i])
 		}
+
+		f.Close()
 	}
 }
 
-func readCrasherInputFilepaths(t *testing.T) []string {
+func readCrasherInputFilePaths(t *testing.T) []string {
 	t.Helper()
 
 	basePath := filepath.Join("..", "..", "test", "testdata", "crashers")
@@ -303,6 +309,19 @@ func (t *FileTest) TestGetRecord(c *check.C) {
 }
 
 func (t *FileTest) TestCreateFile(c *check.C) {
+	_, err := CreateFile(t.packedJson)
+	c.Assert(err, check.IsNil)
+
+	f, err := CreateFile(t.packedRaw)
+	c.Assert(err, check.IsNil)
+
+	raw, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", "packed_file.dat"))
+	c.Assert(err, check.IsNil)
+
+	c.Assert(strings.Compare(f.String(false), string(raw)), check.Equals, 0)
+}
+
+func (t *FileTest) TestNewFileFromReader(c *check.C) {
 	_, err := NewFileFromReader(t.packedJsonReader)
 	c.Assert(err, check.IsNil)
 

@@ -54,8 +54,6 @@ var Validate = &cobra.Command{
 	Long:  "Validate an incoming metro file",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		defer reader.(io.Closer).Close()
-
 		f, err := file.NewFileFromReader(reader)
 		if err != nil {
 			return err
@@ -77,8 +75,6 @@ var Print = &cobra.Command{
 	Short: "Print metro file",
 	Long:  "Print an incoming metro file with special format (options: metro, json)",
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		defer reader.(io.Closer).Close()
 
 		format, err := cmd.Flags().GetString("format")
 		if err != nil {
@@ -133,8 +129,6 @@ var Convert = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		defer reader.(io.Closer).Close()
 
 		format, err := cmd.Flags().GetString("format")
 		if err != nil {
@@ -235,6 +229,13 @@ var rootCmd = &cobra.Command{
 		}
 
 		return nil
+	},
+	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+		if reader != nil {
+			if closer, ok := reader.(io.Closer); ok {
+				closer.Close()
+			}
+		}
 	},
 }
 
