@@ -79,6 +79,8 @@ func NewFileFromReader(r io.Reader) (File, error) {
 	jsonDecodeErr := decoder.Decode(dummy)
 
 	// reset file reader
+	//  need to read first block to detect json or metro format
+	//  after that, need to reset seek point of reader
 	if _, ok := r.(io.Seeker); ok {
 		r.(io.Seeker).Seek(0, io.SeekStart)
 	}
@@ -122,7 +124,7 @@ func CreateFile(buf []byte) (File, error) {
 type Reader struct {
 	// r handles the IO.Reader sent to be parser.
 	scanner *bufio.Scanner
-	// file is ach.file model being built as r is parsed.
+	// file is metro2 file model being built as r is parsed.
 	File File
 	// line is the current line being parsed from the input r
 	line []byte
