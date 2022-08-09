@@ -131,9 +131,10 @@ func getIsNewLine(r *http.Request) bool {
 // method: POST
 // produce: multipart/form-data
 // responses:
-//   200: OK
-//   400: Bad Request
-//   501: Not Implemented
+//
+//	200: OK
+//	400: Bad Request
+//	501: Not Implemented
 func validator(w http.ResponseWriter, r *http.Request) {
 	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
@@ -155,9 +156,10 @@ func validator(w http.ResponseWriter, r *http.Request) {
 // method: POST
 // produce: multipart/form-data
 // responses:
-//   200: OK
-//   400: Bad Request
-//   501: Not Implemented
+//
+//	200: OK
+//	400: Bad Request
+//	501: Not Implemented
 func print(w http.ResponseWriter, r *http.Request) {
 	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
@@ -186,9 +188,10 @@ func print(w http.ResponseWriter, r *http.Request) {
 // method: POST
 // produce: multipart/form-data
 // responses:
-//   200: OK
-//   400: Bad Request
-//   501: Not Implemented
+//
+//	200: OK
+//	400: Bad Request
+//	501: Not Implemented
 func convert(w http.ResponseWriter, r *http.Request) {
 	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
@@ -239,7 +242,8 @@ func convert(w http.ResponseWriter, r *http.Request) {
 // path: /health
 // method: GET
 // responses:
-//   200: OK
+//
+//	200: OK
 func health(w http.ResponseWriter, r *http.Request) {
 	outputSuccess(w, "alive")
 }
