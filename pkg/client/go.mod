@@ -1,8 +1,8 @@
 module github.com/GIT_USER_ID/GIT_REPO_ID
 
-go 1.18
+go 1.19
 
-require golang.org/x/oauth2 v0.0.0-20220722155238-128564f6959c
+require golang.org/x/oauth2 v0.0.0-20220808172628-8227340efae7
 
 require (
 	github.com/golang/protobuf v1.5.2 // indirect
