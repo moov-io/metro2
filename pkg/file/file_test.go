@@ -7,7 +7,6 @@ package file
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -52,7 +51,7 @@ func readCrasherInputFilePaths(t *testing.T) []string {
 	t.Helper()
 
 	basePath := filepath.Join("..", "..", "test", "testdata", "crashers")
-	fds, err := ioutil.ReadDir(basePath)
+	fds, err := os.ReadDir(basePath)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,7 +72,7 @@ func (t *FileTest) TestJsonWithUnpackedVariableBlocked(c *check.C) {
 	err = json.Unmarshal(t.unpackedVariableBlockedJson, f)
 	c.Assert(err, check.IsNil)
 
-	raw, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", "unpacked_variable_file.dat"))
+	raw, err := os.ReadFile(filepath.Join("..", "..", "test", "testdata", "unpacked_variable_file.dat"))
 	c.Assert(err, check.IsNil)
 
 	rawStr := strings.ReplaceAll(string(raw), "\r\n", "\n")
@@ -315,7 +314,7 @@ func (t *FileTest) TestCreateFile(c *check.C) {
 	f, err := CreateFile(t.packedRaw)
 	c.Assert(err, check.IsNil)
 
-	raw, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", "packed_file.dat"))
+	raw, err := os.ReadFile(filepath.Join("..", "..", "test", "testdata", "packed_file.dat"))
 	c.Assert(err, check.IsNil)
 
 	c.Assert(strings.Compare(f.String(false), string(raw)), check.Equals, 0)
@@ -328,7 +327,7 @@ func (t *FileTest) TestNewFileFromReader(c *check.C) {
 	f, err := NewFileFromReader(t.packedRawReader)
 	c.Assert(err, check.IsNil)
 
-	raw, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", "packed_file.dat"))
+	raw, err := os.ReadFile(filepath.Join("..", "..", "test", "testdata", "packed_file.dat"))
 	c.Assert(err, check.IsNil)
 
 	c.Assert(strings.Compare(f.String(false), string(raw)), check.Equals, 0)

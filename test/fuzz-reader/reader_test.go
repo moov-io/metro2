@@ -5,7 +5,6 @@
 package fuzzreader
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -17,7 +16,7 @@ func TestCorpusSymlinks(t *testing.T) {
 	if runtime.GOOS == "windows" {
 		t.Skip()
 	}
-	fds, err := ioutil.ReadDir("corpus")
+	fds, err := os.ReadDir("corpus")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -26,7 +25,7 @@ func TestCorpusSymlinks(t *testing.T) {
 	}
 
 	for i := range fds {
-		if fds[i].Mode()&os.ModeSymlink != 0 {
+		if fds[i].Type()&os.ModeSymlink != 0 {
 			if path, err := os.Readlink(filepath.Join("corpus", fds[i].Name())); err != nil {
 				t.Errorf("broken symlink: %v", err)
 			} else {
@@ -51,7 +50,7 @@ func TestFuzzWithValidData(t *testing.T) {
 		"unpacked_variable_file.json",
 	}
 	for _, sample := range validFileSamples {
-		byteData, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", sample))
+		byteData, err := os.ReadFile(filepath.Join("..", "..", "test", "testdata", sample))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -68,7 +67,7 @@ func TestFuzzWithValidData(t *testing.T) {
 		"packed_base_segment.dat",
 	}
 	for _, sample := range segmentSamples {
-		byteData, err := ioutil.ReadFile(filepath.Join("..", "..", "test", "testdata", sample))
+		byteData, err := os.ReadFile(filepath.Join("..", "..", "test", "testdata", sample))
 		if err != nil {
 			t.Fatal(err)
 		}

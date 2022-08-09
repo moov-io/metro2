@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 
@@ -22,7 +22,7 @@ func parseInputFromRequest(r *http.Request) (file.File, error) {
 	src, _, err := r.FormFile("file")
 	if err != nil {
 
-		buf, err := ioutil.ReadAll(r.Body)
+		buf, err := io.ReadAll(r.Body)
 		if err != nil {
 			return nil, errors.New("unable to read request body")
 		}

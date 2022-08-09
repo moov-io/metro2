@@ -18,7 +18,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -190,9 +189,9 @@ func (c *APIClient) GetConfig() *Configuration {
 }
 
 type formFile struct {
-		fileBytes []byte
-		fileName string
-		formFileName string
+	fileBytes    []byte
+	fileName     string
+	formFileName string
 }
 
 // prepareRequest build the request
@@ -246,11 +245,11 @@ func (c *APIClient) prepareRequest(
 				w.Boundary()
 				part, err := w.CreateFormFile(formFile.formFileName, filepath.Base(formFile.fileName))
 				if err != nil {
-						return nil, err
+					return nil, err
 				}
 				_, err = part.Write(formFile.fileBytes)
 				if err != nil {
-						return nil, err
+					return nil, err
 				}
 			}
 		}
@@ -366,7 +365,7 @@ func (c *APIClient) decode(v interface{}, b []byte, contentType string) (err err
 		return nil
 	}
 	if f, ok := v.(**os.File); ok {
-		*f, err = ioutil.TempFile("", "HttpClientFile")
+		*f, err = os.MkdirTemp("", "HttpClientFile")
 		if err != nil {
 			return
 		}
