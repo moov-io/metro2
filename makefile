@@ -15,7 +15,7 @@ ifeq ($(OS),Windows_NT)
 else
 	@wget -O lint-project.sh https://raw.githubusercontent.com/moov-io/infra/master/go/lint-project.sh
 	@chmod +x ./lint-project.sh
-	IGNORED_CVES=CVE-2020-26160 time ./lint-project.sh
+	COVER_THRESHOLD=85.0 time ./lint-project.sh
 endif
 
 check-openapi:
