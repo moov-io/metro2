@@ -9,28 +9,59 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 
+	"github.com/spf13/cobra"
+
 	"github.com/moov-io/metro2/pkg/file"
 	"github.com/moov-io/metro2/pkg/server"
 	"github.com/moov-io/metro2/pkg/utils"
-	"github.com/spf13/cobra"
 )
 
-var (
-	inputFile = ""
-	rawData   = ""
-)
+// utility functions
+func createReader(cmd *cobra.Command) (io.Reader, error) {
 
-var WebCmd = &cobra.Command{
+	input, err := cmd.Flags().GetString("input")
+	if err != nil {
+		return nil, err
+	}
+
+	if input == "" {
+		path, _ := os.Getwd()
+		input = filepath.Join(path, "metro.json")
+	}
+
+	_, err = os.Stat(input)
+	if os.IsNotExist(err) {
+		return nil, errors.New("invalid input file")
+	}
+	reader, err := os.Open(input)
+	if err != nil {
+		return nil, err
+	}
+
+	return reader, nil
+}
+
+func closeReader(reader io.Reader) {
+	if closer, ok := reader.(io.Closer); ok {
+		closer.Close()
+	}
+}
+
+// commands
+var webCmd = &cobra.Command{
 	Use:   "web",
 	Short: "Launches web server",
 	Long:  "Launches web server",
 	RunE: func(cmd *cobra.Command, args []string) error {
+
 		port, _ := cmd.Flags().GetString("port")
-		fmt.Println("Starting web server on port ", port)
+		fmt.Fprintf(os.Stdout, "Starting web server on port %s\n\n", port)
+
 		listen := "0.0.0.0:" + port
 		h, _ := server.ConfigureHandlers()
 		test, _ := cmd.Flags().GetBool("test")
@@ -44,12 +75,19 @@ var WebCmd = &cobra.Command{
 	},
 }
 
-var Validate = &cobra.Command{
+var validate = &cobra.Command{
 	Use:   "validator",
 	Short: "Validate metro file",
 	Long:  "Validate an incoming metro file",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		f, err := file.CreateFile([]byte(rawData))
+
+		reader, err := createReader(cmd)
+		if err != nil {
+			return err
+		}
+		defer closeReader(reader)
+
+		f, err := file.NewFileFromReader(reader)
 		if err != nil {
 			return err
 		}
@@ -59,17 +97,24 @@ var Validate = &cobra.Command{
 			return err
 		}
 
-		fmt.Println("the file is valid")
+		fmt.Fprintf(os.Stdout, "the file is valid \n")
 
 		return nil
 	},
 }
 
-var Print = &cobra.Command{
+var print = &cobra.Command{
 	Use:   "print",
 	Short: "Print metro file",
 	Long:  "Print an incoming metro file with special format (options: metro, json)",
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		reader, err := createReader(cmd)
+		if err != nil {
+			return err
+		}
+		defer closeReader(reader)
+
 		format, err := cmd.Flags().GetString("format")
 		if err != nil {
 			return err
@@ -83,7 +128,7 @@ var Print = &cobra.Command{
 			}
 		}
 
-		f, err := file.CreateFile([]byte(rawData))
+		f, err := file.NewFileFromReader(reader)
 		if err != nil {
 			return err
 		}
@@ -105,12 +150,14 @@ var Print = &cobra.Command{
 		} else if format == utils.MessageMetroFormat {
 			output = f.String(newline)
 		}
-		fmt.Println(output)
+
+		fmt.Fprintf(os.Stdout, "%s", output)
+
 		return nil
 	},
 }
 
-var Convert = &cobra.Command{
+var convert = &cobra.Command{
 	Use:   "convert [output]",
 	Short: "Convert metro file format",
 	Long:  "Convert an incoming metro file into another format (options: metro, json)",
@@ -121,6 +168,13 @@ var Convert = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		reader, err := createReader(cmd)
+		if err != nil {
+			return err
+		}
+		defer closeReader(reader)
+
 		format, err := cmd.Flags().GetString("format")
 		if err != nil {
 			return err
@@ -134,7 +188,7 @@ var Convert = &cobra.Command{
 			}
 		}
 
-		mf, err := file.CreateFile([]byte(rawData))
+		mf, err := file.NewFileFromReader(reader)
 		if err != nil {
 			return err
 		}
@@ -184,64 +238,27 @@ var Convert = &cobra.Command{
 	},
 }
 
-var rootCmd = &cobra.Command{
-	Use:   "",
-	Short: "",
-	Long:  "",
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		isWeb := false
-		cmdNames := make([]string, 0)
-		getName := func(c *cobra.Command) {}
-		getName = func(c *cobra.Command) {
-			if c == nil {
-				return
-			}
-			cmdNames = append([]string{c.Name()}, cmdNames...)
-			if c.Name() == "web" {
-				isWeb = true
-			}
-			getName(c.Parent())
-		}
-		getName(cmd)
-
-		if !isWeb {
-			if inputFile == "" {
-				path, _ := os.Getwd()
-				inputFile = filepath.Join(path, "metro.json")
-			}
-			_, err := os.Stat(inputFile)
-			if os.IsNotExist(err) {
-				return errors.New("invalid input file")
-			}
-			f, err := os.Open(inputFile)
-			if err != nil {
-				return err
-			}
-			rawData = utils.ReadFile(f)
-		}
-
-		return nil
-	},
-}
+var rootCmd = &cobra.Command{}
 
 func initRootCmd() {
-	WebCmd.Flags().String("port", "8080", "port of the web server")
-	WebCmd.Flags().BoolP("test", "t", false, "test server")
+	webCmd.Flags().String("port", "8080", "port of the web server")
+	webCmd.Flags().BoolP("test", "t", false, "test server")
 
-	Convert.Flags().String("format", "json", "format of metro file(required)")
-	Convert.Flags().String("type", "", "file type (character or packed)")
-	Convert.Flags().BoolP("generate", "g", false, "generate trailer record")
-	Convert.Flags().BoolP("newline", "n", false, "has new line")
+	convert.Flags().String("format", "json", "format of metro file(required)")
+	convert.Flags().String("type", "", "file type (character or packed)")
+	convert.Flags().BoolP("generate", "g", false, "generate trailer record")
+	convert.Flags().BoolP("newline", "n", false, "has new line")
 
-	Print.Flags().String("format", "json", "print format")
-	Print.Flags().BoolP("newline", "n", false, "has new line")
+	print.Flags().String("format", "json", "print format")
+	print.Flags().BoolP("newline", "n", false, "has new line")
 
 	rootCmd.SilenceUsage = true
-	rootCmd.PersistentFlags().StringVar(&inputFile, "input", "", "input file (default is $PWD/metro.json)")
-	rootCmd.AddCommand(WebCmd)
-	rootCmd.AddCommand(Convert)
-	rootCmd.AddCommand(Print)
-	rootCmd.AddCommand(Validate)
+	rootCmd.PersistentFlags().String("input", "", "input file (default is $PWD/metro.json)")
+
+	rootCmd.AddCommand(webCmd)
+	rootCmd.AddCommand(convert)
+	rootCmd.AddCommand(print)
+	rootCmd.AddCommand(validate)
 }
 
 func main() {

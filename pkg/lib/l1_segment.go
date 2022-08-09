@@ -7,7 +7,6 @@ package lib
 import (
 	"reflect"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/moov-io/metro2/pkg/utils"
 )
@@ -46,8 +45,8 @@ func (s *L1Segment) Name() string {
 }
 
 // Parse takes the input record string and parses the l1 segment values
-func (s *L1Segment) Parse(record string) (int, error) {
-	if utf8.RuneCountInString(record) < L1SegmentLength {
+func (s *L1Segment) Parse(record []byte) (int, error) {
+	if len(record) < L1SegmentLength {
 		return 0, utils.NewErrSegmentLength("l1 segment")
 	}
 
@@ -72,6 +71,11 @@ func (s *L1Segment) String() string {
 	}
 
 	return buf.String()
+}
+
+// Bytes return raw byte array
+func (s *L1Segment) Bytes() []byte {
+	return []byte(s.String())
 }
 
 // Validate performs some checks on the record and returns an error if not Validated

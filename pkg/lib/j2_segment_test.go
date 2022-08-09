@@ -5,6 +5,7 @@
 package lib
 
 import (
+	"bytes"
 	"gopkg.in/check.v1"
 )
 
@@ -14,14 +15,14 @@ func (t *SegmentTest) TestJ2Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.sampleJ2Segment)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.sampleJ2Segment))
 	c.Assert(segment.Name(), check.Equals, J2SegmentName)
 	c.Assert(segment.Length(), check.Equals, J2SegmentLength)
 }
 
 func (t *SegmentTest) TestJ2SegmentWithInvalidData(c *check.C) {
 	segment := NewJ2Segment()
-	_, err := segment.Parse("ERROR" + t.sampleJ2Segment)
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleJ2Segment...))
 	c.Assert(err, check.Not(check.IsNil))
 }
 

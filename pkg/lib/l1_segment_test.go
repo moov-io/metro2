@@ -5,6 +5,7 @@
 package lib
 
 import (
+	"bytes"
 	"gopkg.in/check.v1"
 )
 
@@ -14,14 +15,14 @@ func (t *SegmentTest) TestL1Segment(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.sampleL1Segment)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.sampleL1Segment))
 	c.Assert(segment.Name(), check.Equals, L1SegmentName)
 	c.Assert(segment.Length(), check.Equals, L1SegmentLength)
 }
 
 func (t *SegmentTest) TestL1SegmentWithInvalidData(c *check.C) {
 	segment := NewL1Segment()
-	_, err := segment.Parse("ERROR" + t.sampleL1Segment)
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleL1Segment...))
 	c.Assert(err, check.Not(check.IsNil))
 }
 

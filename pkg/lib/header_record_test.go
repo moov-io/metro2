@@ -5,6 +5,7 @@
 package lib
 
 import (
+	"bytes"
 	"testing"
 
 	"gopkg.in/check.v1"
@@ -12,7 +13,7 @@ import (
 
 func TestHeaderRecordErr(t *testing.T) {
 	record := &HeaderRecord{}
-	if _, err := record.Parse("12345"); err == nil {
+	if _, err := record.Parse([]byte("12345")); err == nil {
 		t.Error("expected error")
 	}
 }
@@ -23,7 +24,7 @@ func (t *SegmentTest) TestHeaderRecord(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.sampleHeaderRecord)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.sampleHeaderRecord))
 	c.Assert(segment.Name(), check.Equals, HeaderRecordName)
 	c.Assert(segment.Length(), check.Equals, UnpackedRecordLength)
 	c.Assert(segment.BlockSize(), check.Equals, UnpackedRecordLength+4)
@@ -34,7 +35,7 @@ func (t *SegmentTest) TestHeaderRecord(c *check.C) {
 
 func (t *SegmentTest) TestHeaderRecordWithInvalidData(c *check.C) {
 	segment := NewHeaderRecord()
-	_, err := segment.Parse("ERROR" + t.sampleHeaderRecord)
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleHeaderRecord...))
 	c.Assert(err, check.Not(check.IsNil))
 }
 
@@ -44,7 +45,7 @@ func (t *SegmentTest) TestPackedHeaderRecord(c *check.C) {
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
-	c.Assert(segment.String(), check.Equals, t.samplePackedHeaderRecord)
+	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.samplePackedHeaderRecord))
 	c.Assert(segment.Name(), check.Equals, PackedHeaderRecordName)
 	c.Assert(segment.Length(), check.Equals, PackedRecordLength)
 	c.Assert(segment.BlockSize(), check.Equals, PackedRecordLength+4)
@@ -55,6 +56,6 @@ func (t *SegmentTest) TestPackedHeaderRecord(c *check.C) {
 
 func (t *SegmentTest) TestPackedHeaderRecordWithInvalidData(c *check.C) {
 	segment := NewPackedHeaderRecord()
-	_, err := segment.Parse("ERROR" + t.samplePackedHeaderRecord)
+	_, err := segment.Parse(append([]byte("ERROR"), t.samplePackedHeaderRecord...))
 	c.Assert(err, check.Not(check.IsNil))
 }

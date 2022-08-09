@@ -113,7 +113,7 @@ func (c *converter) toSpecifications(fieldsFormat map[string]field) []specificat
 }
 
 // parse field with string
-func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]field, record string, v *validator, recordName string) (int, error) {
+func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]field, record []byte, v *validator, recordName string) (int, error) {
 	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
@@ -130,7 +130,7 @@ func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]fiel
 		if len(record) < spec.Start+spec.Length+offset {
 			return 0, utils.NewErrSegmentLength(recordName)
 		}
-		data := record[spec.Start+offset : spec.Start+spec.Length+offset]
+		data := string(record[spec.Start+offset : spec.Start+spec.Length+offset])
 		if err := v.isValidType(spec, data, fieldName, recordName); err != nil {
 			return 0, err
 		}

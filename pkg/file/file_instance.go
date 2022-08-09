@@ -5,6 +5,7 @@
 package file
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"reflect"
@@ -15,6 +16,8 @@ import (
 	"github.com/moov-io/metro2/pkg/lib"
 	"github.com/moov-io/metro2/pkg/utils"
 )
+
+var _ File = (*fileInstance)(nil)
 
 // File contains the structures of a parsed metro 2 file.
 type fileInstance struct {
@@ -192,10 +195,10 @@ func (f *fileInstance) Validate() error {
 }
 
 // Parse attempts to initialize a *File object assuming the input is valid raw data.
-func (f *fileInstance) Parse(record string) error {
+func (f *fileInstance) Parse(record []byte) error {
 
 	// remove new lines
-	record = strings.ReplaceAll(strings.ReplaceAll(record, "\r\n", ""), "\n", "")
+	record = bytes.ReplaceAll(bytes.ReplaceAll(record, []byte("\r\n"), nil), []byte("\n"), nil)
 
 	f.Bases = []lib.Record{}
 	offset := 0
@@ -272,6 +275,11 @@ func (f *fileInstance) String(isNewLine bool) string {
 	buf.WriteString(trailer)
 
 	return buf.String()
+}
+
+// Bytes return raw byte array
+func (r *fileInstance) Bytes() []byte {
+	return []byte(r.String(false))
 }
 
 // UnmarshalJSON parses a JSON blob

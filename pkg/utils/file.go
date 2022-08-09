@@ -11,28 +11,28 @@ import (
 )
 
 // File Read
-func ReadFile(f *os.File) string {
+func ReadFile(f *os.File) []byte {
 	scanner := bufio.NewScanner(f)
 	scanner.Split(bufio.ScanLines)
-	var lines []string
+	var raw []byte
 	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
+		raw = append(raw, scanner.Bytes()...)
 	}
 
-	return strings.Join(lines, "")
+	return raw
 }
 
 // Variable block check
-func IsVariableLength(s string) bool {
+func IsVariableLength(data []byte) bool {
 
 	// Checking header record identifier
-	if len(s) > 15 && strings.ToUpper(s[8:14]) == "HEADER" {
+	if len(data) > 15 && strings.ToUpper(string(data[8:14])) == "HEADER" {
 		return true
 	}
 
 	// Checking base record field 4
 	//  Field formerly used for Correction Indicator.
-	if s[17] == 0x30 {
+	if len(data) > 18 && data[17] == 0x30 {
 		return true
 	}
 
@@ -40,15 +40,15 @@ func IsVariableLength(s string) bool {
 }
 
 // IsPacked packed format check
-func IsPacked(s string) bool {
+func IsPacked(buf []byte) bool {
 
 	// fix packed format
-	if s[2] == 0x00 && s[3] == 0x00 {
+	if buf[2] == 0x00 && buf[3] == 0x00 {
 		return true
 	}
 
 	// variable packed format
-	if s[6] == 0x00 && s[7] == 0x00 {
+	if buf[6] == 0x00 && buf[7] == 0x00 {
 		return true
 	}
 
@@ -56,11 +56,11 @@ func IsPacked(s string) bool {
 }
 
 // Metro file check
-func IsMetroFile(s string) bool {
-	if len(s) < packedRecordLength {
+func IsMetroFile(buf []byte) bool {
+	if len(buf) < packedRecordLength {
 		return false
 	}
-	if s[4:10] == headerIdentifier || s[8:14] == headerIdentifier {
+	if string(buf[4:10]) == headerIdentifier || string(buf[8:14]) == headerIdentifier {
 		return true
 	}
 	return false

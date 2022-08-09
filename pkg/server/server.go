@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -18,21 +18,18 @@ import (
 )
 
 func parseInputFromRequest(r *http.Request) (file.File, error) {
-	if r.Header.Get("Content-Type") == "application/json" {
-		var body map[string]interface{}
 
-		decoder := json.NewDecoder(r.Body)
-		if err := decoder.Decode(&body); err != nil {
-			return nil, err
+	src, _, err := r.FormFile("file")
+	if err != nil {
+
+		buf, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			return nil, errors.New("unable to read request body")
 		}
+
 		defer r.Body.Close()
 
-		str, err := json.Marshal(body)
-		if err != nil {
-			return nil, err
-		}
-
-		mf, err := file.CreateFile(str)
+		mf, err := file.NewFileFromReader(bytes.NewReader(buf))
 		if err != nil {
 			return nil, err
 		}
@@ -40,18 +37,9 @@ func parseInputFromRequest(r *http.Request) (file.File, error) {
 		return mf, nil
 	}
 
-	src, _, err := r.FormFile("file")
-	if err != nil {
-		return nil, err
-	}
 	defer src.Close()
 
-	var input bytes.Buffer
-	if _, err = io.Copy(&input, src); err != nil {
-		return nil, err
-	}
-
-	mf, err := file.CreateFile(input.Bytes())
+	mf, err := file.NewFileFromReader(src)
 	if err != nil {
 		return nil, err
 	}

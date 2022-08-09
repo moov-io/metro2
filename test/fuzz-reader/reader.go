@@ -5,6 +5,8 @@
 package fuzzreader
 
 import (
+	"bytes"
+
 	"github.com/moov-io/metro2/pkg/file"
 	"github.com/moov-io/metro2/pkg/utils"
 )
@@ -17,7 +19,8 @@ import (
 // added to corpus even if gives new coverage; and 0 otherwise; other values are
 // reserved for future use.
 func Fuzz(data []byte) int {
-	f, err := file.CreateFile(data)
+
+	f, err := file.NewFileFromReader(bytes.NewReader(data))
 	if err != nil {
 		return 0
 	}

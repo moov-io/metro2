@@ -7,8 +7,9 @@ package lib
 // General record interface
 type Record interface {
 	Name() string
-	Parse(string) (int, error)
+	Parse([]byte) (int, error)
 	String() string
+	Bytes() []byte
 	Validate() error
 	Length() int
 	BlockSize() int

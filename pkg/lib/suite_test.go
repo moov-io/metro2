@@ -16,20 +16,20 @@ import (
 func Test(t *testing.T) { check.TestingT(t) }
 
 type SegmentTest struct {
-	sampleBaseSegment         string
-	samplePackedBaseSegment   string
-	sampleHeaderRecord        string
-	samplePackedHeaderRecord  string
-	sampleTrailerRecord       string
-	samplePackedTrailerRecord string
-	sampleJ1Segment           string
-	sampleJ2Segment           string
-	sampleK1Segment           string
-	sampleK2Segment           string
-	sampleK3Segment           string
-	sampleK4Segment           string
-	sampleL1Segment           string
-	sampleN1Segment           string
+	sampleBaseSegment         []byte
+	samplePackedBaseSegment   []byte
+	sampleHeaderRecord        []byte
+	samplePackedHeaderRecord  []byte
+	sampleTrailerRecord       []byte
+	samplePackedTrailerRecord []byte
+	sampleJ1Segment           []byte
+	sampleJ2Segment           []byte
+	sampleK1Segment           []byte
+	sampleK2Segment           []byte
+	sampleK3Segment           []byte
+	sampleK4Segment           []byte
+	sampleL1Segment           []byte
+	sampleN1Segment           []byte
 }
 
 var _ = check.Suite(&SegmentTest{})
