@@ -210,7 +210,7 @@ func NewReader(r io.Reader) *Reader {
 	return reader
 }
 
-//scanRecord allows reader to split metro file by each record
+// scanRecord allows reader to split metro file by each record
 func scanRecord(data []byte, atEOF bool) (advance int, token []byte, err error) {
 
 	getStripedLength := func() int {
