@@ -8,8 +8,8 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/moov-io/base v0.34.0
 	github.com/spf13/cobra v1.5.0
-	golang.org/x/oauth2 v0.0.0-20220808172628-8227340efae7
 	github.com/stretchr/testify v1.8.0
+	golang.org/x/oauth2 v0.0.0-20220822191816-0ebed06d0094
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 )
 
