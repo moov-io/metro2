@@ -18,7 +18,6 @@ import (
 )
 
 func parseInputFromRequest(r *http.Request) (file.File, error) {
-
 	src, _, err := r.FormFile("file")
 	if err != nil {
 

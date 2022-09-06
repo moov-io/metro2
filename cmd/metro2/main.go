@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -62,12 +63,20 @@ var webCmd = &cobra.Command{
 		port, _ := cmd.Flags().GetString("port")
 		fmt.Fprintf(os.Stdout, "Starting web server on port %s\n\n", port)
 
-		listen := "0.0.0.0:" + port
-		h, _ := server.ConfigureHandlers()
+		timeout, _ := time.ParseDuration("30s")
+		handler, _ := server.ConfigureHandlers()
+		serve := &http.Server{
+			Addr:              "0.0.0.0:" + port,
+			Handler:           handler,
+			ReadTimeout:       timeout,
+			ReadHeaderTimeout: timeout,
+			WriteTimeout:      timeout,
+			IdleTimeout:       timeout,
+		}
+
 		test, _ := cmd.Flags().GetBool("test")
 		if !test {
-			err := http.ListenAndServe(listen, h)
-			if err != nil {
+			if err := serve.ListenAndServe(); err != nil {
 				return err
 			}
 		}
