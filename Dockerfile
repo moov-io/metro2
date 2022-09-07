@@ -8,7 +8,7 @@ RUN make build
 USER moov
 
 FROM scratch
-LABEL maintainer="Moov <support@moov.io>"
+LABEL maintainer="Moov <oss@moov.io>"
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /go/src/github.com/moov-io/metro2/bin/metro2 /bin/metro2
