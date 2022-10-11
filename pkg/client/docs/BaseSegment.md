@@ -54,7 +54,7 @@ Name | Type | Description | Notes
 
 ### NewBaseSegment
 
-`func NewBaseSegment(recordDescriptorWord int32, identificationNumber string, consumerAccountNumber string, accountType string, highestCredit int32, termsDuration string, accountStatus string, paymentHistoryProfile string, currentBalance int32, dateAccountInformation time.Time, surname string, firstName string, socialSecurityNumber int32, dateBirth time.Time, ecoaCode string, firstLineAddress string, state string, zipCode string, ) *BaseSegment`
+`func NewBaseSegment(recordDescriptorWord int32, identificationNumber string, consumerAccountNumber string, accountType string, termsDuration string, accountStatus string, paymentHistoryProfile string, currentBalance int32, dateAccountInformation time.Time, surname string, firstName string, socialSecurityNumber int32, dateBirth time.Time, ecoaCode string, firstLineAddress string, state string, zipCode string, ) *BaseSegment`
 
 NewBaseSegment instantiates a new BaseSegment object
 This constructor will assign default values to properties that have it defined,
