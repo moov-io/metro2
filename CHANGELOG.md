@@ -1,3 +1,13 @@
+## v0.5.1 (Released 2022-10-11)
+
+IMPROVEMENTS
+
+- fix: changed highest credit as omit field
+
+BUILD
+
+- fix(deps): update golang.org/x/oauth2 digest to b44042a
+
 ## v0.5.0 (Released 2022-09-23)
 
 IMPROVEMENTS
