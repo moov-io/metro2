@@ -121,7 +121,7 @@ type BaseSegment struct {
 	//  Revolving = Highest amount of credit utilized by the consumer
 	//
 	// For companies who report returned checks, such as collection agencies, report the original amount of the check, excluding fees and interest.
-	HighestCredit int `json:"highestCredit" validate:"required"`
+	HighestCredit int `json:"highestCredit,omitempty"`
 
 	// Contains the duration of credit extended.
 	//

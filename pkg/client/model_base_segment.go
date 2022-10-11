@@ -27,7 +27,7 @@ type BaseSegment struct {
 	AccountType string `json:"accountType"`
 	DateOpened *time.Time `json:"dateOpened,omitempty"`
 	CreditLimit *int32 `json:"creditLimit,omitempty"`
-	HighestCredit int32 `json:"highestCredit"`
+	HighestCredit *int32 `json:"highestCredit,omitempty"`
 	TermsDuration string `json:"termsDuration"`
 	TermsFrequency *string `json:"termsFrequency,omitempty"`
 	ScheduledMonthlyPaymentAmount *int32 `json:"scheduledMonthlyPaymentAmount,omitempty"`
@@ -68,13 +68,12 @@ type BaseSegment struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBaseSegment(recordDescriptorWord int32, identificationNumber string, consumerAccountNumber string, accountType string, highestCredit int32, termsDuration string, accountStatus string, paymentHistoryProfile string, currentBalance int32, dateAccountInformation time.Time, surname string, firstName string, socialSecurityNumber int32, dateBirth time.Time, ecoaCode string, firstLineAddress string, state string, zipCode string) *BaseSegment {
+func NewBaseSegment(recordDescriptorWord int32, identificationNumber string, consumerAccountNumber string, accountType string, termsDuration string, accountStatus string, paymentHistoryProfile string, currentBalance int32, dateAccountInformation time.Time, surname string, firstName string, socialSecurityNumber int32, dateBirth time.Time, ecoaCode string, firstLineAddress string, state string, zipCode string) *BaseSegment {
 	this := BaseSegment{}
 	this.RecordDescriptorWord = recordDescriptorWord
 	this.IdentificationNumber = identificationNumber
 	this.ConsumerAccountNumber = consumerAccountNumber
 	this.AccountType = accountType
-	this.HighestCredit = highestCredit
 	this.TermsDuration = termsDuration
 	this.AccountStatus = accountStatus
 	this.PaymentHistoryProfile = paymentHistoryProfile
@@ -389,26 +388,25 @@ func (o *BaseSegment) SetCreditLimit(v int32) {
 
 // GetHighestCredit returns the HighestCredit field value
 func (o *BaseSegment) GetHighestCredit() int32 {
-	if o == nil {
+	if o == nil || o.HighestCredit == nil {
 		var ret int32
 		return ret
 	}
-
-	return o.HighestCredit
+	return *o.HighestCredit
 }
 
 // GetHighestCreditOk returns a tuple with the HighestCredit field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetHighestCreditOk() (*int32, bool) {
-	if o == nil  {
+	if o == nil || o.HighestCredit == nil {
 		return nil, false
 	}
-	return &o.HighestCredit, true
+	return o.HighestCredit, true
 }
 
 // SetHighestCredit sets field value
 func (o *BaseSegment) SetHighestCredit(v int32) {
-	o.HighestCredit = v
+	o.HighestCredit = &v
 }
 
 // GetTermsDuration returns the TermsDuration field value
