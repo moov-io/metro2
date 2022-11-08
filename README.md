@@ -42,7 +42,7 @@ Metro2 implements a reader, writer, and validator for consumer credit history re
   - [As a command line tool](#command-line)
   - As a Package
       - [Go Library](#go-library)
-      - [Installation](#package-installation)  
+      - [Installation](#package-installation)
       - [Overview](#package-overview)
       - [Examples](#package-examples)
 - [Learn about Metro 2](#learn-about-metro-2)
@@ -170,7 +170,7 @@ Each interaction that the library supports is exposed in a command-line option:
 
 ### Go library
 
-This project uses [Go Modules](https://github.com/golang/go/wiki/Modules) and uses Go v1.14 or higher. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
+This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.18 or newer. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
 
 ### Package Installation
 ```
@@ -234,7 +234,7 @@ type PackedTrailerRecord // for packed file format
 
 Record has some segments to describe special form
 
-Base Record can use correctly the features of appendable segments  
+Base Record can use correctly the features of appendable segments
 
 ```
 type Record
@@ -268,14 +268,14 @@ type N1Segment
 
 File object has type for metro packed file and metro character file, should specify file type when creating new file
 ```
-f, err := file.NewFile(utils.PackedFileFormat) 
+f, err := file.NewFile(utils.PackedFileFormat)
 err = json.Unmarshal([]byte(buf), f)
 ```
 
 File object will create from metro file buffer directly, CreateFile function will create new file and will set file type based on metro file body
 ```
 r, _ = os.Open(filepath.Join("...))
-f, err := file.NewFileFromReader(r) 
+f, err := file.NewFileFromReader(r)
 ```
 
 File object will manage records using member functions
@@ -291,7 +291,7 @@ newBase := lib.HeaderRecord{}
 ...
 ```
 
-Similarly, Record can manage the appendable segments 
+Similarly, Record can manage the appendable segments
 
 ## Learn about Metro 2
 - [Intro to Metro 2](https://www.cdiaonline.org/resources/furnishers-of-data-overview/metro2-information/)
@@ -313,7 +313,7 @@ Twitter [@moov](https://twitter.com/moov)	| You can follow Moov.io's Twitter fee
 
 Yes please! Please review our [Contributing guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) to get started!
 
-This project uses [Go Modules](https://github.com/golang/go/wiki/Modules) and uses Go v1.14 or higher. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
+This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.18 or newer. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
 
 ### Releasing
 
