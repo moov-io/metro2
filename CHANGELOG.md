@@ -1,3 +1,15 @@
+## v0.5.2 (Released 2022-11-29)
+
+BUG FIXES
+
+- fix: changed spec of CurrentBalance ([#132](https://github.com/moov-io/metro2/pull/132))
+
+BUILD
+
+- fix(deps): update module github.com/moov-io/base to v0.36.2
+- fix(deps): update module github.com/spf13/cobra to v1.6.1
+- fix(deps): update module golang.org/x/oauth2 to v0.2.0
+
 ## v0.5.1 (Released 2022-10-11)
 
 IMPROVEMENTS
