@@ -41,7 +41,7 @@ var (
 		"PaymentHistoryProfile":         {126, 24, alphanumeric, required},
 		"SpecialComment":                {150, 2, alphanumeric, applicable},
 		"ComplianceConditionCode":       {152, 2, alphanumeric, applicable},
-		"CurrentBalance":                {154, 9, numeric, required},
+		"CurrentBalance":                {154, 9, numeric, applicable},
 		"AmountPastDue":                 {163, 9, numeric, applicable},
 		"OriginalChargeOffAmount":       {172, 9, numeric, applicable},
 		"DateAccountInformation":        {181, 8, date, required},
