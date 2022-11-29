@@ -161,7 +161,7 @@ func (t *SegmentTest) TestPackedBaseSegment(c *check.C) {
 	c.Assert(record, check.NotNil)
 
 	record.CurrentBalance = 0
-	
+
 	err = record.Validate()
 	c.Assert(err, check.IsNil)
 
