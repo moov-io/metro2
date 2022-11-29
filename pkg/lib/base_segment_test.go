@@ -48,6 +48,18 @@ func (t *SegmentTest) TestBaseSegment(c *check.C) {
 	c.Assert(len(list), check.Equals, 1)
 	list = segment.GetSegments("unknown")
 	c.Assert(len(list), check.Equals, 0)
+
+	record, ok := segment.(*BaseSegment)
+	c.Assert(ok, check.Equals, true)
+	c.Assert(record, check.NotNil)
+
+	record.CurrentBalance = 0
+
+	err = record.Validate()
+	c.Assert(err, check.IsNil)
+
+	err = segment.Validate()
+	c.Assert(err, check.IsNil)
 }
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidData(c *check.C) {
@@ -143,6 +155,18 @@ func (t *SegmentTest) TestPackedBaseSegment(c *check.C) {
 	c.Assert(len(list), check.Equals, 1)
 	list = segment.GetSegments("unknown")
 	c.Assert(len(list), check.Equals, 0)
+
+	record, ok := segment.(*PackedBaseSegment)
+	c.Assert(ok, check.Equals, true)
+	c.Assert(record, check.NotNil)
+
+	record.CurrentBalance = 0
+	
+	err = record.Validate()
+	c.Assert(err, check.IsNil)
+
+	err = segment.Validate()
+	c.Assert(err, check.IsNil)
 }
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidData(c *check.C) {
