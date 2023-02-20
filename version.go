@@ -4,4 +4,4 @@
 
 package metro2
 
-const Version = "v0.5.2"
+const Version = "v0.6.0"

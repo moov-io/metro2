@@ -1,3 +1,16 @@
+## v0.6.0 (Released 2023-02-20)
+
+IMPROVEMENTS
+
+- client: update openapi-generator to 6.4.0
+
+BUILD
+
+- build: upgrade golang to 1.20 and tidy deps
+- docs: update deps
+- fix(deps): update module github.com/moov-io/base to v0.39.0
+- fix(deps): update module golang.org/x/oauth2 to v0.5.0
+
 ## v0.5.2 (Released 2022-11-29)
 
 BUG FIXES
