@@ -14,11 +14,14 @@ import (
 	"encoding/json"
 )
 
+// checks if the K2Segment type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &K2Segment{}
+
 // K2Segment struct for K2Segment
 type K2Segment struct {
-	SegmentIdentifier string `json:"segmentIdentifier"`
-	PurchasedIndicator int32 `json:"purchasedIndicator"`
-	PurchasedName string `json:"purchasedName"`
+	SegmentIdentifier  string `json:"segmentIdentifier"`
+	PurchasedIndicator int32  `json:"purchasedIndicator"`
+	PurchasedName      string `json:"purchasedName"`
 }
 
 // NewK2Segment instantiates a new K2Segment object
@@ -54,7 +57,7 @@ func (o *K2Segment) GetSegmentIdentifier() string {
 // GetSegmentIdentifierOk returns a tuple with the SegmentIdentifier field value
 // and a boolean to check if the value has been set.
 func (o *K2Segment) GetSegmentIdentifierOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.SegmentIdentifier, true
@@ -78,7 +81,7 @@ func (o *K2Segment) GetPurchasedIndicator() int32 {
 // GetPurchasedIndicatorOk returns a tuple with the PurchasedIndicator field value
 // and a boolean to check if the value has been set.
 func (o *K2Segment) GetPurchasedIndicatorOk() (*int32, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.PurchasedIndicator, true
@@ -102,7 +105,7 @@ func (o *K2Segment) GetPurchasedName() string {
 // GetPurchasedNameOk returns a tuple with the PurchasedName field value
 // and a boolean to check if the value has been set.
 func (o *K2Segment) GetPurchasedNameOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.PurchasedName, true
@@ -114,17 +117,19 @@ func (o *K2Segment) SetPurchasedName(v string) {
 }
 
 func (o K2Segment) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["segmentIdentifier"] = o.SegmentIdentifier
-	}
-	if true {
-		toSerialize["purchasedIndicator"] = o.PurchasedIndicator
-	}
-	if true {
-		toSerialize["purchasedName"] = o.PurchasedName
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o K2Segment) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	toSerialize["segmentIdentifier"] = o.SegmentIdentifier
+	toSerialize["purchasedIndicator"] = o.PurchasedIndicator
+	toSerialize["purchasedName"] = o.PurchasedName
+	return toSerialize, nil
 }
 
 type NullableK2Segment struct {
@@ -162,5 +167,3 @@ func (v *NullableK2Segment) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

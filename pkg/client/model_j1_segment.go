@@ -15,18 +15,21 @@ import (
 	"time"
 )
 
+// checks if the J1Segment type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &J1Segment{}
+
 // J1Segment struct for J1Segment
 type J1Segment struct {
-	SegmentIdentifier string `json:"segmentIdentifier"`
-	Surname string `json:"surname"`
-	FirstName string `json:"firstName"`
-	MiddleName *string `json:"middleName,omitempty"`
-	GenerationCode *string `json:"generationCode,omitempty"`
-	SocialSecurityNumber int32 `json:"socialSecurityNumber"`
-	DateBirth time.Time `json:"dateBirth"`
-	TelephoneNumber *int64 `json:"telephoneNumber,omitempty"`
-	EcoaCode string `json:"ecoaCode"`
-	ConsumerInformationIndicator *string `json:"consumerInformationIndicator,omitempty"`
+	SegmentIdentifier            string    `json:"segmentIdentifier"`
+	Surname                      string    `json:"surname"`
+	FirstName                    string    `json:"firstName"`
+	MiddleName                   *string   `json:"middleName,omitempty"`
+	GenerationCode               *string   `json:"generationCode,omitempty"`
+	SocialSecurityNumber         int32     `json:"socialSecurityNumber"`
+	DateBirth                    time.Time `json:"dateBirth"`
+	TelephoneNumber              *int64    `json:"telephoneNumber,omitempty"`
+	EcoaCode                     string    `json:"ecoaCode"`
+	ConsumerInformationIndicator *string   `json:"consumerInformationIndicator,omitempty"`
 }
 
 // NewJ1Segment instantiates a new J1Segment object
@@ -65,7 +68,7 @@ func (o *J1Segment) GetSegmentIdentifier() string {
 // GetSegmentIdentifierOk returns a tuple with the SegmentIdentifier field value
 // and a boolean to check if the value has been set.
 func (o *J1Segment) GetSegmentIdentifierOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.SegmentIdentifier, true
@@ -89,7 +92,7 @@ func (o *J1Segment) GetSurname() string {
 // GetSurnameOk returns a tuple with the Surname field value
 // and a boolean to check if the value has been set.
 func (o *J1Segment) GetSurnameOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.Surname, true
@@ -113,7 +116,7 @@ func (o *J1Segment) GetFirstName() string {
 // GetFirstNameOk returns a tuple with the FirstName field value
 // and a boolean to check if the value has been set.
 func (o *J1Segment) GetFirstNameOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.FirstName, true
@@ -126,7 +129,7 @@ func (o *J1Segment) SetFirstName(v string) {
 
 // GetMiddleName returns the MiddleName field value if set, zero value otherwise.
 func (o *J1Segment) GetMiddleName() string {
-	if o == nil || o.MiddleName == nil {
+	if o == nil || IsNil(o.MiddleName) {
 		var ret string
 		return ret
 	}
@@ -136,7 +139,7 @@ func (o *J1Segment) GetMiddleName() string {
 // GetMiddleNameOk returns a tuple with the MiddleName field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J1Segment) GetMiddleNameOk() (*string, bool) {
-	if o == nil || o.MiddleName == nil {
+	if o == nil || IsNil(o.MiddleName) {
 		return nil, false
 	}
 	return o.MiddleName, true
@@ -144,7 +147,7 @@ func (o *J1Segment) GetMiddleNameOk() (*string, bool) {
 
 // HasMiddleName returns a boolean if a field has been set.
 func (o *J1Segment) HasMiddleName() bool {
-	if o != nil && o.MiddleName != nil {
+	if o != nil && !IsNil(o.MiddleName) {
 		return true
 	}
 
@@ -158,7 +161,7 @@ func (o *J1Segment) SetMiddleName(v string) {
 
 // GetGenerationCode returns the GenerationCode field value if set, zero value otherwise.
 func (o *J1Segment) GetGenerationCode() string {
-	if o == nil || o.GenerationCode == nil {
+	if o == nil || IsNil(o.GenerationCode) {
 		var ret string
 		return ret
 	}
@@ -168,7 +171,7 @@ func (o *J1Segment) GetGenerationCode() string {
 // GetGenerationCodeOk returns a tuple with the GenerationCode field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J1Segment) GetGenerationCodeOk() (*string, bool) {
-	if o == nil || o.GenerationCode == nil {
+	if o == nil || IsNil(o.GenerationCode) {
 		return nil, false
 	}
 	return o.GenerationCode, true
@@ -176,7 +179,7 @@ func (o *J1Segment) GetGenerationCodeOk() (*string, bool) {
 
 // HasGenerationCode returns a boolean if a field has been set.
 func (o *J1Segment) HasGenerationCode() bool {
-	if o != nil && o.GenerationCode != nil {
+	if o != nil && !IsNil(o.GenerationCode) {
 		return true
 	}
 
@@ -201,7 +204,7 @@ func (o *J1Segment) GetSocialSecurityNumber() int32 {
 // GetSocialSecurityNumberOk returns a tuple with the SocialSecurityNumber field value
 // and a boolean to check if the value has been set.
 func (o *J1Segment) GetSocialSecurityNumberOk() (*int32, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.SocialSecurityNumber, true
@@ -225,7 +228,7 @@ func (o *J1Segment) GetDateBirth() time.Time {
 // GetDateBirthOk returns a tuple with the DateBirth field value
 // and a boolean to check if the value has been set.
 func (o *J1Segment) GetDateBirthOk() (*time.Time, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.DateBirth, true
@@ -238,7 +241,7 @@ func (o *J1Segment) SetDateBirth(v time.Time) {
 
 // GetTelephoneNumber returns the TelephoneNumber field value if set, zero value otherwise.
 func (o *J1Segment) GetTelephoneNumber() int64 {
-	if o == nil || o.TelephoneNumber == nil {
+	if o == nil || IsNil(o.TelephoneNumber) {
 		var ret int64
 		return ret
 	}
@@ -248,7 +251,7 @@ func (o *J1Segment) GetTelephoneNumber() int64 {
 // GetTelephoneNumberOk returns a tuple with the TelephoneNumber field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J1Segment) GetTelephoneNumberOk() (*int64, bool) {
-	if o == nil || o.TelephoneNumber == nil {
+	if o == nil || IsNil(o.TelephoneNumber) {
 		return nil, false
 	}
 	return o.TelephoneNumber, true
@@ -256,7 +259,7 @@ func (o *J1Segment) GetTelephoneNumberOk() (*int64, bool) {
 
 // HasTelephoneNumber returns a boolean if a field has been set.
 func (o *J1Segment) HasTelephoneNumber() bool {
-	if o != nil && o.TelephoneNumber != nil {
+	if o != nil && !IsNil(o.TelephoneNumber) {
 		return true
 	}
 
@@ -281,7 +284,7 @@ func (o *J1Segment) GetEcoaCode() string {
 // GetEcoaCodeOk returns a tuple with the EcoaCode field value
 // and a boolean to check if the value has been set.
 func (o *J1Segment) GetEcoaCodeOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.EcoaCode, true
@@ -294,7 +297,7 @@ func (o *J1Segment) SetEcoaCode(v string) {
 
 // GetConsumerInformationIndicator returns the ConsumerInformationIndicator field value if set, zero value otherwise.
 func (o *J1Segment) GetConsumerInformationIndicator() string {
-	if o == nil || o.ConsumerInformationIndicator == nil {
+	if o == nil || IsNil(o.ConsumerInformationIndicator) {
 		var ret string
 		return ret
 	}
@@ -304,7 +307,7 @@ func (o *J1Segment) GetConsumerInformationIndicator() string {
 // GetConsumerInformationIndicatorOk returns a tuple with the ConsumerInformationIndicator field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J1Segment) GetConsumerInformationIndicatorOk() (*string, bool) {
-	if o == nil || o.ConsumerInformationIndicator == nil {
+	if o == nil || IsNil(o.ConsumerInformationIndicator) {
 		return nil, false
 	}
 	return o.ConsumerInformationIndicator, true
@@ -312,7 +315,7 @@ func (o *J1Segment) GetConsumerInformationIndicatorOk() (*string, bool) {
 
 // HasConsumerInformationIndicator returns a boolean if a field has been set.
 func (o *J1Segment) HasConsumerInformationIndicator() bool {
-	if o != nil && o.ConsumerInformationIndicator != nil {
+	if o != nil && !IsNil(o.ConsumerInformationIndicator) {
 		return true
 	}
 
@@ -325,38 +328,34 @@ func (o *J1Segment) SetConsumerInformationIndicator(v string) {
 }
 
 func (o J1Segment) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["segmentIdentifier"] = o.SegmentIdentifier
-	}
-	if true {
-		toSerialize["surname"] = o.Surname
-	}
-	if true {
-		toSerialize["firstName"] = o.FirstName
-	}
-	if o.MiddleName != nil {
-		toSerialize["middleName"] = o.MiddleName
-	}
-	if o.GenerationCode != nil {
-		toSerialize["generationCode"] = o.GenerationCode
-	}
-	if true {
-		toSerialize["socialSecurityNumber"] = o.SocialSecurityNumber
-	}
-	if true {
-		toSerialize["dateBirth"] = o.DateBirth
-	}
-	if o.TelephoneNumber != nil {
-		toSerialize["telephoneNumber"] = o.TelephoneNumber
-	}
-	if true {
-		toSerialize["ecoaCode"] = o.EcoaCode
-	}
-	if o.ConsumerInformationIndicator != nil {
-		toSerialize["consumerInformationIndicator"] = o.ConsumerInformationIndicator
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o J1Segment) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	toSerialize["segmentIdentifier"] = o.SegmentIdentifier
+	toSerialize["surname"] = o.Surname
+	toSerialize["firstName"] = o.FirstName
+	if !IsNil(o.MiddleName) {
+		toSerialize["middleName"] = o.MiddleName
+	}
+	if !IsNil(o.GenerationCode) {
+		toSerialize["generationCode"] = o.GenerationCode
+	}
+	toSerialize["socialSecurityNumber"] = o.SocialSecurityNumber
+	toSerialize["dateBirth"] = o.DateBirth
+	if !IsNil(o.TelephoneNumber) {
+		toSerialize["telephoneNumber"] = o.TelephoneNumber
+	}
+	toSerialize["ecoaCode"] = o.EcoaCode
+	if !IsNil(o.ConsumerInformationIndicator) {
+		toSerialize["consumerInformationIndicator"] = o.ConsumerInformationIndicator
+	}
+	return toSerialize, nil
 }
 
 type NullableJ1Segment struct {
@@ -394,5 +393,3 @@ func (v *NullableJ1Segment) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

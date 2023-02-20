@@ -15,26 +15,29 @@ import (
 	"time"
 )
 
+// checks if the J2Segment type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &J2Segment{}
+
 // J2Segment struct for J2Segment
 type J2Segment struct {
-	SegmentIdentifier string `json:"segmentIdentifier"`
-	Surname string `json:"surname"`
-	FirstName string `json:"firstName"`
-	MiddleName *string `json:"middleName,omitempty"`
-	GenerationCode *string `json:"generationCode,omitempty"`
-	SocialSecurityNumber int32 `json:"socialSecurityNumber"`
-	DateBirth time.Time `json:"dateBirth"`
-	TelephoneNumber *int64 `json:"telephoneNumber,omitempty"`
-	EcoaCode string `json:"ecoaCode"`
-	ConsumerInformationIndicator *string `json:"consumerInformationIndicator,omitempty"`
-	CountryCode *string `json:"countryCode,omitempty"`
-	FirstLineAddress string `json:"firstLineAddress"`
-	SecondLineAddress *string `json:"secondLineAddress,omitempty"`
-	City string `json:"city"`
-	State string `json:"state"`
-	ZipCode string `json:"zipCode"`
-	AddressIndicator *string `json:"addressIndicator,omitempty"`
-	ResidenceCode *string `json:"residenceCode,omitempty"`
+	SegmentIdentifier            string    `json:"segmentIdentifier"`
+	Surname                      string    `json:"surname"`
+	FirstName                    string    `json:"firstName"`
+	MiddleName                   *string   `json:"middleName,omitempty"`
+	GenerationCode               *string   `json:"generationCode,omitempty"`
+	SocialSecurityNumber         int32     `json:"socialSecurityNumber"`
+	DateBirth                    time.Time `json:"dateBirth"`
+	TelephoneNumber              *int64    `json:"telephoneNumber,omitempty"`
+	EcoaCode                     string    `json:"ecoaCode"`
+	ConsumerInformationIndicator *string   `json:"consumerInformationIndicator,omitempty"`
+	CountryCode                  *string   `json:"countryCode,omitempty"`
+	FirstLineAddress             string    `json:"firstLineAddress"`
+	SecondLineAddress            *string   `json:"secondLineAddress,omitempty"`
+	City                         string    `json:"city"`
+	State                        string    `json:"state"`
+	ZipCode                      string    `json:"zipCode"`
+	AddressIndicator             *string   `json:"addressIndicator,omitempty"`
+	ResidenceCode                *string   `json:"residenceCode,omitempty"`
 }
 
 // NewJ2Segment instantiates a new J2Segment object
@@ -77,7 +80,7 @@ func (o *J2Segment) GetSegmentIdentifier() string {
 // GetSegmentIdentifierOk returns a tuple with the SegmentIdentifier field value
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetSegmentIdentifierOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.SegmentIdentifier, true
@@ -101,7 +104,7 @@ func (o *J2Segment) GetSurname() string {
 // GetSurnameOk returns a tuple with the Surname field value
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetSurnameOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.Surname, true
@@ -125,7 +128,7 @@ func (o *J2Segment) GetFirstName() string {
 // GetFirstNameOk returns a tuple with the FirstName field value
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetFirstNameOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.FirstName, true
@@ -138,7 +141,7 @@ func (o *J2Segment) SetFirstName(v string) {
 
 // GetMiddleName returns the MiddleName field value if set, zero value otherwise.
 func (o *J2Segment) GetMiddleName() string {
-	if o == nil || o.MiddleName == nil {
+	if o == nil || IsNil(o.MiddleName) {
 		var ret string
 		return ret
 	}
@@ -148,7 +151,7 @@ func (o *J2Segment) GetMiddleName() string {
 // GetMiddleNameOk returns a tuple with the MiddleName field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetMiddleNameOk() (*string, bool) {
-	if o == nil || o.MiddleName == nil {
+	if o == nil || IsNil(o.MiddleName) {
 		return nil, false
 	}
 	return o.MiddleName, true
@@ -156,7 +159,7 @@ func (o *J2Segment) GetMiddleNameOk() (*string, bool) {
 
 // HasMiddleName returns a boolean if a field has been set.
 func (o *J2Segment) HasMiddleName() bool {
-	if o != nil && o.MiddleName != nil {
+	if o != nil && !IsNil(o.MiddleName) {
 		return true
 	}
 
@@ -170,7 +173,7 @@ func (o *J2Segment) SetMiddleName(v string) {
 
 // GetGenerationCode returns the GenerationCode field value if set, zero value otherwise.
 func (o *J2Segment) GetGenerationCode() string {
-	if o == nil || o.GenerationCode == nil {
+	if o == nil || IsNil(o.GenerationCode) {
 		var ret string
 		return ret
 	}
@@ -180,7 +183,7 @@ func (o *J2Segment) GetGenerationCode() string {
 // GetGenerationCodeOk returns a tuple with the GenerationCode field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetGenerationCodeOk() (*string, bool) {
-	if o == nil || o.GenerationCode == nil {
+	if o == nil || IsNil(o.GenerationCode) {
 		return nil, false
 	}
 	return o.GenerationCode, true
@@ -188,7 +191,7 @@ func (o *J2Segment) GetGenerationCodeOk() (*string, bool) {
 
 // HasGenerationCode returns a boolean if a field has been set.
 func (o *J2Segment) HasGenerationCode() bool {
-	if o != nil && o.GenerationCode != nil {
+	if o != nil && !IsNil(o.GenerationCode) {
 		return true
 	}
 
@@ -213,7 +216,7 @@ func (o *J2Segment) GetSocialSecurityNumber() int32 {
 // GetSocialSecurityNumberOk returns a tuple with the SocialSecurityNumber field value
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetSocialSecurityNumberOk() (*int32, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.SocialSecurityNumber, true
@@ -237,7 +240,7 @@ func (o *J2Segment) GetDateBirth() time.Time {
 // GetDateBirthOk returns a tuple with the DateBirth field value
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetDateBirthOk() (*time.Time, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.DateBirth, true
@@ -250,7 +253,7 @@ func (o *J2Segment) SetDateBirth(v time.Time) {
 
 // GetTelephoneNumber returns the TelephoneNumber field value if set, zero value otherwise.
 func (o *J2Segment) GetTelephoneNumber() int64 {
-	if o == nil || o.TelephoneNumber == nil {
+	if o == nil || IsNil(o.TelephoneNumber) {
 		var ret int64
 		return ret
 	}
@@ -260,7 +263,7 @@ func (o *J2Segment) GetTelephoneNumber() int64 {
 // GetTelephoneNumberOk returns a tuple with the TelephoneNumber field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetTelephoneNumberOk() (*int64, bool) {
-	if o == nil || o.TelephoneNumber == nil {
+	if o == nil || IsNil(o.TelephoneNumber) {
 		return nil, false
 	}
 	return o.TelephoneNumber, true
@@ -268,7 +271,7 @@ func (o *J2Segment) GetTelephoneNumberOk() (*int64, bool) {
 
 // HasTelephoneNumber returns a boolean if a field has been set.
 func (o *J2Segment) HasTelephoneNumber() bool {
-	if o != nil && o.TelephoneNumber != nil {
+	if o != nil && !IsNil(o.TelephoneNumber) {
 		return true
 	}
 
@@ -293,7 +296,7 @@ func (o *J2Segment) GetEcoaCode() string {
 // GetEcoaCodeOk returns a tuple with the EcoaCode field value
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetEcoaCodeOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.EcoaCode, true
@@ -306,7 +309,7 @@ func (o *J2Segment) SetEcoaCode(v string) {
 
 // GetConsumerInformationIndicator returns the ConsumerInformationIndicator field value if set, zero value otherwise.
 func (o *J2Segment) GetConsumerInformationIndicator() string {
-	if o == nil || o.ConsumerInformationIndicator == nil {
+	if o == nil || IsNil(o.ConsumerInformationIndicator) {
 		var ret string
 		return ret
 	}
@@ -316,7 +319,7 @@ func (o *J2Segment) GetConsumerInformationIndicator() string {
 // GetConsumerInformationIndicatorOk returns a tuple with the ConsumerInformationIndicator field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetConsumerInformationIndicatorOk() (*string, bool) {
-	if o == nil || o.ConsumerInformationIndicator == nil {
+	if o == nil || IsNil(o.ConsumerInformationIndicator) {
 		return nil, false
 	}
 	return o.ConsumerInformationIndicator, true
@@ -324,7 +327,7 @@ func (o *J2Segment) GetConsumerInformationIndicatorOk() (*string, bool) {
 
 // HasConsumerInformationIndicator returns a boolean if a field has been set.
 func (o *J2Segment) HasConsumerInformationIndicator() bool {
-	if o != nil && o.ConsumerInformationIndicator != nil {
+	if o != nil && !IsNil(o.ConsumerInformationIndicator) {
 		return true
 	}
 
@@ -338,7 +341,7 @@ func (o *J2Segment) SetConsumerInformationIndicator(v string) {
 
 // GetCountryCode returns the CountryCode field value if set, zero value otherwise.
 func (o *J2Segment) GetCountryCode() string {
-	if o == nil || o.CountryCode == nil {
+	if o == nil || IsNil(o.CountryCode) {
 		var ret string
 		return ret
 	}
@@ -348,7 +351,7 @@ func (o *J2Segment) GetCountryCode() string {
 // GetCountryCodeOk returns a tuple with the CountryCode field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetCountryCodeOk() (*string, bool) {
-	if o == nil || o.CountryCode == nil {
+	if o == nil || IsNil(o.CountryCode) {
 		return nil, false
 	}
 	return o.CountryCode, true
@@ -356,7 +359,7 @@ func (o *J2Segment) GetCountryCodeOk() (*string, bool) {
 
 // HasCountryCode returns a boolean if a field has been set.
 func (o *J2Segment) HasCountryCode() bool {
-	if o != nil && o.CountryCode != nil {
+	if o != nil && !IsNil(o.CountryCode) {
 		return true
 	}
 
@@ -381,7 +384,7 @@ func (o *J2Segment) GetFirstLineAddress() string {
 // GetFirstLineAddressOk returns a tuple with the FirstLineAddress field value
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetFirstLineAddressOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.FirstLineAddress, true
@@ -394,7 +397,7 @@ func (o *J2Segment) SetFirstLineAddress(v string) {
 
 // GetSecondLineAddress returns the SecondLineAddress field value if set, zero value otherwise.
 func (o *J2Segment) GetSecondLineAddress() string {
-	if o == nil || o.SecondLineAddress == nil {
+	if o == nil || IsNil(o.SecondLineAddress) {
 		var ret string
 		return ret
 	}
@@ -404,7 +407,7 @@ func (o *J2Segment) GetSecondLineAddress() string {
 // GetSecondLineAddressOk returns a tuple with the SecondLineAddress field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetSecondLineAddressOk() (*string, bool) {
-	if o == nil || o.SecondLineAddress == nil {
+	if o == nil || IsNil(o.SecondLineAddress) {
 		return nil, false
 	}
 	return o.SecondLineAddress, true
@@ -412,7 +415,7 @@ func (o *J2Segment) GetSecondLineAddressOk() (*string, bool) {
 
 // HasSecondLineAddress returns a boolean if a field has been set.
 func (o *J2Segment) HasSecondLineAddress() bool {
-	if o != nil && o.SecondLineAddress != nil {
+	if o != nil && !IsNil(o.SecondLineAddress) {
 		return true
 	}
 
@@ -437,7 +440,7 @@ func (o *J2Segment) GetCity() string {
 // GetCityOk returns a tuple with the City field value
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetCityOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.City, true
@@ -461,7 +464,7 @@ func (o *J2Segment) GetState() string {
 // GetStateOk returns a tuple with the State field value
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetStateOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.State, true
@@ -485,7 +488,7 @@ func (o *J2Segment) GetZipCode() string {
 // GetZipCodeOk returns a tuple with the ZipCode field value
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetZipCodeOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.ZipCode, true
@@ -498,7 +501,7 @@ func (o *J2Segment) SetZipCode(v string) {
 
 // GetAddressIndicator returns the AddressIndicator field value if set, zero value otherwise.
 func (o *J2Segment) GetAddressIndicator() string {
-	if o == nil || o.AddressIndicator == nil {
+	if o == nil || IsNil(o.AddressIndicator) {
 		var ret string
 		return ret
 	}
@@ -508,7 +511,7 @@ func (o *J2Segment) GetAddressIndicator() string {
 // GetAddressIndicatorOk returns a tuple with the AddressIndicator field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetAddressIndicatorOk() (*string, bool) {
-	if o == nil || o.AddressIndicator == nil {
+	if o == nil || IsNil(o.AddressIndicator) {
 		return nil, false
 	}
 	return o.AddressIndicator, true
@@ -516,7 +519,7 @@ func (o *J2Segment) GetAddressIndicatorOk() (*string, bool) {
 
 // HasAddressIndicator returns a boolean if a field has been set.
 func (o *J2Segment) HasAddressIndicator() bool {
-	if o != nil && o.AddressIndicator != nil {
+	if o != nil && !IsNil(o.AddressIndicator) {
 		return true
 	}
 
@@ -530,7 +533,7 @@ func (o *J2Segment) SetAddressIndicator(v string) {
 
 // GetResidenceCode returns the ResidenceCode field value if set, zero value otherwise.
 func (o *J2Segment) GetResidenceCode() string {
-	if o == nil || o.ResidenceCode == nil {
+	if o == nil || IsNil(o.ResidenceCode) {
 		var ret string
 		return ret
 	}
@@ -540,7 +543,7 @@ func (o *J2Segment) GetResidenceCode() string {
 // GetResidenceCodeOk returns a tuple with the ResidenceCode field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetResidenceCodeOk() (*string, bool) {
-	if o == nil || o.ResidenceCode == nil {
+	if o == nil || IsNil(o.ResidenceCode) {
 		return nil, false
 	}
 	return o.ResidenceCode, true
@@ -548,7 +551,7 @@ func (o *J2Segment) GetResidenceCodeOk() (*string, bool) {
 
 // HasResidenceCode returns a boolean if a field has been set.
 func (o *J2Segment) HasResidenceCode() bool {
-	if o != nil && o.ResidenceCode != nil {
+	if o != nil && !IsNil(o.ResidenceCode) {
 		return true
 	}
 
@@ -561,62 +564,50 @@ func (o *J2Segment) SetResidenceCode(v string) {
 }
 
 func (o J2Segment) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["segmentIdentifier"] = o.SegmentIdentifier
-	}
-	if true {
-		toSerialize["surname"] = o.Surname
-	}
-	if true {
-		toSerialize["firstName"] = o.FirstName
-	}
-	if o.MiddleName != nil {
-		toSerialize["middleName"] = o.MiddleName
-	}
-	if o.GenerationCode != nil {
-		toSerialize["generationCode"] = o.GenerationCode
-	}
-	if true {
-		toSerialize["socialSecurityNumber"] = o.SocialSecurityNumber
-	}
-	if true {
-		toSerialize["dateBirth"] = o.DateBirth
-	}
-	if o.TelephoneNumber != nil {
-		toSerialize["telephoneNumber"] = o.TelephoneNumber
-	}
-	if true {
-		toSerialize["ecoaCode"] = o.EcoaCode
-	}
-	if o.ConsumerInformationIndicator != nil {
-		toSerialize["consumerInformationIndicator"] = o.ConsumerInformationIndicator
-	}
-	if o.CountryCode != nil {
-		toSerialize["countryCode"] = o.CountryCode
-	}
-	if true {
-		toSerialize["firstLineAddress"] = o.FirstLineAddress
-	}
-	if o.SecondLineAddress != nil {
-		toSerialize["secondLineAddress"] = o.SecondLineAddress
-	}
-	if true {
-		toSerialize["city"] = o.City
-	}
-	if true {
-		toSerialize["state"] = o.State
-	}
-	if true {
-		toSerialize["zipCode"] = o.ZipCode
-	}
-	if o.AddressIndicator != nil {
-		toSerialize["addressIndicator"] = o.AddressIndicator
-	}
-	if o.ResidenceCode != nil {
-		toSerialize["residenceCode"] = o.ResidenceCode
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o J2Segment) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	toSerialize["segmentIdentifier"] = o.SegmentIdentifier
+	toSerialize["surname"] = o.Surname
+	toSerialize["firstName"] = o.FirstName
+	if !IsNil(o.MiddleName) {
+		toSerialize["middleName"] = o.MiddleName
+	}
+	if !IsNil(o.GenerationCode) {
+		toSerialize["generationCode"] = o.GenerationCode
+	}
+	toSerialize["socialSecurityNumber"] = o.SocialSecurityNumber
+	toSerialize["dateBirth"] = o.DateBirth
+	if !IsNil(o.TelephoneNumber) {
+		toSerialize["telephoneNumber"] = o.TelephoneNumber
+	}
+	toSerialize["ecoaCode"] = o.EcoaCode
+	if !IsNil(o.ConsumerInformationIndicator) {
+		toSerialize["consumerInformationIndicator"] = o.ConsumerInformationIndicator
+	}
+	if !IsNil(o.CountryCode) {
+		toSerialize["countryCode"] = o.CountryCode
+	}
+	toSerialize["firstLineAddress"] = o.FirstLineAddress
+	if !IsNil(o.SecondLineAddress) {
+		toSerialize["secondLineAddress"] = o.SecondLineAddress
+	}
+	toSerialize["city"] = o.City
+	toSerialize["state"] = o.State
+	toSerialize["zipCode"] = o.ZipCode
+	if !IsNil(o.AddressIndicator) {
+		toSerialize["addressIndicator"] = o.AddressIndicator
+	}
+	if !IsNil(o.ResidenceCode) {
+		toSerialize["residenceCode"] = o.ResidenceCode
+	}
+	return toSerialize, nil
 }
 
 type NullableJ2Segment struct {
@@ -654,5 +645,3 @@ func (v *NullableJ2Segment) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

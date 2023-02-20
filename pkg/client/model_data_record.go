@@ -14,17 +14,20 @@ import (
 	"encoding/json"
 )
 
+// checks if the DataRecord type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &DataRecord{}
+
 // DataRecord struct for DataRecord
 type DataRecord struct {
 	Base BaseSegment `json:"base"`
-	J1 []J1Segment `json:"j1,omitempty"`
-	J2 []J2Segment `json:"j2,omitempty"`
-	K1 *K1Segment `json:"k1,omitempty"`
-	K2 *K2Segment `json:"k2,omitempty"`
-	K3 *K3Segment `json:"k3,omitempty"`
-	K4 *K4Segment `json:"k4,omitempty"`
-	L1 *L1Segment `json:"l1,omitempty"`
-	N1 *N1Segment `json:"n1,omitempty"`
+	J1   []J1Segment `json:"j1,omitempty"`
+	J2   []J2Segment `json:"j2,omitempty"`
+	K1   *K1Segment  `json:"k1,omitempty"`
+	K2   *K2Segment  `json:"k2,omitempty"`
+	K3   *K3Segment  `json:"k3,omitempty"`
+	K4   *K4Segment  `json:"k4,omitempty"`
+	L1   *L1Segment  `json:"l1,omitempty"`
+	N1   *N1Segment  `json:"n1,omitempty"`
 }
 
 // NewDataRecord instantiates a new DataRecord object
@@ -58,7 +61,7 @@ func (o *DataRecord) GetBase() BaseSegment {
 // GetBaseOk returns a tuple with the Base field value
 // and a boolean to check if the value has been set.
 func (o *DataRecord) GetBaseOk() (*BaseSegment, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.Base, true
@@ -71,7 +74,7 @@ func (o *DataRecord) SetBase(v BaseSegment) {
 
 // GetJ1 returns the J1 field value if set, zero value otherwise.
 func (o *DataRecord) GetJ1() []J1Segment {
-	if o == nil || o.J1 == nil {
+	if o == nil || IsNil(o.J1) {
 		var ret []J1Segment
 		return ret
 	}
@@ -81,7 +84,7 @@ func (o *DataRecord) GetJ1() []J1Segment {
 // GetJ1Ok returns a tuple with the J1 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *DataRecord) GetJ1Ok() ([]J1Segment, bool) {
-	if o == nil || o.J1 == nil {
+	if o == nil || IsNil(o.J1) {
 		return nil, false
 	}
 	return o.J1, true
@@ -89,7 +92,7 @@ func (o *DataRecord) GetJ1Ok() ([]J1Segment, bool) {
 
 // HasJ1 returns a boolean if a field has been set.
 func (o *DataRecord) HasJ1() bool {
-	if o != nil && o.J1 != nil {
+	if o != nil && !IsNil(o.J1) {
 		return true
 	}
 
@@ -103,7 +106,7 @@ func (o *DataRecord) SetJ1(v []J1Segment) {
 
 // GetJ2 returns the J2 field value if set, zero value otherwise.
 func (o *DataRecord) GetJ2() []J2Segment {
-	if o == nil || o.J2 == nil {
+	if o == nil || IsNil(o.J2) {
 		var ret []J2Segment
 		return ret
 	}
@@ -113,7 +116,7 @@ func (o *DataRecord) GetJ2() []J2Segment {
 // GetJ2Ok returns a tuple with the J2 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *DataRecord) GetJ2Ok() ([]J2Segment, bool) {
-	if o == nil || o.J2 == nil {
+	if o == nil || IsNil(o.J2) {
 		return nil, false
 	}
 	return o.J2, true
@@ -121,7 +124,7 @@ func (o *DataRecord) GetJ2Ok() ([]J2Segment, bool) {
 
 // HasJ2 returns a boolean if a field has been set.
 func (o *DataRecord) HasJ2() bool {
-	if o != nil && o.J2 != nil {
+	if o != nil && !IsNil(o.J2) {
 		return true
 	}
 
@@ -135,7 +138,7 @@ func (o *DataRecord) SetJ2(v []J2Segment) {
 
 // GetK1 returns the K1 field value if set, zero value otherwise.
 func (o *DataRecord) GetK1() K1Segment {
-	if o == nil || o.K1 == nil {
+	if o == nil || IsNil(o.K1) {
 		var ret K1Segment
 		return ret
 	}
@@ -145,7 +148,7 @@ func (o *DataRecord) GetK1() K1Segment {
 // GetK1Ok returns a tuple with the K1 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *DataRecord) GetK1Ok() (*K1Segment, bool) {
-	if o == nil || o.K1 == nil {
+	if o == nil || IsNil(o.K1) {
 		return nil, false
 	}
 	return o.K1, true
@@ -153,7 +156,7 @@ func (o *DataRecord) GetK1Ok() (*K1Segment, bool) {
 
 // HasK1 returns a boolean if a field has been set.
 func (o *DataRecord) HasK1() bool {
-	if o != nil && o.K1 != nil {
+	if o != nil && !IsNil(o.K1) {
 		return true
 	}
 
@@ -167,7 +170,7 @@ func (o *DataRecord) SetK1(v K1Segment) {
 
 // GetK2 returns the K2 field value if set, zero value otherwise.
 func (o *DataRecord) GetK2() K2Segment {
-	if o == nil || o.K2 == nil {
+	if o == nil || IsNil(o.K2) {
 		var ret K2Segment
 		return ret
 	}
@@ -177,7 +180,7 @@ func (o *DataRecord) GetK2() K2Segment {
 // GetK2Ok returns a tuple with the K2 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *DataRecord) GetK2Ok() (*K2Segment, bool) {
-	if o == nil || o.K2 == nil {
+	if o == nil || IsNil(o.K2) {
 		return nil, false
 	}
 	return o.K2, true
@@ -185,7 +188,7 @@ func (o *DataRecord) GetK2Ok() (*K2Segment, bool) {
 
 // HasK2 returns a boolean if a field has been set.
 func (o *DataRecord) HasK2() bool {
-	if o != nil && o.K2 != nil {
+	if o != nil && !IsNil(o.K2) {
 		return true
 	}
 
@@ -199,7 +202,7 @@ func (o *DataRecord) SetK2(v K2Segment) {
 
 // GetK3 returns the K3 field value if set, zero value otherwise.
 func (o *DataRecord) GetK3() K3Segment {
-	if o == nil || o.K3 == nil {
+	if o == nil || IsNil(o.K3) {
 		var ret K3Segment
 		return ret
 	}
@@ -209,7 +212,7 @@ func (o *DataRecord) GetK3() K3Segment {
 // GetK3Ok returns a tuple with the K3 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *DataRecord) GetK3Ok() (*K3Segment, bool) {
-	if o == nil || o.K3 == nil {
+	if o == nil || IsNil(o.K3) {
 		return nil, false
 	}
 	return o.K3, true
@@ -217,7 +220,7 @@ func (o *DataRecord) GetK3Ok() (*K3Segment, bool) {
 
 // HasK3 returns a boolean if a field has been set.
 func (o *DataRecord) HasK3() bool {
-	if o != nil && o.K3 != nil {
+	if o != nil && !IsNil(o.K3) {
 		return true
 	}
 
@@ -231,7 +234,7 @@ func (o *DataRecord) SetK3(v K3Segment) {
 
 // GetK4 returns the K4 field value if set, zero value otherwise.
 func (o *DataRecord) GetK4() K4Segment {
-	if o == nil || o.K4 == nil {
+	if o == nil || IsNil(o.K4) {
 		var ret K4Segment
 		return ret
 	}
@@ -241,7 +244,7 @@ func (o *DataRecord) GetK4() K4Segment {
 // GetK4Ok returns a tuple with the K4 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *DataRecord) GetK4Ok() (*K4Segment, bool) {
-	if o == nil || o.K4 == nil {
+	if o == nil || IsNil(o.K4) {
 		return nil, false
 	}
 	return o.K4, true
@@ -249,7 +252,7 @@ func (o *DataRecord) GetK4Ok() (*K4Segment, bool) {
 
 // HasK4 returns a boolean if a field has been set.
 func (o *DataRecord) HasK4() bool {
-	if o != nil && o.K4 != nil {
+	if o != nil && !IsNil(o.K4) {
 		return true
 	}
 
@@ -263,7 +266,7 @@ func (o *DataRecord) SetK4(v K4Segment) {
 
 // GetL1 returns the L1 field value if set, zero value otherwise.
 func (o *DataRecord) GetL1() L1Segment {
-	if o == nil || o.L1 == nil {
+	if o == nil || IsNil(o.L1) {
 		var ret L1Segment
 		return ret
 	}
@@ -273,7 +276,7 @@ func (o *DataRecord) GetL1() L1Segment {
 // GetL1Ok returns a tuple with the L1 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *DataRecord) GetL1Ok() (*L1Segment, bool) {
-	if o == nil || o.L1 == nil {
+	if o == nil || IsNil(o.L1) {
 		return nil, false
 	}
 	return o.L1, true
@@ -281,7 +284,7 @@ func (o *DataRecord) GetL1Ok() (*L1Segment, bool) {
 
 // HasL1 returns a boolean if a field has been set.
 func (o *DataRecord) HasL1() bool {
-	if o != nil && o.L1 != nil {
+	if o != nil && !IsNil(o.L1) {
 		return true
 	}
 
@@ -295,7 +298,7 @@ func (o *DataRecord) SetL1(v L1Segment) {
 
 // GetN1 returns the N1 field value if set, zero value otherwise.
 func (o *DataRecord) GetN1() N1Segment {
-	if o == nil || o.N1 == nil {
+	if o == nil || IsNil(o.N1) {
 		var ret N1Segment
 		return ret
 	}
@@ -305,7 +308,7 @@ func (o *DataRecord) GetN1() N1Segment {
 // GetN1Ok returns a tuple with the N1 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *DataRecord) GetN1Ok() (*N1Segment, bool) {
-	if o == nil || o.N1 == nil {
+	if o == nil || IsNil(o.N1) {
 		return nil, false
 	}
 	return o.N1, true
@@ -313,7 +316,7 @@ func (o *DataRecord) GetN1Ok() (*N1Segment, bool) {
 
 // HasN1 returns a boolean if a field has been set.
 func (o *DataRecord) HasN1() bool {
-	if o != nil && o.N1 != nil {
+	if o != nil && !IsNil(o.N1) {
 		return true
 	}
 
@@ -326,35 +329,41 @@ func (o *DataRecord) SetN1(v N1Segment) {
 }
 
 func (o DataRecord) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["base"] = o.Base
-	}
-	if o.J1 != nil {
-		toSerialize["j1"] = o.J1
-	}
-	if o.J2 != nil {
-		toSerialize["j2"] = o.J2
-	}
-	if o.K1 != nil {
-		toSerialize["k1"] = o.K1
-	}
-	if o.K2 != nil {
-		toSerialize["k2"] = o.K2
-	}
-	if o.K3 != nil {
-		toSerialize["k3"] = o.K3
-	}
-	if o.K4 != nil {
-		toSerialize["k4"] = o.K4
-	}
-	if o.L1 != nil {
-		toSerialize["l1"] = o.L1
-	}
-	if o.N1 != nil {
-		toSerialize["n1"] = o.N1
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o DataRecord) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	toSerialize["base"] = o.Base
+	if !IsNil(o.J1) {
+		toSerialize["j1"] = o.J1
+	}
+	if !IsNil(o.J2) {
+		toSerialize["j2"] = o.J2
+	}
+	if !IsNil(o.K1) {
+		toSerialize["k1"] = o.K1
+	}
+	if !IsNil(o.K2) {
+		toSerialize["k2"] = o.K2
+	}
+	if !IsNil(o.K3) {
+		toSerialize["k3"] = o.K3
+	}
+	if !IsNil(o.K4) {
+		toSerialize["k4"] = o.K4
+	}
+	if !IsNil(o.L1) {
+		toSerialize["l1"] = o.L1
+	}
+	if !IsNil(o.N1) {
+		toSerialize["n1"] = o.N1
+	}
+	return toSerialize, nil
 }
 
 type NullableDataRecord struct {
@@ -392,5 +401,3 @@ func (v *NullableDataRecord) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

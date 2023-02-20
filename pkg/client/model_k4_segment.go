@@ -15,13 +15,16 @@ import (
 	"time"
 )
 
+// checks if the K4Segment type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &K4Segment{}
+
 // K4Segment struct for K4Segment
 type K4Segment struct {
-	SegmentIdentifier string `json:"segmentIdentifier"`
-	SpecializedPaymentIndicator int32 `json:"specializedPaymentIndicator"`
-	DeferredPaymentStartDate *time.Time `json:"deferredPaymentStartDate,omitempty"`
-	BalloonPaymentDueDate *time.Time `json:"balloonPaymentDueDate,omitempty"`
-	BalloonPaymentAmount *int32 `json:"balloonPaymentAmount,omitempty"`
+	SegmentIdentifier           string     `json:"segmentIdentifier"`
+	SpecializedPaymentIndicator int32      `json:"specializedPaymentIndicator"`
+	DeferredPaymentStartDate    *time.Time `json:"deferredPaymentStartDate,omitempty"`
+	BalloonPaymentDueDate       *time.Time `json:"balloonPaymentDueDate,omitempty"`
+	BalloonPaymentAmount        *int32     `json:"balloonPaymentAmount,omitempty"`
 }
 
 // NewK4Segment instantiates a new K4Segment object
@@ -56,7 +59,7 @@ func (o *K4Segment) GetSegmentIdentifier() string {
 // GetSegmentIdentifierOk returns a tuple with the SegmentIdentifier field value
 // and a boolean to check if the value has been set.
 func (o *K4Segment) GetSegmentIdentifierOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.SegmentIdentifier, true
@@ -80,7 +83,7 @@ func (o *K4Segment) GetSpecializedPaymentIndicator() int32 {
 // GetSpecializedPaymentIndicatorOk returns a tuple with the SpecializedPaymentIndicator field value
 // and a boolean to check if the value has been set.
 func (o *K4Segment) GetSpecializedPaymentIndicatorOk() (*int32, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.SpecializedPaymentIndicator, true
@@ -93,7 +96,7 @@ func (o *K4Segment) SetSpecializedPaymentIndicator(v int32) {
 
 // GetDeferredPaymentStartDate returns the DeferredPaymentStartDate field value if set, zero value otherwise.
 func (o *K4Segment) GetDeferredPaymentStartDate() time.Time {
-	if o == nil || o.DeferredPaymentStartDate == nil {
+	if o == nil || IsNil(o.DeferredPaymentStartDate) {
 		var ret time.Time
 		return ret
 	}
@@ -103,7 +106,7 @@ func (o *K4Segment) GetDeferredPaymentStartDate() time.Time {
 // GetDeferredPaymentStartDateOk returns a tuple with the DeferredPaymentStartDate field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *K4Segment) GetDeferredPaymentStartDateOk() (*time.Time, bool) {
-	if o == nil || o.DeferredPaymentStartDate == nil {
+	if o == nil || IsNil(o.DeferredPaymentStartDate) {
 		return nil, false
 	}
 	return o.DeferredPaymentStartDate, true
@@ -111,7 +114,7 @@ func (o *K4Segment) GetDeferredPaymentStartDateOk() (*time.Time, bool) {
 
 // HasDeferredPaymentStartDate returns a boolean if a field has been set.
 func (o *K4Segment) HasDeferredPaymentStartDate() bool {
-	if o != nil && o.DeferredPaymentStartDate != nil {
+	if o != nil && !IsNil(o.DeferredPaymentStartDate) {
 		return true
 	}
 
@@ -125,7 +128,7 @@ func (o *K4Segment) SetDeferredPaymentStartDate(v time.Time) {
 
 // GetBalloonPaymentDueDate returns the BalloonPaymentDueDate field value if set, zero value otherwise.
 func (o *K4Segment) GetBalloonPaymentDueDate() time.Time {
-	if o == nil || o.BalloonPaymentDueDate == nil {
+	if o == nil || IsNil(o.BalloonPaymentDueDate) {
 		var ret time.Time
 		return ret
 	}
@@ -135,7 +138,7 @@ func (o *K4Segment) GetBalloonPaymentDueDate() time.Time {
 // GetBalloonPaymentDueDateOk returns a tuple with the BalloonPaymentDueDate field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *K4Segment) GetBalloonPaymentDueDateOk() (*time.Time, bool) {
-	if o == nil || o.BalloonPaymentDueDate == nil {
+	if o == nil || IsNil(o.BalloonPaymentDueDate) {
 		return nil, false
 	}
 	return o.BalloonPaymentDueDate, true
@@ -143,7 +146,7 @@ func (o *K4Segment) GetBalloonPaymentDueDateOk() (*time.Time, bool) {
 
 // HasBalloonPaymentDueDate returns a boolean if a field has been set.
 func (o *K4Segment) HasBalloonPaymentDueDate() bool {
-	if o != nil && o.BalloonPaymentDueDate != nil {
+	if o != nil && !IsNil(o.BalloonPaymentDueDate) {
 		return true
 	}
 
@@ -157,7 +160,7 @@ func (o *K4Segment) SetBalloonPaymentDueDate(v time.Time) {
 
 // GetBalloonPaymentAmount returns the BalloonPaymentAmount field value if set, zero value otherwise.
 func (o *K4Segment) GetBalloonPaymentAmount() int32 {
-	if o == nil || o.BalloonPaymentAmount == nil {
+	if o == nil || IsNil(o.BalloonPaymentAmount) {
 		var ret int32
 		return ret
 	}
@@ -167,7 +170,7 @@ func (o *K4Segment) GetBalloonPaymentAmount() int32 {
 // GetBalloonPaymentAmountOk returns a tuple with the BalloonPaymentAmount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *K4Segment) GetBalloonPaymentAmountOk() (*int32, bool) {
-	if o == nil || o.BalloonPaymentAmount == nil {
+	if o == nil || IsNil(o.BalloonPaymentAmount) {
 		return nil, false
 	}
 	return o.BalloonPaymentAmount, true
@@ -175,7 +178,7 @@ func (o *K4Segment) GetBalloonPaymentAmountOk() (*int32, bool) {
 
 // HasBalloonPaymentAmount returns a boolean if a field has been set.
 func (o *K4Segment) HasBalloonPaymentAmount() bool {
-	if o != nil && o.BalloonPaymentAmount != nil {
+	if o != nil && !IsNil(o.BalloonPaymentAmount) {
 		return true
 	}
 
@@ -188,23 +191,27 @@ func (o *K4Segment) SetBalloonPaymentAmount(v int32) {
 }
 
 func (o K4Segment) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["segmentIdentifier"] = o.SegmentIdentifier
-	}
-	if true {
-		toSerialize["specializedPaymentIndicator"] = o.SpecializedPaymentIndicator
-	}
-	if o.DeferredPaymentStartDate != nil {
-		toSerialize["deferredPaymentStartDate"] = o.DeferredPaymentStartDate
-	}
-	if o.BalloonPaymentDueDate != nil {
-		toSerialize["balloonPaymentDueDate"] = o.BalloonPaymentDueDate
-	}
-	if o.BalloonPaymentAmount != nil {
-		toSerialize["balloonPaymentAmount"] = o.BalloonPaymentAmount
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o K4Segment) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	toSerialize["segmentIdentifier"] = o.SegmentIdentifier
+	toSerialize["specializedPaymentIndicator"] = o.SpecializedPaymentIndicator
+	if !IsNil(o.DeferredPaymentStartDate) {
+		toSerialize["deferredPaymentStartDate"] = o.DeferredPaymentStartDate
+	}
+	if !IsNil(o.BalloonPaymentDueDate) {
+		toSerialize["balloonPaymentDueDate"] = o.BalloonPaymentDueDate
+	}
+	if !IsNil(o.BalloonPaymentAmount) {
+		toSerialize["balloonPaymentAmount"] = o.BalloonPaymentAmount
+	}
+	return toSerialize, nil
 }
 
 type NullableK4Segment struct {
@@ -242,5 +249,3 @@ func (v *NullableK4Segment) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

@@ -14,12 +14,15 @@ import (
 	"encoding/json"
 )
 
+// checks if the L1Segment type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &L1Segment{}
+
 // L1Segment struct for L1Segment
 type L1Segment struct {
-	SegmentIdentifier string `json:"segmentIdentifier"`
-	ChangeIndicator int32 `json:"changeIndicator"`
+	SegmentIdentifier        string  `json:"segmentIdentifier"`
+	ChangeIndicator          int32   `json:"changeIndicator"`
 	NewConsumerAccountNumber *string `json:"newConsumerAccountNumber,omitempty"`
-	BalloonPaymentDueDate *string `json:"balloonPaymentDueDate,omitempty"`
+	BalloonPaymentDueDate    *string `json:"balloonPaymentDueDate,omitempty"`
 }
 
 // NewL1Segment instantiates a new L1Segment object
@@ -54,7 +57,7 @@ func (o *L1Segment) GetSegmentIdentifier() string {
 // GetSegmentIdentifierOk returns a tuple with the SegmentIdentifier field value
 // and a boolean to check if the value has been set.
 func (o *L1Segment) GetSegmentIdentifierOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.SegmentIdentifier, true
@@ -78,7 +81,7 @@ func (o *L1Segment) GetChangeIndicator() int32 {
 // GetChangeIndicatorOk returns a tuple with the ChangeIndicator field value
 // and a boolean to check if the value has been set.
 func (o *L1Segment) GetChangeIndicatorOk() (*int32, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.ChangeIndicator, true
@@ -91,7 +94,7 @@ func (o *L1Segment) SetChangeIndicator(v int32) {
 
 // GetNewConsumerAccountNumber returns the NewConsumerAccountNumber field value if set, zero value otherwise.
 func (o *L1Segment) GetNewConsumerAccountNumber() string {
-	if o == nil || o.NewConsumerAccountNumber == nil {
+	if o == nil || IsNil(o.NewConsumerAccountNumber) {
 		var ret string
 		return ret
 	}
@@ -101,7 +104,7 @@ func (o *L1Segment) GetNewConsumerAccountNumber() string {
 // GetNewConsumerAccountNumberOk returns a tuple with the NewConsumerAccountNumber field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *L1Segment) GetNewConsumerAccountNumberOk() (*string, bool) {
-	if o == nil || o.NewConsumerAccountNumber == nil {
+	if o == nil || IsNil(o.NewConsumerAccountNumber) {
 		return nil, false
 	}
 	return o.NewConsumerAccountNumber, true
@@ -109,7 +112,7 @@ func (o *L1Segment) GetNewConsumerAccountNumberOk() (*string, bool) {
 
 // HasNewConsumerAccountNumber returns a boolean if a field has been set.
 func (o *L1Segment) HasNewConsumerAccountNumber() bool {
-	if o != nil && o.NewConsumerAccountNumber != nil {
+	if o != nil && !IsNil(o.NewConsumerAccountNumber) {
 		return true
 	}
 
@@ -123,7 +126,7 @@ func (o *L1Segment) SetNewConsumerAccountNumber(v string) {
 
 // GetBalloonPaymentDueDate returns the BalloonPaymentDueDate field value if set, zero value otherwise.
 func (o *L1Segment) GetBalloonPaymentDueDate() string {
-	if o == nil || o.BalloonPaymentDueDate == nil {
+	if o == nil || IsNil(o.BalloonPaymentDueDate) {
 		var ret string
 		return ret
 	}
@@ -133,7 +136,7 @@ func (o *L1Segment) GetBalloonPaymentDueDate() string {
 // GetBalloonPaymentDueDateOk returns a tuple with the BalloonPaymentDueDate field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *L1Segment) GetBalloonPaymentDueDateOk() (*string, bool) {
-	if o == nil || o.BalloonPaymentDueDate == nil {
+	if o == nil || IsNil(o.BalloonPaymentDueDate) {
 		return nil, false
 	}
 	return o.BalloonPaymentDueDate, true
@@ -141,7 +144,7 @@ func (o *L1Segment) GetBalloonPaymentDueDateOk() (*string, bool) {
 
 // HasBalloonPaymentDueDate returns a boolean if a field has been set.
 func (o *L1Segment) HasBalloonPaymentDueDate() bool {
-	if o != nil && o.BalloonPaymentDueDate != nil {
+	if o != nil && !IsNil(o.BalloonPaymentDueDate) {
 		return true
 	}
 
@@ -154,20 +157,24 @@ func (o *L1Segment) SetBalloonPaymentDueDate(v string) {
 }
 
 func (o L1Segment) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["segmentIdentifier"] = o.SegmentIdentifier
-	}
-	if true {
-		toSerialize["changeIndicator"] = o.ChangeIndicator
-	}
-	if o.NewConsumerAccountNumber != nil {
-		toSerialize["newConsumerAccountNumber"] = o.NewConsumerAccountNumber
-	}
-	if o.BalloonPaymentDueDate != nil {
-		toSerialize["balloonPaymentDueDate"] = o.BalloonPaymentDueDate
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o L1Segment) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	toSerialize["segmentIdentifier"] = o.SegmentIdentifier
+	toSerialize["changeIndicator"] = o.ChangeIndicator
+	if !IsNil(o.NewConsumerAccountNumber) {
+		toSerialize["newConsumerAccountNumber"] = o.NewConsumerAccountNumber
+	}
+	if !IsNil(o.BalloonPaymentDueDate) {
+		toSerialize["balloonPaymentDueDate"] = o.BalloonPaymentDueDate
+	}
+	return toSerialize, nil
 }
 
 type NullableL1Segment struct {
@@ -205,5 +212,3 @@ func (v *NullableL1Segment) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

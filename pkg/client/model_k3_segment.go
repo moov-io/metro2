@@ -14,11 +14,14 @@ import (
 	"encoding/json"
 )
 
+// checks if the K3Segment type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &K3Segment{}
+
 // K3Segment struct for K3Segment
 type K3Segment struct {
-	SegmentIdentifier string `json:"segmentIdentifier"`
-	AgencyIdentifier *int32 `json:"agencyIdentifier,omitempty"`
-	AccountNumber *string `json:"accountNumber,omitempty"`
+	SegmentIdentifier            string  `json:"segmentIdentifier"`
+	AgencyIdentifier             *int32  `json:"agencyIdentifier,omitempty"`
+	AccountNumber                *string `json:"accountNumber,omitempty"`
 	MortgageIdentificationNumber *string `json:"mortgageIdentificationNumber,omitempty"`
 }
 
@@ -53,7 +56,7 @@ func (o *K3Segment) GetSegmentIdentifier() string {
 // GetSegmentIdentifierOk returns a tuple with the SegmentIdentifier field value
 // and a boolean to check if the value has been set.
 func (o *K3Segment) GetSegmentIdentifierOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.SegmentIdentifier, true
@@ -66,7 +69,7 @@ func (o *K3Segment) SetSegmentIdentifier(v string) {
 
 // GetAgencyIdentifier returns the AgencyIdentifier field value if set, zero value otherwise.
 func (o *K3Segment) GetAgencyIdentifier() int32 {
-	if o == nil || o.AgencyIdentifier == nil {
+	if o == nil || IsNil(o.AgencyIdentifier) {
 		var ret int32
 		return ret
 	}
@@ -76,7 +79,7 @@ func (o *K3Segment) GetAgencyIdentifier() int32 {
 // GetAgencyIdentifierOk returns a tuple with the AgencyIdentifier field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *K3Segment) GetAgencyIdentifierOk() (*int32, bool) {
-	if o == nil || o.AgencyIdentifier == nil {
+	if o == nil || IsNil(o.AgencyIdentifier) {
 		return nil, false
 	}
 	return o.AgencyIdentifier, true
@@ -84,7 +87,7 @@ func (o *K3Segment) GetAgencyIdentifierOk() (*int32, bool) {
 
 // HasAgencyIdentifier returns a boolean if a field has been set.
 func (o *K3Segment) HasAgencyIdentifier() bool {
-	if o != nil && o.AgencyIdentifier != nil {
+	if o != nil && !IsNil(o.AgencyIdentifier) {
 		return true
 	}
 
@@ -98,7 +101,7 @@ func (o *K3Segment) SetAgencyIdentifier(v int32) {
 
 // GetAccountNumber returns the AccountNumber field value if set, zero value otherwise.
 func (o *K3Segment) GetAccountNumber() string {
-	if o == nil || o.AccountNumber == nil {
+	if o == nil || IsNil(o.AccountNumber) {
 		var ret string
 		return ret
 	}
@@ -108,7 +111,7 @@ func (o *K3Segment) GetAccountNumber() string {
 // GetAccountNumberOk returns a tuple with the AccountNumber field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *K3Segment) GetAccountNumberOk() (*string, bool) {
-	if o == nil || o.AccountNumber == nil {
+	if o == nil || IsNil(o.AccountNumber) {
 		return nil, false
 	}
 	return o.AccountNumber, true
@@ -116,7 +119,7 @@ func (o *K3Segment) GetAccountNumberOk() (*string, bool) {
 
 // HasAccountNumber returns a boolean if a field has been set.
 func (o *K3Segment) HasAccountNumber() bool {
-	if o != nil && o.AccountNumber != nil {
+	if o != nil && !IsNil(o.AccountNumber) {
 		return true
 	}
 
@@ -130,7 +133,7 @@ func (o *K3Segment) SetAccountNumber(v string) {
 
 // GetMortgageIdentificationNumber returns the MortgageIdentificationNumber field value if set, zero value otherwise.
 func (o *K3Segment) GetMortgageIdentificationNumber() string {
-	if o == nil || o.MortgageIdentificationNumber == nil {
+	if o == nil || IsNil(o.MortgageIdentificationNumber) {
 		var ret string
 		return ret
 	}
@@ -140,7 +143,7 @@ func (o *K3Segment) GetMortgageIdentificationNumber() string {
 // GetMortgageIdentificationNumberOk returns a tuple with the MortgageIdentificationNumber field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *K3Segment) GetMortgageIdentificationNumberOk() (*string, bool) {
-	if o == nil || o.MortgageIdentificationNumber == nil {
+	if o == nil || IsNil(o.MortgageIdentificationNumber) {
 		return nil, false
 	}
 	return o.MortgageIdentificationNumber, true
@@ -148,7 +151,7 @@ func (o *K3Segment) GetMortgageIdentificationNumberOk() (*string, bool) {
 
 // HasMortgageIdentificationNumber returns a boolean if a field has been set.
 func (o *K3Segment) HasMortgageIdentificationNumber() bool {
-	if o != nil && o.MortgageIdentificationNumber != nil {
+	if o != nil && !IsNil(o.MortgageIdentificationNumber) {
 		return true
 	}
 
@@ -161,20 +164,26 @@ func (o *K3Segment) SetMortgageIdentificationNumber(v string) {
 }
 
 func (o K3Segment) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["segmentIdentifier"] = o.SegmentIdentifier
-	}
-	if o.AgencyIdentifier != nil {
-		toSerialize["agencyIdentifier"] = o.AgencyIdentifier
-	}
-	if o.AccountNumber != nil {
-		toSerialize["accountNumber"] = o.AccountNumber
-	}
-	if o.MortgageIdentificationNumber != nil {
-		toSerialize["mortgageIdentificationNumber"] = o.MortgageIdentificationNumber
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o K3Segment) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	toSerialize["segmentIdentifier"] = o.SegmentIdentifier
+	if !IsNil(o.AgencyIdentifier) {
+		toSerialize["agencyIdentifier"] = o.AgencyIdentifier
+	}
+	if !IsNil(o.AccountNumber) {
+		toSerialize["accountNumber"] = o.AccountNumber
+	}
+	if !IsNil(o.MortgageIdentificationNumber) {
+		toSerialize["mortgageIdentificationNumber"] = o.MortgageIdentificationNumber
+	}
+	return toSerialize, nil
 }
 
 type NullableK3Segment struct {
@@ -212,5 +221,3 @@ func (v *NullableK3Segment) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

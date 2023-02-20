@@ -31,11 +31,11 @@ else
 # Versions from https://github.com/OpenAPITools/openapi-generator/releases
 	@chmod +x ./openapi-generator
 	@rm -rf ./client
-	OPENAPI_GENERATOR_VERSION=4.2.2 ./openapi-generator generate --package-name client -i ./api/openapi.yaml -g go -o ./pkg/client
-	rm -f ./pkg/client/go.mod ./pkg/client/go.sum
+	OPENAPI_GENERATOR_VERSION=6.4.0 ./openapi-generator generate --git-user-id=moov-io --git-repo-id=metro2 --package-name client -i ./api/openapi.yaml -g go -o ./pkg/client
+	rm -f ./pkg/client/go.mod ./pkg/client/go.sum ./pkg/client/.travis.yml ./pkg/client/git_push.sh
 	go fmt ./...
 	go build github.com/moov-io/metro2/pkg/client
-	go test ./pkg/client
+	go test ./pkg/client/...
 endif
 
 dist: clean build

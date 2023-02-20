@@ -14,53 +14,56 @@ import (
 	"encoding/json"
 )
 
+// checks if the TrailerRecord type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &TrailerRecord{}
+
 // TrailerRecord struct for TrailerRecord
 type TrailerRecord struct {
-	BlockDescriptorWord *int32 `json:"blockDescriptorWord,omitempty"`
-	RecordDescriptorWord int32 `json:"recordDescriptorWord"`
-	RecordIdentifier string `json:"recordIdentifier"`
-	TotalBaseRecords *int32 `json:"totalBaseRecords,omitempty"`
-	TotalStatusCodeDF *int32 `json:"totalStatusCodeDF,omitempty"`
-	TotalConsumerSegmentsJ1 *int32 `json:"totalConsumerSegmentsJ1,omitempty"`
-	TotalConsumerSegmentsJ2 *int32 `json:"totalConsumerSegmentsJ2,omitempty"`
-	BlockCount *int32 `json:"blockCount,omitempty"`
-	TotalStatusCodeDA *int32 `json:"totalStatusCodeDA,omitempty"`
-	TotalStatusCode05 *int32 `json:"totalStatusCode05,omitempty"`
-	TotalStatusCode11 *int32 `json:"totalStatusCode11,omitempty"`
-	TotalStatusCode13 *int32 `json:"totalStatusCode13,omitempty"`
-	TotalStatusCode61 *int32 `json:"totalStatusCode61,omitempty"`
-	TotalStatusCode62 *int32 `json:"totalStatusCode62,omitempty"`
-	TotalStatusCode63 *int32 `json:"totalStatusCode63,omitempty"`
-	TotalStatusCode64 *int32 `json:"totalStatusCode64,omitempty"`
-	TotalStatusCode65 *int32 `json:"totalStatusCode65,omitempty"`
-	TotalStatusCode71 *int32 `json:"totalStatusCode71,omitempty"`
-	TotalStatusCode78 *int32 `json:"totalStatusCode78,omitempty"`
-	TotalStatusCode80 *int32 `json:"totalStatusCode80,omitempty"`
-	TotalStatusCode82 *int32 `json:"totalStatusCode82,omitempty"`
-	TotalStatusCode83 *int32 `json:"totalStatusCode83,omitempty"`
-	TotalStatusCode84 *int32 `json:"totalStatusCode84,omitempty"`
-	TotalStatusCode88 *int32 `json:"totalStatusCode88,omitempty"`
-	TotalStatusCode89 *int32 `json:"totalStatusCode89,omitempty"`
-	TotalStatusCode93 *int32 `json:"totalStatusCode93,omitempty"`
-	TotalStatusCode94 *int32 `json:"totalStatusCode94,omitempty"`
-	TotalStatusCode95 *int32 `json:"totalStatusCode95,omitempty"`
-	TotalStatusCode96 *int32 `json:"totalStatusCode96,omitempty"`
-	TotalStatusCode97 *int32 `json:"totalStatusCode97,omitempty"`
-	TotalECOACodeZ *int32 `json:"totalECOACodeZ,omitempty"`
-	TotalEmploymentSegments *int32 `json:"totalEmploymentSegments,omitempty"`
-	TotalOriginalCreditorSegments *int32 `json:"totalOriginalCreditorSegments,omitempty"`
-	TotalPurchasedToSegments *int32 `json:"totalPurchasedToSegments,omitempty"`
+	BlockDescriptorWord              *int32 `json:"blockDescriptorWord,omitempty"`
+	RecordDescriptorWord             int32  `json:"recordDescriptorWord"`
+	RecordIdentifier                 string `json:"recordIdentifier"`
+	TotalBaseRecords                 *int32 `json:"totalBaseRecords,omitempty"`
+	TotalStatusCodeDF                *int32 `json:"totalStatusCodeDF,omitempty"`
+	TotalConsumerSegmentsJ1          *int32 `json:"totalConsumerSegmentsJ1,omitempty"`
+	TotalConsumerSegmentsJ2          *int32 `json:"totalConsumerSegmentsJ2,omitempty"`
+	BlockCount                       *int32 `json:"blockCount,omitempty"`
+	TotalStatusCodeDA                *int32 `json:"totalStatusCodeDA,omitempty"`
+	TotalStatusCode05                *int32 `json:"totalStatusCode05,omitempty"`
+	TotalStatusCode11                *int32 `json:"totalStatusCode11,omitempty"`
+	TotalStatusCode13                *int32 `json:"totalStatusCode13,omitempty"`
+	TotalStatusCode61                *int32 `json:"totalStatusCode61,omitempty"`
+	TotalStatusCode62                *int32 `json:"totalStatusCode62,omitempty"`
+	TotalStatusCode63                *int32 `json:"totalStatusCode63,omitempty"`
+	TotalStatusCode64                *int32 `json:"totalStatusCode64,omitempty"`
+	TotalStatusCode65                *int32 `json:"totalStatusCode65,omitempty"`
+	TotalStatusCode71                *int32 `json:"totalStatusCode71,omitempty"`
+	TotalStatusCode78                *int32 `json:"totalStatusCode78,omitempty"`
+	TotalStatusCode80                *int32 `json:"totalStatusCode80,omitempty"`
+	TotalStatusCode82                *int32 `json:"totalStatusCode82,omitempty"`
+	TotalStatusCode83                *int32 `json:"totalStatusCode83,omitempty"`
+	TotalStatusCode84                *int32 `json:"totalStatusCode84,omitempty"`
+	TotalStatusCode88                *int32 `json:"totalStatusCode88,omitempty"`
+	TotalStatusCode89                *int32 `json:"totalStatusCode89,omitempty"`
+	TotalStatusCode93                *int32 `json:"totalStatusCode93,omitempty"`
+	TotalStatusCode94                *int32 `json:"totalStatusCode94,omitempty"`
+	TotalStatusCode95                *int32 `json:"totalStatusCode95,omitempty"`
+	TotalStatusCode96                *int32 `json:"totalStatusCode96,omitempty"`
+	TotalStatusCode97                *int32 `json:"totalStatusCode97,omitempty"`
+	TotalECOACodeZ                   *int32 `json:"totalECOACodeZ,omitempty"`
+	TotalEmploymentSegments          *int32 `json:"totalEmploymentSegments,omitempty"`
+	TotalOriginalCreditorSegments    *int32 `json:"totalOriginalCreditorSegments,omitempty"`
+	TotalPurchasedToSegments         *int32 `json:"totalPurchasedToSegments,omitempty"`
 	TotalMortgageInformationSegments *int32 `json:"totalMortgageInformationSegments,omitempty"`
-	TotalPaymentInformationSegments *int32 `json:"totalPaymentInformationSegments,omitempty"`
-	TotalChangeSegments *int32 `json:"totalChangeSegments,omitempty"`
-	TotalSocialNumbersAllSegments *int32 `json:"totalSocialNumbersAllSegments,omitempty"`
-	TotalSocialNumbersBaseSegments *int32 `json:"totalSocialNumbersBaseSegments,omitempty"`
-	TotalSocialNumbersJ1Segments *int32 `json:"totalSocialNumbersJ1Segments,omitempty"`
-	TotalSocialNumbersJ2Segments *int32 `json:"totalSocialNumbersJ2Segments,omitempty"`
-	TotalDatesBirthAllSegments *int32 `json:"totalDatesBirthAllSegments,omitempty"`
-	TotalDatesBirthBaseSegments *int32 `json:"totalDatesBirthBaseSegments,omitempty"`
-	TotalDatesBirthJ1Segments *int32 `json:"totalDatesBirthJ1Segments,omitempty"`
-	TotalDatesBirthJ2Segments *int32 `json:"totalDatesBirthJ2Segments,omitempty"`
+	TotalPaymentInformationSegments  *int32 `json:"totalPaymentInformationSegments,omitempty"`
+	TotalChangeSegments              *int32 `json:"totalChangeSegments,omitempty"`
+	TotalSocialNumbersAllSegments    *int32 `json:"totalSocialNumbersAllSegments,omitempty"`
+	TotalSocialNumbersBaseSegments   *int32 `json:"totalSocialNumbersBaseSegments,omitempty"`
+	TotalSocialNumbersJ1Segments     *int32 `json:"totalSocialNumbersJ1Segments,omitempty"`
+	TotalSocialNumbersJ2Segments     *int32 `json:"totalSocialNumbersJ2Segments,omitempty"`
+	TotalDatesBirthAllSegments       *int32 `json:"totalDatesBirthAllSegments,omitempty"`
+	TotalDatesBirthBaseSegments      *int32 `json:"totalDatesBirthBaseSegments,omitempty"`
+	TotalDatesBirthJ1Segments        *int32 `json:"totalDatesBirthJ1Segments,omitempty"`
+	TotalDatesBirthJ2Segments        *int32 `json:"totalDatesBirthJ2Segments,omitempty"`
 	TotalTelephoneNumbersAllSegments *int32 `json:"totalTelephoneNumbersAllSegments,omitempty"`
 }
 
@@ -85,7 +88,7 @@ func NewTrailerRecordWithDefaults() *TrailerRecord {
 
 // GetBlockDescriptorWord returns the BlockDescriptorWord field value if set, zero value otherwise.
 func (o *TrailerRecord) GetBlockDescriptorWord() int32 {
-	if o == nil || o.BlockDescriptorWord == nil {
+	if o == nil || IsNil(o.BlockDescriptorWord) {
 		var ret int32
 		return ret
 	}
@@ -95,7 +98,7 @@ func (o *TrailerRecord) GetBlockDescriptorWord() int32 {
 // GetBlockDescriptorWordOk returns a tuple with the BlockDescriptorWord field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetBlockDescriptorWordOk() (*int32, bool) {
-	if o == nil || o.BlockDescriptorWord == nil {
+	if o == nil || IsNil(o.BlockDescriptorWord) {
 		return nil, false
 	}
 	return o.BlockDescriptorWord, true
@@ -103,7 +106,7 @@ func (o *TrailerRecord) GetBlockDescriptorWordOk() (*int32, bool) {
 
 // HasBlockDescriptorWord returns a boolean if a field has been set.
 func (o *TrailerRecord) HasBlockDescriptorWord() bool {
-	if o != nil && o.BlockDescriptorWord != nil {
+	if o != nil && !IsNil(o.BlockDescriptorWord) {
 		return true
 	}
 
@@ -128,7 +131,7 @@ func (o *TrailerRecord) GetRecordDescriptorWord() int32 {
 // GetRecordDescriptorWordOk returns a tuple with the RecordDescriptorWord field value
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetRecordDescriptorWordOk() (*int32, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.RecordDescriptorWord, true
@@ -152,7 +155,7 @@ func (o *TrailerRecord) GetRecordIdentifier() string {
 // GetRecordIdentifierOk returns a tuple with the RecordIdentifier field value
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetRecordIdentifierOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.RecordIdentifier, true
@@ -165,7 +168,7 @@ func (o *TrailerRecord) SetRecordIdentifier(v string) {
 
 // GetTotalBaseRecords returns the TotalBaseRecords field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalBaseRecords() int32 {
-	if o == nil || o.TotalBaseRecords == nil {
+	if o == nil || IsNil(o.TotalBaseRecords) {
 		var ret int32
 		return ret
 	}
@@ -175,7 +178,7 @@ func (o *TrailerRecord) GetTotalBaseRecords() int32 {
 // GetTotalBaseRecordsOk returns a tuple with the TotalBaseRecords field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalBaseRecordsOk() (*int32, bool) {
-	if o == nil || o.TotalBaseRecords == nil {
+	if o == nil || IsNil(o.TotalBaseRecords) {
 		return nil, false
 	}
 	return o.TotalBaseRecords, true
@@ -183,7 +186,7 @@ func (o *TrailerRecord) GetTotalBaseRecordsOk() (*int32, bool) {
 
 // HasTotalBaseRecords returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalBaseRecords() bool {
-	if o != nil && o.TotalBaseRecords != nil {
+	if o != nil && !IsNil(o.TotalBaseRecords) {
 		return true
 	}
 
@@ -197,7 +200,7 @@ func (o *TrailerRecord) SetTotalBaseRecords(v int32) {
 
 // GetTotalStatusCodeDF returns the TotalStatusCodeDF field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCodeDF() int32 {
-	if o == nil || o.TotalStatusCodeDF == nil {
+	if o == nil || IsNil(o.TotalStatusCodeDF) {
 		var ret int32
 		return ret
 	}
@@ -207,7 +210,7 @@ func (o *TrailerRecord) GetTotalStatusCodeDF() int32 {
 // GetTotalStatusCodeDFOk returns a tuple with the TotalStatusCodeDF field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCodeDFOk() (*int32, bool) {
-	if o == nil || o.TotalStatusCodeDF == nil {
+	if o == nil || IsNil(o.TotalStatusCodeDF) {
 		return nil, false
 	}
 	return o.TotalStatusCodeDF, true
@@ -215,7 +218,7 @@ func (o *TrailerRecord) GetTotalStatusCodeDFOk() (*int32, bool) {
 
 // HasTotalStatusCodeDF returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCodeDF() bool {
-	if o != nil && o.TotalStatusCodeDF != nil {
+	if o != nil && !IsNil(o.TotalStatusCodeDF) {
 		return true
 	}
 
@@ -229,7 +232,7 @@ func (o *TrailerRecord) SetTotalStatusCodeDF(v int32) {
 
 // GetTotalConsumerSegmentsJ1 returns the TotalConsumerSegmentsJ1 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalConsumerSegmentsJ1() int32 {
-	if o == nil || o.TotalConsumerSegmentsJ1 == nil {
+	if o == nil || IsNil(o.TotalConsumerSegmentsJ1) {
 		var ret int32
 		return ret
 	}
@@ -239,7 +242,7 @@ func (o *TrailerRecord) GetTotalConsumerSegmentsJ1() int32 {
 // GetTotalConsumerSegmentsJ1Ok returns a tuple with the TotalConsumerSegmentsJ1 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalConsumerSegmentsJ1Ok() (*int32, bool) {
-	if o == nil || o.TotalConsumerSegmentsJ1 == nil {
+	if o == nil || IsNil(o.TotalConsumerSegmentsJ1) {
 		return nil, false
 	}
 	return o.TotalConsumerSegmentsJ1, true
@@ -247,7 +250,7 @@ func (o *TrailerRecord) GetTotalConsumerSegmentsJ1Ok() (*int32, bool) {
 
 // HasTotalConsumerSegmentsJ1 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalConsumerSegmentsJ1() bool {
-	if o != nil && o.TotalConsumerSegmentsJ1 != nil {
+	if o != nil && !IsNil(o.TotalConsumerSegmentsJ1) {
 		return true
 	}
 
@@ -261,7 +264,7 @@ func (o *TrailerRecord) SetTotalConsumerSegmentsJ1(v int32) {
 
 // GetTotalConsumerSegmentsJ2 returns the TotalConsumerSegmentsJ2 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalConsumerSegmentsJ2() int32 {
-	if o == nil || o.TotalConsumerSegmentsJ2 == nil {
+	if o == nil || IsNil(o.TotalConsumerSegmentsJ2) {
 		var ret int32
 		return ret
 	}
@@ -271,7 +274,7 @@ func (o *TrailerRecord) GetTotalConsumerSegmentsJ2() int32 {
 // GetTotalConsumerSegmentsJ2Ok returns a tuple with the TotalConsumerSegmentsJ2 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalConsumerSegmentsJ2Ok() (*int32, bool) {
-	if o == nil || o.TotalConsumerSegmentsJ2 == nil {
+	if o == nil || IsNil(o.TotalConsumerSegmentsJ2) {
 		return nil, false
 	}
 	return o.TotalConsumerSegmentsJ2, true
@@ -279,7 +282,7 @@ func (o *TrailerRecord) GetTotalConsumerSegmentsJ2Ok() (*int32, bool) {
 
 // HasTotalConsumerSegmentsJ2 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalConsumerSegmentsJ2() bool {
-	if o != nil && o.TotalConsumerSegmentsJ2 != nil {
+	if o != nil && !IsNil(o.TotalConsumerSegmentsJ2) {
 		return true
 	}
 
@@ -293,7 +296,7 @@ func (o *TrailerRecord) SetTotalConsumerSegmentsJ2(v int32) {
 
 // GetBlockCount returns the BlockCount field value if set, zero value otherwise.
 func (o *TrailerRecord) GetBlockCount() int32 {
-	if o == nil || o.BlockCount == nil {
+	if o == nil || IsNil(o.BlockCount) {
 		var ret int32
 		return ret
 	}
@@ -303,7 +306,7 @@ func (o *TrailerRecord) GetBlockCount() int32 {
 // GetBlockCountOk returns a tuple with the BlockCount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetBlockCountOk() (*int32, bool) {
-	if o == nil || o.BlockCount == nil {
+	if o == nil || IsNil(o.BlockCount) {
 		return nil, false
 	}
 	return o.BlockCount, true
@@ -311,7 +314,7 @@ func (o *TrailerRecord) GetBlockCountOk() (*int32, bool) {
 
 // HasBlockCount returns a boolean if a field has been set.
 func (o *TrailerRecord) HasBlockCount() bool {
-	if o != nil && o.BlockCount != nil {
+	if o != nil && !IsNil(o.BlockCount) {
 		return true
 	}
 
@@ -325,7 +328,7 @@ func (o *TrailerRecord) SetBlockCount(v int32) {
 
 // GetTotalStatusCodeDA returns the TotalStatusCodeDA field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCodeDA() int32 {
-	if o == nil || o.TotalStatusCodeDA == nil {
+	if o == nil || IsNil(o.TotalStatusCodeDA) {
 		var ret int32
 		return ret
 	}
@@ -335,7 +338,7 @@ func (o *TrailerRecord) GetTotalStatusCodeDA() int32 {
 // GetTotalStatusCodeDAOk returns a tuple with the TotalStatusCodeDA field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCodeDAOk() (*int32, bool) {
-	if o == nil || o.TotalStatusCodeDA == nil {
+	if o == nil || IsNil(o.TotalStatusCodeDA) {
 		return nil, false
 	}
 	return o.TotalStatusCodeDA, true
@@ -343,7 +346,7 @@ func (o *TrailerRecord) GetTotalStatusCodeDAOk() (*int32, bool) {
 
 // HasTotalStatusCodeDA returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCodeDA() bool {
-	if o != nil && o.TotalStatusCodeDA != nil {
+	if o != nil && !IsNil(o.TotalStatusCodeDA) {
 		return true
 	}
 
@@ -357,7 +360,7 @@ func (o *TrailerRecord) SetTotalStatusCodeDA(v int32) {
 
 // GetTotalStatusCode05 returns the TotalStatusCode05 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode05() int32 {
-	if o == nil || o.TotalStatusCode05 == nil {
+	if o == nil || IsNil(o.TotalStatusCode05) {
 		var ret int32
 		return ret
 	}
@@ -367,7 +370,7 @@ func (o *TrailerRecord) GetTotalStatusCode05() int32 {
 // GetTotalStatusCode05Ok returns a tuple with the TotalStatusCode05 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode05Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode05 == nil {
+	if o == nil || IsNil(o.TotalStatusCode05) {
 		return nil, false
 	}
 	return o.TotalStatusCode05, true
@@ -375,7 +378,7 @@ func (o *TrailerRecord) GetTotalStatusCode05Ok() (*int32, bool) {
 
 // HasTotalStatusCode05 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode05() bool {
-	if o != nil && o.TotalStatusCode05 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode05) {
 		return true
 	}
 
@@ -389,7 +392,7 @@ func (o *TrailerRecord) SetTotalStatusCode05(v int32) {
 
 // GetTotalStatusCode11 returns the TotalStatusCode11 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode11() int32 {
-	if o == nil || o.TotalStatusCode11 == nil {
+	if o == nil || IsNil(o.TotalStatusCode11) {
 		var ret int32
 		return ret
 	}
@@ -399,7 +402,7 @@ func (o *TrailerRecord) GetTotalStatusCode11() int32 {
 // GetTotalStatusCode11Ok returns a tuple with the TotalStatusCode11 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode11Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode11 == nil {
+	if o == nil || IsNil(o.TotalStatusCode11) {
 		return nil, false
 	}
 	return o.TotalStatusCode11, true
@@ -407,7 +410,7 @@ func (o *TrailerRecord) GetTotalStatusCode11Ok() (*int32, bool) {
 
 // HasTotalStatusCode11 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode11() bool {
-	if o != nil && o.TotalStatusCode11 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode11) {
 		return true
 	}
 
@@ -421,7 +424,7 @@ func (o *TrailerRecord) SetTotalStatusCode11(v int32) {
 
 // GetTotalStatusCode13 returns the TotalStatusCode13 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode13() int32 {
-	if o == nil || o.TotalStatusCode13 == nil {
+	if o == nil || IsNil(o.TotalStatusCode13) {
 		var ret int32
 		return ret
 	}
@@ -431,7 +434,7 @@ func (o *TrailerRecord) GetTotalStatusCode13() int32 {
 // GetTotalStatusCode13Ok returns a tuple with the TotalStatusCode13 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode13Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode13 == nil {
+	if o == nil || IsNil(o.TotalStatusCode13) {
 		return nil, false
 	}
 	return o.TotalStatusCode13, true
@@ -439,7 +442,7 @@ func (o *TrailerRecord) GetTotalStatusCode13Ok() (*int32, bool) {
 
 // HasTotalStatusCode13 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode13() bool {
-	if o != nil && o.TotalStatusCode13 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode13) {
 		return true
 	}
 
@@ -453,7 +456,7 @@ func (o *TrailerRecord) SetTotalStatusCode13(v int32) {
 
 // GetTotalStatusCode61 returns the TotalStatusCode61 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode61() int32 {
-	if o == nil || o.TotalStatusCode61 == nil {
+	if o == nil || IsNil(o.TotalStatusCode61) {
 		var ret int32
 		return ret
 	}
@@ -463,7 +466,7 @@ func (o *TrailerRecord) GetTotalStatusCode61() int32 {
 // GetTotalStatusCode61Ok returns a tuple with the TotalStatusCode61 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode61Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode61 == nil {
+	if o == nil || IsNil(o.TotalStatusCode61) {
 		return nil, false
 	}
 	return o.TotalStatusCode61, true
@@ -471,7 +474,7 @@ func (o *TrailerRecord) GetTotalStatusCode61Ok() (*int32, bool) {
 
 // HasTotalStatusCode61 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode61() bool {
-	if o != nil && o.TotalStatusCode61 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode61) {
 		return true
 	}
 
@@ -485,7 +488,7 @@ func (o *TrailerRecord) SetTotalStatusCode61(v int32) {
 
 // GetTotalStatusCode62 returns the TotalStatusCode62 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode62() int32 {
-	if o == nil || o.TotalStatusCode62 == nil {
+	if o == nil || IsNil(o.TotalStatusCode62) {
 		var ret int32
 		return ret
 	}
@@ -495,7 +498,7 @@ func (o *TrailerRecord) GetTotalStatusCode62() int32 {
 // GetTotalStatusCode62Ok returns a tuple with the TotalStatusCode62 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode62Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode62 == nil {
+	if o == nil || IsNil(o.TotalStatusCode62) {
 		return nil, false
 	}
 	return o.TotalStatusCode62, true
@@ -503,7 +506,7 @@ func (o *TrailerRecord) GetTotalStatusCode62Ok() (*int32, bool) {
 
 // HasTotalStatusCode62 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode62() bool {
-	if o != nil && o.TotalStatusCode62 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode62) {
 		return true
 	}
 
@@ -517,7 +520,7 @@ func (o *TrailerRecord) SetTotalStatusCode62(v int32) {
 
 // GetTotalStatusCode63 returns the TotalStatusCode63 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode63() int32 {
-	if o == nil || o.TotalStatusCode63 == nil {
+	if o == nil || IsNil(o.TotalStatusCode63) {
 		var ret int32
 		return ret
 	}
@@ -527,7 +530,7 @@ func (o *TrailerRecord) GetTotalStatusCode63() int32 {
 // GetTotalStatusCode63Ok returns a tuple with the TotalStatusCode63 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode63Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode63 == nil {
+	if o == nil || IsNil(o.TotalStatusCode63) {
 		return nil, false
 	}
 	return o.TotalStatusCode63, true
@@ -535,7 +538,7 @@ func (o *TrailerRecord) GetTotalStatusCode63Ok() (*int32, bool) {
 
 // HasTotalStatusCode63 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode63() bool {
-	if o != nil && o.TotalStatusCode63 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode63) {
 		return true
 	}
 
@@ -549,7 +552,7 @@ func (o *TrailerRecord) SetTotalStatusCode63(v int32) {
 
 // GetTotalStatusCode64 returns the TotalStatusCode64 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode64() int32 {
-	if o == nil || o.TotalStatusCode64 == nil {
+	if o == nil || IsNil(o.TotalStatusCode64) {
 		var ret int32
 		return ret
 	}
@@ -559,7 +562,7 @@ func (o *TrailerRecord) GetTotalStatusCode64() int32 {
 // GetTotalStatusCode64Ok returns a tuple with the TotalStatusCode64 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode64Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode64 == nil {
+	if o == nil || IsNil(o.TotalStatusCode64) {
 		return nil, false
 	}
 	return o.TotalStatusCode64, true
@@ -567,7 +570,7 @@ func (o *TrailerRecord) GetTotalStatusCode64Ok() (*int32, bool) {
 
 // HasTotalStatusCode64 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode64() bool {
-	if o != nil && o.TotalStatusCode64 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode64) {
 		return true
 	}
 
@@ -581,7 +584,7 @@ func (o *TrailerRecord) SetTotalStatusCode64(v int32) {
 
 // GetTotalStatusCode65 returns the TotalStatusCode65 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode65() int32 {
-	if o == nil || o.TotalStatusCode65 == nil {
+	if o == nil || IsNil(o.TotalStatusCode65) {
 		var ret int32
 		return ret
 	}
@@ -591,7 +594,7 @@ func (o *TrailerRecord) GetTotalStatusCode65() int32 {
 // GetTotalStatusCode65Ok returns a tuple with the TotalStatusCode65 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode65Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode65 == nil {
+	if o == nil || IsNil(o.TotalStatusCode65) {
 		return nil, false
 	}
 	return o.TotalStatusCode65, true
@@ -599,7 +602,7 @@ func (o *TrailerRecord) GetTotalStatusCode65Ok() (*int32, bool) {
 
 // HasTotalStatusCode65 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode65() bool {
-	if o != nil && o.TotalStatusCode65 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode65) {
 		return true
 	}
 
@@ -613,7 +616,7 @@ func (o *TrailerRecord) SetTotalStatusCode65(v int32) {
 
 // GetTotalStatusCode71 returns the TotalStatusCode71 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode71() int32 {
-	if o == nil || o.TotalStatusCode71 == nil {
+	if o == nil || IsNil(o.TotalStatusCode71) {
 		var ret int32
 		return ret
 	}
@@ -623,7 +626,7 @@ func (o *TrailerRecord) GetTotalStatusCode71() int32 {
 // GetTotalStatusCode71Ok returns a tuple with the TotalStatusCode71 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode71Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode71 == nil {
+	if o == nil || IsNil(o.TotalStatusCode71) {
 		return nil, false
 	}
 	return o.TotalStatusCode71, true
@@ -631,7 +634,7 @@ func (o *TrailerRecord) GetTotalStatusCode71Ok() (*int32, bool) {
 
 // HasTotalStatusCode71 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode71() bool {
-	if o != nil && o.TotalStatusCode71 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode71) {
 		return true
 	}
 
@@ -645,7 +648,7 @@ func (o *TrailerRecord) SetTotalStatusCode71(v int32) {
 
 // GetTotalStatusCode78 returns the TotalStatusCode78 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode78() int32 {
-	if o == nil || o.TotalStatusCode78 == nil {
+	if o == nil || IsNil(o.TotalStatusCode78) {
 		var ret int32
 		return ret
 	}
@@ -655,7 +658,7 @@ func (o *TrailerRecord) GetTotalStatusCode78() int32 {
 // GetTotalStatusCode78Ok returns a tuple with the TotalStatusCode78 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode78Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode78 == nil {
+	if o == nil || IsNil(o.TotalStatusCode78) {
 		return nil, false
 	}
 	return o.TotalStatusCode78, true
@@ -663,7 +666,7 @@ func (o *TrailerRecord) GetTotalStatusCode78Ok() (*int32, bool) {
 
 // HasTotalStatusCode78 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode78() bool {
-	if o != nil && o.TotalStatusCode78 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode78) {
 		return true
 	}
 
@@ -677,7 +680,7 @@ func (o *TrailerRecord) SetTotalStatusCode78(v int32) {
 
 // GetTotalStatusCode80 returns the TotalStatusCode80 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode80() int32 {
-	if o == nil || o.TotalStatusCode80 == nil {
+	if o == nil || IsNil(o.TotalStatusCode80) {
 		var ret int32
 		return ret
 	}
@@ -687,7 +690,7 @@ func (o *TrailerRecord) GetTotalStatusCode80() int32 {
 // GetTotalStatusCode80Ok returns a tuple with the TotalStatusCode80 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode80Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode80 == nil {
+	if o == nil || IsNil(o.TotalStatusCode80) {
 		return nil, false
 	}
 	return o.TotalStatusCode80, true
@@ -695,7 +698,7 @@ func (o *TrailerRecord) GetTotalStatusCode80Ok() (*int32, bool) {
 
 // HasTotalStatusCode80 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode80() bool {
-	if o != nil && o.TotalStatusCode80 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode80) {
 		return true
 	}
 
@@ -709,7 +712,7 @@ func (o *TrailerRecord) SetTotalStatusCode80(v int32) {
 
 // GetTotalStatusCode82 returns the TotalStatusCode82 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode82() int32 {
-	if o == nil || o.TotalStatusCode82 == nil {
+	if o == nil || IsNil(o.TotalStatusCode82) {
 		var ret int32
 		return ret
 	}
@@ -719,7 +722,7 @@ func (o *TrailerRecord) GetTotalStatusCode82() int32 {
 // GetTotalStatusCode82Ok returns a tuple with the TotalStatusCode82 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode82Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode82 == nil {
+	if o == nil || IsNil(o.TotalStatusCode82) {
 		return nil, false
 	}
 	return o.TotalStatusCode82, true
@@ -727,7 +730,7 @@ func (o *TrailerRecord) GetTotalStatusCode82Ok() (*int32, bool) {
 
 // HasTotalStatusCode82 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode82() bool {
-	if o != nil && o.TotalStatusCode82 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode82) {
 		return true
 	}
 
@@ -741,7 +744,7 @@ func (o *TrailerRecord) SetTotalStatusCode82(v int32) {
 
 // GetTotalStatusCode83 returns the TotalStatusCode83 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode83() int32 {
-	if o == nil || o.TotalStatusCode83 == nil {
+	if o == nil || IsNil(o.TotalStatusCode83) {
 		var ret int32
 		return ret
 	}
@@ -751,7 +754,7 @@ func (o *TrailerRecord) GetTotalStatusCode83() int32 {
 // GetTotalStatusCode83Ok returns a tuple with the TotalStatusCode83 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode83Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode83 == nil {
+	if o == nil || IsNil(o.TotalStatusCode83) {
 		return nil, false
 	}
 	return o.TotalStatusCode83, true
@@ -759,7 +762,7 @@ func (o *TrailerRecord) GetTotalStatusCode83Ok() (*int32, bool) {
 
 // HasTotalStatusCode83 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode83() bool {
-	if o != nil && o.TotalStatusCode83 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode83) {
 		return true
 	}
 
@@ -773,7 +776,7 @@ func (o *TrailerRecord) SetTotalStatusCode83(v int32) {
 
 // GetTotalStatusCode84 returns the TotalStatusCode84 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode84() int32 {
-	if o == nil || o.TotalStatusCode84 == nil {
+	if o == nil || IsNil(o.TotalStatusCode84) {
 		var ret int32
 		return ret
 	}
@@ -783,7 +786,7 @@ func (o *TrailerRecord) GetTotalStatusCode84() int32 {
 // GetTotalStatusCode84Ok returns a tuple with the TotalStatusCode84 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode84Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode84 == nil {
+	if o == nil || IsNil(o.TotalStatusCode84) {
 		return nil, false
 	}
 	return o.TotalStatusCode84, true
@@ -791,7 +794,7 @@ func (o *TrailerRecord) GetTotalStatusCode84Ok() (*int32, bool) {
 
 // HasTotalStatusCode84 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode84() bool {
-	if o != nil && o.TotalStatusCode84 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode84) {
 		return true
 	}
 
@@ -805,7 +808,7 @@ func (o *TrailerRecord) SetTotalStatusCode84(v int32) {
 
 // GetTotalStatusCode88 returns the TotalStatusCode88 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode88() int32 {
-	if o == nil || o.TotalStatusCode88 == nil {
+	if o == nil || IsNil(o.TotalStatusCode88) {
 		var ret int32
 		return ret
 	}
@@ -815,7 +818,7 @@ func (o *TrailerRecord) GetTotalStatusCode88() int32 {
 // GetTotalStatusCode88Ok returns a tuple with the TotalStatusCode88 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode88Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode88 == nil {
+	if o == nil || IsNil(o.TotalStatusCode88) {
 		return nil, false
 	}
 	return o.TotalStatusCode88, true
@@ -823,7 +826,7 @@ func (o *TrailerRecord) GetTotalStatusCode88Ok() (*int32, bool) {
 
 // HasTotalStatusCode88 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode88() bool {
-	if o != nil && o.TotalStatusCode88 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode88) {
 		return true
 	}
 
@@ -837,7 +840,7 @@ func (o *TrailerRecord) SetTotalStatusCode88(v int32) {
 
 // GetTotalStatusCode89 returns the TotalStatusCode89 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode89() int32 {
-	if o == nil || o.TotalStatusCode89 == nil {
+	if o == nil || IsNil(o.TotalStatusCode89) {
 		var ret int32
 		return ret
 	}
@@ -847,7 +850,7 @@ func (o *TrailerRecord) GetTotalStatusCode89() int32 {
 // GetTotalStatusCode89Ok returns a tuple with the TotalStatusCode89 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode89Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode89 == nil {
+	if o == nil || IsNil(o.TotalStatusCode89) {
 		return nil, false
 	}
 	return o.TotalStatusCode89, true
@@ -855,7 +858,7 @@ func (o *TrailerRecord) GetTotalStatusCode89Ok() (*int32, bool) {
 
 // HasTotalStatusCode89 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode89() bool {
-	if o != nil && o.TotalStatusCode89 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode89) {
 		return true
 	}
 
@@ -869,7 +872,7 @@ func (o *TrailerRecord) SetTotalStatusCode89(v int32) {
 
 // GetTotalStatusCode93 returns the TotalStatusCode93 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode93() int32 {
-	if o == nil || o.TotalStatusCode93 == nil {
+	if o == nil || IsNil(o.TotalStatusCode93) {
 		var ret int32
 		return ret
 	}
@@ -879,7 +882,7 @@ func (o *TrailerRecord) GetTotalStatusCode93() int32 {
 // GetTotalStatusCode93Ok returns a tuple with the TotalStatusCode93 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode93Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode93 == nil {
+	if o == nil || IsNil(o.TotalStatusCode93) {
 		return nil, false
 	}
 	return o.TotalStatusCode93, true
@@ -887,7 +890,7 @@ func (o *TrailerRecord) GetTotalStatusCode93Ok() (*int32, bool) {
 
 // HasTotalStatusCode93 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode93() bool {
-	if o != nil && o.TotalStatusCode93 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode93) {
 		return true
 	}
 
@@ -901,7 +904,7 @@ func (o *TrailerRecord) SetTotalStatusCode93(v int32) {
 
 // GetTotalStatusCode94 returns the TotalStatusCode94 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode94() int32 {
-	if o == nil || o.TotalStatusCode94 == nil {
+	if o == nil || IsNil(o.TotalStatusCode94) {
 		var ret int32
 		return ret
 	}
@@ -911,7 +914,7 @@ func (o *TrailerRecord) GetTotalStatusCode94() int32 {
 // GetTotalStatusCode94Ok returns a tuple with the TotalStatusCode94 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode94Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode94 == nil {
+	if o == nil || IsNil(o.TotalStatusCode94) {
 		return nil, false
 	}
 	return o.TotalStatusCode94, true
@@ -919,7 +922,7 @@ func (o *TrailerRecord) GetTotalStatusCode94Ok() (*int32, bool) {
 
 // HasTotalStatusCode94 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode94() bool {
-	if o != nil && o.TotalStatusCode94 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode94) {
 		return true
 	}
 
@@ -933,7 +936,7 @@ func (o *TrailerRecord) SetTotalStatusCode94(v int32) {
 
 // GetTotalStatusCode95 returns the TotalStatusCode95 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode95() int32 {
-	if o == nil || o.TotalStatusCode95 == nil {
+	if o == nil || IsNil(o.TotalStatusCode95) {
 		var ret int32
 		return ret
 	}
@@ -943,7 +946,7 @@ func (o *TrailerRecord) GetTotalStatusCode95() int32 {
 // GetTotalStatusCode95Ok returns a tuple with the TotalStatusCode95 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode95Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode95 == nil {
+	if o == nil || IsNil(o.TotalStatusCode95) {
 		return nil, false
 	}
 	return o.TotalStatusCode95, true
@@ -951,7 +954,7 @@ func (o *TrailerRecord) GetTotalStatusCode95Ok() (*int32, bool) {
 
 // HasTotalStatusCode95 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode95() bool {
-	if o != nil && o.TotalStatusCode95 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode95) {
 		return true
 	}
 
@@ -965,7 +968,7 @@ func (o *TrailerRecord) SetTotalStatusCode95(v int32) {
 
 // GetTotalStatusCode96 returns the TotalStatusCode96 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode96() int32 {
-	if o == nil || o.TotalStatusCode96 == nil {
+	if o == nil || IsNil(o.TotalStatusCode96) {
 		var ret int32
 		return ret
 	}
@@ -975,7 +978,7 @@ func (o *TrailerRecord) GetTotalStatusCode96() int32 {
 // GetTotalStatusCode96Ok returns a tuple with the TotalStatusCode96 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode96Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode96 == nil {
+	if o == nil || IsNil(o.TotalStatusCode96) {
 		return nil, false
 	}
 	return o.TotalStatusCode96, true
@@ -983,7 +986,7 @@ func (o *TrailerRecord) GetTotalStatusCode96Ok() (*int32, bool) {
 
 // HasTotalStatusCode96 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode96() bool {
-	if o != nil && o.TotalStatusCode96 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode96) {
 		return true
 	}
 
@@ -997,7 +1000,7 @@ func (o *TrailerRecord) SetTotalStatusCode96(v int32) {
 
 // GetTotalStatusCode97 returns the TotalStatusCode97 field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalStatusCode97() int32 {
-	if o == nil || o.TotalStatusCode97 == nil {
+	if o == nil || IsNil(o.TotalStatusCode97) {
 		var ret int32
 		return ret
 	}
@@ -1007,7 +1010,7 @@ func (o *TrailerRecord) GetTotalStatusCode97() int32 {
 // GetTotalStatusCode97Ok returns a tuple with the TotalStatusCode97 field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalStatusCode97Ok() (*int32, bool) {
-	if o == nil || o.TotalStatusCode97 == nil {
+	if o == nil || IsNil(o.TotalStatusCode97) {
 		return nil, false
 	}
 	return o.TotalStatusCode97, true
@@ -1015,7 +1018,7 @@ func (o *TrailerRecord) GetTotalStatusCode97Ok() (*int32, bool) {
 
 // HasTotalStatusCode97 returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalStatusCode97() bool {
-	if o != nil && o.TotalStatusCode97 != nil {
+	if o != nil && !IsNil(o.TotalStatusCode97) {
 		return true
 	}
 
@@ -1029,7 +1032,7 @@ func (o *TrailerRecord) SetTotalStatusCode97(v int32) {
 
 // GetTotalECOACodeZ returns the TotalECOACodeZ field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalECOACodeZ() int32 {
-	if o == nil || o.TotalECOACodeZ == nil {
+	if o == nil || IsNil(o.TotalECOACodeZ) {
 		var ret int32
 		return ret
 	}
@@ -1039,7 +1042,7 @@ func (o *TrailerRecord) GetTotalECOACodeZ() int32 {
 // GetTotalECOACodeZOk returns a tuple with the TotalECOACodeZ field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalECOACodeZOk() (*int32, bool) {
-	if o == nil || o.TotalECOACodeZ == nil {
+	if o == nil || IsNil(o.TotalECOACodeZ) {
 		return nil, false
 	}
 	return o.TotalECOACodeZ, true
@@ -1047,7 +1050,7 @@ func (o *TrailerRecord) GetTotalECOACodeZOk() (*int32, bool) {
 
 // HasTotalECOACodeZ returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalECOACodeZ() bool {
-	if o != nil && o.TotalECOACodeZ != nil {
+	if o != nil && !IsNil(o.TotalECOACodeZ) {
 		return true
 	}
 
@@ -1061,7 +1064,7 @@ func (o *TrailerRecord) SetTotalECOACodeZ(v int32) {
 
 // GetTotalEmploymentSegments returns the TotalEmploymentSegments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalEmploymentSegments() int32 {
-	if o == nil || o.TotalEmploymentSegments == nil {
+	if o == nil || IsNil(o.TotalEmploymentSegments) {
 		var ret int32
 		return ret
 	}
@@ -1071,7 +1074,7 @@ func (o *TrailerRecord) GetTotalEmploymentSegments() int32 {
 // GetTotalEmploymentSegmentsOk returns a tuple with the TotalEmploymentSegments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalEmploymentSegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalEmploymentSegments == nil {
+	if o == nil || IsNil(o.TotalEmploymentSegments) {
 		return nil, false
 	}
 	return o.TotalEmploymentSegments, true
@@ -1079,7 +1082,7 @@ func (o *TrailerRecord) GetTotalEmploymentSegmentsOk() (*int32, bool) {
 
 // HasTotalEmploymentSegments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalEmploymentSegments() bool {
-	if o != nil && o.TotalEmploymentSegments != nil {
+	if o != nil && !IsNil(o.TotalEmploymentSegments) {
 		return true
 	}
 
@@ -1093,7 +1096,7 @@ func (o *TrailerRecord) SetTotalEmploymentSegments(v int32) {
 
 // GetTotalOriginalCreditorSegments returns the TotalOriginalCreditorSegments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalOriginalCreditorSegments() int32 {
-	if o == nil || o.TotalOriginalCreditorSegments == nil {
+	if o == nil || IsNil(o.TotalOriginalCreditorSegments) {
 		var ret int32
 		return ret
 	}
@@ -1103,7 +1106,7 @@ func (o *TrailerRecord) GetTotalOriginalCreditorSegments() int32 {
 // GetTotalOriginalCreditorSegmentsOk returns a tuple with the TotalOriginalCreditorSegments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalOriginalCreditorSegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalOriginalCreditorSegments == nil {
+	if o == nil || IsNil(o.TotalOriginalCreditorSegments) {
 		return nil, false
 	}
 	return o.TotalOriginalCreditorSegments, true
@@ -1111,7 +1114,7 @@ func (o *TrailerRecord) GetTotalOriginalCreditorSegmentsOk() (*int32, bool) {
 
 // HasTotalOriginalCreditorSegments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalOriginalCreditorSegments() bool {
-	if o != nil && o.TotalOriginalCreditorSegments != nil {
+	if o != nil && !IsNil(o.TotalOriginalCreditorSegments) {
 		return true
 	}
 
@@ -1125,7 +1128,7 @@ func (o *TrailerRecord) SetTotalOriginalCreditorSegments(v int32) {
 
 // GetTotalPurchasedToSegments returns the TotalPurchasedToSegments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalPurchasedToSegments() int32 {
-	if o == nil || o.TotalPurchasedToSegments == nil {
+	if o == nil || IsNil(o.TotalPurchasedToSegments) {
 		var ret int32
 		return ret
 	}
@@ -1135,7 +1138,7 @@ func (o *TrailerRecord) GetTotalPurchasedToSegments() int32 {
 // GetTotalPurchasedToSegmentsOk returns a tuple with the TotalPurchasedToSegments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalPurchasedToSegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalPurchasedToSegments == nil {
+	if o == nil || IsNil(o.TotalPurchasedToSegments) {
 		return nil, false
 	}
 	return o.TotalPurchasedToSegments, true
@@ -1143,7 +1146,7 @@ func (o *TrailerRecord) GetTotalPurchasedToSegmentsOk() (*int32, bool) {
 
 // HasTotalPurchasedToSegments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalPurchasedToSegments() bool {
-	if o != nil && o.TotalPurchasedToSegments != nil {
+	if o != nil && !IsNil(o.TotalPurchasedToSegments) {
 		return true
 	}
 
@@ -1157,7 +1160,7 @@ func (o *TrailerRecord) SetTotalPurchasedToSegments(v int32) {
 
 // GetTotalMortgageInformationSegments returns the TotalMortgageInformationSegments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalMortgageInformationSegments() int32 {
-	if o == nil || o.TotalMortgageInformationSegments == nil {
+	if o == nil || IsNil(o.TotalMortgageInformationSegments) {
 		var ret int32
 		return ret
 	}
@@ -1167,7 +1170,7 @@ func (o *TrailerRecord) GetTotalMortgageInformationSegments() int32 {
 // GetTotalMortgageInformationSegmentsOk returns a tuple with the TotalMortgageInformationSegments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalMortgageInformationSegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalMortgageInformationSegments == nil {
+	if o == nil || IsNil(o.TotalMortgageInformationSegments) {
 		return nil, false
 	}
 	return o.TotalMortgageInformationSegments, true
@@ -1175,7 +1178,7 @@ func (o *TrailerRecord) GetTotalMortgageInformationSegmentsOk() (*int32, bool) {
 
 // HasTotalMortgageInformationSegments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalMortgageInformationSegments() bool {
-	if o != nil && o.TotalMortgageInformationSegments != nil {
+	if o != nil && !IsNil(o.TotalMortgageInformationSegments) {
 		return true
 	}
 
@@ -1189,7 +1192,7 @@ func (o *TrailerRecord) SetTotalMortgageInformationSegments(v int32) {
 
 // GetTotalPaymentInformationSegments returns the TotalPaymentInformationSegments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalPaymentInformationSegments() int32 {
-	if o == nil || o.TotalPaymentInformationSegments == nil {
+	if o == nil || IsNil(o.TotalPaymentInformationSegments) {
 		var ret int32
 		return ret
 	}
@@ -1199,7 +1202,7 @@ func (o *TrailerRecord) GetTotalPaymentInformationSegments() int32 {
 // GetTotalPaymentInformationSegmentsOk returns a tuple with the TotalPaymentInformationSegments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalPaymentInformationSegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalPaymentInformationSegments == nil {
+	if o == nil || IsNil(o.TotalPaymentInformationSegments) {
 		return nil, false
 	}
 	return o.TotalPaymentInformationSegments, true
@@ -1207,7 +1210,7 @@ func (o *TrailerRecord) GetTotalPaymentInformationSegmentsOk() (*int32, bool) {
 
 // HasTotalPaymentInformationSegments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalPaymentInformationSegments() bool {
-	if o != nil && o.TotalPaymentInformationSegments != nil {
+	if o != nil && !IsNil(o.TotalPaymentInformationSegments) {
 		return true
 	}
 
@@ -1221,7 +1224,7 @@ func (o *TrailerRecord) SetTotalPaymentInformationSegments(v int32) {
 
 // GetTotalChangeSegments returns the TotalChangeSegments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalChangeSegments() int32 {
-	if o == nil || o.TotalChangeSegments == nil {
+	if o == nil || IsNil(o.TotalChangeSegments) {
 		var ret int32
 		return ret
 	}
@@ -1231,7 +1234,7 @@ func (o *TrailerRecord) GetTotalChangeSegments() int32 {
 // GetTotalChangeSegmentsOk returns a tuple with the TotalChangeSegments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalChangeSegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalChangeSegments == nil {
+	if o == nil || IsNil(o.TotalChangeSegments) {
 		return nil, false
 	}
 	return o.TotalChangeSegments, true
@@ -1239,7 +1242,7 @@ func (o *TrailerRecord) GetTotalChangeSegmentsOk() (*int32, bool) {
 
 // HasTotalChangeSegments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalChangeSegments() bool {
-	if o != nil && o.TotalChangeSegments != nil {
+	if o != nil && !IsNil(o.TotalChangeSegments) {
 		return true
 	}
 
@@ -1253,7 +1256,7 @@ func (o *TrailerRecord) SetTotalChangeSegments(v int32) {
 
 // GetTotalSocialNumbersAllSegments returns the TotalSocialNumbersAllSegments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalSocialNumbersAllSegments() int32 {
-	if o == nil || o.TotalSocialNumbersAllSegments == nil {
+	if o == nil || IsNil(o.TotalSocialNumbersAllSegments) {
 		var ret int32
 		return ret
 	}
@@ -1263,7 +1266,7 @@ func (o *TrailerRecord) GetTotalSocialNumbersAllSegments() int32 {
 // GetTotalSocialNumbersAllSegmentsOk returns a tuple with the TotalSocialNumbersAllSegments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalSocialNumbersAllSegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalSocialNumbersAllSegments == nil {
+	if o == nil || IsNil(o.TotalSocialNumbersAllSegments) {
 		return nil, false
 	}
 	return o.TotalSocialNumbersAllSegments, true
@@ -1271,7 +1274,7 @@ func (o *TrailerRecord) GetTotalSocialNumbersAllSegmentsOk() (*int32, bool) {
 
 // HasTotalSocialNumbersAllSegments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalSocialNumbersAllSegments() bool {
-	if o != nil && o.TotalSocialNumbersAllSegments != nil {
+	if o != nil && !IsNil(o.TotalSocialNumbersAllSegments) {
 		return true
 	}
 
@@ -1285,7 +1288,7 @@ func (o *TrailerRecord) SetTotalSocialNumbersAllSegments(v int32) {
 
 // GetTotalSocialNumbersBaseSegments returns the TotalSocialNumbersBaseSegments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalSocialNumbersBaseSegments() int32 {
-	if o == nil || o.TotalSocialNumbersBaseSegments == nil {
+	if o == nil || IsNil(o.TotalSocialNumbersBaseSegments) {
 		var ret int32
 		return ret
 	}
@@ -1295,7 +1298,7 @@ func (o *TrailerRecord) GetTotalSocialNumbersBaseSegments() int32 {
 // GetTotalSocialNumbersBaseSegmentsOk returns a tuple with the TotalSocialNumbersBaseSegments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalSocialNumbersBaseSegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalSocialNumbersBaseSegments == nil {
+	if o == nil || IsNil(o.TotalSocialNumbersBaseSegments) {
 		return nil, false
 	}
 	return o.TotalSocialNumbersBaseSegments, true
@@ -1303,7 +1306,7 @@ func (o *TrailerRecord) GetTotalSocialNumbersBaseSegmentsOk() (*int32, bool) {
 
 // HasTotalSocialNumbersBaseSegments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalSocialNumbersBaseSegments() bool {
-	if o != nil && o.TotalSocialNumbersBaseSegments != nil {
+	if o != nil && !IsNil(o.TotalSocialNumbersBaseSegments) {
 		return true
 	}
 
@@ -1317,7 +1320,7 @@ func (o *TrailerRecord) SetTotalSocialNumbersBaseSegments(v int32) {
 
 // GetTotalSocialNumbersJ1Segments returns the TotalSocialNumbersJ1Segments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalSocialNumbersJ1Segments() int32 {
-	if o == nil || o.TotalSocialNumbersJ1Segments == nil {
+	if o == nil || IsNil(o.TotalSocialNumbersJ1Segments) {
 		var ret int32
 		return ret
 	}
@@ -1327,7 +1330,7 @@ func (o *TrailerRecord) GetTotalSocialNumbersJ1Segments() int32 {
 // GetTotalSocialNumbersJ1SegmentsOk returns a tuple with the TotalSocialNumbersJ1Segments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalSocialNumbersJ1SegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalSocialNumbersJ1Segments == nil {
+	if o == nil || IsNil(o.TotalSocialNumbersJ1Segments) {
 		return nil, false
 	}
 	return o.TotalSocialNumbersJ1Segments, true
@@ -1335,7 +1338,7 @@ func (o *TrailerRecord) GetTotalSocialNumbersJ1SegmentsOk() (*int32, bool) {
 
 // HasTotalSocialNumbersJ1Segments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalSocialNumbersJ1Segments() bool {
-	if o != nil && o.TotalSocialNumbersJ1Segments != nil {
+	if o != nil && !IsNil(o.TotalSocialNumbersJ1Segments) {
 		return true
 	}
 
@@ -1349,7 +1352,7 @@ func (o *TrailerRecord) SetTotalSocialNumbersJ1Segments(v int32) {
 
 // GetTotalSocialNumbersJ2Segments returns the TotalSocialNumbersJ2Segments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalSocialNumbersJ2Segments() int32 {
-	if o == nil || o.TotalSocialNumbersJ2Segments == nil {
+	if o == nil || IsNil(o.TotalSocialNumbersJ2Segments) {
 		var ret int32
 		return ret
 	}
@@ -1359,7 +1362,7 @@ func (o *TrailerRecord) GetTotalSocialNumbersJ2Segments() int32 {
 // GetTotalSocialNumbersJ2SegmentsOk returns a tuple with the TotalSocialNumbersJ2Segments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalSocialNumbersJ2SegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalSocialNumbersJ2Segments == nil {
+	if o == nil || IsNil(o.TotalSocialNumbersJ2Segments) {
 		return nil, false
 	}
 	return o.TotalSocialNumbersJ2Segments, true
@@ -1367,7 +1370,7 @@ func (o *TrailerRecord) GetTotalSocialNumbersJ2SegmentsOk() (*int32, bool) {
 
 // HasTotalSocialNumbersJ2Segments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalSocialNumbersJ2Segments() bool {
-	if o != nil && o.TotalSocialNumbersJ2Segments != nil {
+	if o != nil && !IsNil(o.TotalSocialNumbersJ2Segments) {
 		return true
 	}
 
@@ -1381,7 +1384,7 @@ func (o *TrailerRecord) SetTotalSocialNumbersJ2Segments(v int32) {
 
 // GetTotalDatesBirthAllSegments returns the TotalDatesBirthAllSegments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalDatesBirthAllSegments() int32 {
-	if o == nil || o.TotalDatesBirthAllSegments == nil {
+	if o == nil || IsNil(o.TotalDatesBirthAllSegments) {
 		var ret int32
 		return ret
 	}
@@ -1391,7 +1394,7 @@ func (o *TrailerRecord) GetTotalDatesBirthAllSegments() int32 {
 // GetTotalDatesBirthAllSegmentsOk returns a tuple with the TotalDatesBirthAllSegments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalDatesBirthAllSegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalDatesBirthAllSegments == nil {
+	if o == nil || IsNil(o.TotalDatesBirthAllSegments) {
 		return nil, false
 	}
 	return o.TotalDatesBirthAllSegments, true
@@ -1399,7 +1402,7 @@ func (o *TrailerRecord) GetTotalDatesBirthAllSegmentsOk() (*int32, bool) {
 
 // HasTotalDatesBirthAllSegments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalDatesBirthAllSegments() bool {
-	if o != nil && o.TotalDatesBirthAllSegments != nil {
+	if o != nil && !IsNil(o.TotalDatesBirthAllSegments) {
 		return true
 	}
 
@@ -1413,7 +1416,7 @@ func (o *TrailerRecord) SetTotalDatesBirthAllSegments(v int32) {
 
 // GetTotalDatesBirthBaseSegments returns the TotalDatesBirthBaseSegments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalDatesBirthBaseSegments() int32 {
-	if o == nil || o.TotalDatesBirthBaseSegments == nil {
+	if o == nil || IsNil(o.TotalDatesBirthBaseSegments) {
 		var ret int32
 		return ret
 	}
@@ -1423,7 +1426,7 @@ func (o *TrailerRecord) GetTotalDatesBirthBaseSegments() int32 {
 // GetTotalDatesBirthBaseSegmentsOk returns a tuple with the TotalDatesBirthBaseSegments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalDatesBirthBaseSegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalDatesBirthBaseSegments == nil {
+	if o == nil || IsNil(o.TotalDatesBirthBaseSegments) {
 		return nil, false
 	}
 	return o.TotalDatesBirthBaseSegments, true
@@ -1431,7 +1434,7 @@ func (o *TrailerRecord) GetTotalDatesBirthBaseSegmentsOk() (*int32, bool) {
 
 // HasTotalDatesBirthBaseSegments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalDatesBirthBaseSegments() bool {
-	if o != nil && o.TotalDatesBirthBaseSegments != nil {
+	if o != nil && !IsNil(o.TotalDatesBirthBaseSegments) {
 		return true
 	}
 
@@ -1445,7 +1448,7 @@ func (o *TrailerRecord) SetTotalDatesBirthBaseSegments(v int32) {
 
 // GetTotalDatesBirthJ1Segments returns the TotalDatesBirthJ1Segments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalDatesBirthJ1Segments() int32 {
-	if o == nil || o.TotalDatesBirthJ1Segments == nil {
+	if o == nil || IsNil(o.TotalDatesBirthJ1Segments) {
 		var ret int32
 		return ret
 	}
@@ -1455,7 +1458,7 @@ func (o *TrailerRecord) GetTotalDatesBirthJ1Segments() int32 {
 // GetTotalDatesBirthJ1SegmentsOk returns a tuple with the TotalDatesBirthJ1Segments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalDatesBirthJ1SegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalDatesBirthJ1Segments == nil {
+	if o == nil || IsNil(o.TotalDatesBirthJ1Segments) {
 		return nil, false
 	}
 	return o.TotalDatesBirthJ1Segments, true
@@ -1463,7 +1466,7 @@ func (o *TrailerRecord) GetTotalDatesBirthJ1SegmentsOk() (*int32, bool) {
 
 // HasTotalDatesBirthJ1Segments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalDatesBirthJ1Segments() bool {
-	if o != nil && o.TotalDatesBirthJ1Segments != nil {
+	if o != nil && !IsNil(o.TotalDatesBirthJ1Segments) {
 		return true
 	}
 
@@ -1477,7 +1480,7 @@ func (o *TrailerRecord) SetTotalDatesBirthJ1Segments(v int32) {
 
 // GetTotalDatesBirthJ2Segments returns the TotalDatesBirthJ2Segments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalDatesBirthJ2Segments() int32 {
-	if o == nil || o.TotalDatesBirthJ2Segments == nil {
+	if o == nil || IsNil(o.TotalDatesBirthJ2Segments) {
 		var ret int32
 		return ret
 	}
@@ -1487,7 +1490,7 @@ func (o *TrailerRecord) GetTotalDatesBirthJ2Segments() int32 {
 // GetTotalDatesBirthJ2SegmentsOk returns a tuple with the TotalDatesBirthJ2Segments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalDatesBirthJ2SegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalDatesBirthJ2Segments == nil {
+	if o == nil || IsNil(o.TotalDatesBirthJ2Segments) {
 		return nil, false
 	}
 	return o.TotalDatesBirthJ2Segments, true
@@ -1495,7 +1498,7 @@ func (o *TrailerRecord) GetTotalDatesBirthJ2SegmentsOk() (*int32, bool) {
 
 // HasTotalDatesBirthJ2Segments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalDatesBirthJ2Segments() bool {
-	if o != nil && o.TotalDatesBirthJ2Segments != nil {
+	if o != nil && !IsNil(o.TotalDatesBirthJ2Segments) {
 		return true
 	}
 
@@ -1509,7 +1512,7 @@ func (o *TrailerRecord) SetTotalDatesBirthJ2Segments(v int32) {
 
 // GetTotalTelephoneNumbersAllSegments returns the TotalTelephoneNumbersAllSegments field value if set, zero value otherwise.
 func (o *TrailerRecord) GetTotalTelephoneNumbersAllSegments() int32 {
-	if o == nil || o.TotalTelephoneNumbersAllSegments == nil {
+	if o == nil || IsNil(o.TotalTelephoneNumbersAllSegments) {
 		var ret int32
 		return ret
 	}
@@ -1519,7 +1522,7 @@ func (o *TrailerRecord) GetTotalTelephoneNumbersAllSegments() int32 {
 // GetTotalTelephoneNumbersAllSegmentsOk returns a tuple with the TotalTelephoneNumbersAllSegments field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *TrailerRecord) GetTotalTelephoneNumbersAllSegmentsOk() (*int32, bool) {
-	if o == nil || o.TotalTelephoneNumbersAllSegments == nil {
+	if o == nil || IsNil(o.TotalTelephoneNumbersAllSegments) {
 		return nil, false
 	}
 	return o.TotalTelephoneNumbersAllSegments, true
@@ -1527,7 +1530,7 @@ func (o *TrailerRecord) GetTotalTelephoneNumbersAllSegmentsOk() (*int32, bool) {
 
 // HasTotalTelephoneNumbersAllSegments returns a boolean if a field has been set.
 func (o *TrailerRecord) HasTotalTelephoneNumbersAllSegments() bool {
-	if o != nil && o.TotalTelephoneNumbersAllSegments != nil {
+	if o != nil && !IsNil(o.TotalTelephoneNumbersAllSegments) {
 		return true
 	}
 
@@ -1540,146 +1543,150 @@ func (o *TrailerRecord) SetTotalTelephoneNumbersAllSegments(v int32) {
 }
 
 func (o TrailerRecord) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if o.BlockDescriptorWord != nil {
-		toSerialize["blockDescriptorWord"] = o.BlockDescriptorWord
-	}
-	if true {
-		toSerialize["recordDescriptorWord"] = o.RecordDescriptorWord
-	}
-	if true {
-		toSerialize["recordIdentifier"] = o.RecordIdentifier
-	}
-	if o.TotalBaseRecords != nil {
-		toSerialize["totalBaseRecords"] = o.TotalBaseRecords
-	}
-	if o.TotalStatusCodeDF != nil {
-		toSerialize["totalStatusCodeDF"] = o.TotalStatusCodeDF
-	}
-	if o.TotalConsumerSegmentsJ1 != nil {
-		toSerialize["totalConsumerSegmentsJ1"] = o.TotalConsumerSegmentsJ1
-	}
-	if o.TotalConsumerSegmentsJ2 != nil {
-		toSerialize["totalConsumerSegmentsJ2"] = o.TotalConsumerSegmentsJ2
-	}
-	if o.BlockCount != nil {
-		toSerialize["blockCount"] = o.BlockCount
-	}
-	if o.TotalStatusCodeDA != nil {
-		toSerialize["totalStatusCodeDA"] = o.TotalStatusCodeDA
-	}
-	if o.TotalStatusCode05 != nil {
-		toSerialize["totalStatusCode05"] = o.TotalStatusCode05
-	}
-	if o.TotalStatusCode11 != nil {
-		toSerialize["totalStatusCode11"] = o.TotalStatusCode11
-	}
-	if o.TotalStatusCode13 != nil {
-		toSerialize["totalStatusCode13"] = o.TotalStatusCode13
-	}
-	if o.TotalStatusCode61 != nil {
-		toSerialize["totalStatusCode61"] = o.TotalStatusCode61
-	}
-	if o.TotalStatusCode62 != nil {
-		toSerialize["totalStatusCode62"] = o.TotalStatusCode62
-	}
-	if o.TotalStatusCode63 != nil {
-		toSerialize["totalStatusCode63"] = o.TotalStatusCode63
-	}
-	if o.TotalStatusCode64 != nil {
-		toSerialize["totalStatusCode64"] = o.TotalStatusCode64
-	}
-	if o.TotalStatusCode65 != nil {
-		toSerialize["totalStatusCode65"] = o.TotalStatusCode65
-	}
-	if o.TotalStatusCode71 != nil {
-		toSerialize["totalStatusCode71"] = o.TotalStatusCode71
-	}
-	if o.TotalStatusCode78 != nil {
-		toSerialize["totalStatusCode78"] = o.TotalStatusCode78
-	}
-	if o.TotalStatusCode80 != nil {
-		toSerialize["totalStatusCode80"] = o.TotalStatusCode80
-	}
-	if o.TotalStatusCode82 != nil {
-		toSerialize["totalStatusCode82"] = o.TotalStatusCode82
-	}
-	if o.TotalStatusCode83 != nil {
-		toSerialize["totalStatusCode83"] = o.TotalStatusCode83
-	}
-	if o.TotalStatusCode84 != nil {
-		toSerialize["totalStatusCode84"] = o.TotalStatusCode84
-	}
-	if o.TotalStatusCode88 != nil {
-		toSerialize["totalStatusCode88"] = o.TotalStatusCode88
-	}
-	if o.TotalStatusCode89 != nil {
-		toSerialize["totalStatusCode89"] = o.TotalStatusCode89
-	}
-	if o.TotalStatusCode93 != nil {
-		toSerialize["totalStatusCode93"] = o.TotalStatusCode93
-	}
-	if o.TotalStatusCode94 != nil {
-		toSerialize["totalStatusCode94"] = o.TotalStatusCode94
-	}
-	if o.TotalStatusCode95 != nil {
-		toSerialize["totalStatusCode95"] = o.TotalStatusCode95
-	}
-	if o.TotalStatusCode96 != nil {
-		toSerialize["totalStatusCode96"] = o.TotalStatusCode96
-	}
-	if o.TotalStatusCode97 != nil {
-		toSerialize["totalStatusCode97"] = o.TotalStatusCode97
-	}
-	if o.TotalECOACodeZ != nil {
-		toSerialize["totalECOACodeZ"] = o.TotalECOACodeZ
-	}
-	if o.TotalEmploymentSegments != nil {
-		toSerialize["totalEmploymentSegments"] = o.TotalEmploymentSegments
-	}
-	if o.TotalOriginalCreditorSegments != nil {
-		toSerialize["totalOriginalCreditorSegments"] = o.TotalOriginalCreditorSegments
-	}
-	if o.TotalPurchasedToSegments != nil {
-		toSerialize["totalPurchasedToSegments"] = o.TotalPurchasedToSegments
-	}
-	if o.TotalMortgageInformationSegments != nil {
-		toSerialize["totalMortgageInformationSegments"] = o.TotalMortgageInformationSegments
-	}
-	if o.TotalPaymentInformationSegments != nil {
-		toSerialize["totalPaymentInformationSegments"] = o.TotalPaymentInformationSegments
-	}
-	if o.TotalChangeSegments != nil {
-		toSerialize["totalChangeSegments"] = o.TotalChangeSegments
-	}
-	if o.TotalSocialNumbersAllSegments != nil {
-		toSerialize["totalSocialNumbersAllSegments"] = o.TotalSocialNumbersAllSegments
-	}
-	if o.TotalSocialNumbersBaseSegments != nil {
-		toSerialize["totalSocialNumbersBaseSegments"] = o.TotalSocialNumbersBaseSegments
-	}
-	if o.TotalSocialNumbersJ1Segments != nil {
-		toSerialize["totalSocialNumbersJ1Segments"] = o.TotalSocialNumbersJ1Segments
-	}
-	if o.TotalSocialNumbersJ2Segments != nil {
-		toSerialize["totalSocialNumbersJ2Segments"] = o.TotalSocialNumbersJ2Segments
-	}
-	if o.TotalDatesBirthAllSegments != nil {
-		toSerialize["totalDatesBirthAllSegments"] = o.TotalDatesBirthAllSegments
-	}
-	if o.TotalDatesBirthBaseSegments != nil {
-		toSerialize["totalDatesBirthBaseSegments"] = o.TotalDatesBirthBaseSegments
-	}
-	if o.TotalDatesBirthJ1Segments != nil {
-		toSerialize["totalDatesBirthJ1Segments"] = o.TotalDatesBirthJ1Segments
-	}
-	if o.TotalDatesBirthJ2Segments != nil {
-		toSerialize["totalDatesBirthJ2Segments"] = o.TotalDatesBirthJ2Segments
-	}
-	if o.TotalTelephoneNumbersAllSegments != nil {
-		toSerialize["totalTelephoneNumbersAllSegments"] = o.TotalTelephoneNumbersAllSegments
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o TrailerRecord) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	if !IsNil(o.BlockDescriptorWord) {
+		toSerialize["blockDescriptorWord"] = o.BlockDescriptorWord
+	}
+	toSerialize["recordDescriptorWord"] = o.RecordDescriptorWord
+	toSerialize["recordIdentifier"] = o.RecordIdentifier
+	if !IsNil(o.TotalBaseRecords) {
+		toSerialize["totalBaseRecords"] = o.TotalBaseRecords
+	}
+	if !IsNil(o.TotalStatusCodeDF) {
+		toSerialize["totalStatusCodeDF"] = o.TotalStatusCodeDF
+	}
+	if !IsNil(o.TotalConsumerSegmentsJ1) {
+		toSerialize["totalConsumerSegmentsJ1"] = o.TotalConsumerSegmentsJ1
+	}
+	if !IsNil(o.TotalConsumerSegmentsJ2) {
+		toSerialize["totalConsumerSegmentsJ2"] = o.TotalConsumerSegmentsJ2
+	}
+	if !IsNil(o.BlockCount) {
+		toSerialize["blockCount"] = o.BlockCount
+	}
+	if !IsNil(o.TotalStatusCodeDA) {
+		toSerialize["totalStatusCodeDA"] = o.TotalStatusCodeDA
+	}
+	if !IsNil(o.TotalStatusCode05) {
+		toSerialize["totalStatusCode05"] = o.TotalStatusCode05
+	}
+	if !IsNil(o.TotalStatusCode11) {
+		toSerialize["totalStatusCode11"] = o.TotalStatusCode11
+	}
+	if !IsNil(o.TotalStatusCode13) {
+		toSerialize["totalStatusCode13"] = o.TotalStatusCode13
+	}
+	if !IsNil(o.TotalStatusCode61) {
+		toSerialize["totalStatusCode61"] = o.TotalStatusCode61
+	}
+	if !IsNil(o.TotalStatusCode62) {
+		toSerialize["totalStatusCode62"] = o.TotalStatusCode62
+	}
+	if !IsNil(o.TotalStatusCode63) {
+		toSerialize["totalStatusCode63"] = o.TotalStatusCode63
+	}
+	if !IsNil(o.TotalStatusCode64) {
+		toSerialize["totalStatusCode64"] = o.TotalStatusCode64
+	}
+	if !IsNil(o.TotalStatusCode65) {
+		toSerialize["totalStatusCode65"] = o.TotalStatusCode65
+	}
+	if !IsNil(o.TotalStatusCode71) {
+		toSerialize["totalStatusCode71"] = o.TotalStatusCode71
+	}
+	if !IsNil(o.TotalStatusCode78) {
+		toSerialize["totalStatusCode78"] = o.TotalStatusCode78
+	}
+	if !IsNil(o.TotalStatusCode80) {
+		toSerialize["totalStatusCode80"] = o.TotalStatusCode80
+	}
+	if !IsNil(o.TotalStatusCode82) {
+		toSerialize["totalStatusCode82"] = o.TotalStatusCode82
+	}
+	if !IsNil(o.TotalStatusCode83) {
+		toSerialize["totalStatusCode83"] = o.TotalStatusCode83
+	}
+	if !IsNil(o.TotalStatusCode84) {
+		toSerialize["totalStatusCode84"] = o.TotalStatusCode84
+	}
+	if !IsNil(o.TotalStatusCode88) {
+		toSerialize["totalStatusCode88"] = o.TotalStatusCode88
+	}
+	if !IsNil(o.TotalStatusCode89) {
+		toSerialize["totalStatusCode89"] = o.TotalStatusCode89
+	}
+	if !IsNil(o.TotalStatusCode93) {
+		toSerialize["totalStatusCode93"] = o.TotalStatusCode93
+	}
+	if !IsNil(o.TotalStatusCode94) {
+		toSerialize["totalStatusCode94"] = o.TotalStatusCode94
+	}
+	if !IsNil(o.TotalStatusCode95) {
+		toSerialize["totalStatusCode95"] = o.TotalStatusCode95
+	}
+	if !IsNil(o.TotalStatusCode96) {
+		toSerialize["totalStatusCode96"] = o.TotalStatusCode96
+	}
+	if !IsNil(o.TotalStatusCode97) {
+		toSerialize["totalStatusCode97"] = o.TotalStatusCode97
+	}
+	if !IsNil(o.TotalECOACodeZ) {
+		toSerialize["totalECOACodeZ"] = o.TotalECOACodeZ
+	}
+	if !IsNil(o.TotalEmploymentSegments) {
+		toSerialize["totalEmploymentSegments"] = o.TotalEmploymentSegments
+	}
+	if !IsNil(o.TotalOriginalCreditorSegments) {
+		toSerialize["totalOriginalCreditorSegments"] = o.TotalOriginalCreditorSegments
+	}
+	if !IsNil(o.TotalPurchasedToSegments) {
+		toSerialize["totalPurchasedToSegments"] = o.TotalPurchasedToSegments
+	}
+	if !IsNil(o.TotalMortgageInformationSegments) {
+		toSerialize["totalMortgageInformationSegments"] = o.TotalMortgageInformationSegments
+	}
+	if !IsNil(o.TotalPaymentInformationSegments) {
+		toSerialize["totalPaymentInformationSegments"] = o.TotalPaymentInformationSegments
+	}
+	if !IsNil(o.TotalChangeSegments) {
+		toSerialize["totalChangeSegments"] = o.TotalChangeSegments
+	}
+	if !IsNil(o.TotalSocialNumbersAllSegments) {
+		toSerialize["totalSocialNumbersAllSegments"] = o.TotalSocialNumbersAllSegments
+	}
+	if !IsNil(o.TotalSocialNumbersBaseSegments) {
+		toSerialize["totalSocialNumbersBaseSegments"] = o.TotalSocialNumbersBaseSegments
+	}
+	if !IsNil(o.TotalSocialNumbersJ1Segments) {
+		toSerialize["totalSocialNumbersJ1Segments"] = o.TotalSocialNumbersJ1Segments
+	}
+	if !IsNil(o.TotalSocialNumbersJ2Segments) {
+		toSerialize["totalSocialNumbersJ2Segments"] = o.TotalSocialNumbersJ2Segments
+	}
+	if !IsNil(o.TotalDatesBirthAllSegments) {
+		toSerialize["totalDatesBirthAllSegments"] = o.TotalDatesBirthAllSegments
+	}
+	if !IsNil(o.TotalDatesBirthBaseSegments) {
+		toSerialize["totalDatesBirthBaseSegments"] = o.TotalDatesBirthBaseSegments
+	}
+	if !IsNil(o.TotalDatesBirthJ1Segments) {
+		toSerialize["totalDatesBirthJ1Segments"] = o.TotalDatesBirthJ1Segments
+	}
+	if !IsNil(o.TotalDatesBirthJ2Segments) {
+		toSerialize["totalDatesBirthJ2Segments"] = o.TotalDatesBirthJ2Segments
+	}
+	if !IsNil(o.TotalTelephoneNumbersAllSegments) {
+		toSerialize["totalTelephoneNumbersAllSegments"] = o.TotalTelephoneNumbersAllSegments
+	}
+	return toSerialize, nil
 }
 
 type NullableTrailerRecord struct {
@@ -1717,5 +1724,3 @@ func (v *NullableTrailerRecord) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

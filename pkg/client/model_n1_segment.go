@@ -14,16 +14,19 @@ import (
 	"encoding/json"
 )
 
+// checks if the N1Segment type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &N1Segment{}
+
 // N1Segment struct for N1Segment
 type N1Segment struct {
-	SegmentIdentifier string `json:"segmentIdentifier"`
-	EmployerName string `json:"employerName"`
-	FirstLineEmployerAddress *string `json:"firstLineEmployerAddress,omitempty"`
+	SegmentIdentifier         string  `json:"segmentIdentifier"`
+	EmployerName              string  `json:"employerName"`
+	FirstLineEmployerAddress  *string `json:"firstLineEmployerAddress,omitempty"`
 	SecondLineEmployerAddress *string `json:"secondLineEmployerAddress,omitempty"`
-	EmployerCity *string `json:"employerCity,omitempty"`
-	EmployerState *string `json:"employerState,omitempty"`
-	ZipCode *string `json:"zipCode,omitempty"`
-	Occupation *string `json:"occupation,omitempty"`
+	EmployerCity              *string `json:"employerCity,omitempty"`
+	EmployerState             *string `json:"employerState,omitempty"`
+	ZipCode                   *string `json:"zipCode,omitempty"`
+	Occupation                *string `json:"occupation,omitempty"`
 }
 
 // NewN1Segment instantiates a new N1Segment object
@@ -58,7 +61,7 @@ func (o *N1Segment) GetSegmentIdentifier() string {
 // GetSegmentIdentifierOk returns a tuple with the SegmentIdentifier field value
 // and a boolean to check if the value has been set.
 func (o *N1Segment) GetSegmentIdentifierOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.SegmentIdentifier, true
@@ -82,7 +85,7 @@ func (o *N1Segment) GetEmployerName() string {
 // GetEmployerNameOk returns a tuple with the EmployerName field value
 // and a boolean to check if the value has been set.
 func (o *N1Segment) GetEmployerNameOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.EmployerName, true
@@ -95,7 +98,7 @@ func (o *N1Segment) SetEmployerName(v string) {
 
 // GetFirstLineEmployerAddress returns the FirstLineEmployerAddress field value if set, zero value otherwise.
 func (o *N1Segment) GetFirstLineEmployerAddress() string {
-	if o == nil || o.FirstLineEmployerAddress == nil {
+	if o == nil || IsNil(o.FirstLineEmployerAddress) {
 		var ret string
 		return ret
 	}
@@ -105,7 +108,7 @@ func (o *N1Segment) GetFirstLineEmployerAddress() string {
 // GetFirstLineEmployerAddressOk returns a tuple with the FirstLineEmployerAddress field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *N1Segment) GetFirstLineEmployerAddressOk() (*string, bool) {
-	if o == nil || o.FirstLineEmployerAddress == nil {
+	if o == nil || IsNil(o.FirstLineEmployerAddress) {
 		return nil, false
 	}
 	return o.FirstLineEmployerAddress, true
@@ -113,7 +116,7 @@ func (o *N1Segment) GetFirstLineEmployerAddressOk() (*string, bool) {
 
 // HasFirstLineEmployerAddress returns a boolean if a field has been set.
 func (o *N1Segment) HasFirstLineEmployerAddress() bool {
-	if o != nil && o.FirstLineEmployerAddress != nil {
+	if o != nil && !IsNil(o.FirstLineEmployerAddress) {
 		return true
 	}
 
@@ -127,7 +130,7 @@ func (o *N1Segment) SetFirstLineEmployerAddress(v string) {
 
 // GetSecondLineEmployerAddress returns the SecondLineEmployerAddress field value if set, zero value otherwise.
 func (o *N1Segment) GetSecondLineEmployerAddress() string {
-	if o == nil || o.SecondLineEmployerAddress == nil {
+	if o == nil || IsNil(o.SecondLineEmployerAddress) {
 		var ret string
 		return ret
 	}
@@ -137,7 +140,7 @@ func (o *N1Segment) GetSecondLineEmployerAddress() string {
 // GetSecondLineEmployerAddressOk returns a tuple with the SecondLineEmployerAddress field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *N1Segment) GetSecondLineEmployerAddressOk() (*string, bool) {
-	if o == nil || o.SecondLineEmployerAddress == nil {
+	if o == nil || IsNil(o.SecondLineEmployerAddress) {
 		return nil, false
 	}
 	return o.SecondLineEmployerAddress, true
@@ -145,7 +148,7 @@ func (o *N1Segment) GetSecondLineEmployerAddressOk() (*string, bool) {
 
 // HasSecondLineEmployerAddress returns a boolean if a field has been set.
 func (o *N1Segment) HasSecondLineEmployerAddress() bool {
-	if o != nil && o.SecondLineEmployerAddress != nil {
+	if o != nil && !IsNil(o.SecondLineEmployerAddress) {
 		return true
 	}
 
@@ -159,7 +162,7 @@ func (o *N1Segment) SetSecondLineEmployerAddress(v string) {
 
 // GetEmployerCity returns the EmployerCity field value if set, zero value otherwise.
 func (o *N1Segment) GetEmployerCity() string {
-	if o == nil || o.EmployerCity == nil {
+	if o == nil || IsNil(o.EmployerCity) {
 		var ret string
 		return ret
 	}
@@ -169,7 +172,7 @@ func (o *N1Segment) GetEmployerCity() string {
 // GetEmployerCityOk returns a tuple with the EmployerCity field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *N1Segment) GetEmployerCityOk() (*string, bool) {
-	if o == nil || o.EmployerCity == nil {
+	if o == nil || IsNil(o.EmployerCity) {
 		return nil, false
 	}
 	return o.EmployerCity, true
@@ -177,7 +180,7 @@ func (o *N1Segment) GetEmployerCityOk() (*string, bool) {
 
 // HasEmployerCity returns a boolean if a field has been set.
 func (o *N1Segment) HasEmployerCity() bool {
-	if o != nil && o.EmployerCity != nil {
+	if o != nil && !IsNil(o.EmployerCity) {
 		return true
 	}
 
@@ -191,7 +194,7 @@ func (o *N1Segment) SetEmployerCity(v string) {
 
 // GetEmployerState returns the EmployerState field value if set, zero value otherwise.
 func (o *N1Segment) GetEmployerState() string {
-	if o == nil || o.EmployerState == nil {
+	if o == nil || IsNil(o.EmployerState) {
 		var ret string
 		return ret
 	}
@@ -201,7 +204,7 @@ func (o *N1Segment) GetEmployerState() string {
 // GetEmployerStateOk returns a tuple with the EmployerState field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *N1Segment) GetEmployerStateOk() (*string, bool) {
-	if o == nil || o.EmployerState == nil {
+	if o == nil || IsNil(o.EmployerState) {
 		return nil, false
 	}
 	return o.EmployerState, true
@@ -209,7 +212,7 @@ func (o *N1Segment) GetEmployerStateOk() (*string, bool) {
 
 // HasEmployerState returns a boolean if a field has been set.
 func (o *N1Segment) HasEmployerState() bool {
-	if o != nil && o.EmployerState != nil {
+	if o != nil && !IsNil(o.EmployerState) {
 		return true
 	}
 
@@ -223,7 +226,7 @@ func (o *N1Segment) SetEmployerState(v string) {
 
 // GetZipCode returns the ZipCode field value if set, zero value otherwise.
 func (o *N1Segment) GetZipCode() string {
-	if o == nil || o.ZipCode == nil {
+	if o == nil || IsNil(o.ZipCode) {
 		var ret string
 		return ret
 	}
@@ -233,7 +236,7 @@ func (o *N1Segment) GetZipCode() string {
 // GetZipCodeOk returns a tuple with the ZipCode field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *N1Segment) GetZipCodeOk() (*string, bool) {
-	if o == nil || o.ZipCode == nil {
+	if o == nil || IsNil(o.ZipCode) {
 		return nil, false
 	}
 	return o.ZipCode, true
@@ -241,7 +244,7 @@ func (o *N1Segment) GetZipCodeOk() (*string, bool) {
 
 // HasZipCode returns a boolean if a field has been set.
 func (o *N1Segment) HasZipCode() bool {
-	if o != nil && o.ZipCode != nil {
+	if o != nil && !IsNil(o.ZipCode) {
 		return true
 	}
 
@@ -255,7 +258,7 @@ func (o *N1Segment) SetZipCode(v string) {
 
 // GetOccupation returns the Occupation field value if set, zero value otherwise.
 func (o *N1Segment) GetOccupation() string {
-	if o == nil || o.Occupation == nil {
+	if o == nil || IsNil(o.Occupation) {
 		var ret string
 		return ret
 	}
@@ -265,7 +268,7 @@ func (o *N1Segment) GetOccupation() string {
 // GetOccupationOk returns a tuple with the Occupation field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *N1Segment) GetOccupationOk() (*string, bool) {
-	if o == nil || o.Occupation == nil {
+	if o == nil || IsNil(o.Occupation) {
 		return nil, false
 	}
 	return o.Occupation, true
@@ -273,7 +276,7 @@ func (o *N1Segment) GetOccupationOk() (*string, bool) {
 
 // HasOccupation returns a boolean if a field has been set.
 func (o *N1Segment) HasOccupation() bool {
-	if o != nil && o.Occupation != nil {
+	if o != nil && !IsNil(o.Occupation) {
 		return true
 	}
 
@@ -286,32 +289,36 @@ func (o *N1Segment) SetOccupation(v string) {
 }
 
 func (o N1Segment) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["segmentIdentifier"] = o.SegmentIdentifier
-	}
-	if true {
-		toSerialize["employerName"] = o.EmployerName
-	}
-	if o.FirstLineEmployerAddress != nil {
-		toSerialize["firstLineEmployerAddress"] = o.FirstLineEmployerAddress
-	}
-	if o.SecondLineEmployerAddress != nil {
-		toSerialize["secondLineEmployerAddress"] = o.SecondLineEmployerAddress
-	}
-	if o.EmployerCity != nil {
-		toSerialize["employerCity"] = o.EmployerCity
-	}
-	if o.EmployerState != nil {
-		toSerialize["employerState"] = o.EmployerState
-	}
-	if o.ZipCode != nil {
-		toSerialize["zipCode"] = o.ZipCode
-	}
-	if o.Occupation != nil {
-		toSerialize["occupation"] = o.Occupation
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o N1Segment) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	toSerialize["segmentIdentifier"] = o.SegmentIdentifier
+	toSerialize["employerName"] = o.EmployerName
+	if !IsNil(o.FirstLineEmployerAddress) {
+		toSerialize["firstLineEmployerAddress"] = o.FirstLineEmployerAddress
+	}
+	if !IsNil(o.SecondLineEmployerAddress) {
+		toSerialize["secondLineEmployerAddress"] = o.SecondLineEmployerAddress
+	}
+	if !IsNil(o.EmployerCity) {
+		toSerialize["employerCity"] = o.EmployerCity
+	}
+	if !IsNil(o.EmployerState) {
+		toSerialize["employerState"] = o.EmployerState
+	}
+	if !IsNil(o.ZipCode) {
+		toSerialize["zipCode"] = o.ZipCode
+	}
+	if !IsNil(o.Occupation) {
+		toSerialize["occupation"] = o.Occupation
+	}
+	return toSerialize, nil
 }
 
 type NullableN1Segment struct {
@@ -349,5 +356,3 @@ func (v *NullableN1Segment) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

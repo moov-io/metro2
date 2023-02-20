@@ -15,65 +15,69 @@ import (
 	"time"
 )
 
+// checks if the BaseSegment type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &BaseSegment{}
+
 // BaseSegment struct for BaseSegment
 type BaseSegment struct {
-	BlockDescriptorWord *int32 `json:"blockDescriptorWord,omitempty"`
-	RecordDescriptorWord int32 `json:"recordDescriptorWord"`
-	TimeStamp *time.Time `json:"timeStamp,omitempty"`
-	IdentificationNumber string `json:"identificationNumber"`
-	CycleIdentifier *string `json:"cycleIdentifier,omitempty"`
-	ConsumerAccountNumber string `json:"consumerAccountNumber"`
-	PortfolioType *string `json:"portfolioType,omitempty"`
-	AccountType string `json:"accountType"`
-	DateOpened *time.Time `json:"dateOpened,omitempty"`
-	CreditLimit *int32 `json:"creditLimit,omitempty"`
-	HighestCredit *int32 `json:"highestCredit,omitempty"`
-	TermsDuration string `json:"termsDuration"`
-	TermsFrequency *string `json:"termsFrequency,omitempty"`
-	ScheduledMonthlyPaymentAmount *int32 `json:"scheduledMonthlyPaymentAmount,omitempty"`
-	ActualPaymentAmount *int32 `json:"actualPaymentAmount,omitempty"`
-	AccountStatus string `json:"accountStatus"`
-	PaymentRating *string `json:"paymentRating,omitempty"`
-	PaymentHistoryProfile string `json:"paymentHistoryProfile"`
-	SpecialComment *string `json:"specialComment,omitempty"`
-	ComplianceConditionCode *string `json:"complianceConditionCode,omitempty"`
-	CurrentBalance int32 `json:"currentBalance"`
-	AmountPastDue *int32 `json:"amountPastDue,omitempty"`
-	OriginalChargeOffAmount *int32 `json:"originalChargeOffAmount,omitempty"`
-	DateAccountInformation time.Time `json:"dateAccountInformation"`
-	DateFirstDelinquency *time.Time `json:"dateFirstDelinquency,omitempty"`
-	DateClosed *time.Time `json:"dateClosed,omitempty"`
-	DateLastPayment *time.Time `json:"dateLastPayment,omitempty"`
-	InterestTypeIndicator *string `json:"interestTypeIndicator,omitempty"`
-	Surname string `json:"surname"`
-	FirstName string `json:"firstName"`
-	MiddleName *string `json:"middleName,omitempty"`
-	GenerationCode *string `json:"generationCode,omitempty"`
-	SocialSecurityNumber int32 `json:"socialSecurityNumber"`
-	DateBirth time.Time `json:"dateBirth"`
-	TelephoneNumber *int64 `json:"telephoneNumber,omitempty"`
-	EcoaCode string `json:"ecoaCode"`
-	ConsumerInformationIndicator *string `json:"consumerInformationIndicator,omitempty"`
-	CountryCode *string `json:"countryCode,omitempty"`
-	FirstLineAddress string `json:"firstLineAddress"`
-	SecondLineAddress *string `json:"secondLineAddress,omitempty"`
-	City *string `json:"city,omitempty"`
-	State string `json:"state"`
-	ZipCode string `json:"zipCode"`
-	AddressIndicator *string `json:"addressIndicator,omitempty"`
-	ResidenceCode *string `json:"residenceCode,omitempty"`
+	BlockDescriptorWord           *int32     `json:"blockDescriptorWord,omitempty"`
+	RecordDescriptorWord          int32      `json:"recordDescriptorWord"`
+	TimeStamp                     *time.Time `json:"timeStamp,omitempty"`
+	IdentificationNumber          string     `json:"identificationNumber"`
+	CycleIdentifier               *string    `json:"cycleIdentifier,omitempty"`
+	ConsumerAccountNumber         string     `json:"consumerAccountNumber"`
+	PortfolioType                 *string    `json:"portfolioType,omitempty"`
+	AccountType                   string     `json:"accountType"`
+	DateOpened                    *time.Time `json:"dateOpened,omitempty"`
+	CreditLimit                   *int32     `json:"creditLimit,omitempty"`
+	HighestCredit                 int32      `json:"highestCredit"`
+	TermsDuration                 string     `json:"termsDuration"`
+	TermsFrequency                *string    `json:"termsFrequency,omitempty"`
+	ScheduledMonthlyPaymentAmount *int32     `json:"scheduledMonthlyPaymentAmount,omitempty"`
+	ActualPaymentAmount           *int32     `json:"actualPaymentAmount,omitempty"`
+	AccountStatus                 string     `json:"accountStatus"`
+	PaymentRating                 *string    `json:"paymentRating,omitempty"`
+	PaymentHistoryProfile         string     `json:"paymentHistoryProfile"`
+	SpecialComment                *string    `json:"specialComment,omitempty"`
+	ComplianceConditionCode       *string    `json:"complianceConditionCode,omitempty"`
+	CurrentBalance                int32      `json:"currentBalance"`
+	AmountPastDue                 *int32     `json:"amountPastDue,omitempty"`
+	OriginalChargeOffAmount       *int32     `json:"originalChargeOffAmount,omitempty"`
+	DateAccountInformation        time.Time  `json:"dateAccountInformation"`
+	DateFirstDelinquency          *time.Time `json:"dateFirstDelinquency,omitempty"`
+	DateClosed                    *time.Time `json:"dateClosed,omitempty"`
+	DateLastPayment               *time.Time `json:"dateLastPayment,omitempty"`
+	InterestTypeIndicator         *string    `json:"interestTypeIndicator,omitempty"`
+	Surname                       string     `json:"surname"`
+	FirstName                     string     `json:"firstName"`
+	MiddleName                    *string    `json:"middleName,omitempty"`
+	GenerationCode                *string    `json:"generationCode,omitempty"`
+	SocialSecurityNumber          int32      `json:"socialSecurityNumber"`
+	DateBirth                     time.Time  `json:"dateBirth"`
+	TelephoneNumber               *int64     `json:"telephoneNumber,omitempty"`
+	EcoaCode                      string     `json:"ecoaCode"`
+	ConsumerInformationIndicator  *string    `json:"consumerInformationIndicator,omitempty"`
+	CountryCode                   *string    `json:"countryCode,omitempty"`
+	FirstLineAddress              string     `json:"firstLineAddress"`
+	SecondLineAddress             *string    `json:"secondLineAddress,omitempty"`
+	City                          *string    `json:"city,omitempty"`
+	State                         string     `json:"state"`
+	ZipCode                       string     `json:"zipCode"`
+	AddressIndicator              *string    `json:"addressIndicator,omitempty"`
+	ResidenceCode                 *string    `json:"residenceCode,omitempty"`
 }
 
 // NewBaseSegment instantiates a new BaseSegment object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBaseSegment(recordDescriptorWord int32, identificationNumber string, consumerAccountNumber string, accountType string, termsDuration string, accountStatus string, paymentHistoryProfile string, currentBalance int32, dateAccountInformation time.Time, surname string, firstName string, socialSecurityNumber int32, dateBirth time.Time, ecoaCode string, firstLineAddress string, state string, zipCode string) *BaseSegment {
+func NewBaseSegment(recordDescriptorWord int32, identificationNumber string, consumerAccountNumber string, accountType string, highestCredit int32, termsDuration string, accountStatus string, paymentHistoryProfile string, currentBalance int32, dateAccountInformation time.Time, surname string, firstName string, socialSecurityNumber int32, dateBirth time.Time, ecoaCode string, firstLineAddress string, state string, zipCode string) *BaseSegment {
 	this := BaseSegment{}
 	this.RecordDescriptorWord = recordDescriptorWord
 	this.IdentificationNumber = identificationNumber
 	this.ConsumerAccountNumber = consumerAccountNumber
 	this.AccountType = accountType
+	this.HighestCredit = highestCredit
 	this.TermsDuration = termsDuration
 	this.AccountStatus = accountStatus
 	this.PaymentHistoryProfile = paymentHistoryProfile
@@ -100,7 +104,7 @@ func NewBaseSegmentWithDefaults() *BaseSegment {
 
 // GetBlockDescriptorWord returns the BlockDescriptorWord field value if set, zero value otherwise.
 func (o *BaseSegment) GetBlockDescriptorWord() int32 {
-	if o == nil || o.BlockDescriptorWord == nil {
+	if o == nil || IsNil(o.BlockDescriptorWord) {
 		var ret int32
 		return ret
 	}
@@ -110,7 +114,7 @@ func (o *BaseSegment) GetBlockDescriptorWord() int32 {
 // GetBlockDescriptorWordOk returns a tuple with the BlockDescriptorWord field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetBlockDescriptorWordOk() (*int32, bool) {
-	if o == nil || o.BlockDescriptorWord == nil {
+	if o == nil || IsNil(o.BlockDescriptorWord) {
 		return nil, false
 	}
 	return o.BlockDescriptorWord, true
@@ -118,7 +122,7 @@ func (o *BaseSegment) GetBlockDescriptorWordOk() (*int32, bool) {
 
 // HasBlockDescriptorWord returns a boolean if a field has been set.
 func (o *BaseSegment) HasBlockDescriptorWord() bool {
-	if o != nil && o.BlockDescriptorWord != nil {
+	if o != nil && !IsNil(o.BlockDescriptorWord) {
 		return true
 	}
 
@@ -143,7 +147,7 @@ func (o *BaseSegment) GetRecordDescriptorWord() int32 {
 // GetRecordDescriptorWordOk returns a tuple with the RecordDescriptorWord field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetRecordDescriptorWordOk() (*int32, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.RecordDescriptorWord, true
@@ -156,7 +160,7 @@ func (o *BaseSegment) SetRecordDescriptorWord(v int32) {
 
 // GetTimeStamp returns the TimeStamp field value if set, zero value otherwise.
 func (o *BaseSegment) GetTimeStamp() time.Time {
-	if o == nil || o.TimeStamp == nil {
+	if o == nil || IsNil(o.TimeStamp) {
 		var ret time.Time
 		return ret
 	}
@@ -166,7 +170,7 @@ func (o *BaseSegment) GetTimeStamp() time.Time {
 // GetTimeStampOk returns a tuple with the TimeStamp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetTimeStampOk() (*time.Time, bool) {
-	if o == nil || o.TimeStamp == nil {
+	if o == nil || IsNil(o.TimeStamp) {
 		return nil, false
 	}
 	return o.TimeStamp, true
@@ -174,7 +178,7 @@ func (o *BaseSegment) GetTimeStampOk() (*time.Time, bool) {
 
 // HasTimeStamp returns a boolean if a field has been set.
 func (o *BaseSegment) HasTimeStamp() bool {
-	if o != nil && o.TimeStamp != nil {
+	if o != nil && !IsNil(o.TimeStamp) {
 		return true
 	}
 
@@ -199,7 +203,7 @@ func (o *BaseSegment) GetIdentificationNumber() string {
 // GetIdentificationNumberOk returns a tuple with the IdentificationNumber field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetIdentificationNumberOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.IdentificationNumber, true
@@ -212,7 +216,7 @@ func (o *BaseSegment) SetIdentificationNumber(v string) {
 
 // GetCycleIdentifier returns the CycleIdentifier field value if set, zero value otherwise.
 func (o *BaseSegment) GetCycleIdentifier() string {
-	if o == nil || o.CycleIdentifier == nil {
+	if o == nil || IsNil(o.CycleIdentifier) {
 		var ret string
 		return ret
 	}
@@ -222,7 +226,7 @@ func (o *BaseSegment) GetCycleIdentifier() string {
 // GetCycleIdentifierOk returns a tuple with the CycleIdentifier field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetCycleIdentifierOk() (*string, bool) {
-	if o == nil || o.CycleIdentifier == nil {
+	if o == nil || IsNil(o.CycleIdentifier) {
 		return nil, false
 	}
 	return o.CycleIdentifier, true
@@ -230,7 +234,7 @@ func (o *BaseSegment) GetCycleIdentifierOk() (*string, bool) {
 
 // HasCycleIdentifier returns a boolean if a field has been set.
 func (o *BaseSegment) HasCycleIdentifier() bool {
-	if o != nil && o.CycleIdentifier != nil {
+	if o != nil && !IsNil(o.CycleIdentifier) {
 		return true
 	}
 
@@ -255,7 +259,7 @@ func (o *BaseSegment) GetConsumerAccountNumber() string {
 // GetConsumerAccountNumberOk returns a tuple with the ConsumerAccountNumber field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetConsumerAccountNumberOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.ConsumerAccountNumber, true
@@ -268,7 +272,7 @@ func (o *BaseSegment) SetConsumerAccountNumber(v string) {
 
 // GetPortfolioType returns the PortfolioType field value if set, zero value otherwise.
 func (o *BaseSegment) GetPortfolioType() string {
-	if o == nil || o.PortfolioType == nil {
+	if o == nil || IsNil(o.PortfolioType) {
 		var ret string
 		return ret
 	}
@@ -278,7 +282,7 @@ func (o *BaseSegment) GetPortfolioType() string {
 // GetPortfolioTypeOk returns a tuple with the PortfolioType field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetPortfolioTypeOk() (*string, bool) {
-	if o == nil || o.PortfolioType == nil {
+	if o == nil || IsNil(o.PortfolioType) {
 		return nil, false
 	}
 	return o.PortfolioType, true
@@ -286,7 +290,7 @@ func (o *BaseSegment) GetPortfolioTypeOk() (*string, bool) {
 
 // HasPortfolioType returns a boolean if a field has been set.
 func (o *BaseSegment) HasPortfolioType() bool {
-	if o != nil && o.PortfolioType != nil {
+	if o != nil && !IsNil(o.PortfolioType) {
 		return true
 	}
 
@@ -311,7 +315,7 @@ func (o *BaseSegment) GetAccountType() string {
 // GetAccountTypeOk returns a tuple with the AccountType field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetAccountTypeOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.AccountType, true
@@ -324,7 +328,7 @@ func (o *BaseSegment) SetAccountType(v string) {
 
 // GetDateOpened returns the DateOpened field value if set, zero value otherwise.
 func (o *BaseSegment) GetDateOpened() time.Time {
-	if o == nil || o.DateOpened == nil {
+	if o == nil || IsNil(o.DateOpened) {
 		var ret time.Time
 		return ret
 	}
@@ -334,7 +338,7 @@ func (o *BaseSegment) GetDateOpened() time.Time {
 // GetDateOpenedOk returns a tuple with the DateOpened field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetDateOpenedOk() (*time.Time, bool) {
-	if o == nil || o.DateOpened == nil {
+	if o == nil || IsNil(o.DateOpened) {
 		return nil, false
 	}
 	return o.DateOpened, true
@@ -342,7 +346,7 @@ func (o *BaseSegment) GetDateOpenedOk() (*time.Time, bool) {
 
 // HasDateOpened returns a boolean if a field has been set.
 func (o *BaseSegment) HasDateOpened() bool {
-	if o != nil && o.DateOpened != nil {
+	if o != nil && !IsNil(o.DateOpened) {
 		return true
 	}
 
@@ -356,7 +360,7 @@ func (o *BaseSegment) SetDateOpened(v time.Time) {
 
 // GetCreditLimit returns the CreditLimit field value if set, zero value otherwise.
 func (o *BaseSegment) GetCreditLimit() int32 {
-	if o == nil || o.CreditLimit == nil {
+	if o == nil || IsNil(o.CreditLimit) {
 		var ret int32
 		return ret
 	}
@@ -366,7 +370,7 @@ func (o *BaseSegment) GetCreditLimit() int32 {
 // GetCreditLimitOk returns a tuple with the CreditLimit field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetCreditLimitOk() (*int32, bool) {
-	if o == nil || o.CreditLimit == nil {
+	if o == nil || IsNil(o.CreditLimit) {
 		return nil, false
 	}
 	return o.CreditLimit, true
@@ -374,7 +378,7 @@ func (o *BaseSegment) GetCreditLimitOk() (*int32, bool) {
 
 // HasCreditLimit returns a boolean if a field has been set.
 func (o *BaseSegment) HasCreditLimit() bool {
-	if o != nil && o.CreditLimit != nil {
+	if o != nil && !IsNil(o.CreditLimit) {
 		return true
 	}
 
@@ -388,25 +392,26 @@ func (o *BaseSegment) SetCreditLimit(v int32) {
 
 // GetHighestCredit returns the HighestCredit field value
 func (o *BaseSegment) GetHighestCredit() int32 {
-	if o == nil || o.HighestCredit == nil {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.HighestCredit
+
+	return o.HighestCredit
 }
 
 // GetHighestCreditOk returns a tuple with the HighestCredit field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetHighestCreditOk() (*int32, bool) {
-	if o == nil || o.HighestCredit == nil {
+	if o == nil {
 		return nil, false
 	}
-	return o.HighestCredit, true
+	return &o.HighestCredit, true
 }
 
 // SetHighestCredit sets field value
 func (o *BaseSegment) SetHighestCredit(v int32) {
-	o.HighestCredit = &v
+	o.HighestCredit = v
 }
 
 // GetTermsDuration returns the TermsDuration field value
@@ -422,7 +427,7 @@ func (o *BaseSegment) GetTermsDuration() string {
 // GetTermsDurationOk returns a tuple with the TermsDuration field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetTermsDurationOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.TermsDuration, true
@@ -435,7 +440,7 @@ func (o *BaseSegment) SetTermsDuration(v string) {
 
 // GetTermsFrequency returns the TermsFrequency field value if set, zero value otherwise.
 func (o *BaseSegment) GetTermsFrequency() string {
-	if o == nil || o.TermsFrequency == nil {
+	if o == nil || IsNil(o.TermsFrequency) {
 		var ret string
 		return ret
 	}
@@ -445,7 +450,7 @@ func (o *BaseSegment) GetTermsFrequency() string {
 // GetTermsFrequencyOk returns a tuple with the TermsFrequency field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetTermsFrequencyOk() (*string, bool) {
-	if o == nil || o.TermsFrequency == nil {
+	if o == nil || IsNil(o.TermsFrequency) {
 		return nil, false
 	}
 	return o.TermsFrequency, true
@@ -453,7 +458,7 @@ func (o *BaseSegment) GetTermsFrequencyOk() (*string, bool) {
 
 // HasTermsFrequency returns a boolean if a field has been set.
 func (o *BaseSegment) HasTermsFrequency() bool {
-	if o != nil && o.TermsFrequency != nil {
+	if o != nil && !IsNil(o.TermsFrequency) {
 		return true
 	}
 
@@ -467,7 +472,7 @@ func (o *BaseSegment) SetTermsFrequency(v string) {
 
 // GetScheduledMonthlyPaymentAmount returns the ScheduledMonthlyPaymentAmount field value if set, zero value otherwise.
 func (o *BaseSegment) GetScheduledMonthlyPaymentAmount() int32 {
-	if o == nil || o.ScheduledMonthlyPaymentAmount == nil {
+	if o == nil || IsNil(o.ScheduledMonthlyPaymentAmount) {
 		var ret int32
 		return ret
 	}
@@ -477,7 +482,7 @@ func (o *BaseSegment) GetScheduledMonthlyPaymentAmount() int32 {
 // GetScheduledMonthlyPaymentAmountOk returns a tuple with the ScheduledMonthlyPaymentAmount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetScheduledMonthlyPaymentAmountOk() (*int32, bool) {
-	if o == nil || o.ScheduledMonthlyPaymentAmount == nil {
+	if o == nil || IsNil(o.ScheduledMonthlyPaymentAmount) {
 		return nil, false
 	}
 	return o.ScheduledMonthlyPaymentAmount, true
@@ -485,7 +490,7 @@ func (o *BaseSegment) GetScheduledMonthlyPaymentAmountOk() (*int32, bool) {
 
 // HasScheduledMonthlyPaymentAmount returns a boolean if a field has been set.
 func (o *BaseSegment) HasScheduledMonthlyPaymentAmount() bool {
-	if o != nil && o.ScheduledMonthlyPaymentAmount != nil {
+	if o != nil && !IsNil(o.ScheduledMonthlyPaymentAmount) {
 		return true
 	}
 
@@ -499,7 +504,7 @@ func (o *BaseSegment) SetScheduledMonthlyPaymentAmount(v int32) {
 
 // GetActualPaymentAmount returns the ActualPaymentAmount field value if set, zero value otherwise.
 func (o *BaseSegment) GetActualPaymentAmount() int32 {
-	if o == nil || o.ActualPaymentAmount == nil {
+	if o == nil || IsNil(o.ActualPaymentAmount) {
 		var ret int32
 		return ret
 	}
@@ -509,7 +514,7 @@ func (o *BaseSegment) GetActualPaymentAmount() int32 {
 // GetActualPaymentAmountOk returns a tuple with the ActualPaymentAmount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetActualPaymentAmountOk() (*int32, bool) {
-	if o == nil || o.ActualPaymentAmount == nil {
+	if o == nil || IsNil(o.ActualPaymentAmount) {
 		return nil, false
 	}
 	return o.ActualPaymentAmount, true
@@ -517,7 +522,7 @@ func (o *BaseSegment) GetActualPaymentAmountOk() (*int32, bool) {
 
 // HasActualPaymentAmount returns a boolean if a field has been set.
 func (o *BaseSegment) HasActualPaymentAmount() bool {
-	if o != nil && o.ActualPaymentAmount != nil {
+	if o != nil && !IsNil(o.ActualPaymentAmount) {
 		return true
 	}
 
@@ -542,7 +547,7 @@ func (o *BaseSegment) GetAccountStatus() string {
 // GetAccountStatusOk returns a tuple with the AccountStatus field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetAccountStatusOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.AccountStatus, true
@@ -555,7 +560,7 @@ func (o *BaseSegment) SetAccountStatus(v string) {
 
 // GetPaymentRating returns the PaymentRating field value if set, zero value otherwise.
 func (o *BaseSegment) GetPaymentRating() string {
-	if o == nil || o.PaymentRating == nil {
+	if o == nil || IsNil(o.PaymentRating) {
 		var ret string
 		return ret
 	}
@@ -565,7 +570,7 @@ func (o *BaseSegment) GetPaymentRating() string {
 // GetPaymentRatingOk returns a tuple with the PaymentRating field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetPaymentRatingOk() (*string, bool) {
-	if o == nil || o.PaymentRating == nil {
+	if o == nil || IsNil(o.PaymentRating) {
 		return nil, false
 	}
 	return o.PaymentRating, true
@@ -573,7 +578,7 @@ func (o *BaseSegment) GetPaymentRatingOk() (*string, bool) {
 
 // HasPaymentRating returns a boolean if a field has been set.
 func (o *BaseSegment) HasPaymentRating() bool {
-	if o != nil && o.PaymentRating != nil {
+	if o != nil && !IsNil(o.PaymentRating) {
 		return true
 	}
 
@@ -598,7 +603,7 @@ func (o *BaseSegment) GetPaymentHistoryProfile() string {
 // GetPaymentHistoryProfileOk returns a tuple with the PaymentHistoryProfile field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetPaymentHistoryProfileOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.PaymentHistoryProfile, true
@@ -611,7 +616,7 @@ func (o *BaseSegment) SetPaymentHistoryProfile(v string) {
 
 // GetSpecialComment returns the SpecialComment field value if set, zero value otherwise.
 func (o *BaseSegment) GetSpecialComment() string {
-	if o == nil || o.SpecialComment == nil {
+	if o == nil || IsNil(o.SpecialComment) {
 		var ret string
 		return ret
 	}
@@ -621,7 +626,7 @@ func (o *BaseSegment) GetSpecialComment() string {
 // GetSpecialCommentOk returns a tuple with the SpecialComment field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetSpecialCommentOk() (*string, bool) {
-	if o == nil || o.SpecialComment == nil {
+	if o == nil || IsNil(o.SpecialComment) {
 		return nil, false
 	}
 	return o.SpecialComment, true
@@ -629,7 +634,7 @@ func (o *BaseSegment) GetSpecialCommentOk() (*string, bool) {
 
 // HasSpecialComment returns a boolean if a field has been set.
 func (o *BaseSegment) HasSpecialComment() bool {
-	if o != nil && o.SpecialComment != nil {
+	if o != nil && !IsNil(o.SpecialComment) {
 		return true
 	}
 
@@ -643,7 +648,7 @@ func (o *BaseSegment) SetSpecialComment(v string) {
 
 // GetComplianceConditionCode returns the ComplianceConditionCode field value if set, zero value otherwise.
 func (o *BaseSegment) GetComplianceConditionCode() string {
-	if o == nil || o.ComplianceConditionCode == nil {
+	if o == nil || IsNil(o.ComplianceConditionCode) {
 		var ret string
 		return ret
 	}
@@ -653,7 +658,7 @@ func (o *BaseSegment) GetComplianceConditionCode() string {
 // GetComplianceConditionCodeOk returns a tuple with the ComplianceConditionCode field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetComplianceConditionCodeOk() (*string, bool) {
-	if o == nil || o.ComplianceConditionCode == nil {
+	if o == nil || IsNil(o.ComplianceConditionCode) {
 		return nil, false
 	}
 	return o.ComplianceConditionCode, true
@@ -661,7 +666,7 @@ func (o *BaseSegment) GetComplianceConditionCodeOk() (*string, bool) {
 
 // HasComplianceConditionCode returns a boolean if a field has been set.
 func (o *BaseSegment) HasComplianceConditionCode() bool {
-	if o != nil && o.ComplianceConditionCode != nil {
+	if o != nil && !IsNil(o.ComplianceConditionCode) {
 		return true
 	}
 
@@ -686,7 +691,7 @@ func (o *BaseSegment) GetCurrentBalance() int32 {
 // GetCurrentBalanceOk returns a tuple with the CurrentBalance field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetCurrentBalanceOk() (*int32, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.CurrentBalance, true
@@ -699,7 +704,7 @@ func (o *BaseSegment) SetCurrentBalance(v int32) {
 
 // GetAmountPastDue returns the AmountPastDue field value if set, zero value otherwise.
 func (o *BaseSegment) GetAmountPastDue() int32 {
-	if o == nil || o.AmountPastDue == nil {
+	if o == nil || IsNil(o.AmountPastDue) {
 		var ret int32
 		return ret
 	}
@@ -709,7 +714,7 @@ func (o *BaseSegment) GetAmountPastDue() int32 {
 // GetAmountPastDueOk returns a tuple with the AmountPastDue field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetAmountPastDueOk() (*int32, bool) {
-	if o == nil || o.AmountPastDue == nil {
+	if o == nil || IsNil(o.AmountPastDue) {
 		return nil, false
 	}
 	return o.AmountPastDue, true
@@ -717,7 +722,7 @@ func (o *BaseSegment) GetAmountPastDueOk() (*int32, bool) {
 
 // HasAmountPastDue returns a boolean if a field has been set.
 func (o *BaseSegment) HasAmountPastDue() bool {
-	if o != nil && o.AmountPastDue != nil {
+	if o != nil && !IsNil(o.AmountPastDue) {
 		return true
 	}
 
@@ -731,7 +736,7 @@ func (o *BaseSegment) SetAmountPastDue(v int32) {
 
 // GetOriginalChargeOffAmount returns the OriginalChargeOffAmount field value if set, zero value otherwise.
 func (o *BaseSegment) GetOriginalChargeOffAmount() int32 {
-	if o == nil || o.OriginalChargeOffAmount == nil {
+	if o == nil || IsNil(o.OriginalChargeOffAmount) {
 		var ret int32
 		return ret
 	}
@@ -741,7 +746,7 @@ func (o *BaseSegment) GetOriginalChargeOffAmount() int32 {
 // GetOriginalChargeOffAmountOk returns a tuple with the OriginalChargeOffAmount field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetOriginalChargeOffAmountOk() (*int32, bool) {
-	if o == nil || o.OriginalChargeOffAmount == nil {
+	if o == nil || IsNil(o.OriginalChargeOffAmount) {
 		return nil, false
 	}
 	return o.OriginalChargeOffAmount, true
@@ -749,7 +754,7 @@ func (o *BaseSegment) GetOriginalChargeOffAmountOk() (*int32, bool) {
 
 // HasOriginalChargeOffAmount returns a boolean if a field has been set.
 func (o *BaseSegment) HasOriginalChargeOffAmount() bool {
-	if o != nil && o.OriginalChargeOffAmount != nil {
+	if o != nil && !IsNil(o.OriginalChargeOffAmount) {
 		return true
 	}
 
@@ -774,7 +779,7 @@ func (o *BaseSegment) GetDateAccountInformation() time.Time {
 // GetDateAccountInformationOk returns a tuple with the DateAccountInformation field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetDateAccountInformationOk() (*time.Time, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.DateAccountInformation, true
@@ -787,7 +792,7 @@ func (o *BaseSegment) SetDateAccountInformation(v time.Time) {
 
 // GetDateFirstDelinquency returns the DateFirstDelinquency field value if set, zero value otherwise.
 func (o *BaseSegment) GetDateFirstDelinquency() time.Time {
-	if o == nil || o.DateFirstDelinquency == nil {
+	if o == nil || IsNil(o.DateFirstDelinquency) {
 		var ret time.Time
 		return ret
 	}
@@ -797,7 +802,7 @@ func (o *BaseSegment) GetDateFirstDelinquency() time.Time {
 // GetDateFirstDelinquencyOk returns a tuple with the DateFirstDelinquency field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetDateFirstDelinquencyOk() (*time.Time, bool) {
-	if o == nil || o.DateFirstDelinquency == nil {
+	if o == nil || IsNil(o.DateFirstDelinquency) {
 		return nil, false
 	}
 	return o.DateFirstDelinquency, true
@@ -805,7 +810,7 @@ func (o *BaseSegment) GetDateFirstDelinquencyOk() (*time.Time, bool) {
 
 // HasDateFirstDelinquency returns a boolean if a field has been set.
 func (o *BaseSegment) HasDateFirstDelinquency() bool {
-	if o != nil && o.DateFirstDelinquency != nil {
+	if o != nil && !IsNil(o.DateFirstDelinquency) {
 		return true
 	}
 
@@ -819,7 +824,7 @@ func (o *BaseSegment) SetDateFirstDelinquency(v time.Time) {
 
 // GetDateClosed returns the DateClosed field value if set, zero value otherwise.
 func (o *BaseSegment) GetDateClosed() time.Time {
-	if o == nil || o.DateClosed == nil {
+	if o == nil || IsNil(o.DateClosed) {
 		var ret time.Time
 		return ret
 	}
@@ -829,7 +834,7 @@ func (o *BaseSegment) GetDateClosed() time.Time {
 // GetDateClosedOk returns a tuple with the DateClosed field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetDateClosedOk() (*time.Time, bool) {
-	if o == nil || o.DateClosed == nil {
+	if o == nil || IsNil(o.DateClosed) {
 		return nil, false
 	}
 	return o.DateClosed, true
@@ -837,7 +842,7 @@ func (o *BaseSegment) GetDateClosedOk() (*time.Time, bool) {
 
 // HasDateClosed returns a boolean if a field has been set.
 func (o *BaseSegment) HasDateClosed() bool {
-	if o != nil && o.DateClosed != nil {
+	if o != nil && !IsNil(o.DateClosed) {
 		return true
 	}
 
@@ -851,7 +856,7 @@ func (o *BaseSegment) SetDateClosed(v time.Time) {
 
 // GetDateLastPayment returns the DateLastPayment field value if set, zero value otherwise.
 func (o *BaseSegment) GetDateLastPayment() time.Time {
-	if o == nil || o.DateLastPayment == nil {
+	if o == nil || IsNil(o.DateLastPayment) {
 		var ret time.Time
 		return ret
 	}
@@ -861,7 +866,7 @@ func (o *BaseSegment) GetDateLastPayment() time.Time {
 // GetDateLastPaymentOk returns a tuple with the DateLastPayment field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetDateLastPaymentOk() (*time.Time, bool) {
-	if o == nil || o.DateLastPayment == nil {
+	if o == nil || IsNil(o.DateLastPayment) {
 		return nil, false
 	}
 	return o.DateLastPayment, true
@@ -869,7 +874,7 @@ func (o *BaseSegment) GetDateLastPaymentOk() (*time.Time, bool) {
 
 // HasDateLastPayment returns a boolean if a field has been set.
 func (o *BaseSegment) HasDateLastPayment() bool {
-	if o != nil && o.DateLastPayment != nil {
+	if o != nil && !IsNil(o.DateLastPayment) {
 		return true
 	}
 
@@ -883,7 +888,7 @@ func (o *BaseSegment) SetDateLastPayment(v time.Time) {
 
 // GetInterestTypeIndicator returns the InterestTypeIndicator field value if set, zero value otherwise.
 func (o *BaseSegment) GetInterestTypeIndicator() string {
-	if o == nil || o.InterestTypeIndicator == nil {
+	if o == nil || IsNil(o.InterestTypeIndicator) {
 		var ret string
 		return ret
 	}
@@ -893,7 +898,7 @@ func (o *BaseSegment) GetInterestTypeIndicator() string {
 // GetInterestTypeIndicatorOk returns a tuple with the InterestTypeIndicator field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetInterestTypeIndicatorOk() (*string, bool) {
-	if o == nil || o.InterestTypeIndicator == nil {
+	if o == nil || IsNil(o.InterestTypeIndicator) {
 		return nil, false
 	}
 	return o.InterestTypeIndicator, true
@@ -901,7 +906,7 @@ func (o *BaseSegment) GetInterestTypeIndicatorOk() (*string, bool) {
 
 // HasInterestTypeIndicator returns a boolean if a field has been set.
 func (o *BaseSegment) HasInterestTypeIndicator() bool {
-	if o != nil && o.InterestTypeIndicator != nil {
+	if o != nil && !IsNil(o.InterestTypeIndicator) {
 		return true
 	}
 
@@ -926,7 +931,7 @@ func (o *BaseSegment) GetSurname() string {
 // GetSurnameOk returns a tuple with the Surname field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetSurnameOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.Surname, true
@@ -950,7 +955,7 @@ func (o *BaseSegment) GetFirstName() string {
 // GetFirstNameOk returns a tuple with the FirstName field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetFirstNameOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.FirstName, true
@@ -963,7 +968,7 @@ func (o *BaseSegment) SetFirstName(v string) {
 
 // GetMiddleName returns the MiddleName field value if set, zero value otherwise.
 func (o *BaseSegment) GetMiddleName() string {
-	if o == nil || o.MiddleName == nil {
+	if o == nil || IsNil(o.MiddleName) {
 		var ret string
 		return ret
 	}
@@ -973,7 +978,7 @@ func (o *BaseSegment) GetMiddleName() string {
 // GetMiddleNameOk returns a tuple with the MiddleName field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetMiddleNameOk() (*string, bool) {
-	if o == nil || o.MiddleName == nil {
+	if o == nil || IsNil(o.MiddleName) {
 		return nil, false
 	}
 	return o.MiddleName, true
@@ -981,7 +986,7 @@ func (o *BaseSegment) GetMiddleNameOk() (*string, bool) {
 
 // HasMiddleName returns a boolean if a field has been set.
 func (o *BaseSegment) HasMiddleName() bool {
-	if o != nil && o.MiddleName != nil {
+	if o != nil && !IsNil(o.MiddleName) {
 		return true
 	}
 
@@ -995,7 +1000,7 @@ func (o *BaseSegment) SetMiddleName(v string) {
 
 // GetGenerationCode returns the GenerationCode field value if set, zero value otherwise.
 func (o *BaseSegment) GetGenerationCode() string {
-	if o == nil || o.GenerationCode == nil {
+	if o == nil || IsNil(o.GenerationCode) {
 		var ret string
 		return ret
 	}
@@ -1005,7 +1010,7 @@ func (o *BaseSegment) GetGenerationCode() string {
 // GetGenerationCodeOk returns a tuple with the GenerationCode field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetGenerationCodeOk() (*string, bool) {
-	if o == nil || o.GenerationCode == nil {
+	if o == nil || IsNil(o.GenerationCode) {
 		return nil, false
 	}
 	return o.GenerationCode, true
@@ -1013,7 +1018,7 @@ func (o *BaseSegment) GetGenerationCodeOk() (*string, bool) {
 
 // HasGenerationCode returns a boolean if a field has been set.
 func (o *BaseSegment) HasGenerationCode() bool {
-	if o != nil && o.GenerationCode != nil {
+	if o != nil && !IsNil(o.GenerationCode) {
 		return true
 	}
 
@@ -1038,7 +1043,7 @@ func (o *BaseSegment) GetSocialSecurityNumber() int32 {
 // GetSocialSecurityNumberOk returns a tuple with the SocialSecurityNumber field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetSocialSecurityNumberOk() (*int32, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.SocialSecurityNumber, true
@@ -1062,7 +1067,7 @@ func (o *BaseSegment) GetDateBirth() time.Time {
 // GetDateBirthOk returns a tuple with the DateBirth field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetDateBirthOk() (*time.Time, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.DateBirth, true
@@ -1075,7 +1080,7 @@ func (o *BaseSegment) SetDateBirth(v time.Time) {
 
 // GetTelephoneNumber returns the TelephoneNumber field value if set, zero value otherwise.
 func (o *BaseSegment) GetTelephoneNumber() int64 {
-	if o == nil || o.TelephoneNumber == nil {
+	if o == nil || IsNil(o.TelephoneNumber) {
 		var ret int64
 		return ret
 	}
@@ -1085,7 +1090,7 @@ func (o *BaseSegment) GetTelephoneNumber() int64 {
 // GetTelephoneNumberOk returns a tuple with the TelephoneNumber field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetTelephoneNumberOk() (*int64, bool) {
-	if o == nil || o.TelephoneNumber == nil {
+	if o == nil || IsNil(o.TelephoneNumber) {
 		return nil, false
 	}
 	return o.TelephoneNumber, true
@@ -1093,7 +1098,7 @@ func (o *BaseSegment) GetTelephoneNumberOk() (*int64, bool) {
 
 // HasTelephoneNumber returns a boolean if a field has been set.
 func (o *BaseSegment) HasTelephoneNumber() bool {
-	if o != nil && o.TelephoneNumber != nil {
+	if o != nil && !IsNil(o.TelephoneNumber) {
 		return true
 	}
 
@@ -1118,7 +1123,7 @@ func (o *BaseSegment) GetEcoaCode() string {
 // GetEcoaCodeOk returns a tuple with the EcoaCode field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetEcoaCodeOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.EcoaCode, true
@@ -1131,7 +1136,7 @@ func (o *BaseSegment) SetEcoaCode(v string) {
 
 // GetConsumerInformationIndicator returns the ConsumerInformationIndicator field value if set, zero value otherwise.
 func (o *BaseSegment) GetConsumerInformationIndicator() string {
-	if o == nil || o.ConsumerInformationIndicator == nil {
+	if o == nil || IsNil(o.ConsumerInformationIndicator) {
 		var ret string
 		return ret
 	}
@@ -1141,7 +1146,7 @@ func (o *BaseSegment) GetConsumerInformationIndicator() string {
 // GetConsumerInformationIndicatorOk returns a tuple with the ConsumerInformationIndicator field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetConsumerInformationIndicatorOk() (*string, bool) {
-	if o == nil || o.ConsumerInformationIndicator == nil {
+	if o == nil || IsNil(o.ConsumerInformationIndicator) {
 		return nil, false
 	}
 	return o.ConsumerInformationIndicator, true
@@ -1149,7 +1154,7 @@ func (o *BaseSegment) GetConsumerInformationIndicatorOk() (*string, bool) {
 
 // HasConsumerInformationIndicator returns a boolean if a field has been set.
 func (o *BaseSegment) HasConsumerInformationIndicator() bool {
-	if o != nil && o.ConsumerInformationIndicator != nil {
+	if o != nil && !IsNil(o.ConsumerInformationIndicator) {
 		return true
 	}
 
@@ -1163,7 +1168,7 @@ func (o *BaseSegment) SetConsumerInformationIndicator(v string) {
 
 // GetCountryCode returns the CountryCode field value if set, zero value otherwise.
 func (o *BaseSegment) GetCountryCode() string {
-	if o == nil || o.CountryCode == nil {
+	if o == nil || IsNil(o.CountryCode) {
 		var ret string
 		return ret
 	}
@@ -1173,7 +1178,7 @@ func (o *BaseSegment) GetCountryCode() string {
 // GetCountryCodeOk returns a tuple with the CountryCode field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetCountryCodeOk() (*string, bool) {
-	if o == nil || o.CountryCode == nil {
+	if o == nil || IsNil(o.CountryCode) {
 		return nil, false
 	}
 	return o.CountryCode, true
@@ -1181,7 +1186,7 @@ func (o *BaseSegment) GetCountryCodeOk() (*string, bool) {
 
 // HasCountryCode returns a boolean if a field has been set.
 func (o *BaseSegment) HasCountryCode() bool {
-	if o != nil && o.CountryCode != nil {
+	if o != nil && !IsNil(o.CountryCode) {
 		return true
 	}
 
@@ -1206,7 +1211,7 @@ func (o *BaseSegment) GetFirstLineAddress() string {
 // GetFirstLineAddressOk returns a tuple with the FirstLineAddress field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetFirstLineAddressOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.FirstLineAddress, true
@@ -1219,7 +1224,7 @@ func (o *BaseSegment) SetFirstLineAddress(v string) {
 
 // GetSecondLineAddress returns the SecondLineAddress field value if set, zero value otherwise.
 func (o *BaseSegment) GetSecondLineAddress() string {
-	if o == nil || o.SecondLineAddress == nil {
+	if o == nil || IsNil(o.SecondLineAddress) {
 		var ret string
 		return ret
 	}
@@ -1229,7 +1234,7 @@ func (o *BaseSegment) GetSecondLineAddress() string {
 // GetSecondLineAddressOk returns a tuple with the SecondLineAddress field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetSecondLineAddressOk() (*string, bool) {
-	if o == nil || o.SecondLineAddress == nil {
+	if o == nil || IsNil(o.SecondLineAddress) {
 		return nil, false
 	}
 	return o.SecondLineAddress, true
@@ -1237,7 +1242,7 @@ func (o *BaseSegment) GetSecondLineAddressOk() (*string, bool) {
 
 // HasSecondLineAddress returns a boolean if a field has been set.
 func (o *BaseSegment) HasSecondLineAddress() bool {
-	if o != nil && o.SecondLineAddress != nil {
+	if o != nil && !IsNil(o.SecondLineAddress) {
 		return true
 	}
 
@@ -1251,7 +1256,7 @@ func (o *BaseSegment) SetSecondLineAddress(v string) {
 
 // GetCity returns the City field value if set, zero value otherwise.
 func (o *BaseSegment) GetCity() string {
-	if o == nil || o.City == nil {
+	if o == nil || IsNil(o.City) {
 		var ret string
 		return ret
 	}
@@ -1261,7 +1266,7 @@ func (o *BaseSegment) GetCity() string {
 // GetCityOk returns a tuple with the City field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetCityOk() (*string, bool) {
-	if o == nil || o.City == nil {
+	if o == nil || IsNil(o.City) {
 		return nil, false
 	}
 	return o.City, true
@@ -1269,7 +1274,7 @@ func (o *BaseSegment) GetCityOk() (*string, bool) {
 
 // HasCity returns a boolean if a field has been set.
 func (o *BaseSegment) HasCity() bool {
-	if o != nil && o.City != nil {
+	if o != nil && !IsNil(o.City) {
 		return true
 	}
 
@@ -1294,7 +1299,7 @@ func (o *BaseSegment) GetState() string {
 // GetStateOk returns a tuple with the State field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetStateOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.State, true
@@ -1318,7 +1323,7 @@ func (o *BaseSegment) GetZipCode() string {
 // GetZipCodeOk returns a tuple with the ZipCode field value
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetZipCodeOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.ZipCode, true
@@ -1331,7 +1336,7 @@ func (o *BaseSegment) SetZipCode(v string) {
 
 // GetAddressIndicator returns the AddressIndicator field value if set, zero value otherwise.
 func (o *BaseSegment) GetAddressIndicator() string {
-	if o == nil || o.AddressIndicator == nil {
+	if o == nil || IsNil(o.AddressIndicator) {
 		var ret string
 		return ret
 	}
@@ -1341,7 +1346,7 @@ func (o *BaseSegment) GetAddressIndicator() string {
 // GetAddressIndicatorOk returns a tuple with the AddressIndicator field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetAddressIndicatorOk() (*string, bool) {
-	if o == nil || o.AddressIndicator == nil {
+	if o == nil || IsNil(o.AddressIndicator) {
 		return nil, false
 	}
 	return o.AddressIndicator, true
@@ -1349,7 +1354,7 @@ func (o *BaseSegment) GetAddressIndicatorOk() (*string, bool) {
 
 // HasAddressIndicator returns a boolean if a field has been set.
 func (o *BaseSegment) HasAddressIndicator() bool {
-	if o != nil && o.AddressIndicator != nil {
+	if o != nil && !IsNil(o.AddressIndicator) {
 		return true
 	}
 
@@ -1363,7 +1368,7 @@ func (o *BaseSegment) SetAddressIndicator(v string) {
 
 // GetResidenceCode returns the ResidenceCode field value if set, zero value otherwise.
 func (o *BaseSegment) GetResidenceCode() string {
-	if o == nil || o.ResidenceCode == nil {
+	if o == nil || IsNil(o.ResidenceCode) {
 		var ret string
 		return ret
 	}
@@ -1373,7 +1378,7 @@ func (o *BaseSegment) GetResidenceCode() string {
 // GetResidenceCodeOk returns a tuple with the ResidenceCode field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *BaseSegment) GetResidenceCodeOk() (*string, bool) {
-	if o == nil || o.ResidenceCode == nil {
+	if o == nil || IsNil(o.ResidenceCode) {
 		return nil, false
 	}
 	return o.ResidenceCode, true
@@ -1381,7 +1386,7 @@ func (o *BaseSegment) GetResidenceCodeOk() (*string, bool) {
 
 // HasResidenceCode returns a boolean if a field has been set.
 func (o *BaseSegment) HasResidenceCode() bool {
-	if o != nil && o.ResidenceCode != nil {
+	if o != nil && !IsNil(o.ResidenceCode) {
 		return true
 	}
 
@@ -1394,143 +1399,115 @@ func (o *BaseSegment) SetResidenceCode(v string) {
 }
 
 func (o BaseSegment) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if o.BlockDescriptorWord != nil {
-		toSerialize["blockDescriptorWord"] = o.BlockDescriptorWord
-	}
-	if true {
-		toSerialize["recordDescriptorWord"] = o.RecordDescriptorWord
-	}
-	if o.TimeStamp != nil {
-		toSerialize["timeStamp"] = o.TimeStamp
-	}
-	if true {
-		toSerialize["identificationNumber"] = o.IdentificationNumber
-	}
-	if o.CycleIdentifier != nil {
-		toSerialize["cycleIdentifier"] = o.CycleIdentifier
-	}
-	if true {
-		toSerialize["consumerAccountNumber"] = o.ConsumerAccountNumber
-	}
-	if o.PortfolioType != nil {
-		toSerialize["portfolioType"] = o.PortfolioType
-	}
-	if true {
-		toSerialize["accountType"] = o.AccountType
-	}
-	if o.DateOpened != nil {
-		toSerialize["dateOpened"] = o.DateOpened
-	}
-	if o.CreditLimit != nil {
-		toSerialize["creditLimit"] = o.CreditLimit
-	}
-	if true {
-		toSerialize["highestCredit"] = o.HighestCredit
-	}
-	if true {
-		toSerialize["termsDuration"] = o.TermsDuration
-	}
-	if o.TermsFrequency != nil {
-		toSerialize["termsFrequency"] = o.TermsFrequency
-	}
-	if o.ScheduledMonthlyPaymentAmount != nil {
-		toSerialize["scheduledMonthlyPaymentAmount"] = o.ScheduledMonthlyPaymentAmount
-	}
-	if o.ActualPaymentAmount != nil {
-		toSerialize["actualPaymentAmount"] = o.ActualPaymentAmount
-	}
-	if true {
-		toSerialize["accountStatus"] = o.AccountStatus
-	}
-	if o.PaymentRating != nil {
-		toSerialize["paymentRating"] = o.PaymentRating
-	}
-	if true {
-		toSerialize["paymentHistoryProfile"] = o.PaymentHistoryProfile
-	}
-	if o.SpecialComment != nil {
-		toSerialize["specialComment"] = o.SpecialComment
-	}
-	if o.ComplianceConditionCode != nil {
-		toSerialize["complianceConditionCode"] = o.ComplianceConditionCode
-	}
-	if true {
-		toSerialize["currentBalance"] = o.CurrentBalance
-	}
-	if o.AmountPastDue != nil {
-		toSerialize["amountPastDue"] = o.AmountPastDue
-	}
-	if o.OriginalChargeOffAmount != nil {
-		toSerialize["originalChargeOffAmount"] = o.OriginalChargeOffAmount
-	}
-	if true {
-		toSerialize["dateAccountInformation"] = o.DateAccountInformation
-	}
-	if o.DateFirstDelinquency != nil {
-		toSerialize["dateFirstDelinquency"] = o.DateFirstDelinquency
-	}
-	if o.DateClosed != nil {
-		toSerialize["dateClosed"] = o.DateClosed
-	}
-	if o.DateLastPayment != nil {
-		toSerialize["dateLastPayment"] = o.DateLastPayment
-	}
-	if o.InterestTypeIndicator != nil {
-		toSerialize["interestTypeIndicator"] = o.InterestTypeIndicator
-	}
-	if true {
-		toSerialize["surname"] = o.Surname
-	}
-	if true {
-		toSerialize["firstName"] = o.FirstName
-	}
-	if o.MiddleName != nil {
-		toSerialize["middleName"] = o.MiddleName
-	}
-	if o.GenerationCode != nil {
-		toSerialize["generationCode"] = o.GenerationCode
-	}
-	if true {
-		toSerialize["socialSecurityNumber"] = o.SocialSecurityNumber
-	}
-	if true {
-		toSerialize["dateBirth"] = o.DateBirth
-	}
-	if o.TelephoneNumber != nil {
-		toSerialize["telephoneNumber"] = o.TelephoneNumber
-	}
-	if true {
-		toSerialize["ecoaCode"] = o.EcoaCode
-	}
-	if o.ConsumerInformationIndicator != nil {
-		toSerialize["consumerInformationIndicator"] = o.ConsumerInformationIndicator
-	}
-	if o.CountryCode != nil {
-		toSerialize["countryCode"] = o.CountryCode
-	}
-	if true {
-		toSerialize["firstLineAddress"] = o.FirstLineAddress
-	}
-	if o.SecondLineAddress != nil {
-		toSerialize["secondLineAddress"] = o.SecondLineAddress
-	}
-	if o.City != nil {
-		toSerialize["city"] = o.City
-	}
-	if true {
-		toSerialize["state"] = o.State
-	}
-	if true {
-		toSerialize["zipCode"] = o.ZipCode
-	}
-	if o.AddressIndicator != nil {
-		toSerialize["addressIndicator"] = o.AddressIndicator
-	}
-	if o.ResidenceCode != nil {
-		toSerialize["residenceCode"] = o.ResidenceCode
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o BaseSegment) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	if !IsNil(o.BlockDescriptorWord) {
+		toSerialize["blockDescriptorWord"] = o.BlockDescriptorWord
+	}
+	toSerialize["recordDescriptorWord"] = o.RecordDescriptorWord
+	if !IsNil(o.TimeStamp) {
+		toSerialize["timeStamp"] = o.TimeStamp
+	}
+	toSerialize["identificationNumber"] = o.IdentificationNumber
+	if !IsNil(o.CycleIdentifier) {
+		toSerialize["cycleIdentifier"] = o.CycleIdentifier
+	}
+	toSerialize["consumerAccountNumber"] = o.ConsumerAccountNumber
+	if !IsNil(o.PortfolioType) {
+		toSerialize["portfolioType"] = o.PortfolioType
+	}
+	toSerialize["accountType"] = o.AccountType
+	if !IsNil(o.DateOpened) {
+		toSerialize["dateOpened"] = o.DateOpened
+	}
+	if !IsNil(o.CreditLimit) {
+		toSerialize["creditLimit"] = o.CreditLimit
+	}
+	toSerialize["highestCredit"] = o.HighestCredit
+	toSerialize["termsDuration"] = o.TermsDuration
+	if !IsNil(o.TermsFrequency) {
+		toSerialize["termsFrequency"] = o.TermsFrequency
+	}
+	if !IsNil(o.ScheduledMonthlyPaymentAmount) {
+		toSerialize["scheduledMonthlyPaymentAmount"] = o.ScheduledMonthlyPaymentAmount
+	}
+	if !IsNil(o.ActualPaymentAmount) {
+		toSerialize["actualPaymentAmount"] = o.ActualPaymentAmount
+	}
+	toSerialize["accountStatus"] = o.AccountStatus
+	if !IsNil(o.PaymentRating) {
+		toSerialize["paymentRating"] = o.PaymentRating
+	}
+	toSerialize["paymentHistoryProfile"] = o.PaymentHistoryProfile
+	if !IsNil(o.SpecialComment) {
+		toSerialize["specialComment"] = o.SpecialComment
+	}
+	if !IsNil(o.ComplianceConditionCode) {
+		toSerialize["complianceConditionCode"] = o.ComplianceConditionCode
+	}
+	toSerialize["currentBalance"] = o.CurrentBalance
+	if !IsNil(o.AmountPastDue) {
+		toSerialize["amountPastDue"] = o.AmountPastDue
+	}
+	if !IsNil(o.OriginalChargeOffAmount) {
+		toSerialize["originalChargeOffAmount"] = o.OriginalChargeOffAmount
+	}
+	toSerialize["dateAccountInformation"] = o.DateAccountInformation
+	if !IsNil(o.DateFirstDelinquency) {
+		toSerialize["dateFirstDelinquency"] = o.DateFirstDelinquency
+	}
+	if !IsNil(o.DateClosed) {
+		toSerialize["dateClosed"] = o.DateClosed
+	}
+	if !IsNil(o.DateLastPayment) {
+		toSerialize["dateLastPayment"] = o.DateLastPayment
+	}
+	if !IsNil(o.InterestTypeIndicator) {
+		toSerialize["interestTypeIndicator"] = o.InterestTypeIndicator
+	}
+	toSerialize["surname"] = o.Surname
+	toSerialize["firstName"] = o.FirstName
+	if !IsNil(o.MiddleName) {
+		toSerialize["middleName"] = o.MiddleName
+	}
+	if !IsNil(o.GenerationCode) {
+		toSerialize["generationCode"] = o.GenerationCode
+	}
+	toSerialize["socialSecurityNumber"] = o.SocialSecurityNumber
+	toSerialize["dateBirth"] = o.DateBirth
+	if !IsNil(o.TelephoneNumber) {
+		toSerialize["telephoneNumber"] = o.TelephoneNumber
+	}
+	toSerialize["ecoaCode"] = o.EcoaCode
+	if !IsNil(o.ConsumerInformationIndicator) {
+		toSerialize["consumerInformationIndicator"] = o.ConsumerInformationIndicator
+	}
+	if !IsNil(o.CountryCode) {
+		toSerialize["countryCode"] = o.CountryCode
+	}
+	toSerialize["firstLineAddress"] = o.FirstLineAddress
+	if !IsNil(o.SecondLineAddress) {
+		toSerialize["secondLineAddress"] = o.SecondLineAddress
+	}
+	if !IsNil(o.City) {
+		toSerialize["city"] = o.City
+	}
+	toSerialize["state"] = o.State
+	toSerialize["zipCode"] = o.ZipCode
+	if !IsNil(o.AddressIndicator) {
+		toSerialize["addressIndicator"] = o.AddressIndicator
+	}
+	if !IsNil(o.ResidenceCode) {
+		toSerialize["residenceCode"] = o.ResidenceCode
+	}
+	return toSerialize, nil
 }
 
 type NullableBaseSegment struct {
@@ -1568,5 +1545,3 @@ func (v *NullableBaseSegment) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

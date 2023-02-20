@@ -15,26 +15,29 @@ import (
 	"time"
 )
 
+// checks if the HeaderRecord type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &HeaderRecord{}
+
 // HeaderRecord struct for HeaderRecord
 type HeaderRecord struct {
-	BlockDescriptorWord *int32 `json:"blockDescriptorWord,omitempty"`
-	RecordDescriptorWord int32 `json:"recordDescriptorWord"`
-	RecordIdentifier string `json:"recordIdentifier"`
-	CycleIdentifier *string `json:"cycleIdentifier,omitempty"`
-	InnovisProgramIdentifier *string `json:"innovisProgramIdentifier,omitempty"`
-	EquifaxProgramIdentifier *string `json:"equifaxProgramIdentifier,omitempty"`
-	ExperianProgramIdentifier *string `json:"experianProgramIdentifier,omitempty"`
-	TransUnionProgramIdentifier *string `json:"transUnionProgramIdentifier,omitempty"`
-	ActivityDate time.Time `json:"activityDate"`
-	DateCreated time.Time `json:"dateCreated"`
-	ProgramDate *time.Time `json:"programDate,omitempty"`
-	ProgramRevisionDate *time.Time `json:"programRevisionDate,omitempty"`
-	ReporterName string `json:"reporterName"`
-	ReporterAddress string `json:"reporterAddress"`
-	ReporterTelephoneNumber *int64 `json:"reporterTelephoneNumber,omitempty"`
-	SoftwareVendorName *string `json:"softwareVendorName,omitempty"`
-	SoftwareVersionNumber *string `json:"softwareVersionNumber,omitempty"`
-	PrbcProgramIdentifier *string `json:"prbcProgramIdentifier,omitempty"`
+	BlockDescriptorWord         *int32     `json:"blockDescriptorWord,omitempty"`
+	RecordDescriptorWord        int32      `json:"recordDescriptorWord"`
+	RecordIdentifier            string     `json:"recordIdentifier"`
+	CycleIdentifier             *string    `json:"cycleIdentifier,omitempty"`
+	InnovisProgramIdentifier    *string    `json:"innovisProgramIdentifier,omitempty"`
+	EquifaxProgramIdentifier    *string    `json:"equifaxProgramIdentifier,omitempty"`
+	ExperianProgramIdentifier   *string    `json:"experianProgramIdentifier,omitempty"`
+	TransUnionProgramIdentifier *string    `json:"transUnionProgramIdentifier,omitempty"`
+	ActivityDate                time.Time  `json:"activityDate"`
+	DateCreated                 time.Time  `json:"dateCreated"`
+	ProgramDate                 *time.Time `json:"programDate,omitempty"`
+	ProgramRevisionDate         *time.Time `json:"programRevisionDate,omitempty"`
+	ReporterName                string     `json:"reporterName"`
+	ReporterAddress             string     `json:"reporterAddress"`
+	ReporterTelephoneNumber     *int64     `json:"reporterTelephoneNumber,omitempty"`
+	SoftwareVendorName          *string    `json:"softwareVendorName,omitempty"`
+	SoftwareVersionNumber       *string    `json:"softwareVersionNumber,omitempty"`
+	PrbcProgramIdentifier       *string    `json:"prbcProgramIdentifier,omitempty"`
 }
 
 // NewHeaderRecord instantiates a new HeaderRecord object
@@ -62,7 +65,7 @@ func NewHeaderRecordWithDefaults() *HeaderRecord {
 
 // GetBlockDescriptorWord returns the BlockDescriptorWord field value if set, zero value otherwise.
 func (o *HeaderRecord) GetBlockDescriptorWord() int32 {
-	if o == nil || o.BlockDescriptorWord == nil {
+	if o == nil || IsNil(o.BlockDescriptorWord) {
 		var ret int32
 		return ret
 	}
@@ -72,7 +75,7 @@ func (o *HeaderRecord) GetBlockDescriptorWord() int32 {
 // GetBlockDescriptorWordOk returns a tuple with the BlockDescriptorWord field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetBlockDescriptorWordOk() (*int32, bool) {
-	if o == nil || o.BlockDescriptorWord == nil {
+	if o == nil || IsNil(o.BlockDescriptorWord) {
 		return nil, false
 	}
 	return o.BlockDescriptorWord, true
@@ -80,7 +83,7 @@ func (o *HeaderRecord) GetBlockDescriptorWordOk() (*int32, bool) {
 
 // HasBlockDescriptorWord returns a boolean if a field has been set.
 func (o *HeaderRecord) HasBlockDescriptorWord() bool {
-	if o != nil && o.BlockDescriptorWord != nil {
+	if o != nil && !IsNil(o.BlockDescriptorWord) {
 		return true
 	}
 
@@ -105,7 +108,7 @@ func (o *HeaderRecord) GetRecordDescriptorWord() int32 {
 // GetRecordDescriptorWordOk returns a tuple with the RecordDescriptorWord field value
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetRecordDescriptorWordOk() (*int32, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.RecordDescriptorWord, true
@@ -129,7 +132,7 @@ func (o *HeaderRecord) GetRecordIdentifier() string {
 // GetRecordIdentifierOk returns a tuple with the RecordIdentifier field value
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetRecordIdentifierOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.RecordIdentifier, true
@@ -142,7 +145,7 @@ func (o *HeaderRecord) SetRecordIdentifier(v string) {
 
 // GetCycleIdentifier returns the CycleIdentifier field value if set, zero value otherwise.
 func (o *HeaderRecord) GetCycleIdentifier() string {
-	if o == nil || o.CycleIdentifier == nil {
+	if o == nil || IsNil(o.CycleIdentifier) {
 		var ret string
 		return ret
 	}
@@ -152,7 +155,7 @@ func (o *HeaderRecord) GetCycleIdentifier() string {
 // GetCycleIdentifierOk returns a tuple with the CycleIdentifier field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetCycleIdentifierOk() (*string, bool) {
-	if o == nil || o.CycleIdentifier == nil {
+	if o == nil || IsNil(o.CycleIdentifier) {
 		return nil, false
 	}
 	return o.CycleIdentifier, true
@@ -160,7 +163,7 @@ func (o *HeaderRecord) GetCycleIdentifierOk() (*string, bool) {
 
 // HasCycleIdentifier returns a boolean if a field has been set.
 func (o *HeaderRecord) HasCycleIdentifier() bool {
-	if o != nil && o.CycleIdentifier != nil {
+	if o != nil && !IsNil(o.CycleIdentifier) {
 		return true
 	}
 
@@ -174,7 +177,7 @@ func (o *HeaderRecord) SetCycleIdentifier(v string) {
 
 // GetInnovisProgramIdentifier returns the InnovisProgramIdentifier field value if set, zero value otherwise.
 func (o *HeaderRecord) GetInnovisProgramIdentifier() string {
-	if o == nil || o.InnovisProgramIdentifier == nil {
+	if o == nil || IsNil(o.InnovisProgramIdentifier) {
 		var ret string
 		return ret
 	}
@@ -184,7 +187,7 @@ func (o *HeaderRecord) GetInnovisProgramIdentifier() string {
 // GetInnovisProgramIdentifierOk returns a tuple with the InnovisProgramIdentifier field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetInnovisProgramIdentifierOk() (*string, bool) {
-	if o == nil || o.InnovisProgramIdentifier == nil {
+	if o == nil || IsNil(o.InnovisProgramIdentifier) {
 		return nil, false
 	}
 	return o.InnovisProgramIdentifier, true
@@ -192,7 +195,7 @@ func (o *HeaderRecord) GetInnovisProgramIdentifierOk() (*string, bool) {
 
 // HasInnovisProgramIdentifier returns a boolean if a field has been set.
 func (o *HeaderRecord) HasInnovisProgramIdentifier() bool {
-	if o != nil && o.InnovisProgramIdentifier != nil {
+	if o != nil && !IsNil(o.InnovisProgramIdentifier) {
 		return true
 	}
 
@@ -206,7 +209,7 @@ func (o *HeaderRecord) SetInnovisProgramIdentifier(v string) {
 
 // GetEquifaxProgramIdentifier returns the EquifaxProgramIdentifier field value if set, zero value otherwise.
 func (o *HeaderRecord) GetEquifaxProgramIdentifier() string {
-	if o == nil || o.EquifaxProgramIdentifier == nil {
+	if o == nil || IsNil(o.EquifaxProgramIdentifier) {
 		var ret string
 		return ret
 	}
@@ -216,7 +219,7 @@ func (o *HeaderRecord) GetEquifaxProgramIdentifier() string {
 // GetEquifaxProgramIdentifierOk returns a tuple with the EquifaxProgramIdentifier field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetEquifaxProgramIdentifierOk() (*string, bool) {
-	if o == nil || o.EquifaxProgramIdentifier == nil {
+	if o == nil || IsNil(o.EquifaxProgramIdentifier) {
 		return nil, false
 	}
 	return o.EquifaxProgramIdentifier, true
@@ -224,7 +227,7 @@ func (o *HeaderRecord) GetEquifaxProgramIdentifierOk() (*string, bool) {
 
 // HasEquifaxProgramIdentifier returns a boolean if a field has been set.
 func (o *HeaderRecord) HasEquifaxProgramIdentifier() bool {
-	if o != nil && o.EquifaxProgramIdentifier != nil {
+	if o != nil && !IsNil(o.EquifaxProgramIdentifier) {
 		return true
 	}
 
@@ -238,7 +241,7 @@ func (o *HeaderRecord) SetEquifaxProgramIdentifier(v string) {
 
 // GetExperianProgramIdentifier returns the ExperianProgramIdentifier field value if set, zero value otherwise.
 func (o *HeaderRecord) GetExperianProgramIdentifier() string {
-	if o == nil || o.ExperianProgramIdentifier == nil {
+	if o == nil || IsNil(o.ExperianProgramIdentifier) {
 		var ret string
 		return ret
 	}
@@ -248,7 +251,7 @@ func (o *HeaderRecord) GetExperianProgramIdentifier() string {
 // GetExperianProgramIdentifierOk returns a tuple with the ExperianProgramIdentifier field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetExperianProgramIdentifierOk() (*string, bool) {
-	if o == nil || o.ExperianProgramIdentifier == nil {
+	if o == nil || IsNil(o.ExperianProgramIdentifier) {
 		return nil, false
 	}
 	return o.ExperianProgramIdentifier, true
@@ -256,7 +259,7 @@ func (o *HeaderRecord) GetExperianProgramIdentifierOk() (*string, bool) {
 
 // HasExperianProgramIdentifier returns a boolean if a field has been set.
 func (o *HeaderRecord) HasExperianProgramIdentifier() bool {
-	if o != nil && o.ExperianProgramIdentifier != nil {
+	if o != nil && !IsNil(o.ExperianProgramIdentifier) {
 		return true
 	}
 
@@ -270,7 +273,7 @@ func (o *HeaderRecord) SetExperianProgramIdentifier(v string) {
 
 // GetTransUnionProgramIdentifier returns the TransUnionProgramIdentifier field value if set, zero value otherwise.
 func (o *HeaderRecord) GetTransUnionProgramIdentifier() string {
-	if o == nil || o.TransUnionProgramIdentifier == nil {
+	if o == nil || IsNil(o.TransUnionProgramIdentifier) {
 		var ret string
 		return ret
 	}
@@ -280,7 +283,7 @@ func (o *HeaderRecord) GetTransUnionProgramIdentifier() string {
 // GetTransUnionProgramIdentifierOk returns a tuple with the TransUnionProgramIdentifier field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetTransUnionProgramIdentifierOk() (*string, bool) {
-	if o == nil || o.TransUnionProgramIdentifier == nil {
+	if o == nil || IsNil(o.TransUnionProgramIdentifier) {
 		return nil, false
 	}
 	return o.TransUnionProgramIdentifier, true
@@ -288,7 +291,7 @@ func (o *HeaderRecord) GetTransUnionProgramIdentifierOk() (*string, bool) {
 
 // HasTransUnionProgramIdentifier returns a boolean if a field has been set.
 func (o *HeaderRecord) HasTransUnionProgramIdentifier() bool {
-	if o != nil && o.TransUnionProgramIdentifier != nil {
+	if o != nil && !IsNil(o.TransUnionProgramIdentifier) {
 		return true
 	}
 
@@ -313,7 +316,7 @@ func (o *HeaderRecord) GetActivityDate() time.Time {
 // GetActivityDateOk returns a tuple with the ActivityDate field value
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetActivityDateOk() (*time.Time, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.ActivityDate, true
@@ -337,7 +340,7 @@ func (o *HeaderRecord) GetDateCreated() time.Time {
 // GetDateCreatedOk returns a tuple with the DateCreated field value
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetDateCreatedOk() (*time.Time, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.DateCreated, true
@@ -350,7 +353,7 @@ func (o *HeaderRecord) SetDateCreated(v time.Time) {
 
 // GetProgramDate returns the ProgramDate field value if set, zero value otherwise.
 func (o *HeaderRecord) GetProgramDate() time.Time {
-	if o == nil || o.ProgramDate == nil {
+	if o == nil || IsNil(o.ProgramDate) {
 		var ret time.Time
 		return ret
 	}
@@ -360,7 +363,7 @@ func (o *HeaderRecord) GetProgramDate() time.Time {
 // GetProgramDateOk returns a tuple with the ProgramDate field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetProgramDateOk() (*time.Time, bool) {
-	if o == nil || o.ProgramDate == nil {
+	if o == nil || IsNil(o.ProgramDate) {
 		return nil, false
 	}
 	return o.ProgramDate, true
@@ -368,7 +371,7 @@ func (o *HeaderRecord) GetProgramDateOk() (*time.Time, bool) {
 
 // HasProgramDate returns a boolean if a field has been set.
 func (o *HeaderRecord) HasProgramDate() bool {
-	if o != nil && o.ProgramDate != nil {
+	if o != nil && !IsNil(o.ProgramDate) {
 		return true
 	}
 
@@ -382,7 +385,7 @@ func (o *HeaderRecord) SetProgramDate(v time.Time) {
 
 // GetProgramRevisionDate returns the ProgramRevisionDate field value if set, zero value otherwise.
 func (o *HeaderRecord) GetProgramRevisionDate() time.Time {
-	if o == nil || o.ProgramRevisionDate == nil {
+	if o == nil || IsNil(o.ProgramRevisionDate) {
 		var ret time.Time
 		return ret
 	}
@@ -392,7 +395,7 @@ func (o *HeaderRecord) GetProgramRevisionDate() time.Time {
 // GetProgramRevisionDateOk returns a tuple with the ProgramRevisionDate field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetProgramRevisionDateOk() (*time.Time, bool) {
-	if o == nil || o.ProgramRevisionDate == nil {
+	if o == nil || IsNil(o.ProgramRevisionDate) {
 		return nil, false
 	}
 	return o.ProgramRevisionDate, true
@@ -400,7 +403,7 @@ func (o *HeaderRecord) GetProgramRevisionDateOk() (*time.Time, bool) {
 
 // HasProgramRevisionDate returns a boolean if a field has been set.
 func (o *HeaderRecord) HasProgramRevisionDate() bool {
-	if o != nil && o.ProgramRevisionDate != nil {
+	if o != nil && !IsNil(o.ProgramRevisionDate) {
 		return true
 	}
 
@@ -425,7 +428,7 @@ func (o *HeaderRecord) GetReporterName() string {
 // GetReporterNameOk returns a tuple with the ReporterName field value
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetReporterNameOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.ReporterName, true
@@ -449,7 +452,7 @@ func (o *HeaderRecord) GetReporterAddress() string {
 // GetReporterAddressOk returns a tuple with the ReporterAddress field value
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetReporterAddressOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.ReporterAddress, true
@@ -462,7 +465,7 @@ func (o *HeaderRecord) SetReporterAddress(v string) {
 
 // GetReporterTelephoneNumber returns the ReporterTelephoneNumber field value if set, zero value otherwise.
 func (o *HeaderRecord) GetReporterTelephoneNumber() int64 {
-	if o == nil || o.ReporterTelephoneNumber == nil {
+	if o == nil || IsNil(o.ReporterTelephoneNumber) {
 		var ret int64
 		return ret
 	}
@@ -472,7 +475,7 @@ func (o *HeaderRecord) GetReporterTelephoneNumber() int64 {
 // GetReporterTelephoneNumberOk returns a tuple with the ReporterTelephoneNumber field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetReporterTelephoneNumberOk() (*int64, bool) {
-	if o == nil || o.ReporterTelephoneNumber == nil {
+	if o == nil || IsNil(o.ReporterTelephoneNumber) {
 		return nil, false
 	}
 	return o.ReporterTelephoneNumber, true
@@ -480,7 +483,7 @@ func (o *HeaderRecord) GetReporterTelephoneNumberOk() (*int64, bool) {
 
 // HasReporterTelephoneNumber returns a boolean if a field has been set.
 func (o *HeaderRecord) HasReporterTelephoneNumber() bool {
-	if o != nil && o.ReporterTelephoneNumber != nil {
+	if o != nil && !IsNil(o.ReporterTelephoneNumber) {
 		return true
 	}
 
@@ -494,7 +497,7 @@ func (o *HeaderRecord) SetReporterTelephoneNumber(v int64) {
 
 // GetSoftwareVendorName returns the SoftwareVendorName field value if set, zero value otherwise.
 func (o *HeaderRecord) GetSoftwareVendorName() string {
-	if o == nil || o.SoftwareVendorName == nil {
+	if o == nil || IsNil(o.SoftwareVendorName) {
 		var ret string
 		return ret
 	}
@@ -504,7 +507,7 @@ func (o *HeaderRecord) GetSoftwareVendorName() string {
 // GetSoftwareVendorNameOk returns a tuple with the SoftwareVendorName field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetSoftwareVendorNameOk() (*string, bool) {
-	if o == nil || o.SoftwareVendorName == nil {
+	if o == nil || IsNil(o.SoftwareVendorName) {
 		return nil, false
 	}
 	return o.SoftwareVendorName, true
@@ -512,7 +515,7 @@ func (o *HeaderRecord) GetSoftwareVendorNameOk() (*string, bool) {
 
 // HasSoftwareVendorName returns a boolean if a field has been set.
 func (o *HeaderRecord) HasSoftwareVendorName() bool {
-	if o != nil && o.SoftwareVendorName != nil {
+	if o != nil && !IsNil(o.SoftwareVendorName) {
 		return true
 	}
 
@@ -526,7 +529,7 @@ func (o *HeaderRecord) SetSoftwareVendorName(v string) {
 
 // GetSoftwareVersionNumber returns the SoftwareVersionNumber field value if set, zero value otherwise.
 func (o *HeaderRecord) GetSoftwareVersionNumber() string {
-	if o == nil || o.SoftwareVersionNumber == nil {
+	if o == nil || IsNil(o.SoftwareVersionNumber) {
 		var ret string
 		return ret
 	}
@@ -536,7 +539,7 @@ func (o *HeaderRecord) GetSoftwareVersionNumber() string {
 // GetSoftwareVersionNumberOk returns a tuple with the SoftwareVersionNumber field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetSoftwareVersionNumberOk() (*string, bool) {
-	if o == nil || o.SoftwareVersionNumber == nil {
+	if o == nil || IsNil(o.SoftwareVersionNumber) {
 		return nil, false
 	}
 	return o.SoftwareVersionNumber, true
@@ -544,7 +547,7 @@ func (o *HeaderRecord) GetSoftwareVersionNumberOk() (*string, bool) {
 
 // HasSoftwareVersionNumber returns a boolean if a field has been set.
 func (o *HeaderRecord) HasSoftwareVersionNumber() bool {
-	if o != nil && o.SoftwareVersionNumber != nil {
+	if o != nil && !IsNil(o.SoftwareVersionNumber) {
 		return true
 	}
 
@@ -558,7 +561,7 @@ func (o *HeaderRecord) SetSoftwareVersionNumber(v string) {
 
 // GetPrbcProgramIdentifier returns the PrbcProgramIdentifier field value if set, zero value otherwise.
 func (o *HeaderRecord) GetPrbcProgramIdentifier() string {
-	if o == nil || o.PrbcProgramIdentifier == nil {
+	if o == nil || IsNil(o.PrbcProgramIdentifier) {
 		var ret string
 		return ret
 	}
@@ -568,7 +571,7 @@ func (o *HeaderRecord) GetPrbcProgramIdentifier() string {
 // GetPrbcProgramIdentifierOk returns a tuple with the PrbcProgramIdentifier field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *HeaderRecord) GetPrbcProgramIdentifierOk() (*string, bool) {
-	if o == nil || o.PrbcProgramIdentifier == nil {
+	if o == nil || IsNil(o.PrbcProgramIdentifier) {
 		return nil, false
 	}
 	return o.PrbcProgramIdentifier, true
@@ -576,7 +579,7 @@ func (o *HeaderRecord) GetPrbcProgramIdentifierOk() (*string, bool) {
 
 // HasPrbcProgramIdentifier returns a boolean if a field has been set.
 func (o *HeaderRecord) HasPrbcProgramIdentifier() bool {
-	if o != nil && o.PrbcProgramIdentifier != nil {
+	if o != nil && !IsNil(o.PrbcProgramIdentifier) {
 		return true
 	}
 
@@ -589,62 +592,58 @@ func (o *HeaderRecord) SetPrbcProgramIdentifier(v string) {
 }
 
 func (o HeaderRecord) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if o.BlockDescriptorWord != nil {
-		toSerialize["blockDescriptorWord"] = o.BlockDescriptorWord
-	}
-	if true {
-		toSerialize["recordDescriptorWord"] = o.RecordDescriptorWord
-	}
-	if true {
-		toSerialize["recordIdentifier"] = o.RecordIdentifier
-	}
-	if o.CycleIdentifier != nil {
-		toSerialize["cycleIdentifier"] = o.CycleIdentifier
-	}
-	if o.InnovisProgramIdentifier != nil {
-		toSerialize["innovisProgramIdentifier"] = o.InnovisProgramIdentifier
-	}
-	if o.EquifaxProgramIdentifier != nil {
-		toSerialize["equifaxProgramIdentifier"] = o.EquifaxProgramIdentifier
-	}
-	if o.ExperianProgramIdentifier != nil {
-		toSerialize["experianProgramIdentifier"] = o.ExperianProgramIdentifier
-	}
-	if o.TransUnionProgramIdentifier != nil {
-		toSerialize["transUnionProgramIdentifier"] = o.TransUnionProgramIdentifier
-	}
-	if true {
-		toSerialize["activityDate"] = o.ActivityDate
-	}
-	if true {
-		toSerialize["dateCreated"] = o.DateCreated
-	}
-	if o.ProgramDate != nil {
-		toSerialize["programDate"] = o.ProgramDate
-	}
-	if o.ProgramRevisionDate != nil {
-		toSerialize["programRevisionDate"] = o.ProgramRevisionDate
-	}
-	if true {
-		toSerialize["reporterName"] = o.ReporterName
-	}
-	if true {
-		toSerialize["reporterAddress"] = o.ReporterAddress
-	}
-	if o.ReporterTelephoneNumber != nil {
-		toSerialize["reporterTelephoneNumber"] = o.ReporterTelephoneNumber
-	}
-	if o.SoftwareVendorName != nil {
-		toSerialize["softwareVendorName"] = o.SoftwareVendorName
-	}
-	if o.SoftwareVersionNumber != nil {
-		toSerialize["softwareVersionNumber"] = o.SoftwareVersionNumber
-	}
-	if o.PrbcProgramIdentifier != nil {
-		toSerialize["prbcProgramIdentifier"] = o.PrbcProgramIdentifier
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o HeaderRecord) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	if !IsNil(o.BlockDescriptorWord) {
+		toSerialize["blockDescriptorWord"] = o.BlockDescriptorWord
+	}
+	toSerialize["recordDescriptorWord"] = o.RecordDescriptorWord
+	toSerialize["recordIdentifier"] = o.RecordIdentifier
+	if !IsNil(o.CycleIdentifier) {
+		toSerialize["cycleIdentifier"] = o.CycleIdentifier
+	}
+	if !IsNil(o.InnovisProgramIdentifier) {
+		toSerialize["innovisProgramIdentifier"] = o.InnovisProgramIdentifier
+	}
+	if !IsNil(o.EquifaxProgramIdentifier) {
+		toSerialize["equifaxProgramIdentifier"] = o.EquifaxProgramIdentifier
+	}
+	if !IsNil(o.ExperianProgramIdentifier) {
+		toSerialize["experianProgramIdentifier"] = o.ExperianProgramIdentifier
+	}
+	if !IsNil(o.TransUnionProgramIdentifier) {
+		toSerialize["transUnionProgramIdentifier"] = o.TransUnionProgramIdentifier
+	}
+	toSerialize["activityDate"] = o.ActivityDate
+	toSerialize["dateCreated"] = o.DateCreated
+	if !IsNil(o.ProgramDate) {
+		toSerialize["programDate"] = o.ProgramDate
+	}
+	if !IsNil(o.ProgramRevisionDate) {
+		toSerialize["programRevisionDate"] = o.ProgramRevisionDate
+	}
+	toSerialize["reporterName"] = o.ReporterName
+	toSerialize["reporterAddress"] = o.ReporterAddress
+	if !IsNil(o.ReporterTelephoneNumber) {
+		toSerialize["reporterTelephoneNumber"] = o.ReporterTelephoneNumber
+	}
+	if !IsNil(o.SoftwareVendorName) {
+		toSerialize["softwareVendorName"] = o.SoftwareVendorName
+	}
+	if !IsNil(o.SoftwareVersionNumber) {
+		toSerialize["softwareVersionNumber"] = o.SoftwareVersionNumber
+	}
+	if !IsNil(o.PrbcProgramIdentifier) {
+		toSerialize["prbcProgramIdentifier"] = o.PrbcProgramIdentifier
+	}
+	return toSerialize, nil
 }
 
 type NullableHeaderRecord struct {
@@ -682,5 +681,3 @@ func (v *NullableHeaderRecord) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

@@ -14,10 +14,13 @@ import (
 	"encoding/json"
 )
 
+// checks if the File type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &File{}
+
 // File struct for File
 type File struct {
-	Header HeaderRecord `json:"header"`
-	Data []DataRecord `json:"data,omitempty"`
+	Header  HeaderRecord  `json:"header"`
+	Data    []DataRecord  `json:"data,omitempty"`
 	Trailer TrailerRecord `json:"trailer"`
 }
 
@@ -53,7 +56,7 @@ func (o *File) GetHeader() HeaderRecord {
 // GetHeaderOk returns a tuple with the Header field value
 // and a boolean to check if the value has been set.
 func (o *File) GetHeaderOk() (*HeaderRecord, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.Header, true
@@ -66,7 +69,7 @@ func (o *File) SetHeader(v HeaderRecord) {
 
 // GetData returns the Data field value if set, zero value otherwise.
 func (o *File) GetData() []DataRecord {
-	if o == nil || o.Data == nil {
+	if o == nil || IsNil(o.Data) {
 		var ret []DataRecord
 		return ret
 	}
@@ -76,7 +79,7 @@ func (o *File) GetData() []DataRecord {
 // GetDataOk returns a tuple with the Data field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *File) GetDataOk() ([]DataRecord, bool) {
-	if o == nil || o.Data == nil {
+	if o == nil || IsNil(o.Data) {
 		return nil, false
 	}
 	return o.Data, true
@@ -84,7 +87,7 @@ func (o *File) GetDataOk() ([]DataRecord, bool) {
 
 // HasData returns a boolean if a field has been set.
 func (o *File) HasData() bool {
-	if o != nil && o.Data != nil {
+	if o != nil && !IsNil(o.Data) {
 		return true
 	}
 
@@ -109,7 +112,7 @@ func (o *File) GetTrailer() TrailerRecord {
 // GetTrailerOk returns a tuple with the Trailer field value
 // and a boolean to check if the value has been set.
 func (o *File) GetTrailerOk() (*TrailerRecord, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.Trailer, true
@@ -121,17 +124,21 @@ func (o *File) SetTrailer(v TrailerRecord) {
 }
 
 func (o File) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["header"] = o.Header
-	}
-	if o.Data != nil {
-		toSerialize["data"] = o.Data
-	}
-	if true {
-		toSerialize["trailer"] = o.Trailer
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o File) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	toSerialize["header"] = o.Header
+	if !IsNil(o.Data) {
+		toSerialize["data"] = o.Data
+	}
+	toSerialize["trailer"] = o.Trailer
+	return toSerialize, nil
 }
 
 type NullableFile struct {
@@ -169,5 +176,3 @@ func (v *NullableFile) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

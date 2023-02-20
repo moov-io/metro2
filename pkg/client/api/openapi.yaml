@@ -2,10 +2,10 @@ openapi: 3.0.2
 info:
   contact:
     url: https://github.com/moov-io/metro2
-  description: Moov Metro2 ([Automated Clearing House](https://en.wikipedia.org/wiki/Automated_Clearing_House))
-    implements an HTTP API for creating, parsing and validating Metro2 files. Metro2
-    is an open-source consumer credit history report for credit report file creation
-    and validation.
+  description: "Moov Metro2 ([Automated Clearing House](https://en.wikipedia.org/wiki/Automated_Clearing_House))\
+    \ implements an HTTP API for creating, parsing and validating Metro2 files. Metro2\
+    \ is an open-source consumer credit history report for credit report file creation\
+    \ and validation."
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -29,7 +29,7 @@ paths:
           content:
             text/plain:
               schema:
-                example: 'health: true'
+                example: "health: true"
                 type: string
           description: successful operation
       summary: health metro2 service
@@ -56,18 +56,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              properties:
-                format:
-                  default: json
-                  description: print metro2 file type
-                  enum:
-                  - json
-                  - metro2
-                  type: string
-                file:
-                  description: metro2 file to upload
-                  format: binary
-                  type: string
+              $ref: '#/components/schemas/print_request'
           application/json:
             schema:
               $ref: '#/components/schemas/File'
@@ -76,18 +65,32 @@ paths:
           content:
             text/plain:
               schema:
-                example: '0480HEADER                           555555555508202002051019990510199905101999YOUR
-                  BUSINESS NAME HERE                 LINE ONE OF YOUR ADDRESS LINE
-                  TWO OF YOUR ADDRESS LINE THERE OF YOUR ADDRESS                    1234567890                                                                                                                                                                                                                                                               109810101202001112206666666               553723456                     M4811222019000000000000002438LOC
-                  00000000000000010062 BBBBBBBBBBBBBBBBBBBBBBBBASXA00000223300000000000000000009202002071920010802200208022002                  SMITH-JONES              JUNIOR                                  S1593287590318197251755555551  USRMXH+6W
-                  Casper, Wyoming,        United States                   U.S. Postal         MI72654    YOJ1
-                  BEAUCHAMP                KEVIN                                   S4451128770102202043355523332R  J2
-                  BEAUCHAMP                KEVIN                                   S4451128770102202043355523332R
-                  US234 HARRISON PLACE              SUITE #305                      LANSING             MI72654    YO  K1WETCOSAT
-                  INDUSTRIES LTD.      04K21Purchased From Name            K300                  Mortgage
-                  Number   K4010120202001202020000001234 L11New Consumer Account Number                        N1Employer
-                  Name                 First Line of Employer Address  Second Line
-                  of Employer Address Employer City       MI23456    Occupation                                           0500TRAILER000000001         000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000001000000001000000000000000001000000000000000001000000001000000001000000001000000001000000001000000000000000001000000001000000001000000001000000001000000001000000001000000001000000001000000001                                                                                             '
+                example: "0480HEADER                           555555555508202002051019990510199905101999YOUR\
+                  \ BUSINESS NAME HERE                 LINE ONE OF YOUR ADDRESS LINE\
+                  \ TWO OF YOUR ADDRESS LINE THERE OF YOUR ADDRESS               \
+                  \     1234567890                                               \
+                  \                                                              \
+                  \                                                              \
+                  \                                                              \
+                  \                      109810101202001112206666666             \
+                  \  553723456                     M4811222019000000000000002438LOC\
+                  \ 00000000000000010062 BBBBBBBBBBBBBBBBBBBBBBBBASXA00000223300000000000000000009202002071920010802200208022002\
+                  \                  SMITH-JONES              JUNIOR             \
+                  \                     S1593287590318197251755555551  USRMXH+6W Casper,\
+                  \ Wyoming,        United States                   U.S. Postal  \
+                  \       MI72654    YOJ1 BEAUCHAMP                KEVIN         \
+                  \                          S4451128770102202043355523332R  J2 BEAUCHAMP\
+                  \                KEVIN                                   S4451128770102202043355523332R\
+                  \ US234 HARRISON PLACE              SUITE #305                 \
+                  \     LANSING             MI72654    YO  K1WETCOSAT INDUSTRIES LTD.\
+                  \      04K21Purchased From Name            K300                \
+                  \  Mortgage Number   K4010120202001202020000001234 L11New Consumer\
+                  \ Account Number                        N1Employer Name        \
+                  \         First Line of Employer Address  Second Line of Employer\
+                  \ Address Employer City       MI23456    Occupation            \
+                  \                               0500TRAILER000000001         000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000001000000001000000000000000001000000000000000001000000001000000001000000001000000001000000001000000000000000001000000001000000001000000001000000001000000001000000001000000001000000001000000001\
+                  \                                                              \
+                  \                               "
                 type: string
             application/json:
               schema:
@@ -111,11 +114,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              properties:
-                file:
-                  description: metro2 file to upload
-                  format: binary
-                  type: string
+              $ref: '#/components/schemas/validator_request'
       responses:
         "200":
           content:
@@ -162,31 +161,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              properties:
-                format:
-                  default: json
-                  description: format of metro file
-                  enum:
-                  - json
-                  - metro2
-                  type: string
-                type:
-                  description: metro file type
-                  enum:
-                  - character
-                  - packed
-                  type: string
-                generate:
-                  default: false
-                  description: generate new trailer record
-                  type: boolean
-                newline:
-                  description: has new line
-                  type: boolean
-                file:
-                  description: metro2 file to upload
-                  format: binary
-                  type: string
+              $ref: '#/components/schemas/convert_request'
           application/json:
             schema:
               $ref: '#/components/schemas/File'
@@ -196,6 +171,44 @@ paths:
             application/octet-stream:
               schema:
                 description: new metro2 file
+                example: !!binary |-
+                  MDQ4MEhFQURFUiAgICAgICAgICAgICAgICAgICAgICAgICAgIDU1NTU1NTU1NTUwODIwMjAwMjA1
+                  MTAxOTk5MDUxMDE5OTkwNTEwMTk5OVlPVVIgQlVTSU5FU1MgTkFNRSBIRVJFICAgICAgICAgICAg
+                  ICAgICBMSU5FIE9ORSBPRiBZT1VSIEFERFJFU1MgTElORSBUV08gT0YgWU9VUiBBRERSRVNTIExJ
+                  TkUgVEhFUkUgT0YgWU9VUiBBRERSRVNTICAgICAgICAgICAgICAgICAgICAxMjM0NTY3ODkwICAg
+                  ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+                  ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+                  ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+                  ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+                  ICAgICAgICAgICAgICAgICAgICAgICAgMTA5ODEwMTAxMjAyMDAxMTEyMjA2NjY2NjY2ICAgICAg
+                  ICAgICAgICAgNTUzNzIzNDU2ICAgICAgICAgICAgICAgICAgICAgTTQ4MTEyMjIwMTkwMDAwMDAw
+                  MDAwMDAwMDI0MzhMT0MgMDAwMDAwMDAwMDAwMDAwMTAwNjIgQkJCQkJCQkJCQkJCQkJCQkJCQkJC
+                  QkJCQVNYQTAwMDAwMjIzMzAwMDAwMDAwMDAwMDAwMDAwMDA5MjAyMDAyMDcxOTIwMDEwODAyMjAw
+                  MjA4MDIyMDAyICAgICAgICAgICAgICAgICAgU01JVEgtSk9ORVMgICAgICAgICAgICAgIEpVTklP
+                  UiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBTMTU5MzI4NzU5MDMxODE5NzI1MTc1
+                  NTU1NTU1MSAgVVNSTVhIKzZXIENhc3BlciwgV3lvbWluZywgICAgICAgIFVuaXRlZCBTdGF0ZXMg
+                  ICAgICAgICAgICAgICAgICAgVS5TLiBQb3N0YWwgICAgICAgICBNSTcyNjU0ICAgIFlPSjEgQkVB
+                  VUNIQU1QICAgICAgICAgICAgICAgIEtFVklOICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+                  ICAgICBTNDQ1MTEyODc3MDEwMjIwMjA0MzM1NTUyMzMzMlIgIEoyIEJFQVVDSEFNUCAgICAgICAg
+                  ICAgICAgICBLRVZJTiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgUzQ0NTExMjg3
+                  NzAxMDIyMDIwNDMzNTU1MjMzMzJSIFVTMjM0IEhBUlJJU09OIFBMQUNFICAgICAgICAgICAgICBT
+                  VUlURSAjMzA1ICAgICAgICAgICAgICAgICAgICAgIExBTlNJTkcgICAgICAgICAgICAgTUk3MjY1
+                  NCAgICBZTyAgSzFXRVRDT1NBVCBJTkRVU1RSSUVTIExURC4gICAgICAwNEsyMVB1cmNoYXNlZCBG
+                  cm9tIE5hbWUgICAgICAgICAgICBLMzAwICAgICAgICAgICAgICAgICAgTW9ydGdhZ2UgTnVtYmVy
+                  ICAgSzQwMTAxMjAyMDIwMDEyMDIwMjAwMDAwMDEyMzQgTDExTmV3IENvbnN1bWVyIEFjY291bnQg
+                  TnVtYmVyICAgICAgICAgICAgICAgICAgICAgICAgTjFFbXBsb3llciBOYW1lICAgICAgICAgICAg
+                  ICAgICBGaXJzdCBMaW5lIG9mIEVtcGxveWVyIEFkZHJlc3MgIFNlY29uZCBMaW5lIG9mIEVtcGxv
+                  eWVyIEFkZHJlc3MgRW1wbG95ZXIgQ2l0eSAgICAgICBNSTIzNDU2ICAgIE9jY3VwYXRpb24gICAg
+                  ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMDUwMFRSQUlMRVIwMDAwMDAw
+                  MDEgICAgICAgICAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDEwMDAwMDAwMDAw
+                  MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw
+                  MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw
+                  MDAwMDAwMDAwMDAwMDAwMDAwMDEwMDAwMDAwMDEwMDAwMDAwMDEwMDAwMDAwMDAwMDAwMDAwMDEw
+                  MDAwMDAwMDAwMDAwMDAwMDEwMDAwMDAwMDEwMDAwMDAwMDEwMDAwMDAwMDEwMDAwMDAwMDEwMDAw
+                  MDAwMDEwMDAwMDAwMDAwMDAwMDAwMDEwMDAwMDAwMDEwMDAwMDAwMDEwMDAwMDAwMDEwMDAwMDAw
+                  MDEwMDAwMDAwMDEwMDAwMDAwMDEwMDAwMDAwMDEwMDAwMDAwMDEwMDAwMDAwMDEgICAgICAgICAg
+                  ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+                  ICAgICAgICAgICAgICAgICAgICAgICAgICA=
                 format: binary
                 type: string
           description: successful operation
@@ -918,3 +931,48 @@ components:
       required:
       - employerName
       - segmentIdentifier
+    print_request:
+      properties:
+        format:
+          default: json
+          description: print metro2 file type
+          enum:
+          - json
+          - metro2
+          type: string
+        file:
+          description: metro2 file to upload
+          format: binary
+          type: string
+    validator_request:
+      properties:
+        file:
+          description: metro2 file to upload
+          format: binary
+          type: string
+    convert_request:
+      properties:
+        format:
+          default: json
+          description: format of metro file
+          enum:
+          - json
+          - metro2
+          type: string
+        type:
+          description: metro file type
+          enum:
+          - character
+          - packed
+          type: string
+        generate:
+          default: false
+          description: generate new trailer record
+          type: boolean
+        newline:
+          description: has new line
+          type: boolean
+        file:
+          description: metro2 file to upload
+          format: binary
+          type: string

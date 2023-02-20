@@ -14,11 +14,14 @@ import (
 	"encoding/json"
 )
 
+// checks if the K1Segment type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &K1Segment{}
+
 // K1Segment struct for K1Segment
 type K1Segment struct {
-	SegmentIdentifier string `json:"segmentIdentifier"`
-	OriginalCreditorName string `json:"originalCreditorName"`
-	CreditorClassification int32 `json:"creditorClassification"`
+	SegmentIdentifier      string `json:"segmentIdentifier"`
+	OriginalCreditorName   string `json:"originalCreditorName"`
+	CreditorClassification int32  `json:"creditorClassification"`
 }
 
 // NewK1Segment instantiates a new K1Segment object
@@ -54,7 +57,7 @@ func (o *K1Segment) GetSegmentIdentifier() string {
 // GetSegmentIdentifierOk returns a tuple with the SegmentIdentifier field value
 // and a boolean to check if the value has been set.
 func (o *K1Segment) GetSegmentIdentifierOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.SegmentIdentifier, true
@@ -78,7 +81,7 @@ func (o *K1Segment) GetOriginalCreditorName() string {
 // GetOriginalCreditorNameOk returns a tuple with the OriginalCreditorName field value
 // and a boolean to check if the value has been set.
 func (o *K1Segment) GetOriginalCreditorNameOk() (*string, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.OriginalCreditorName, true
@@ -102,7 +105,7 @@ func (o *K1Segment) GetCreditorClassification() int32 {
 // GetCreditorClassificationOk returns a tuple with the CreditorClassification field value
 // and a boolean to check if the value has been set.
 func (o *K1Segment) GetCreditorClassificationOk() (*int32, bool) {
-	if o == nil  {
+	if o == nil {
 		return nil, false
 	}
 	return &o.CreditorClassification, true
@@ -114,17 +117,19 @@ func (o *K1Segment) SetCreditorClassification(v int32) {
 }
 
 func (o K1Segment) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["segmentIdentifier"] = o.SegmentIdentifier
-	}
-	if true {
-		toSerialize["originalCreditorName"] = o.OriginalCreditorName
-	}
-	if true {
-		toSerialize["creditorClassification"] = o.CreditorClassification
+	toSerialize, err := o.ToMap()
+	if err != nil {
+		return []byte{}, err
 	}
 	return json.Marshal(toSerialize)
+}
+
+func (o K1Segment) ToMap() (map[string]interface{}, error) {
+	toSerialize := map[string]interface{}{}
+	toSerialize["segmentIdentifier"] = o.SegmentIdentifier
+	toSerialize["originalCreditorName"] = o.OriginalCreditorName
+	toSerialize["creditorClassification"] = o.CreditorClassification
+	return toSerialize, nil
 }
 
 type NullableK1Segment struct {
@@ -162,5 +167,3 @@ func (v *NullableK1Segment) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-
