@@ -118,7 +118,8 @@ func (t *FileTest) TestParseWithUnpackedFixedLength(c *check.C) {
 	_, err = f.GeneratorTrailer()
 	c.Assert(err, check.IsNil)
 	trailer := f.GetDataRecords()[0]
-	a := trailer.(*lib.BaseSegment)
+	a, ok := trailer.(*lib.BaseSegment)
+	c.Assert(ok, check.Equals, true)
 	a.AccountStatus = lib.AccountStatusDF
 	_, err = f.GeneratorTrailer()
 	c.Assert(err, check.IsNil)
@@ -156,7 +157,8 @@ func (t *FileTest) TestParseWithUnpackedFixedLength2(c *check.C) {
 	_, err = f.GeneratorTrailer()
 	c.Assert(err, check.IsNil)
 	trailer := f.GetDataRecords()[0]
-	a := trailer.(*lib.BaseSegment)
+	a, ok := trailer.(*lib.BaseSegment)
+	c.Assert(ok, check.Equals, true)
 	a.AccountStatus = lib.AccountStatus71
 	_, err = f.GeneratorTrailer()
 	c.Assert(err, check.IsNil)

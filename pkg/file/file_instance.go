@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 	"unicode"
@@ -363,41 +364,65 @@ func (f *fileInstance) SetType(newType string) error {
 	if newType == utils.CharacterFileFormat {
 		// convert header
 		if f.Header != nil {
-			newHeader := lib.HeaderRecord(*f.Header.(*lib.PackedHeaderRecord))
+			rec, ok := f.Header.(*lib.PackedHeaderRecord)
+			if !ok || rec == nil {
+				return fmt.Errorf("unexpected PackedHeaderRecord: %T", f.Header)
+			}
+			newHeader := lib.HeaderRecord(*rec)
 			f.Header = &newHeader
 		}
 
 		// convert bases
 		var bases []lib.Record
 		for _, _base := range f.Bases {
-			newBase := lib.BaseSegment(*_base.(*lib.PackedBaseSegment))
+			rec, ok := _base.(*lib.PackedBaseSegment)
+			if !ok || rec == nil {
+				return fmt.Errorf("unexpected PackedBaseSegment: %T", _base)
+			}
+			newBase := lib.BaseSegment(*rec)
 			bases = append(bases, &newBase)
 		}
 		f.Bases = bases
 
 		// convert trailer
 		if f.Trailer != nil {
-			newTrailer := lib.TrailerRecord(*f.Trailer.(*lib.PackedTrailerRecord))
+			rec, ok := f.Trailer.(*lib.PackedTrailerRecord)
+			if !ok || rec == nil {
+				return fmt.Errorf("unexpected PackedTrailerRecord: %T", f.Trailer)
+			}
+			newTrailer := lib.TrailerRecord(*rec)
 			f.Trailer = &newTrailer
 		}
 	} else if newType == utils.PackedFileFormat {
 		// convert header
 		if f.Header != nil {
-			newHeader := lib.PackedHeaderRecord(*f.Header.(*lib.HeaderRecord))
+			rec, ok := f.Header.(*lib.HeaderRecord)
+			if !ok || rec == nil {
+				return fmt.Errorf("unexpected HeaderRecord: %T", f.Header)
+			}
+			newHeader := lib.PackedHeaderRecord(*rec)
 			f.Header = &newHeader
 		}
 
 		// convert bases
 		var bases []lib.Record
 		for _, _base := range f.Bases {
-			newBase := lib.PackedBaseSegment(*_base.(*lib.BaseSegment))
+			rec, ok := _base.(*lib.BaseSegment)
+			if !ok || rec == nil {
+				return fmt.Errorf("unexpected BaseSegment: %T", _base)
+			}
+			newBase := lib.PackedBaseSegment(*rec)
 			bases = append(bases, &newBase)
 		}
 		f.Bases = bases
 
 		// convert trailer
 		if f.Trailer != nil {
-			newTrailer := lib.PackedTrailerRecord(*f.Trailer.(*lib.TrailerRecord))
+			rec, ok := f.Trailer.(*lib.TrailerRecord)
+			if !ok || rec == nil {
+				return fmt.Errorf("unexpected TrailerRecord: %T", f.Trailer)
+			}
+			newTrailer := lib.PackedTrailerRecord(*rec)
 			f.Trailer = &newTrailer
 		}
 	}
@@ -528,7 +553,10 @@ func (f *fileInstance) statisticAccountStatus(status string, info *lib.TrailerIn
 
 func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer *lib.TrailerInformation) {
 	for _, j1 := range base.GetSegments(lib.J1SegmentName) {
-		sub := j1.(*lib.J1Segment)
+		sub, ok := j1.(*lib.J1Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected J1Segment: %T", j1))
+		}
 		if sub.ECOACode == lib.ECOACodeZ {
 			trailer.TotalECOACodeZ++
 		}
@@ -551,7 +579,10 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 		}
 	}
 	for _, j2 := range base.GetSegments(lib.J2SegmentName) {
-		sub := j2.(*lib.J2Segment)
+		sub, ok := j2.(*lib.J2Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected J2Segment: %T", j2))
+		}
 		if sub.ECOACode == lib.ECOACodeZ {
 			trailer.TotalECOACodeZ++
 		}
@@ -574,33 +605,48 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 		}
 	}
 	for _, k1 := range base.GetSegments(lib.K1SegmentName) {
-		sub := k1.(*lib.K1Segment)
+		sub, ok := k1.(*lib.K1Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected K1Segment: %T", k1))
+		}
 		if len(sub.OriginalCreditorName) > 0 {
 			trailer.TotalOriginalCreditorSegments++
 		}
 	}
 	for _, k2 := range base.GetSegments(lib.K2SegmentName) {
-		sub := k2.(*lib.K2Segment)
+		sub, ok := k2.(*lib.K2Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected K2Segment: %T", k2))
+		}
 		if sub.PurchasedIndicator == lib.PurchasedIndicatorToName ||
 			sub.PurchasedIndicator == lib.PurchasedIndicatorFromName {
 			trailer.TotalPurchasedToSegments++
 		}
 	}
 	for _, k3 := range base.GetSegments(lib.K3SegmentName) {
-		sub := k3.(*lib.K3Segment)
+		sub, ok := k3.(*lib.K3Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected K3Segment: %T", k3))
+		}
 		if sub.AgencyIdentifier == lib.AgencyIdentifierNotApplicable {
 			trailer.TotalMortgageInformationSegments++
 		}
 	}
 	for _, k4 := range base.GetSegments(lib.K4SegmentName) {
-		sub := k4.(*lib.K4Segment)
+		sub, ok := k4.(*lib.K4Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected K4Segment: %T", k4))
+		}
 		if sub.SpecializedPaymentIndicator == lib.SpecializedBalloonPayment ||
 			sub.SpecializedPaymentIndicator == lib.SpecializedDeferredPayment {
 			trailer.TotalPaymentInformationSegments++
 		}
 	}
 	for _, l1 := range base.GetSegments(lib.L1SegmentName) {
-		sub := l1.(*lib.L1Segment)
+		sub, ok := l1.(*lib.L1Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected L1Segment: %T", l1))
+		}
 		if sub.ChangeIndicator == lib.ChangeIndicatorAccountNumber ||
 			sub.ChangeIndicator == lib.ChangeIndicatorIdentificationNumber ||
 			sub.ChangeIndicator == lib.ChangeIndicatorBothNumber {
@@ -608,7 +654,10 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 		}
 	}
 	for _, n1 := range base.GetSegments(lib.N1SegmentName) {
-		sub := n1.(*lib.N1Segment)
+		sub, ok := n1.(*lib.N1Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected N1Segment: %T", n1))
+		}
 		if len(sub.EmployerName) > 0 {
 			trailer.TotalEmploymentSegments++
 		}
@@ -617,7 +666,10 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 
 func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.TrailerInformation) {
 	for _, j1 := range base.GetSegments(lib.J1SegmentName) {
-		sub := j1.(*lib.J1Segment)
+		sub, ok := j1.(*lib.J1Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected J1Segment: %T", j1))
+		}
 		if sub.ECOACode == lib.ECOACodeZ {
 			trailer.TotalECOACodeZ++
 		}
@@ -640,7 +692,10 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 		}
 	}
 	for _, j2 := range base.GetSegments(lib.J2SegmentName) {
-		sub := j2.(*lib.J2Segment)
+		sub, ok := j2.(*lib.J2Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected J2Segment: %T", j2))
+		}
 		if sub.ECOACode == lib.ECOACodeZ {
 			trailer.TotalECOACodeZ++
 		}
@@ -663,33 +718,48 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 		}
 	}
 	for _, k1 := range base.GetSegments(lib.K1SegmentName) {
-		sub := k1.(*lib.K1Segment)
+		sub, ok := k1.(*lib.K1Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected K1Segment: %T", k1))
+		}
 		if len(sub.OriginalCreditorName) > 0 {
 			trailer.TotalOriginalCreditorSegments++
 		}
 	}
 	for _, k2 := range base.GetSegments(lib.K2SegmentName) {
-		sub := k2.(*lib.K2Segment)
+		sub, ok := k2.(*lib.K2Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected K2Segment: %T", k2))
+		}
 		if sub.PurchasedIndicator == lib.PurchasedIndicatorToName ||
 			sub.PurchasedIndicator == lib.PurchasedIndicatorFromName {
 			trailer.TotalPurchasedToSegments++
 		}
 	}
 	for _, k3 := range base.GetSegments(lib.K3SegmentName) {
-		sub := k3.(*lib.K3Segment)
+		sub, ok := k3.(*lib.K3Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected K3Segment: %T", k3))
+		}
 		if sub.AgencyIdentifier == lib.AgencyIdentifierNotApplicable {
 			trailer.TotalMortgageInformationSegments++
 		}
 	}
 	for _, k4 := range base.GetSegments(lib.K4SegmentName) {
-		sub := k4.(*lib.K4Segment)
+		sub, ok := k4.(*lib.K4Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected K4Segment: %T", k4))
+		}
 		if sub.SpecializedPaymentIndicator == lib.SpecializedBalloonPayment ||
 			sub.SpecializedPaymentIndicator == lib.SpecializedDeferredPayment {
 			trailer.TotalPaymentInformationSegments++
 		}
 	}
 	for _, l1 := range base.GetSegments(lib.L1SegmentName) {
-		sub := l1.(*lib.L1Segment)
+		sub, ok := l1.(*lib.L1Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected L1Segment: %T", l1))
+		}
 		if sub.ChangeIndicator == lib.ChangeIndicatorAccountNumber ||
 			sub.ChangeIndicator == lib.ChangeIndicatorIdentificationNumber ||
 			sub.ChangeIndicator == lib.ChangeIndicatorBothNumber {
@@ -697,7 +767,10 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 		}
 	}
 	for _, n1 := range base.GetSegments(lib.N1SegmentName) {
-		sub := n1.(*lib.N1Segment)
+		sub, ok := n1.(*lib.N1Segment)
+		if !ok {
+			panic(fmt.Sprintf("unexpected N1Segment: %T", n1))
+		}
 		if len(sub.EmployerName) > 0 {
 			trailer.TotalEmploymentSegments++
 		}

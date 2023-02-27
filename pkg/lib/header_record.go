@@ -224,9 +224,9 @@ func (r *PackedHeaderRecord) Parse(record []byte) (int, error) {
 					}
 					offset += 4
 				}
-				field.SetInt(value.Interface().(int64))
+				field.SetInt(value.Interface().(int64)) //nolint:forcetypeassert
 			case string:
-				field.SetString(value.Interface().(string))
+				field.SetString(value.Interface().(string)) //nolint:forcetypeassert
 			case utils.Time:
 				field.Set(value)
 			}

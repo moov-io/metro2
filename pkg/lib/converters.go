@@ -62,7 +62,7 @@ func (c *converter) toString(elm field, data reflect.Value) string {
 	if !data.IsValid() {
 		return c.fillString(elm)
 	}
-	if elm.Type&omitted > 0 && data.Interface().(int) == 0 {
+	if elm.Type&omitted > 0 && data.Interface().(int) == 0 { //nolint:forcetypeassert
 		return ""
 	}
 
@@ -149,9 +149,9 @@ func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]fiel
 					}
 					offset += 4
 				}
-				field.SetInt(value.Interface().(int64))
+				field.SetInt(value.Interface().(int64)) //nolint:forcetypeassert
 			case string:
-				field.SetString(value.Interface().(string))
+				field.SetString(value.Interface().(string)) //nolint:forcetypeassert
 			case utils.Time:
 				field.Set(value)
 			}
@@ -231,7 +231,10 @@ func packedTimeString(data reflect.Value, format string, length int, size int) s
 			return ""
 		}
 
-		newTime := data.Interface().(utils.Time)
+		newTime, ok := data.Interface().(utils.Time)
+		if !ok {
+			panic(fmt.Sprintf("unexpected utils.Time: %T", data.Interface()))
+		}
 		value, _ = strconv.ParseInt(time.Time(newTime).Format(format), 10, 64)
 	}
 

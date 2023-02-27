@@ -106,7 +106,7 @@ func (v *validator) validateRecord(r interface{}, spec map[string]field, recordN
 
 			err := method.Call(nil)[0]
 			if !err.IsNil() {
-				return err.Interface().(error)
+				return err.Interface().(error) //nolint:forcetypeassert
 			}
 		}
 	}

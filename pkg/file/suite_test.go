@@ -75,10 +75,14 @@ func (t *FileTest) SetUpSuite(c *check.C) {
 }
 
 func (t *FileTest) TearDownSuite(c *check.C) {
-	err := t.packedJsonReader.(io.ReadCloser).Close()
+	rc, ok := t.packedJsonReader.(io.ReadCloser)
+	c.Assert(ok, check.Equals, true)
+	err := rc.Close()
 	c.Assert(err, check.IsNil)
 
-	err = t.packedRawReader.(io.ReadCloser).Close()
+	rc, ok = t.packedRawReader.(io.ReadCloser)
+	c.Assert(ok, check.Equals, true)
+	err = rc.Close()
 	c.Assert(err, check.IsNil)
 }
 

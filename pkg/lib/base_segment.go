@@ -939,9 +939,9 @@ func (r *PackedBaseSegment) Parse(record []byte) (int, error) {
 					}
 					offset += 4
 				}
-				field.SetInt(value.Interface().(int64))
+				field.SetInt(value.Interface().(int64)) //nolint:forcetypeassert
 			case string:
-				field.SetString(value.Interface().(string))
+				field.SetString(value.Interface().(string)) //nolint:forcetypeassert
 			case utils.Time:
 				field.Set(value)
 			}
@@ -1045,7 +1045,7 @@ func (r *PackedBaseSegment) Validate() error {
 
 			err := method.Call(nil)[0]
 			if !err.IsNil() {
-				return err.Interface().(error)
+				return err.Interface().(error) //nolint:forcetypeassert
 			}
 		}
 	}

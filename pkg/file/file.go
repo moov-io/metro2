@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"fmt"
 	"io"
 	"strconv"
 
@@ -68,7 +69,6 @@ func NewFile(format string) (File, error) {
 
 // NewFileFromReader attempts to parse raw metro2 file or json file
 func NewFileFromReader(r io.Reader) (File, error) {
-
 	if r == nil {
 		return nil, errors.New("invalid file reader")
 	}
@@ -81,8 +81,8 @@ func NewFileFromReader(r io.Reader) (File, error) {
 	// reset file reader
 	//  need to read first block to detect json or metro format
 	//  after that, need to reset seek point of reader
-	if _, ok := r.(io.Seeker); ok {
-		r.(io.Seeker).Seek(0, io.SeekStart)
+	if sk, ok := r.(io.Seeker); ok {
+		sk.Seek(0, io.SeekStart)
 	}
 
 	if jsonDecodeErr != nil {
@@ -132,8 +132,10 @@ type Reader struct {
 
 // Read reads each record of the metro file
 func (r *Reader) Read() (File, error) {
-
-	f := r.File.(*fileInstance)
+	f, ok := r.File.(*fileInstance)
+	if !ok {
+		return r.File, fmt.Errorf("unexpected File of %T", r.File)
+	}
 
 	f.Bases = []lib.Record{}
 

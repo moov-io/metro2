@@ -5,10 +5,11 @@
 package lib
 
 import (
-	"github.com/moov-io/metro2/pkg/utils"
 	"reflect"
 	"strings"
 	"unicode"
+
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 var _ Record = (*TrailerRecord)(nil)
@@ -275,9 +276,9 @@ func (r *PackedTrailerRecord) Parse(record []byte) (int, error) {
 		if value.IsValid() && field.CanSet() {
 			switch value.Interface().(type) {
 			case int, int64:
-				field.SetInt(value.Interface().(int64))
+				field.SetInt(value.Interface().(int64)) //nolint:forcetypeassert
 			case string:
-				field.SetString(value.Interface().(string))
+				field.SetString(value.Interface().(string)) //nolint:forcetypeassert
 			}
 		}
 	}
