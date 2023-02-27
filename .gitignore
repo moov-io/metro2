@@ -46,6 +46,7 @@ coverage.txt
 misspell*
 staticcheck*
 /lint-project.sh
+gitleaks.tar.gz
 bin/
 tmp/
 
