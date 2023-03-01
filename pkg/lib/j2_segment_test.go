@@ -6,6 +6,8 @@ package lib
 
 import (
 	"bytes"
+	"encoding/json"
+
 	"gopkg.in/check.v1"
 )
 
@@ -33,7 +35,35 @@ func (t *SegmentTest) TestJ2SegmentWithInvalidGenerationCode(c *check.C) {
 	segment.GenerationCode = "0"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "generation code in j1 segment has an invalid value")
+	c.Assert(err.Error(), check.DeepEquals, "generation code in j2 segment has an invalid value")
+}
+
+func (t *SegmentTest) TestJ2SegmentWithEmptyGenerationCode(c *check.C) {
+	jsonStr := `{
+      "segmentIdentifier": "J2",
+      "surname": "BEAUCHAMP",
+      "firstName": "KEVIN",
+      "socialSecurityNumber": 445112877,
+      "dateBirth": "2020-01-02T00:00:00Z",
+      "telephoneNumber": 4335552333,
+      "ecoaCode": "2",
+      "consumerInformationIndicator": "R",
+      "countryCode": "US",
+      "firstLineAddress": "234 HARRISON PLACE",
+      "secondLineAddress": "SUITE #305",
+      "city": "LANSING",
+      "state": "MI",
+      "zipCode": "72654",
+      "addressIndicator": "Y",
+      "residenceCode": "O"
+    }`
+	segment := NewJ2Segment()
+	err := json.Unmarshal([]byte(jsonStr), &segment)
+	c.Assert(err, check.IsNil)
+	err = segment.Validate()
+	c.Assert(err, check.IsNil)
+	c.Assert(segment.Name(), check.Equals, J2SegmentName)
+	c.Assert(segment.Length(), check.Equals, J2SegmentLength)
 }
 
 func (t *SegmentTest) TestJ2SegmentWithInvalidTelephoneNumber(c *check.C) {
