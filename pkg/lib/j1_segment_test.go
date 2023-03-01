@@ -6,6 +6,8 @@ package lib
 
 import (
 	"bytes"
+	"encoding/json"
+
 	"gopkg.in/check.v1"
 )
 
@@ -24,6 +26,26 @@ func (t *SegmentTest) TestJ1SegmentWithInvalidData(c *check.C) {
 	segment := NewJ1Segment()
 	_, err := segment.Parse(append([]byte("ERROR"), t.sampleJ1Segment...))
 	c.Assert(err, check.Not(check.IsNil))
+}
+
+func (t *SegmentTest) TestJ1SegmentWithEmptyGenerationCode(c *check.C) {
+	jsonStr := `{
+      "segmentIdentifier": "J1",
+      "surname": "BEAUCHAMP",
+      "firstName": "KEVIN",
+      "socialSecurityNumber": 445112877,
+      "dateBirth": "2020-01-02T00:00:00Z",
+      "telephoneNumber": 4335552333,
+      "ecoaCode": "2",
+      "consumerInformationIndicator": "R"
+    }`
+	segment := NewJ1Segment()
+	err := json.Unmarshal([]byte(jsonStr), &segment)
+	c.Assert(err, check.IsNil)
+	err = segment.Validate()
+	c.Assert(err, check.IsNil)
+	c.Assert(segment.Name(), check.Equals, J1SegmentName)
+	c.Assert(segment.Length(), check.Equals, J1SegmentLength)
 }
 
 func (t *SegmentTest) TestJ1SegmentWithInvalidGenerationCode(c *check.C) {
