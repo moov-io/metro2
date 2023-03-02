@@ -1,3 +1,16 @@
+## v0.6.1 (Released 2023-03-02)
+
+IMPROVEMENTS
+
+- fix j1 validation for missing GenerationCode
+- fix j2 validation for missing GenerationCode
+
+BUILD
+
+- chore: checking type castings
+- chore(deps): update dependency tzinfo to "~> 2.0"
+- meta: update github.com/stretchr/testify to v1.8.2
+
 ## v0.6.0 (Released 2023-02-20)
 
 IMPROVEMENTS
