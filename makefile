@@ -80,6 +80,13 @@ release: docker AUTHORS
 	go test -coverprofile=cover-$(VERSION).out ./...
 	git tag -f $(VERSION)
 
+# From https://github.com/genuinetools/img
+.PHONY: AUTHORS.md
+AUTHORS.md:
+	@$(file >$@,# This file lists all individuals having contributed content to the repository.)
+	@$(file >>$@,# For how it is generated, see `make AUTHORS.md`.)
+	@echo "$(shell git log --format='\n%aN <%aE>' | LC_ALL=C.UTF-8 sort -uf)" >> $@
+
 release-push:
 	docker push moov/metro2:$(VERSION)
 	docker push moov/metro2:latest
