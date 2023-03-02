@@ -159,7 +159,7 @@ func (s *J1Segment) Length() int {
 func (s *J1Segment) ValidateGenerationCode() error {
 	switch s.GenerationCode {
 	case GenerationCodeJunior, GenerationCodeSenior, GenerationCode2, GenerationCode3, GenerationCode4,
-		GenerationCode5, GenerationCode6, GenerationCode7, GenerationCode8, GenerationCode9:
+		GenerationCode5, GenerationCode6, GenerationCode7, GenerationCode8, GenerationCode9, "":
 		return nil
 	}
 	return utils.NewErrInvalidValueOfField("generation code", "j1 segment")
