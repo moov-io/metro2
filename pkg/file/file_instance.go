@@ -279,8 +279,8 @@ func (f *fileInstance) String(isNewLine bool) string {
 }
 
 // Bytes return raw byte array
-func (r *fileInstance) Bytes() []byte {
-	return []byte(r.String(false))
+func (f *fileInstance) Bytes() []byte {
+	return []byte(f.String(false))
 }
 
 // UnmarshalJSON parses a JSON blob
@@ -437,29 +437,29 @@ func (f *fileInstance) generatorTrailer() (*lib.TrailerInformation, error) {
 	trailer.TotalBaseRecords = len(f.Bases)
 	trailer.BlockCount = len(f.Bases) + 2
 	for _, base := range f.Bases {
-		base, ok := base.(*lib.BaseSegment)
-		if !ok && base.Validate() != nil {
-			return nil, utils.NewErrInvalidSegment(base.Name())
+		baseSegment, ok := base.(*lib.BaseSegment)
+		if !ok && baseSegment.Validate() != nil {
+			return nil, utils.NewErrInvalidSegment(baseSegment.Name())
 		}
 
-		if isValidSocialSecurityNumber(base.SocialSecurityNumber) {
+		if isValidSocialSecurityNumber(baseSegment.SocialSecurityNumber) {
 			trailer.TotalSocialNumbersAllSegments++
 			trailer.TotalSocialNumbersBaseSegments++
 		}
 
-		if !base.DateBirth.IsZero() {
+		if !baseSegment.DateBirth.IsZero() {
 			trailer.TotalDatesBirthAllSegments++
 			trailer.TotalDatesBirthBaseSegments++
 		}
 
-		if base.ECOACode == lib.ECOACodeZ {
+		if baseSegment.ECOACode == lib.ECOACodeZ {
 			trailer.TotalECOACodeZ++
 		}
-		if base.TelephoneNumber > 0 {
+		if baseSegment.TelephoneNumber > 0 {
 			trailer.TotalTelephoneNumbersAllSegments++
 		}
-		f.statisticAccountStatus(base.AccountStatus, trailer)
-		f.statisticBase(base, trailer)
+		f.statisticAccountStatus(baseSegment.AccountStatus, trailer)
+		f.statisticBase(baseSegment, trailer)
 	}
 
 	return trailer, nil
