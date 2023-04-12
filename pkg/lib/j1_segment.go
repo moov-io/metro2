@@ -69,7 +69,7 @@ type J1Segment struct {
 	//   per the Social Security Administration.
 	//  Do not report Credit Profile Numbers (CPNs) in this field.
 	//  The CPN should not be used for credit reporting purposes and does not replace the Social Security Number.
-	SocialSecurityNumber int `json:"socialSecurityNumber"  validate:"required"`
+	SocialSecurityNumber int `json:"socialSecurityNumber,omitempty"`
 
 	// Report the full Date of Birth of the associated consumer, including the month, day and year.
 	// Reporting of this information is required as the Date of Birth greatly enhances accuracy in matching to the correct consumer.
@@ -79,7 +79,7 @@ type J1Segment struct {
 	//  When reporting Authorized Users (ECOA Code 3), the full Date of Birth (MMDDYYYY) must be reported for all newly-added
 	//  Authorized Users on all pre-existing and newly-opened accounts, even if the Social Security Number is reported.
 	//  Do not report accounts of consumers who are too young to enter into a binding contract.
-	DateBirth utils.Time `json:"dateBirth"  validate:"required"`
+	DateBirth utils.Time `json:"dateBirth,omitempty"`
 
 	// Contains the telephone number of the associated consumer (Area Code + 7 digits).
 	TelephoneNumber int64 `json:"telephoneNumber"`
@@ -169,6 +169,22 @@ func (s *J1Segment) ValidateGenerationCode() error {
 func (s *J1Segment) ValidateTelephoneNumber() error {
 	if err := s.isPhoneNumber(s.TelephoneNumber, "j1 segment"); err != nil {
 		return err
+	}
+	return nil
+}
+
+// validation of social security number
+func (r *J1Segment) ValidateSocialSecurityNumber() error {
+	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
+		return utils.NewErrInvalidValueOfField("social security number", "base segment")
+	}
+	return nil
+}
+
+// validation of date of birth
+func (r *J1Segment) ValidateDateBirth() error {
+	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
+		return utils.NewErrInvalidValueOfField("date birth", "base segment")
 	}
 	return nil
 }

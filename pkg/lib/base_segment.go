@@ -384,7 +384,7 @@ type BaseSegment struct {
 	//   If the Social Security Number is not reported, the Date of Birth is required to be reported.
 	//   Do not report Individual Tax Identification Numbers  (ITINs) in this field.  ITINs do not prove identity outside the tax system and should not be offered or accepted as identification for non-tax purposes, per the Social Security Administration.
 	//   Do not report Credit Profile Numbers (CPNs) in this field.  The CPN should not be used for credit reporting purposes and does not replace the Social Security Number.
-	SocialSecurityNumber int `json:"socialSecurityNumber" validate:"required"`
+	SocialSecurityNumber int `json:"socialSecurityNumber,omitempty"`
 
 	// Report the full Date of Birth of the primary consumer, including the month, day and year.
 	// Reporting of this information is required as the Date of Birth greatly enhances accuracy in matching to the correct consumer.
@@ -393,7 +393,7 @@ type BaseSegment struct {
 	// Notes:  If the Date of Birth is not reported, the Social Security Number is required to be reported.
 	//         When reporting Authorized Users (ECOA Code 3), the full Date of Birth (MMDDYYYY) must be reported for all newly-added Authorized Users on all pre-existing and newly-opened accounts, even if the Social Security Number is reported.
 	//         Do not report accounts of consumers who are too young to enter into a binding contract.
-	DateBirth utils.Time `json:"dateBirth" validate:"required"`
+	DateBirth utils.Time `json:"dateBirth,omitempty"`
 
 	// Contains the telephone number of the primary consumer (Area Code + 7 digits).
 	TelephoneNumber int64 `json:"telephoneNumber"`
@@ -805,6 +805,7 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 // customized field validation functions
 // function name should be "Validate" + field name
 
+// validation of identification number
 func (r *BaseSegment) ValidateIdentificationNumber() error {
 	if validFilledString(r.IdentificationNumber) {
 		return utils.NewErrInvalidValueOfField("identification number", "base segment")
@@ -812,6 +813,7 @@ func (r *BaseSegment) ValidateIdentificationNumber() error {
 	return nil
 }
 
+// validation of portfolio type
 func (r *BaseSegment) ValidatePortfolioType() error {
 	switch r.PortfolioType {
 	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
@@ -820,6 +822,7 @@ func (r *BaseSegment) ValidatePortfolioType() error {
 	return utils.NewErrInvalidValueOfField("portfolio type", "base segment")
 }
 
+// validation of terms duration
 func (r *BaseSegment) ValidateTermsDuration() error {
 	switch r.TermsDuration {
 	case TermsDurationCredit, TermsDurationOpen, TermsDurationRevolving:
@@ -832,6 +835,7 @@ func (r *BaseSegment) ValidateTermsDuration() error {
 	return nil
 }
 
+// validation of terms frequency
 func (r *BaseSegment) ValidateTermsFrequency() error {
 	switch r.TermsFrequency {
 	case TermsFrequencyDeferred, TermsFrequencyPayment, TermsFrequencyWeekly, TermsFrequencyBiweekly,
@@ -842,6 +846,7 @@ func (r *BaseSegment) ValidateTermsFrequency() error {
 	return utils.NewErrInvalidValueOfField("terms frequency", "base segment")
 }
 
+// validation of payment rating
 func (r *BaseSegment) ValidatePaymentRating() error {
 	switch r.AccountStatus {
 	case AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88, AccountStatus89, AccountStatus94, AccountStatus95:
@@ -859,6 +864,7 @@ func (r *BaseSegment) ValidatePaymentRating() error {
 	return utils.NewErrInvalidValueOfField("payment rating", "base segment")
 }
 
+// validation of payment history profile
 func (r *BaseSegment) ValidatePaymentHistoryProfile() error {
 	if len(r.PaymentHistoryProfile) != 24 {
 		return utils.NewErrInvalidValueOfField("payment history profile", "base segment")
@@ -877,6 +883,7 @@ func (r *BaseSegment) ValidatePaymentHistoryProfile() error {
 	return nil
 }
 
+// validation of interest type indicator
 func (r *BaseSegment) ValidateInterestTypeIndicator() error {
 	switch r.InterestTypeIndicator {
 	case InterestIndicatorFixed, InterestIndicatorVariable, "":
@@ -885,9 +892,26 @@ func (r *BaseSegment) ValidateInterestTypeIndicator() error {
 	return utils.NewErrInvalidValueOfField("interest type indicator", "base segment")
 }
 
+// validation of telephone number
 func (r *BaseSegment) ValidateTelephoneNumber() error {
 	if err := r.isPhoneNumber(r.TelephoneNumber, "base segment"); err != nil {
 		return err
+	}
+	return nil
+}
+
+// validation of social security number
+func (r *BaseSegment) ValidateSocialSecurityNumber() error {
+	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
+		return utils.NewErrInvalidValueOfField("social security number", "base segment")
+	}
+	return nil
+}
+
+// validation of date of birth
+func (r *BaseSegment) ValidateDateBirth() error {
+	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
+		return utils.NewErrInvalidValueOfField("date birth", "base segment")
 	}
 	return nil
 }
@@ -1230,6 +1254,7 @@ func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
 // customized field validation functions
 // function name should be "Validate" + field name
 
+// validation of identification number
 func (r *PackedBaseSegment) ValidateIdentificationNumber() error {
 	if validFilledString(r.IdentificationNumber) {
 		return utils.NewErrInvalidValueOfField("identification number", "packed base segment")
@@ -1237,6 +1262,7 @@ func (r *PackedBaseSegment) ValidateIdentificationNumber() error {
 	return nil
 }
 
+// validation of portfolio type
 func (r *PackedBaseSegment) ValidatePortfolioType() error {
 	switch r.PortfolioType {
 	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
@@ -1245,6 +1271,7 @@ func (r *PackedBaseSegment) ValidatePortfolioType() error {
 	return utils.NewErrInvalidValueOfField("portfolio type", "packed base segment")
 }
 
+// validation of terms duration
 func (r *PackedBaseSegment) ValidateTermsDuration() error {
 	switch r.TermsDuration {
 	case TermsDurationCredit, TermsDurationOpen, TermsDurationRevolving:
@@ -1257,6 +1284,7 @@ func (r *PackedBaseSegment) ValidateTermsDuration() error {
 	return nil
 }
 
+// validation of terms frequency
 func (r *PackedBaseSegment) ValidateTermsFrequency() error {
 	switch r.TermsFrequency {
 	case TermsFrequencyDeferred, TermsFrequencyPayment, TermsFrequencyWeekly, TermsFrequencyBiweekly,
@@ -1267,6 +1295,7 @@ func (r *PackedBaseSegment) ValidateTermsFrequency() error {
 	return utils.NewErrInvalidValueOfField("terms frequency", "packed base segment")
 }
 
+// validation of payment rating
 func (r *PackedBaseSegment) ValidatePaymentRating() error {
 	switch r.AccountStatus {
 	case AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88, AccountStatus89, AccountStatus94, AccountStatus95:
@@ -1284,6 +1313,7 @@ func (r *PackedBaseSegment) ValidatePaymentRating() error {
 	return utils.NewErrInvalidValueOfField("payment rating", "packed base segment")
 }
 
+// validation of payment history profile
 func (r *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
 	if len(r.PaymentHistoryProfile) != 24 {
 		return utils.NewErrInvalidValueOfField("payment history profile", "packed base segment")
@@ -1302,6 +1332,7 @@ func (r *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
 	return nil
 }
 
+// validation of interest type indicator
 func (r *PackedBaseSegment) ValidateInterestTypeIndicator() error {
 	switch r.InterestTypeIndicator {
 	case InterestIndicatorFixed, InterestIndicatorVariable, "":
@@ -1310,9 +1341,26 @@ func (r *PackedBaseSegment) ValidateInterestTypeIndicator() error {
 	return utils.NewErrInvalidValueOfField("interest type indicator", "packed base segment")
 }
 
+// validation of telephone number
 func (r *PackedBaseSegment) ValidateTelephoneNumber() error {
 	if err := r.isPhoneNumber(r.TelephoneNumber, "packed base segment"); err != nil {
 		return err
+	}
+	return nil
+}
+
+// validation of social security number
+func (r *PackedBaseSegment) ValidateSocialSecurityNumber() error {
+	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
+		return utils.NewErrInvalidValueOfField("social security number", "base segment")
+	}
+	return nil
+}
+
+// validation of date of birth
+func (r *PackedBaseSegment) ValidateDateBirth() error {
+	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
+		return utils.NewErrInvalidValueOfField("date birth", "base segment")
 	}
 	return nil
 }

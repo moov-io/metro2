@@ -9,6 +9,8 @@ import (
 	"encoding/json"
 
 	"gopkg.in/check.v1"
+
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 func (t *SegmentTest) TestJ1Segment(c *check.C) {
@@ -69,5 +71,33 @@ func (t *SegmentTest) TestJ1SegmentWithInvalidTelephoneNumber(c *check.C) {
 
 func (t *SegmentTest) TestJ1SegmentWithInvalidData2(c *check.C) {
 	_, err := NewJ1Segment().Parse(t.sampleJ1Segment[:16])
+	c.Assert(err, check.Not(check.IsNil))
+}
+
+func (t *SegmentTest) TestJ1SegmentWithSocialSecurityNumber(c *check.C) {
+	segment := &J1Segment{}
+	_, err := segment.Parse(t.sampleJ1Segment)
+	c.Assert(err, check.IsNil)
+
+	segment.SocialSecurityNumber = 0
+	err = segment.Validate()
+	c.Assert(err, check.Equals, nil)
+
+	segment.DateBirth = utils.Time{}
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+}
+
+func (t *SegmentTest) TestJ1SegmentWithDateBirth(c *check.C) {
+	segment := &J1Segment{}
+	_, err := segment.Parse(t.sampleJ1Segment)
+	c.Assert(err, check.IsNil)
+
+	segment.DateBirth = utils.Time{}
+	err = segment.Validate()
+	c.Assert(err, check.Equals, nil)
+
+	segment.SocialSecurityNumber = 0
+	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
 }

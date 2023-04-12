@@ -652,8 +652,6 @@ components:
         - dateAccountInformation
         - surname
         - firstName
-        - socialSecurityNumber
-        - dateBirth
         - ecoaCode
         - firstLineAddress
         - state
@@ -693,8 +691,6 @@ components:
         - segmentIdentifier
         - surname
         - firstName
-        - socialSecurityNumber
-        - dateBirth
         - ecoaCode
     J2Segment:
       properties:
@@ -760,8 +756,6 @@ components:
         - segmentIdentifier
         - surname
         - firstName
-        - socialSecurityNumber
-        - dateBirth
         - ecoaCode
         - firstLineAddress
         - city

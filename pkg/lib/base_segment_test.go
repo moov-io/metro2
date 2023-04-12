@@ -10,6 +10,8 @@ import (
 	"testing"
 
 	"gopkg.in/check.v1"
+
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 func TestBaseSegmentErr(t *testing.T) {
@@ -367,4 +369,60 @@ func (t *SegmentTest) TestPackedBaseSegmentJson(c *check.C) {
 	c.Assert(err, check.IsNil)
 	c.Assert(0, check.Equals, bytes.Compare(segment.Bytes(), t.samplePackedBaseSegment))
 	c.Assert(segment.Name(), check.Equals, PackedBaseSegmentName)
+}
+
+func (t *SegmentTest) TestBaseSegmentWithSocialSecurityNumber(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+
+	segment.SocialSecurityNumber = 0
+	err = segment.Validate()
+	c.Assert(err, check.Equals, nil)
+
+	segment.DateBirth = utils.Time{}
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+}
+
+func (t *SegmentTest) TestBaseSegmentWithDateBirth(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+
+	segment.DateBirth = utils.Time{}
+	err = segment.Validate()
+	c.Assert(err, check.Equals, nil)
+
+	segment.SocialSecurityNumber = 0
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithSocialSecurityNumber(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+
+	segment.SocialSecurityNumber = 0
+	err = segment.Validate()
+	c.Assert(err, check.Equals, nil)
+
+	segment.DateBirth = utils.Time{}
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithDateBirth(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+
+	segment.DateBirth = utils.Time{}
+	err = segment.Validate()
+	c.Assert(err, check.Equals, nil)
+
+	segment.SocialSecurityNumber = 0
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
 }
