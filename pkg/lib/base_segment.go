@@ -623,7 +623,10 @@ func (r *BaseSegment) Bytes() []byte {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (r *BaseSegment) Validate() error {
-	return r.validateRecord(r, baseSegmentCharacterFormat, "base segment")
+	if err := r.validateRecord(r, baseSegmentCharacterFormat, "base segment"); err != nil {
+		return err
+	}
+	return nil
 }
 
 // BlockSize returns size of block
@@ -741,8 +744,7 @@ func (r *BaseSegment) MarshalJSON() ([]byte, error) {
 func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 
 	dummy := make(map[string]interface{})
-	err := json.Unmarshal(data, &dummy)
-	if err != nil {
+	if err := json.Unmarshal(data, &dummy); err != nil {
 		return fmt.Errorf("invalid json format (%s)", err.Error())
 	}
 
@@ -758,9 +760,8 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 		switch key {
 		case BaseSegmentName:
 			base := baseJson{}
-			err := json.Unmarshal(buf, &base)
-			if err != nil {
-				return fmt.Errorf("unabled to parse %s segment (%s)", key, err.Error())
+			if parseErr := json.Unmarshal(buf, &base); parseErr != nil {
+				return fmt.Errorf("unabled to parse %s segment (%s)", key, parseErr.Error())
 			}
 
 			fromFields := reflect.ValueOf(&base).Elem()
@@ -775,19 +776,18 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 			}
 		case J1SegmentName, J2SegmentName:
 			var list []interface{}
-			err := json.Unmarshal(buf, &list)
-			if err != nil {
-				return fmt.Errorf("unabled to parse %s segment (%s)", key, err.Error())
+			if parseErr := json.Unmarshal(buf, &list); parseErr != nil {
+				return fmt.Errorf("unabled to parse %s segment (%s)", key, parseErr.Error())
 			}
 
 			for _, subSegment := range list {
-				subBuf, err := json.Marshal(subSegment)
-				if err != nil {
-					return err
+				subBuf, parseErr := json.Marshal(subSegment)
+				if parseErr != nil {
+					return parseErr
 				}
-				err = unmarshalApplicableSegments(key, subBuf, r)
-				if err != nil {
-					return err
+				parseErr = unmarshalApplicableSegments(key, subBuf, r)
+				if parseErr != nil {
+					return parseErr
 				}
 			}
 		default:
@@ -903,6 +903,10 @@ func (r *BaseSegment) ValidateTelephoneNumber() error {
 // validation of social security number
 func (r *BaseSegment) ValidateSocialSecurityNumber() error {
 	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
+		// social security number and date birth may omit for business account
+		if r.ECOACode == "2" || r.ECOACode == "5" {
+			return nil
+		}
 		return utils.NewErrInvalidValueOfField("social security number", "base segment")
 	}
 	return nil
@@ -911,6 +915,10 @@ func (r *BaseSegment) ValidateSocialSecurityNumber() error {
 // validation of date of birth
 func (r *BaseSegment) ValidateDateBirth() error {
 	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
+		// social security number and date birth may omit for business account
+		if r.ECOACode == "2" || r.ECOACode == "5" {
+			return nil
+		}
 		return utils.NewErrInvalidValueOfField("date birth", "base segment")
 	}
 	return nil
@@ -1192,8 +1200,7 @@ func (r *PackedBaseSegment) MarshalJSON() ([]byte, error) {
 func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
 
 	dummy := make(map[string]interface{})
-	err := json.Unmarshal(data, &dummy)
-	if err != nil {
+	if err := json.Unmarshal(data, &dummy); err != nil {
 		return fmt.Errorf("invalid json format (%s)", err.Error())
 	}
 
@@ -1209,9 +1216,8 @@ func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
 		switch key {
 		case BaseSegmentName:
 			base := baseJson{}
-			err := json.Unmarshal(buf, &base)
-			if err != nil {
-				return fmt.Errorf("unabled to parse %s segment (%s)", key, err.Error())
+			if parseErr := json.Unmarshal(buf, &base); parseErr != nil {
+				return fmt.Errorf("unabled to parse %s segment (%s)", key, parseErr.Error())
 			}
 			fromFields := reflect.ValueOf(&base).Elem()
 			toFields := reflect.ValueOf(r).Elem()
@@ -1225,18 +1231,17 @@ func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
 			}
 		case J1SegmentName, J2SegmentName:
 			var list []interface{}
-			err := json.Unmarshal(buf, &list)
-			if err != nil {
-				return fmt.Errorf("unabled to parse %s segment (%s)", key, err.Error())
+			if parseErr := json.Unmarshal(buf, &list); parseErr != nil {
+				return fmt.Errorf("unabled to parse %s segment (%s)", key, parseErr.Error())
 			}
 			for _, subSegment := range list {
-				subBuf, err := json.Marshal(subSegment)
-				if err != nil {
-					return err
+				subBuf, parseErr := json.Marshal(subSegment)
+				if parseErr != nil {
+					return parseErr
 				}
-				err = unmarshalApplicableSegments(key, subBuf, r)
-				if err != nil {
-					return err
+				parseErr = unmarshalApplicableSegments(key, subBuf, r)
+				if parseErr != nil {
+					return parseErr
 				}
 			}
 		default:
@@ -1352,6 +1357,10 @@ func (r *PackedBaseSegment) ValidateTelephoneNumber() error {
 // validation of social security number
 func (r *PackedBaseSegment) ValidateSocialSecurityNumber() error {
 	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
+		// social security number and date birth may omit for business account
+		if r.ECOACode == "2" || r.ECOACode == "5" {
+			return nil
+		}
 		return utils.NewErrInvalidValueOfField("social security number", "base segment")
 	}
 	return nil
@@ -1360,6 +1369,10 @@ func (r *PackedBaseSegment) ValidateSocialSecurityNumber() error {
 // validation of date of birth
 func (r *PackedBaseSegment) ValidateDateBirth() error {
 	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
+		// social security number and date birth may omit for business account
+		if r.ECOACode == "2" || r.ECOACode == "5" {
+			return nil
+		}
 		return utils.NewErrInvalidValueOfField("date birth", "base segment")
 	}
 	return nil
