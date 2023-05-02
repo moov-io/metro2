@@ -252,6 +252,10 @@ func (s *J2Segment) ValidateResidenceCode() error {
 // validation of social security number
 func (r *J2Segment) ValidateSocialSecurityNumber() error {
 	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
+		// social security number and date birth may omit for business account
+		if strings.ToUpper(r.ECOACode) == "W" {
+			return nil
+		}
 		return utils.NewErrInvalidValueOfField("social security number", "base segment")
 	}
 	return nil
@@ -260,6 +264,10 @@ func (r *J2Segment) ValidateSocialSecurityNumber() error {
 // validation of date of birth
 func (r *J2Segment) ValidateDateBirth() error {
 	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
+		// social security number and date birth may omit for business account
+		if strings.ToUpper(r.ECOACode) == "W" {
+			return nil
+		}
 		return utils.NewErrInvalidValueOfField("date birth", "base segment")
 	}
 	return nil

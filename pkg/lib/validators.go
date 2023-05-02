@@ -87,8 +87,8 @@ func (v *validator) validateRecord(r interface{}, spec map[string]field, recordN
 	fields := reflect.ValueOf(r).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
-		if spec, ok := spec[fieldName]; ok {
-			if spec.Required == required {
+		if elmSpec, ok := spec[fieldName]; ok {
+			if elmSpec.Required == required {
 				fieldValue := fields.FieldByName(fieldName)
 				if fieldValue.IsZero() {
 					return utils.NewErrFieldRequired(fieldName, recordName)
