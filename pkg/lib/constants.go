@@ -105,6 +105,8 @@ const (
 	PaymentHistoryRepossession = 'K'
 	// consecutive payment activity, Charge-off
 	PaymentHistoryChargeOff = 'L'
+	// consecutive payment activity, Too new to rate
+	PaymentHistoryTooNew = 'Z'
 	//  status code that properly identifies the current condition of the account, "DF"
 	AccountStatusDF = "DF"
 	//  status code that properly identifies the current condition of the account, "DA"
