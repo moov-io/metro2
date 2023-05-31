@@ -875,7 +875,7 @@ func (r *BaseSegment) ValidatePaymentHistoryProfile() error {
 			PaymentHistoryPast120, PaymentHistoryPast150, PaymentHistoryPast180, PaymentHistoryNoPayment,
 			PaymentHistoryNoPaymentMonth, PaymentHistoryZero, PaymentHistoryCollection,
 			PaymentHistoryForeclosureCompleted, PaymentHistoryVoluntarySurrender, PaymentHistoryRepossession,
-			PaymentHistoryChargeOff:
+			PaymentHistoryChargeOff, PaymentHistoryTooNew:
 			continue
 		}
 		return utils.NewErrInvalidValueOfField("payment history profile", "base segment")
