@@ -219,7 +219,7 @@ func packedNumberFromString(data string) int64 {
 	for i := 0; i < int64size-length; i++ {
 		in.WriteByte(0x00)
 	}
-	in.Write([]byte(data))
+	in.WriteString(data)
 	value := int64(binary.BigEndian.Uint64(in.Bytes()))
 	return value
 }
