@@ -1,0 +1,39 @@
+name: Go Fuzz Testing
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  fuzz-ach:
+    name: Fuzz Metro2
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v4
+      with:
+        go-version: stable
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    - name: Fuzz
+      run: |
+        go test ./test/fuzz/... -fuzz Fuzz -fuzztime 10m
