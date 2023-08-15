@@ -325,9 +325,10 @@ We maintain a comprehensive suite of unit tests and recommend table-driven testi
 
 ### Fuzzing
 
-We currently run fuzzing over ImageCashLetter in the form of a [`moov/metro2`](https://hub.docker.com/r/moov/metro2fuzz) Docker image. You can [read more](./test/fuzz-reader/README.md) or run the image and report crasher examples to [`security@moov.io`](mailto:security@moov.io). Thanks!
+We currently run fuzzing over ACH in the form of a [Github Action](https://github.com/moov-io/metro2/actions/workflows/fuzz.yml). Please report crashes examples to [`oss@moov.io`](mailto:oss@moov.io). Thanks!
 
 ## Related projects
+
 As part of Moov's initiative to offer open source fintech infrastructure, we have a large collection of active projects you may find useful:
 
 - [Moov Watchman](https://github.com/moov-io/watchman) offers search functions over numerous trade sanction lists from the United States and European Union.
