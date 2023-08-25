@@ -233,7 +233,7 @@ func packedTimeString(data reflect.Value, format string, length int, size int) s
 
 		newTime, ok := data.Interface().(utils.Time)
 		if !ok {
-			panic(fmt.Sprintf("unexpected utils.Time: %T", data.Interface()))
+			return ""
 		}
 		value, _ = strconv.ParseInt(time.Time(newTime).Format(format), 10, 64)
 	}

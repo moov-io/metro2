@@ -555,7 +555,7 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 	for _, j1 := range base.GetSegments(lib.J1SegmentName) {
 		sub, ok := j1.(*lib.J1Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected J1Segment: %T", j1))
+			continue
 		}
 		if sub.ECOACode == lib.ECOACodeZ {
 			trailer.TotalECOACodeZ++
@@ -581,7 +581,7 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 	for _, j2 := range base.GetSegments(lib.J2SegmentName) {
 		sub, ok := j2.(*lib.J2Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected J2Segment: %T", j2))
+			continue
 		}
 		if sub.ECOACode == lib.ECOACodeZ {
 			trailer.TotalECOACodeZ++
@@ -607,7 +607,7 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 	for _, k1 := range base.GetSegments(lib.K1SegmentName) {
 		sub, ok := k1.(*lib.K1Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected K1Segment: %T", k1))
+			continue
 		}
 		if len(sub.OriginalCreditorName) > 0 {
 			trailer.TotalOriginalCreditorSegments++
@@ -616,7 +616,7 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 	for _, k2 := range base.GetSegments(lib.K2SegmentName) {
 		sub, ok := k2.(*lib.K2Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected K2Segment: %T", k2))
+			continue
 		}
 		if sub.PurchasedIndicator == lib.PurchasedIndicatorToName ||
 			sub.PurchasedIndicator == lib.PurchasedIndicatorFromName {
@@ -626,7 +626,7 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 	for _, k3 := range base.GetSegments(lib.K3SegmentName) {
 		sub, ok := k3.(*lib.K3Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected K3Segment: %T", k3))
+			continue
 		}
 		if sub.AgencyIdentifier == lib.AgencyIdentifierNotApplicable {
 			trailer.TotalMortgageInformationSegments++
@@ -635,7 +635,7 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 	for _, k4 := range base.GetSegments(lib.K4SegmentName) {
 		sub, ok := k4.(*lib.K4Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected K4Segment: %T", k4))
+			continue
 		}
 		if sub.SpecializedPaymentIndicator == lib.SpecializedBalloonPayment ||
 			sub.SpecializedPaymentIndicator == lib.SpecializedDeferredPayment {
@@ -645,7 +645,7 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 	for _, l1 := range base.GetSegments(lib.L1SegmentName) {
 		sub, ok := l1.(*lib.L1Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected L1Segment: %T", l1))
+			continue
 		}
 		if sub.ChangeIndicator == lib.ChangeIndicatorAccountNumber ||
 			sub.ChangeIndicator == lib.ChangeIndicatorIdentificationNumber ||
@@ -656,7 +656,7 @@ func (f *fileInstance) statisticPackedBase(base *lib.PackedBaseSegment, trailer 
 	for _, n1 := range base.GetSegments(lib.N1SegmentName) {
 		sub, ok := n1.(*lib.N1Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected N1Segment: %T", n1))
+			continue
 		}
 		if len(sub.EmployerName) > 0 {
 			trailer.TotalEmploymentSegments++
@@ -668,7 +668,7 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 	for _, j1 := range base.GetSegments(lib.J1SegmentName) {
 		sub, ok := j1.(*lib.J1Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected J1Segment: %T", j1))
+			continue
 		}
 		if sub.ECOACode == lib.ECOACodeZ {
 			trailer.TotalECOACodeZ++
@@ -694,7 +694,7 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 	for _, j2 := range base.GetSegments(lib.J2SegmentName) {
 		sub, ok := j2.(*lib.J2Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected J2Segment: %T", j2))
+			continue
 		}
 		if sub.ECOACode == lib.ECOACodeZ {
 			trailer.TotalECOACodeZ++
@@ -720,7 +720,7 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 	for _, k1 := range base.GetSegments(lib.K1SegmentName) {
 		sub, ok := k1.(*lib.K1Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected K1Segment: %T", k1))
+			continue
 		}
 		if len(sub.OriginalCreditorName) > 0 {
 			trailer.TotalOriginalCreditorSegments++
@@ -729,7 +729,7 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 	for _, k2 := range base.GetSegments(lib.K2SegmentName) {
 		sub, ok := k2.(*lib.K2Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected K2Segment: %T", k2))
+			continue
 		}
 		if sub.PurchasedIndicator == lib.PurchasedIndicatorToName ||
 			sub.PurchasedIndicator == lib.PurchasedIndicatorFromName {
@@ -739,7 +739,7 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 	for _, k3 := range base.GetSegments(lib.K3SegmentName) {
 		sub, ok := k3.(*lib.K3Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected K3Segment: %T", k3))
+			continue
 		}
 		if sub.AgencyIdentifier == lib.AgencyIdentifierNotApplicable {
 			trailer.TotalMortgageInformationSegments++
@@ -748,7 +748,7 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 	for _, k4 := range base.GetSegments(lib.K4SegmentName) {
 		sub, ok := k4.(*lib.K4Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected K4Segment: %T", k4))
+			continue
 		}
 		if sub.SpecializedPaymentIndicator == lib.SpecializedBalloonPayment ||
 			sub.SpecializedPaymentIndicator == lib.SpecializedDeferredPayment {
@@ -758,7 +758,7 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 	for _, l1 := range base.GetSegments(lib.L1SegmentName) {
 		sub, ok := l1.(*lib.L1Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected L1Segment: %T", l1))
+			continue
 		}
 		if sub.ChangeIndicator == lib.ChangeIndicatorAccountNumber ||
 			sub.ChangeIndicator == lib.ChangeIndicatorIdentificationNumber ||
@@ -769,7 +769,7 @@ func (f *fileInstance) statisticBase(base *lib.BaseSegment, trailer *lib.Trailer
 	for _, n1 := range base.GetSegments(lib.N1SegmentName) {
 		sub, ok := n1.(*lib.N1Segment)
 		if !ok {
-			panic(fmt.Sprintf("unexpected N1Segment: %T", n1))
+			continue
 		}
 		if len(sub.EmployerName) > 0 {
 			trailer.TotalEmploymentSegments++
