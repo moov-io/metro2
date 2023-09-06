@@ -28,7 +28,7 @@ BUILD
 
 BUG FIXES
 
-- fix: changed spec of CurrentBalance ([#132](https://github.com/moov-io/metro2/pull/132))
+- fix: changed spec of CurrentBalance ([#132](https://github.com/bloomcredit/moov-metro2/pull/132))
 
 BUILD
 
@@ -182,7 +182,7 @@ ADDITIONS
 
 - Created fuzzing container (`docker run moov/metro2fuzz:v0.2.1`)
 - Added OpenAPI specification
-- Added generated Go client (`github.com/moov-io/metro2/pkg/client`)
+- Added generated Go client (`github.com/bloomcredit/moov-metro2/pkg/client`)
 
 ## v0.2.0 (Released 2020-07-03)
 

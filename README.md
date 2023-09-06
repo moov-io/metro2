@@ -14,22 +14,22 @@
   <br>
 </p>
 
-[![GoDoc](https://godoc.org/github.com/moov-io/metro2?status.svg)](https://godoc.org/github.com/moov-io/metro2)
-[![Build Status](https://github.com/moov-io/metro2/workflows/Go/badge.svg)](https://github.com/moov-io/metro2/actions)
+[![GoDoc](https://godoc.org/github.com/bloomcredit/moov-metro2?status.svg)](https://godoc.org/github.com/bloomcredit/moov-metro2)
+[![Build Status](https://github.com/bloomcredit/moov-metro2/workflows/Go/badge.svg)](https://github.com/bloomcredit/moov-metro2/actions)
 [![Coverage Status](https://codecov.io/gh/moov-io/metro2/branch/master/graph/badge.svg)](https://codecov.io/gh/moov-io/metro2)
-[![Go Report Card](https://goreportcard.com/badge/github.com/moov-io/metro2)](https://goreportcard.com/report/github.com/moov-io/metro2)
-[![Repo Size](https://img.shields.io/github/languages/code-size/moov-io/metro2?label=project%20size)](https://github.com/moov-io/metro2)
+[![Go Report Card](https://goreportcard.com/badge/github.com/bloomcredit/moov-metro2)](https://goreportcard.com/report/github.com/bloomcredit/moov-metro2)
+[![Repo Size](https://img.shields.io/github/languages/code-size/moov-io/metro2?label=project%20size)](https://github.com/bloomcredit/moov-metro2)
 [![Apache 2 License](https://img.shields.io/badge/license-Apache2-blue.svg)](https://raw.githubusercontent.com/moov-io/metro2/master/LICENSE)
 [![Slack Channel](https://slack.moov.io/badge.svg?bg=e01563&fgColor=fffff)](https://slack.moov.io/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/moov/metro2)](https://hub.docker.com/r/moov/metro2)
-[![GitHub Stars](https://img.shields.io/github/stars/moov-io/metro2)](https://github.com/moov-io/metro2)
+[![GitHub Stars](https://img.shields.io/github/stars/moov-io/metro2)](https://github.com/bloomcredit/moov-metro2)
 [![Twitter](https://img.shields.io/twitter/follow/moov?style=social)](https://twitter.com/moov?lang=en)
 
 # moov-io/metro2
 
 Moov's mission is to give developers an easy way to create and integrate bank processing into their own software products. Our open source projects are each focused on solving a single responsibility in financial services and designed around performance, scalability, and ease-of-use.
 
-Metro2 implements a reader, writer, and validator for consumer credit history reports in an HTTP server and Go library. The HTTP server is available in a [Docker image](#docker) and the Go package `github.com/moov-io/metro2` is available.
+Metro2 implements a reader, writer, and validator for consumer credit history reports in an HTTP server and Go library. The HTTP server is available in a [Docker image](#docker) and the Go package `github.com/bloomcredit/moov-metro2` is available.
 
 ## Table of contents
 
@@ -57,7 +57,7 @@ Moov Metro2 is actively used in multiple production environments. Please star th
 
 ## Usage
 
-The Metro2 project implements an HTTP server and [Go library](https://pkg.go.dev/github.com/moov-io/metro2) for creating and modifying files in Metro 2 format, which is used for consumer credit history reporting by U.S. credit bureaus.
+The Metro2 project implements an HTTP server and [Go library](https://pkg.go.dev/github.com/bloomcredit/moov-metro2) for creating and modifying files in Metro 2 format, which is used for consumer credit history reporting by U.S. credit bureaus.
 
 ### Docker
 
@@ -170,16 +170,16 @@ Each interaction that the library supports is exposed in a command-line option:
 
 ### Go library
 
-This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.18 or newer. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
+This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.18 or newer. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/bloomcredit/moov-metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
 
 ### Package Installation
 ```
 $ git@github.com:moov-io/metro2.git
 
 # Pull down into the Go Module cache
-$ go get -u github.com/moov-io/metro2
+$ go get -u github.com/bloomcredit/moov-metro2
 
-$ go doc github.com/moov-io/metro2
+$ go doc github.com/bloomcredit/moov-metro2
 ```
 
 ### Package Overview
@@ -313,7 +313,7 @@ Twitter [@moov](https://twitter.com/moov)	| You can follow Moov.io's Twitter fee
 
 Yes please! Please review our [Contributing guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) to get started!
 
-This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.18 or newer. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
+This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.18 or newer. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/bloomcredit/moov-metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
 
 ### Releasing
 
@@ -325,7 +325,7 @@ We maintain a comprehensive suite of unit tests and recommend table-driven testi
 
 ### Fuzzing
 
-We currently run fuzzing over ACH in the form of a [Github Action](https://github.com/moov-io/metro2/actions/workflows/fuzz.yml). Please report crashes examples to [`oss@moov.io`](mailto:oss@moov.io). Thanks!
+We currently run fuzzing over ACH in the form of a [Github Action](https://github.com/bloomcredit/moov-metro2/actions/workflows/fuzz.yml). Please report crashes examples to [`oss@moov.io`](mailto:oss@moov.io). Thanks!
 
 ## Related projects
 

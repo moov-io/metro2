@@ -15,7 +15,7 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/moov-io/metro2/pkg/utils"
+	"github.com/bloomcredit/moov-metro2/pkg/utils"
 )
 
 type converter struct{}

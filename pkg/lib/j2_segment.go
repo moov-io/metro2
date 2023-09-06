@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/moov-io/metro2/pkg/utils"
+	"github.com/bloomcredit/moov-metro2/pkg/utils"
 )
 
 var _ Segment = (*J2Segment)(nil)

@@ -15,9 +15,9 @@ import (
 	"encoding/binary"
 	"encoding/json"
 
+	"github.com/bloomcredit/moov-metro2/pkg/lib"
+	"github.com/bloomcredit/moov-metro2/pkg/utils"
 	"github.com/moov-io/base/log"
-	"github.com/moov-io/metro2/pkg/lib"
-	"github.com/moov-io/metro2/pkg/utils"
 )
 
 // General file interface

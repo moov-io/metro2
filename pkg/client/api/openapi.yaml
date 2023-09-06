@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
   contact:
-    url: https://github.com/moov-io/metro2
+    url: https://github.com/bloomcredit/moov-metro2
   description: "Moov Metro2 ([Automated Clearing House](https://en.wikipedia.org/wiki/Automated_Clearing_House))\
     \ implements an HTTP API for creating, parsing and validating Metro2 files. Metro2\
     \ is an open-source consumer credit history report for credit report file creation\
