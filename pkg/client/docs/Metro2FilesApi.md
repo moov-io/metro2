@@ -28,7 +28,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/moov-io/metro2"
+    openapiclient "github.com/bloomcredit/moov-metro2"
 )
 
 func main() {
@@ -104,7 +104,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/moov-io/metro2"
+    openapiclient "github.com/bloomcredit/moov-metro2"
 )
 
 func main() {
@@ -165,7 +165,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/moov-io/metro2"
+    openapiclient "github.com/bloomcredit/moov-metro2"
 )
 
 func main() {
@@ -235,7 +235,7 @@ import (
     "context"
     "fmt"
     "os"
-    openapiclient "github.com/moov-io/metro2"
+    openapiclient "github.com/bloomcredit/moov-metro2"
 )
 
 func main() {

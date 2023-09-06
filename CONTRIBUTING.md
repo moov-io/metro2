@@ -26,7 +26,7 @@ We use GitHub to manage reviews of pull requests.
 
 Before starting please make sure you have Go setup and can build our projects from source.
 
-This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.18 or newer. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
+This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.18 or newer. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/bloomcredit/moov-metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
 
 You can pull a working repository of our code code with git:
 
@@ -38,7 +38,7 @@ $ git clone git@github.com:moov-io/metro2.git
 
 We recommend using additional git remote's for pushing/pulling code. This allows you to use the same repository for submitting patches as tracking our code.
 
-First, [Fork our project](https://github.com/moov-io/metro2) somewhere and after that's done add the remote:
+First, [Fork our project](https://github.com/bloomcredit/moov-metro2) somewhere and after that's done add the remote:
 
 ```
 $ cd moov/metro2 # Whereever this project's source code is
@@ -68,4 +68,4 @@ A good quality PR will have the following characteristics:
 
 A good PR should be able to flow through a peer review system easily and quickly.
 
-Our Build pipeline utilizes [Travis-CI](https://travis-ci.org/moov-io/metro2) to enforce many tools that you should add to your editor before issuing a pull request. Learn more about these tools on our [Go Report card](https://goreportcard.com/report/github.com/moov-io/metro2)
+Our Build pipeline utilizes [Travis-CI](https://travis-ci.org/moov-io/metro2) to enforce many tools that you should add to your editor before issuing a pull request. Learn more about these tools on our [Go Report card](https://goreportcard.com/report/github.com/bloomcredit/moov-metro2)

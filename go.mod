@@ -1,4 +1,4 @@
-module github.com/moov-io/metro2
+module github.com/bloomcredit/moov-metro2
 
 go 1.19
 

@@ -12,9 +12,9 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/bloomcredit/moov-metro2/pkg/file"
+	"github.com/bloomcredit/moov-metro2/pkg/utils"
 	"github.com/gorilla/mux"
-	"github.com/moov-io/metro2/pkg/file"
-	"github.com/moov-io/metro2/pkg/utils"
 )
 
 func parseInputFromRequest(r *http.Request) (file.File, error) {

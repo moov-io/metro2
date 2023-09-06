@@ -11,8 +11,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/moov-io/metro2/pkg/file"
-	"github.com/moov-io/metro2/pkg/utils"
+	"github.com/bloomcredit/moov-metro2/pkg/file"
+	"github.com/bloomcredit/moov-metro2/pkg/utils"
 )
 
 func FuzzReader(f *testing.F) {

@@ -13,7 +13,7 @@ import (
 	"context"
 	"testing"
 
-	openapiclient "github.com/moov-io/metro2/pkg/client"
+	openapiclient "github.com/bloomcredit/moov-metro2/pkg/client"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

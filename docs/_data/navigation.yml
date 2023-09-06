@@ -1,7 +1,7 @@
 - name: API
   link: https://moov-io.github.io/metro2/api
 - name: Go
-  link: https://pkg.go.dev/github.com/moov-io/metro2#section-documentation
+  link: https://pkg.go.dev/github.com/bloomcredit/moov-metro2#section-documentation
 - name: Community
   dropdown:
     - name: Awesome Fintech

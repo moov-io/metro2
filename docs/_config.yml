@@ -21,10 +21,10 @@
 title: Moov Metro2
 email: oss@moov.io
 description: >- # this means to ignore newlines until "baseurl:"
- Metro2 implements a reader, writer, and validator for consumer credit history reports in an HTTP server and Go library. The HTTP server is available in a Docker image and the Go package `github.com/moov-io/metro2` is available.
+ Metro2 implements a reader, writer, and validator for consumer credit history reports in an HTTP server and Go library. The HTTP server is available in a Docker image and the Go package `github.com/bloomcredit/moov-metro2` is available.
 url: "https://moov-io.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 baseurl: "/metro2" # the subpath of your site, e.g. /blog
-source_code: https://github.com/moov-io/metro2
+source_code: https://github.com/bloomcredit/moov-metro2
 permalink: pretty
 
 # Build settings
