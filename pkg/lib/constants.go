@@ -107,6 +107,8 @@ const (
 	PaymentHistoryChargeOff = 'L'
 	// consecutive payment activity, Too new to rate
 	PaymentHistoryTooNew = 'Z'
+	// consecutive payment activity, No payment history available prior to this time (collections and debt payer)
+	PaymentHistoryNoHistory = ' '
 	//  status code that properly identifies the current condition of the account, "DF"
 	AccountStatusDF = "DF"
 	//  status code that properly identifies the current condition of the account, "DA"
