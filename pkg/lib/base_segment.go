@@ -875,7 +875,7 @@ func (r *BaseSegment) ValidatePaymentHistoryProfile() error {
 			PaymentHistoryPast120, PaymentHistoryPast150, PaymentHistoryPast180, PaymentHistoryNoPayment,
 			PaymentHistoryNoPaymentMonth, PaymentHistoryZero, PaymentHistoryCollection,
 			PaymentHistoryForeclosureCompleted, PaymentHistoryVoluntarySurrender, PaymentHistoryRepossession,
-			PaymentHistoryChargeOff, PaymentHistoryTooNew:
+			PaymentHistoryChargeOff, PaymentHistoryTooNew, PaymentHistoryNoHistory:
 			continue
 		}
 		return utils.NewErrInvalidValueOfField("payment history profile", "base segment")
@@ -1329,7 +1329,7 @@ func (r *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
 			PaymentHistoryPast120, PaymentHistoryPast150, PaymentHistoryPast180, PaymentHistoryNoPayment,
 			PaymentHistoryNoPaymentMonth, PaymentHistoryZero, PaymentHistoryCollection,
 			PaymentHistoryForeclosureCompleted, PaymentHistoryVoluntarySurrender, PaymentHistoryRepossession,
-			PaymentHistoryChargeOff:
+			PaymentHistoryChargeOff, PaymentHistoryNoHistory:
 			continue
 		}
 		return utils.NewErrInvalidValueOfField("payment history profile", "packed base segment")
