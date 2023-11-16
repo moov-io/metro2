@@ -33,7 +33,7 @@ type L1Segment struct {
 	// Contains the new Identification Number assigned to this account.
 	// Do not include embedded blanks or special characters.
 	// If field 2 = 1, this field should be blank filled.
-	NewIdentificationNumber string `json:"balloonPaymentDueDate,omitempty"`
+	NewIdentificationNumber string `json:"newIdentificationNumber,omitempty"`
 
 	converter
 	validator
