@@ -1,4 +1,4 @@
-## v0.7.0 (Released 2023-11-21)
+## v0.7.1 (Released 2023-11-21)
 
 BREAKING CHANGES
 
