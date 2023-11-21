@@ -1,3 +1,17 @@
+## v0.7.0 (Released 2023-11-21)
+
+BREAKING CHANGES
+
+This release contains a fix for `L1Segment.NewIdentificationNumber` to use `newIdentificationNumber` as a key in JSON. It was previously `balloonPaymentDueDate` which was incorrect.
+
+IMPROVEMENTS
+
+- client: regenerate with openapi-generator v6.6.0
+
+BUILD
+
+- fix(deps): update module github.com/moov-io/base to v0.48.2
+
 ## v0.6.1 (Released 2023-03-02)
 
 IMPROVEMENTS
