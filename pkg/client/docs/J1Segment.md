@@ -9,8 +9,8 @@ Name | Type | Description | Notes
 **FirstName** | **string** |  | 
 **MiddleName** | Pointer to **string** |  | [optional] 
 **GenerationCode** | Pointer to **string** |  | [optional] 
-**SocialSecurityNumber** | **int32** |  | 
-**DateBirth** | **time.Time** |  | 
+**SocialSecurityNumber** | Pointer to **int32** |  | [optional] 
+**DateBirth** | Pointer to **time.Time** |  | [optional] 
 **TelephoneNumber** | Pointer to **int64** |  | [optional] 
 **EcoaCode** | **string** |  | 
 **ConsumerInformationIndicator** | Pointer to **string** |  | [optional] 
@@ -19,7 +19,7 @@ Name | Type | Description | Notes
 
 ### NewJ1Segment
 
-`func NewJ1Segment(segmentIdentifier string, surname string, firstName string, socialSecurityNumber int32, dateBirth time.Time, ecoaCode string, ) *J1Segment`
+`func NewJ1Segment(segmentIdentifier string, surname string, firstName string, ecoaCode string, ) *J1Segment`
 
 NewJ1Segment instantiates a new J1Segment object
 This constructor will assign default values to properties that have it defined,
@@ -163,6 +163,11 @@ and a boolean to check if the value has been set.
 
 SetSocialSecurityNumber sets SocialSecurityNumber field to given value.
 
+### HasSocialSecurityNumber
+
+`func (o *J1Segment) HasSocialSecurityNumber() bool`
+
+HasSocialSecurityNumber returns a boolean if a field has been set.
 
 ### GetDateBirth
 
@@ -183,6 +188,11 @@ and a boolean to check if the value has been set.
 
 SetDateBirth sets DateBirth field to given value.
 
+### HasDateBirth
+
+`func (o *J1Segment) HasDateBirth() bool`
+
+HasDateBirth returns a boolean if a field has been set.
 
 ### GetTelephoneNumber
 
