@@ -5,10 +5,8 @@
 package server
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
-	"io"
 	"net/http"
 	"strings"
 
@@ -20,15 +18,9 @@ import (
 func parseInputFromRequest(r *http.Request) (file.File, error) {
 	src, _, err := r.FormFile("file")
 	if err != nil {
-
-		buf, err := io.ReadAll(r.Body)
-		if err != nil {
-			return nil, errors.New("unable to read request body")
-		}
-
 		defer r.Body.Close()
 
-		mf, err := file.NewFileFromReader(bytes.NewReader(buf))
+		mf, err := file.NewFileFromReader(r.Body)
 		if err != nil {
 			return nil, err
 		}
