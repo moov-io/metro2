@@ -62,7 +62,7 @@ func messageToBuf(format string, metroFile file.File, newline bool) ([]byte, err
 	case utils.MessageMetroFormat:
 		output = []byte(metroFile.String(newline))
 	default:
-		return nil, errors.New("invalid format")
+		return nil, fmt.Errorf("invalid format: %v", format)
 	}
 	return output, err
 }
@@ -91,7 +91,7 @@ func getFormat(r *http.Request) (string, error) {
 		format = utils.MessageJsonFormat
 	}
 	if format != utils.MessageMetroFormat && format != utils.MessageJsonFormat {
-		return format, errors.New("invalid format")
+		return format, fmt.Errorf("invalid format: %v", format)
 	}
 	return format, nil
 }
