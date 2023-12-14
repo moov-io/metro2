@@ -6,7 +6,7 @@ package server
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -18,8 +18,6 @@ import (
 func parseInputFromRequest(r *http.Request) (file.File, error) {
 	src, _, err := r.FormFile("file")
 	if err != nil {
-		defer r.Body.Close()
-
 		mf, err := file.NewFileFromReader(r.Body)
 		if err != nil {
 			return nil, err
@@ -27,8 +25,6 @@ func parseInputFromRequest(r *http.Request) (file.File, error) {
 
 		return mf, nil
 	}
-
-	defer src.Close()
 
 	mf, err := file.NewFileFromReader(src)
 	if err != nil {
@@ -115,6 +111,10 @@ func getIsNewLine(r *http.Request) bool {
 //	400: Bad Request
 //	501: Not Implemented
 func validator(w http.ResponseWriter, r *http.Request) {
+	if r != nil && r.Body != nil {
+		defer r.Body.Close()
+	}
+
 	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -140,6 +140,10 @@ func validator(w http.ResponseWriter, r *http.Request) {
 //	400: Bad Request
 //	501: Not Implemented
 func print(w http.ResponseWriter, r *http.Request) {
+	if r != nil && r.Body != nil {
+		defer r.Body.Close()
+	}
+
 	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -172,6 +176,10 @@ func print(w http.ResponseWriter, r *http.Request) {
 //	400: Bad Request
 //	501: Not Implemented
 func convert(w http.ResponseWriter, r *http.Request) {
+	if r != nil && r.Body != nil {
+		defer r.Body.Close()
+	}
+
 	metroFile, err := parseInputFromRequest(r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
