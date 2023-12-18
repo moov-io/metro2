@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/gorilla/mux v1.8.1
-	github.com/moov-io/base v0.48.2
+	github.com/moov-io/base v0.48.3
 	github.com/spf13/cobra v1.8.0
 	github.com/stretchr/testify v1.8.4
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
