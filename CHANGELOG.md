@@ -1,3 +1,15 @@
+## v0.8.0 (Released 2023-12-21)
+
+IMPROVEMENTS
+
+- fix: stream http request instead of consuming all
+- file: peek at contents to determine content type and packing level
+- test: verify 10k, 25k, and 50k line files can be processed
+
+BUILD
+
+- fix(deps): update module github.com/moov-io/base to v0.48.3
+
 ## v0.7.1 (Released 2023-11-21)
 
 BREAKING CHANGES
