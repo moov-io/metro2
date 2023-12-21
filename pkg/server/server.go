@@ -16,19 +16,24 @@ import (
 )
 
 func parseInputFromRequest(r *http.Request) (file.File, error) {
-	src, _, err := r.FormFile("file")
-	if err != nil {
-		mf, err := file.NewFileFromReader(r.Body)
+	contentType := strings.ToLower(r.Header.Get("Content-Type"))
+	if strings.HasPrefix(contentType, "multipart/") {
+		src, _, err := r.FormFile("file")
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("reading multipart request: %w", err)
 		}
+		defer src.Close()
 
+		mf, err := file.NewFileFromReader(src)
+		if err != nil {
+			return nil, fmt.Errorf("parsing file as multipart: %w", err)
+		}
 		return mf, nil
 	}
 
-	mf, err := file.NewFileFromReader(src)
+	mf, err := file.NewFileFromReader(r.Body)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("parsing request body as reader: %w", err)
 	}
 	return mf, nil
 }
