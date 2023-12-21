@@ -73,44 +73,63 @@ func NewFileFromReader(r io.Reader) (File, error) {
 		return nil, errors.New("invalid file reader")
 	}
 
-	dummy := &dummyFile{}
-
-	decoder := json.NewDecoder(r)
-	jsonDecodeErr := decoder.Decode(dummy)
-
-	// reset file reader
-	//  need to read first block to detect json or metro format
-	//  after that, need to reset seek point of reader
-	if sk, ok := r.(io.Seeker); ok {
-		sk.Seek(0, io.SeekStart)
+	// Take a peek and see if we encounter '{' (would imply the contents is JSON)
+	preview := make([]byte, 1024)
+	n, err := io.ReadFull(r, preview)
+	switch {
+	case err == io.ErrUnexpectedEOF:
+		preview = preview[:n]
+		r = bytes.NewReader(preview)
+	case err != nil:
+		return nil, err
+	default:
+		r = io.MultiReader(bytes.NewReader(preview), r)
 	}
 
-	if jsonDecodeErr != nil {
-		// Parse metro file
+	// Look for the start of JSON
+	var isJSON bool
+	for i := range preview {
+		if preview[i] == '{' {
+			isJSON = true
+			break
+		}
+	}
+
+	// Decode contents as Metro2 formatting when it's not JSON
+	if !isJSON {
 		return NewReader(r).Read()
 	}
 
-	// Parse json file
-	if dummy.Header == nil {
-		return nil, errors.New("invalid json file")
+	// Determine the file format
+	var buf bytes.Buffer
+	r = io.TeeReader(r, &buf)
+
+	var dummy dummyFile
+	err = json.NewDecoder(r).Decode(&dummy)
+	if err != nil {
+		return nil, fmt.Errorf("reading header: %w", err)
 	}
 
 	fileFormat := utils.CharacterFileFormat
-	if dummy.Header.RecordDescriptorWord == lib.UnpackedRecordLength {
-		fileFormat = utils.CharacterFileFormat
-	} else if dummy.Header.BlockDescriptorWord > 0 {
-		fileFormat = utils.PackedFileFormat
+	if dummy.Header != nil {
+		if dummy.Header.RecordDescriptorWord == lib.UnpackedRecordLength {
+			fileFormat = utils.CharacterFileFormat
+		} else if dummy.Header.BlockDescriptorWord > 0 {
+			fileFormat = utils.PackedFileFormat
+		}
 	}
 
+	// Decode the file as JSON now
 	f, err := NewFile(fileFormat)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = decoder.Decode(f); err != nil {
-		return nil, err
+	r = io.MultiReader(&buf, r)
+	err = json.NewDecoder(r).Decode(f)
+	if err != nil {
+		return f, fmt.Errorf("reading file: %w", err)
 	}
-
 	return f, nil
 }
 
