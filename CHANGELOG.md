@@ -1,4 +1,4 @@
-## v0.8.0 (Released 2023-12-21)
+## v0.8.1 (Released 2023-12-21)
 
 IMPROVEMENTS
 
