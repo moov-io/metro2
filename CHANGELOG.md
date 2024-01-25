@@ -1,3 +1,11 @@
+## v0.8.2 (Released 2024-01-25)
+
+BUILD
+
+- build: enable tests on windows
+- chore(deps): update dependency jekyll-feed to v0.17.0
+- fix(deps): update module github.com/moov-io/base to v0.48.5
+
 ## v0.8.1 (Released 2023-12-21)
 
 IMPROVEMENTS
