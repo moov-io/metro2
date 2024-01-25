@@ -78,7 +78,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: release_url
-        path: release_url.txt
+        path: release_url
 
     - name: Distribute
       run: make dist
@@ -87,8 +87,7 @@ jobs:
       id: get_release_info
       shell: bash
       run: |
-        ls -l release_url.txt
-        value=`cat release_url.txt`
+        value=`cat release_url/release_url.txt`
         echo ::set-output name=upload_url::$value
       env:
         TAG_REF_NAME: ${{ github.ref }}
