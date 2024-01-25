@@ -87,7 +87,7 @@ jobs:
       id: get_release_info
       shell: bash
       run: |
-        ls -lR
+        ls -l release_url.txt
         value=`cat release_url.txt`
         echo ::set-output name=upload_url::$value
       env:
