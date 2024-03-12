@@ -218,7 +218,7 @@ func (t *ServerTest) TestWithInvalidForm(c *check.C) {
 	c.Assert(recorder.Code, check.Equals, http.StatusBadRequest)
 }
 
-func (t *ServerTest) TestPrintWithInvalidData(c *check.C) {
+func (t *ServerTest) TestPrintWithoutContentType(c *check.C) {
 	writer, body := t.getWriter("base_segment.json", c)
 	err := writer.WriteField("format", "json")
 	c.Assert(err, check.IsNil)
@@ -227,10 +227,10 @@ func (t *ServerTest) TestPrintWithInvalidData(c *check.C) {
 	recorder, request := t.makeRequest(http.MethodPost, "/print", body.String(), c)
 	request.Header.Set("Content-Type", writer.FormDataContentType())
 	t.testServer.ServeHTTP(recorder, request)
-	c.Assert(recorder.Code, check.Equals, http.StatusBadRequest)
+	c.Assert(recorder.Code, check.Equals, http.StatusOK)
 }
 
-func (t *ServerTest) TestConvertWithInvalidData(c *check.C) {
+func (t *ServerTest) TestConvertWithoutContentType(c *check.C) {
 	writer, body := t.getWriter("base_segment.json", c)
 	err := writer.WriteField("format", "json")
 	c.Assert(err, check.IsNil)
@@ -239,7 +239,7 @@ func (t *ServerTest) TestConvertWithInvalidData(c *check.C) {
 	recorder, request := t.makeRequest(http.MethodPost, "/convert", body.String(), c)
 	request.Header.Set("Content-Type", writer.FormDataContentType())
 	t.testServer.ServeHTTP(recorder, request)
-	c.Assert(recorder.Code, check.Equals, http.StatusBadRequest)
+	c.Assert(recorder.Code, check.Equals, http.StatusOK)
 }
 
 func (t *ServerTest) TestConvertWithValidJsonRequest(c *check.C) {

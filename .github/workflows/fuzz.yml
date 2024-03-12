@@ -37,3 +37,8 @@ jobs:
     - name: Fuzz
       run: |
         go test ./test/fuzz/... -fuzz Fuzz -fuzztime 10m
+
+    - name: Report Failures
+      if: ${{ failure() }}
+      run: |
+        find ./test/fuzz/testdata/fuzz/ -type f | xargs -n1 tail -n +1 -v

@@ -36,8 +36,8 @@ Name | Type | Description | Notes
 **FirstName** | **string** |  | 
 **MiddleName** | Pointer to **string** |  | [optional] 
 **GenerationCode** | Pointer to **string** |  | [optional] 
-**SocialSecurityNumber** | **int32** |  | 
-**DateBirth** | **time.Time** |  | 
+**SocialSecurityNumber** | Pointer to **int32** |  | [optional] 
+**DateBirth** | Pointer to **time.Time** |  | [optional] 
 **TelephoneNumber** | Pointer to **int64** |  | [optional] 
 **EcoaCode** | **string** |  | 
 **ConsumerInformationIndicator** | Pointer to **string** |  | [optional] 
@@ -54,7 +54,7 @@ Name | Type | Description | Notes
 
 ### NewBaseSegment
 
-`func NewBaseSegment(recordDescriptorWord int32, identificationNumber string, consumerAccountNumber string, accountType string, highestCredit int32, termsDuration string, accountStatus string, paymentHistoryProfile string, currentBalance int32, dateAccountInformation time.Time, surname string, firstName string, socialSecurityNumber int32, dateBirth time.Time, ecoaCode string, firstLineAddress string, state string, zipCode string, ) *BaseSegment`
+`func NewBaseSegment(recordDescriptorWord int32, identificationNumber string, consumerAccountNumber string, accountType string, highestCredit int32, termsDuration string, accountStatus string, paymentHistoryProfile string, currentBalance int32, dateAccountInformation time.Time, surname string, firstName string, ecoaCode string, firstLineAddress string, state string, zipCode string, ) *BaseSegment`
 
 NewBaseSegment instantiates a new BaseSegment object
 This constructor will assign default values to properties that have it defined,
@@ -828,6 +828,11 @@ and a boolean to check if the value has been set.
 
 SetSocialSecurityNumber sets SocialSecurityNumber field to given value.
 
+### HasSocialSecurityNumber
+
+`func (o *BaseSegment) HasSocialSecurityNumber() bool`
+
+HasSocialSecurityNumber returns a boolean if a field has been set.
 
 ### GetDateBirth
 
@@ -848,6 +853,11 @@ and a boolean to check if the value has been set.
 
 SetDateBirth sets DateBirth field to given value.
 
+### HasDateBirth
+
+`func (o *BaseSegment) HasDateBirth() bool`
+
+HasDateBirth returns a boolean if a field has been set.
 
 ### GetTelephoneNumber
 

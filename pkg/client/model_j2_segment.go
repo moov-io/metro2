@@ -20,37 +20,35 @@ var _ MappedNullable = &J2Segment{}
 
 // J2Segment struct for J2Segment
 type J2Segment struct {
-	SegmentIdentifier            string    `json:"segmentIdentifier"`
-	Surname                      string    `json:"surname"`
-	FirstName                    string    `json:"firstName"`
-	MiddleName                   *string   `json:"middleName,omitempty"`
-	GenerationCode               *string   `json:"generationCode,omitempty"`
-	SocialSecurityNumber         int32     `json:"socialSecurityNumber"`
-	DateBirth                    time.Time `json:"dateBirth"`
-	TelephoneNumber              *int64    `json:"telephoneNumber,omitempty"`
-	EcoaCode                     string    `json:"ecoaCode"`
-	ConsumerInformationIndicator *string   `json:"consumerInformationIndicator,omitempty"`
-	CountryCode                  *string   `json:"countryCode,omitempty"`
-	FirstLineAddress             string    `json:"firstLineAddress"`
-	SecondLineAddress            *string   `json:"secondLineAddress,omitempty"`
-	City                         string    `json:"city"`
-	State                        string    `json:"state"`
-	ZipCode                      string    `json:"zipCode"`
-	AddressIndicator             *string   `json:"addressIndicator,omitempty"`
-	ResidenceCode                *string   `json:"residenceCode,omitempty"`
+	SegmentIdentifier            string     `json:"segmentIdentifier"`
+	Surname                      string     `json:"surname"`
+	FirstName                    string     `json:"firstName"`
+	MiddleName                   *string    `json:"middleName,omitempty"`
+	GenerationCode               *string    `json:"generationCode,omitempty"`
+	SocialSecurityNumber         *int32     `json:"socialSecurityNumber,omitempty"`
+	DateBirth                    *time.Time `json:"dateBirth,omitempty"`
+	TelephoneNumber              *int64     `json:"telephoneNumber,omitempty"`
+	EcoaCode                     string     `json:"ecoaCode"`
+	ConsumerInformationIndicator *string    `json:"consumerInformationIndicator,omitempty"`
+	CountryCode                  *string    `json:"countryCode,omitempty"`
+	FirstLineAddress             string     `json:"firstLineAddress"`
+	SecondLineAddress            *string    `json:"secondLineAddress,omitempty"`
+	City                         string     `json:"city"`
+	State                        string     `json:"state"`
+	ZipCode                      string     `json:"zipCode"`
+	AddressIndicator             *string    `json:"addressIndicator,omitempty"`
+	ResidenceCode                *string    `json:"residenceCode,omitempty"`
 }
 
 // NewJ2Segment instantiates a new J2Segment object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewJ2Segment(segmentIdentifier string, surname string, firstName string, socialSecurityNumber int32, dateBirth time.Time, ecoaCode string, firstLineAddress string, city string, state string, zipCode string) *J2Segment {
+func NewJ2Segment(segmentIdentifier string, surname string, firstName string, ecoaCode string, firstLineAddress string, city string, state string, zipCode string) *J2Segment {
 	this := J2Segment{}
 	this.SegmentIdentifier = segmentIdentifier
 	this.Surname = surname
 	this.FirstName = firstName
-	this.SocialSecurityNumber = socialSecurityNumber
-	this.DateBirth = dateBirth
 	this.EcoaCode = ecoaCode
 	this.FirstLineAddress = firstLineAddress
 	this.City = city
@@ -203,52 +201,68 @@ func (o *J2Segment) SetGenerationCode(v string) {
 	o.GenerationCode = &v
 }
 
-// GetSocialSecurityNumber returns the SocialSecurityNumber field value
+// GetSocialSecurityNumber returns the SocialSecurityNumber field value if set, zero value otherwise.
 func (o *J2Segment) GetSocialSecurityNumber() int32 {
-	if o == nil {
+	if o == nil || IsNil(o.SocialSecurityNumber) {
 		var ret int32
 		return ret
 	}
-
-	return o.SocialSecurityNumber
+	return *o.SocialSecurityNumber
 }
 
-// GetSocialSecurityNumberOk returns a tuple with the SocialSecurityNumber field value
+// GetSocialSecurityNumberOk returns a tuple with the SocialSecurityNumber field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetSocialSecurityNumberOk() (*int32, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.SocialSecurityNumber) {
 		return nil, false
 	}
-	return &o.SocialSecurityNumber, true
+	return o.SocialSecurityNumber, true
 }
 
-// SetSocialSecurityNumber sets field value
+// HasSocialSecurityNumber returns a boolean if a field has been set.
+func (o *J2Segment) HasSocialSecurityNumber() bool {
+	if o != nil && !IsNil(o.SocialSecurityNumber) {
+		return true
+	}
+
+	return false
+}
+
+// SetSocialSecurityNumber gets a reference to the given int32 and assigns it to the SocialSecurityNumber field.
 func (o *J2Segment) SetSocialSecurityNumber(v int32) {
-	o.SocialSecurityNumber = v
+	o.SocialSecurityNumber = &v
 }
 
-// GetDateBirth returns the DateBirth field value
+// GetDateBirth returns the DateBirth field value if set, zero value otherwise.
 func (o *J2Segment) GetDateBirth() time.Time {
-	if o == nil {
+	if o == nil || IsNil(o.DateBirth) {
 		var ret time.Time
 		return ret
 	}
-
-	return o.DateBirth
+	return *o.DateBirth
 }
 
-// GetDateBirthOk returns a tuple with the DateBirth field value
+// GetDateBirthOk returns a tuple with the DateBirth field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *J2Segment) GetDateBirthOk() (*time.Time, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.DateBirth) {
 		return nil, false
 	}
-	return &o.DateBirth, true
+	return o.DateBirth, true
 }
 
-// SetDateBirth sets field value
+// HasDateBirth returns a boolean if a field has been set.
+func (o *J2Segment) HasDateBirth() bool {
+	if o != nil && !IsNil(o.DateBirth) {
+		return true
+	}
+
+	return false
+}
+
+// SetDateBirth gets a reference to the given time.Time and assigns it to the DateBirth field.
 func (o *J2Segment) SetDateBirth(v time.Time) {
-	o.DateBirth = v
+	o.DateBirth = &v
 }
 
 // GetTelephoneNumber returns the TelephoneNumber field value if set, zero value otherwise.
@@ -582,8 +596,12 @@ func (o J2Segment) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.GenerationCode) {
 		toSerialize["generationCode"] = o.GenerationCode
 	}
-	toSerialize["socialSecurityNumber"] = o.SocialSecurityNumber
-	toSerialize["dateBirth"] = o.DateBirth
+	if !IsNil(o.SocialSecurityNumber) {
+		toSerialize["socialSecurityNumber"] = o.SocialSecurityNumber
+	}
+	if !IsNil(o.DateBirth) {
+		toSerialize["dateBirth"] = o.DateBirth
+	}
 	if !IsNil(o.TelephoneNumber) {
 		toSerialize["telephoneNumber"] = o.TelephoneNumber
 	}

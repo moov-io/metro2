@@ -677,7 +677,6 @@ components:
       - consumerAccountNumber
       - currentBalance
       - dateAccountInformation
-      - dateBirth
       - ecoaCode
       - firstLineAddress
       - firstName
@@ -685,7 +684,6 @@ components:
       - identificationNumber
       - paymentHistoryProfile
       - recordDescriptorWord
-      - socialSecurityNumber
       - state
       - surname
       - termsDuration
@@ -722,11 +720,9 @@ components:
         consumerInformationIndicator:
           type: string
       required:
-      - dateBirth
       - ecoaCode
       - firstName
       - segmentIdentifier
-      - socialSecurityNumber
       - surname
     J2Segment:
       properties:
@@ -790,12 +786,10 @@ components:
           type: string
       required:
       - city
-      - dateBirth
       - ecoaCode
       - firstLineAddress
       - firstName
       - segmentIdentifier
-      - socialSecurityNumber
       - state
       - surname
       - zipCode

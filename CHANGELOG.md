@@ -1,3 +1,37 @@
+## v0.8.2 (Released 2024-01-25)
+
+BUILD
+
+- build: enable tests on windows
+- chore(deps): update dependency jekyll-feed to v0.17.0
+- fix(deps): update module github.com/moov-io/base to v0.48.5
+
+## v0.8.1 (Released 2023-12-21)
+
+IMPROVEMENTS
+
+- fix: stream http request instead of consuming all
+- file: peek at contents to determine content type and packing level
+- test: verify 10k, 25k, and 50k line files can be processed
+
+BUILD
+
+- fix(deps): update module github.com/moov-io/base to v0.48.3
+
+## v0.7.1 (Released 2023-11-21)
+
+BREAKING CHANGES
+
+This release contains a fix for `L1Segment.NewIdentificationNumber` to use `newIdentificationNumber` as a key in JSON. It was previously `balloonPaymentDueDate` which was incorrect.
+
+IMPROVEMENTS
+
+- client: regenerate with openapi-generator v6.6.0
+
+BUILD
+
+- fix(deps): update module github.com/moov-io/base to v0.48.2
+
 ## v0.6.1 (Released 2023-03-02)
 
 IMPROVEMENTS

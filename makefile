@@ -11,7 +11,7 @@ build:
 .PHONY: check
 check:
 ifeq ($(OS),Windows_NT)
-	@echo "Skipping checks on Windows, currently unsupported."
+	go test ./... -count 1 -race
 else
 	@wget -O lint-project.sh https://raw.githubusercontent.com/moov-io/infra/master/go/lint-project.sh
 	@chmod +x ./lint-project.sh
@@ -31,7 +31,7 @@ else
 # Versions from https://github.com/OpenAPITools/openapi-generator/releases
 	@chmod +x ./openapi-generator
 	@rm -rf ./client
-	OPENAPI_GENERATOR_VERSION=6.4.0 ./openapi-generator generate --git-user-id=moov-io --git-repo-id=metro2 --package-name client -i ./api/openapi.yaml -g go -o ./pkg/client
+	OPENAPI_GENERATOR_VERSION=6.6.0 ./openapi-generator generate --git-user-id=moov-io --git-repo-id=metro2 --package-name client -i ./api/openapi.yaml -g go -o ./pkg/client
 	rm -f ./pkg/client/go.mod ./pkg/client/go.sum ./pkg/client/.travis.yml ./pkg/client/git_push.sh
 	go fmt ./...
 	go build github.com/bloomcredit/moov-metro2/pkg/client
