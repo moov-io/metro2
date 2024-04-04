@@ -36,6 +36,9 @@ func FuzzReader(f *testing.F) {
 		}
 
 		f.Validate()
+
+		f.String(true)
+		f.String(false)
 	})
 }
 
@@ -43,6 +46,8 @@ func populateCorpus(f *testing.F) {
 	f.Helper()
 
 	err := filepath.Walk(filepath.Join("..", "testdata"), func(path string, info fs.FileInfo, _ error) error {
+		path = filepath.ToSlash(path)
+
 		if info.IsDir() {
 			return nil
 		}

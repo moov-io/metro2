@@ -10,7 +10,10 @@ permissions:
 jobs:
   fuzz-ach:
     name: Fuzz Metro2
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     timeout-minutes: 12
 
     steps:
