@@ -128,7 +128,7 @@ curl https://YOUR-METRO2-APP-URL.a.run.app/health
 ```
 You should get this response:
 ```
-{"health":true}
+{"status":"alive"}
 ```
 
 ### Data persistence
