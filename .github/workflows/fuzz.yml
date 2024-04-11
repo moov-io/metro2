@@ -17,6 +17,16 @@ jobs:
     timeout-minutes: 12
 
     steps:
+    - name: 'Collect Workflow Telemetry'
+      uses: catchpoint/workflow-telemetry-action@v1
+      env:
+        GITHUB_TOKEN: ""
+      with:
+        github_token: ${{ github.token }}
+        comment_on_pr: false
+        job_summary: true
+        theme: dark
+
     - name: Set up Go 1.x
       uses: actions/setup-go@v4
       with:
