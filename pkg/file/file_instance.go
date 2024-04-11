@@ -9,13 +9,14 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"slices"
 	"strings"
 	"unicode"
 
 	"github.com/moov-io/base/log"
 	"github.com/moov-io/metro2/pkg/lib"
 	"github.com/moov-io/metro2/pkg/utils"
+
+	"golang.org/x/exp/slices"
 )
 
 var _ File = (*fileInstance)(nil)
