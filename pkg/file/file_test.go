@@ -361,52 +361,86 @@ func (t *FileTest) TestWithUnknownFileType(c *check.C) {
 }
 
 func TestFile__Reader(t *testing.T) {
-
 	t.Run("Read with unpacked fixed file", func(t *testing.T) {
-
-		fd, err := os.Open(filepath.Join("..", "..", "test", "testdata", "unpacked_fixed_file.dat"))
-		if err != nil {
-			t.Fatalf("Can not open local file: %s: \n", err)
-		}
-		defer fd.Close()
-
-		f, err := NewReader(fd).Read()
-		require.NoError(t, err)
-
-		// ensure we have a validated file structure
-		err = f.Validate()
-		require.NoError(t, err)
+		readUnpackedFixedFile(t)
 	})
 
 	t.Run("Read with unpacked variable file", func(t *testing.T) {
-
-		fd, err := os.Open(filepath.Join("..", "..", "test", "testdata", "unpacked_variable_file.dat"))
-		if err != nil {
-			t.Fatalf("Can not open local file: %s: \n", err)
-		}
-		defer fd.Close()
-
-		f, err := NewReader(fd).Read()
-		require.NoError(t, err)
-
-		// ensure we have a validated file structure
-		err = f.Validate()
-		require.NoError(t, err)
+		readUnpackedVariableFile(t)
 	})
 
 	t.Run("Read with packed file", func(t *testing.T) {
-
-		fd, err := os.Open(filepath.Join("..", "..", "test", "testdata", "packed_file.dat"))
-		if err != nil {
-			t.Fatalf("Can not open local file: %s: \n", err)
-		}
-		defer fd.Close()
-
-		f, err := NewReader(fd).Read()
-		require.NoError(t, err)
-
-		// ensure we have a validated file structure
-		err = f.Validate()
-		require.NoError(t, err)
+		readPackedFile(t)
 	})
+}
+
+func BenchmarkFile(b *testing.B) {
+	b.Run("Read with unpacked fixed file", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			readUnpackedFixedFile(b)
+		}
+	})
+
+	b.Run("Read with unpacked variable file", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			readUnpackedVariableFile(b)
+		}
+	})
+
+	b.Run("Read with packed file", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			readPackedFile(b)
+		}
+	})
+}
+
+func readUnpackedFixedFile(tb testing.TB) {
+	tb.Helper()
+
+	fd, err := os.Open(filepath.Join("..", "..", "test", "testdata", "unpacked_fixed_file.dat"))
+	if err != nil {
+		tb.Fatalf("Can not open local file: %s: \n", err)
+	}
+	defer fd.Close()
+
+	f, err := NewReader(fd).Read()
+	require.NoError(tb, err)
+
+	// ensure we have a validated file structure
+	err = f.Validate()
+	require.NoError(tb, err)
+}
+
+func readUnpackedVariableFile(tb testing.TB) {
+	tb.Helper()
+
+	fd, err := os.Open(filepath.Join("..", "..", "test", "testdata", "unpacked_variable_file.dat"))
+	if err != nil {
+		tb.Fatalf("Can not open local file: %s: \n", err)
+	}
+	defer fd.Close()
+
+	f, err := NewReader(fd).Read()
+	require.NoError(tb, err)
+
+	// ensure we have a validated file structure
+	err = f.Validate()
+	require.NoError(tb, err)
+}
+
+func readPackedFile(tb testing.TB) {
+	tb.Helper()
+
+	fd, err := os.Open(filepath.Join("..", "..", "test", "testdata", "packed_file.dat"))
+	if err != nil {
+		tb.Fatalf("Can not open local file: %s: \n", err)
+	}
+	defer fd.Close()
+
+	f, err := NewReader(fd).Read()
+	require.NoError(tb, err)
+
+	// ensure we have a validated file structure
+	err = f.Validate()
+	require.NoError(tb, err)
 }

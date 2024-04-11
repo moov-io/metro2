@@ -233,16 +233,30 @@ func NewReader(r io.Reader) *Reader {
 
 // scanRecord allows reader to split metro file by each record
 func scanRecord(data []byte, atEOF bool) (advance int, token []byte, err error) {
-
-	getStripedLength := func() int {
-		return len(bytes.ReplaceAll(bytes.ReplaceAll(data, []byte("\r\n"), nil), []byte("\n"), nil))
+	getStripedLength := func() (length int) {
+		// Count every byte except for carriage returns and newlines
+		for _, b := range data {
+			switch b {
+			case '\r', '\n':
+				continue
+			default:
+				length += 1
+			}
+		}
+		return length
 	}
 
 	getStripedData := func(size int) (int, []byte, error) {
+		var buffer bytes.Buffer
 		for i := size; i <= len(data); i++ {
-			converted := bytes.ReplaceAll(bytes.ReplaceAll(data[:i], []byte("\r\n"), nil), []byte("\n"), nil)
-			if len(converted) == size {
-				return i, converted, nil
+			buffer.Reset()
+			for _, b := range data[:i] {
+				if b != '\r' && b != '\n' {
+					buffer.WriteByte(b)
+				}
+			}
+			if buffer.Len() == size {
+				return i, buffer.Bytes(), nil
 			}
 		}
 		return 0, nil, io.ErrNoProgress

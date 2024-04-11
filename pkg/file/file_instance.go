@@ -5,11 +5,11 @@
 package file
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
+	"slices"
 	"strings"
 	"unicode"
 
@@ -199,7 +199,9 @@ func (f *fileInstance) Validate() error {
 func (f *fileInstance) Parse(record []byte) error {
 
 	// remove new lines
-	record = bytes.ReplaceAll(bytes.ReplaceAll(record, []byte("\r\n"), nil), []byte("\n"), nil)
+	record = slices.DeleteFunc(record, func(b byte) bool {
+		return b == '\r' || b == '\n'
+	})
 
 	f.Bases = []lib.Record{}
 	offset := 0
