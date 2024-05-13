@@ -924,6 +924,19 @@ func (r *BaseSegment) ValidateDateBirth() error {
 	return nil
 }
 
+// validation of account status
+func (r *BaseSegment) ValidateAccountStatus() error {
+	switch r.AccountStatus {
+	case AccountStatusDF, AccountStatusDA, AccountStatus11, AccountStatus61, AccountStatus62,
+		AccountStatus63, AccountStatus64, AccountStatus71, AccountStatus78, AccountStatus80,
+		AccountStatus82, AccountStatus83, AccountStatus84, AccountStatus93, AccountStatus96,
+		AccountStatus97, AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88,
+		AccountStatus89, AccountStatus94, AccountStatus95:
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("account status", "base segment")
+}
+
 // Name returns name of packed base segment
 func (r *PackedBaseSegment) Name() string {
 	return PackedBaseSegmentName
@@ -1376,6 +1389,19 @@ func (r *PackedBaseSegment) ValidateDateBirth() error {
 		return utils.NewErrInvalidValueOfField("date birth", "base segment")
 	}
 	return nil
+}
+
+// validation of account status
+func (r *PackedBaseSegment) ValidateAccountStatus() error {
+	switch r.AccountStatus {
+	case AccountStatusDF, AccountStatusDA, AccountStatus11, AccountStatus61, AccountStatus62,
+		AccountStatus63, AccountStatus64, AccountStatus71, AccountStatus78, AccountStatus80,
+		AccountStatus82, AccountStatus83, AccountStatus84, AccountStatus93, AccountStatus96,
+		AccountStatus97, AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88,
+		AccountStatus89, AccountStatus94, AccountStatus95:
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("account status", "packed base segment")
 }
 
 func readApplicableSegments(record []byte, f Record) (int, error) {

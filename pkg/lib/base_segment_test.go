@@ -399,6 +399,26 @@ func (t *SegmentTest) TestBaseSegmentWithDateBirth(c *check.C) {
 	c.Assert(err, check.Not(check.IsNil))
 }
 
+func (t *SegmentTest) TestBaseSegmentWithInvalidAccountStatus(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.AccountStatus = "FF"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "account status in base segment has an invalid value")
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithInvalidAccountStatus(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.AccountStatus = "FF"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "account status in packed base segment has an invalid value")
+}
+
 func (t *SegmentTest) TestPackedBaseSegmentWithSocialSecurityNumber(c *check.C) {
 	segment := &PackedBaseSegment{}
 	_, err := segment.Parse(t.samplePackedBaseSegment)
