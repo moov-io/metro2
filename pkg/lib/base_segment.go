@@ -937,6 +937,23 @@ func (r *BaseSegment) ValidateAccountStatus() error {
 	return utils.NewErrInvalidValueOfField("account status", "base segment")
 }
 
+// validation of account type
+func (r *BaseSegment) ValidateAccountType() error {
+	switch r.AccountType {
+	case AccountType00, AccountType01, AccountType02, AccountType03, AccountType04, AccountType05, AccountType06,
+		AccountType07, AccountType08, AccountType0A, AccountType0C, AccountType0F, AccountType0G, AccountType10,
+		AccountType11, AccountType12, AccountType13, AccountType15, AccountType17, AccountType18, AccountType19,
+		AccountType20, AccountType25, AccountType26, AccountType29, AccountType2A, AccountType2C, AccountType37,
+		AccountType3A, AccountType43, AccountType47, AccountType48, AccountType4D, AccountType50, AccountType5A,
+		AccountType5B, AccountType65, AccountType66, AccountType67, AccountType68, AccountType69, AccountType6A,
+		AccountType6B, AccountType6D, AccountType70, AccountType71, AccountType72, AccountType73, AccountType74,
+		AccountType75, AccountType77, AccountType7A, AccountType7B, AccountType89, AccountType8A, AccountType8B,
+		AccountType90, AccountType91, AccountType92, AccountType93, AccountType95, AccountType9A, AccountType9B:
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("account type", "base segment")
+}
+
 // Name returns name of packed base segment
 func (r *PackedBaseSegment) Name() string {
 	return PackedBaseSegmentName
@@ -1402,6 +1419,23 @@ func (r *PackedBaseSegment) ValidateAccountStatus() error {
 		return nil
 	}
 	return utils.NewErrInvalidValueOfField("account status", "packed base segment")
+}
+
+// validation of account type
+func (r *PackedBaseSegment) ValidateAccountType() error {
+	switch r.AccountType {
+	case AccountType00, AccountType01, AccountType02, AccountType03, AccountType04, AccountType05, AccountType06,
+		AccountType07, AccountType08, AccountType0A, AccountType0C, AccountType0F, AccountType0G, AccountType10,
+		AccountType11, AccountType12, AccountType13, AccountType15, AccountType17, AccountType18, AccountType19,
+		AccountType20, AccountType25, AccountType26, AccountType29, AccountType2A, AccountType2C, AccountType37,
+		AccountType3A, AccountType43, AccountType47, AccountType48, AccountType4D, AccountType50, AccountType5A,
+		AccountType5B, AccountType65, AccountType66, AccountType67, AccountType68, AccountType69, AccountType6A,
+		AccountType6B, AccountType6D, AccountType70, AccountType71, AccountType72, AccountType73, AccountType74,
+		AccountType75, AccountType77, AccountType7A, AccountType7B, AccountType89, AccountType8A, AccountType8B,
+		AccountType90, AccountType91, AccountType92, AccountType93, AccountType95, AccountType9A, AccountType9B:
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("account type", "packed base segment")
 }
 
 func readApplicableSegments(record []byte, f Record) (int, error) {

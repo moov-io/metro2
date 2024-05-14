@@ -255,6 +255,132 @@ const (
 	SpecializedDeferredPayment = 2
 	// ECOA Code Z
 	ECOACodeZ = "Z"
+	// Account Type 00
+	AccountType00 = "00"
+	// Account Type 01
+	AccountType01 = "01"
+	// Account Type 02
+	AccountType02 = "02"
+	// Account Type 03
+	AccountType03 = "03"
+	// Account Type 04
+	AccountType04 = "04"
+	// Account Type 05
+	AccountType05 = "05"
+	// Account Type 06
+	AccountType06 = "06"
+	// Account Type 07
+	AccountType07 = "07"
+	// Account Type 08
+	AccountType08 = "08"
+	// Account Type 0A
+	AccountType0A = "0A"
+	// Account Type 0C
+	AccountType0C = "0C"
+	// Account Type 0F
+	AccountType0F = "0F"
+	// Account Type 0G
+	AccountType0G = "0G"
+	// Account Type 10
+	AccountType10 = "10"
+	// Account Type 11
+	AccountType11 = "11"
+	// Account Type 12
+	AccountType12 = "12"
+	// Account Type 13
+	AccountType13 = "13"
+	// Account Type 15
+	AccountType15 = "15"
+	// Account Type 17
+	AccountType17 = "17"
+	// Account Type 18
+	AccountType18 = "18"
+	// Account Type 19
+	AccountType19 = "19"
+	// Account Type 20
+	AccountType20 = "20"
+	// Account Type 25
+	AccountType25 = "25"
+	// Account Type 26
+	AccountType26 = "26"
+	// Account Type 29
+	AccountType29 = "29"
+	// Account Type 2A
+	AccountType2A = "2A"
+	// Account Type 2C
+	AccountType2C = "2C"
+	// Account Type 37
+	AccountType37 = "37"
+	// Account Type 3A
+	AccountType3A = "3A"
+	// Account Type 43
+	AccountType43 = "43"
+	// Account Type 47
+	AccountType47 = "47"
+	// Account Type 48
+	AccountType48 = "48"
+	// Account Type 4D
+	AccountType4D = "4D"
+	// Account Type 50
+	AccountType50 = "50"
+	// Account Type 5A
+	AccountType5A = "5A"
+	// Account Type 5B
+	AccountType5B = "5B"
+	// Account Type 65
+	AccountType65 = "65"
+	// Account Type 66
+	AccountType66 = "66"
+	// Account Type 67
+	AccountType67 = "67"
+	// Account Type 68
+	AccountType68 = "68"
+	// Account Type 69
+	AccountType69 = "69"
+	// Account Type 6A
+	AccountType6A = "6A"
+	// Account Type 6B
+	AccountType6B = "6B"
+	// Account Type 6D
+	AccountType6D = "6D"
+	// Account Type 70
+	AccountType70 = "70"
+	// Account Type 71
+	AccountType71 = "71"
+	// Account Type 72
+	AccountType72 = "72"
+	// Account Type 73
+	AccountType73 = "73"
+	// Account Type 74
+	AccountType74 = "74"
+	// Account Type 75
+	AccountType75 = "75"
+	// Account Type 77
+	AccountType77 = "77"
+	// Account Type 7A
+	AccountType7A = "7A"
+	// Account Type 7B
+	AccountType7B = "7B"
+	// Account Type 89
+	AccountType89 = "89"
+	// Account Type 8A
+	AccountType8A = "8A"
+	// Account Type 8B
+	AccountType8B = "8B"
+	// Account Type 90
+	AccountType90 = "90"
+	// Account Type 91
+	AccountType91 = "91"
+	// Account Type 92
+	AccountType92 = "92"
+	// Account Type 93
+	AccountType93 = "93"
+	// Account Type 95
+	AccountType95 = "95"
+	// Account Type 9A
+	AccountType9A = "9A"
+	// Account Type 9B
+	AccountType9B = "9B"
 )
 
 // Internal Constants
