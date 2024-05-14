@@ -954,6 +954,26 @@ func (r *BaseSegment) ValidateAccountType() error {
 	return utils.NewErrInvalidValueOfField("account type", "base segment")
 }
 
+// validation of special comment
+func (r *BaseSegment) ValidateSpecialComment() error {
+	switch r.SpecialComment {
+	case SpecialCommentCodeBlank, SpecialCommentCodeB, SpecialCommentCodeC, SpecialCommentCodeH, SpecialCommentCodeI,
+		SpecialCommentCodeM, SpecialCommentCodeO, SpecialCommentCodeS, SpecialCommentCodeV, SpecialCommentCodeAB,
+		SpecialCommentCodeAC, SpecialCommentCodeAH, SpecialCommentCodeAI, SpecialCommentCodeAM, SpecialCommentCodeAN,
+		SpecialCommentCodeAO, SpecialCommentCodeAP, SpecialCommentCodeAS, SpecialCommentCodeAT, SpecialCommentCodeAU,
+		SpecialCommentCodeAV, SpecialCommentCodeAW, SpecialCommentCodeAX, SpecialCommentCodeAZ, SpecialCommentCodeBA,
+		SpecialCommentCodeBB, SpecialCommentCodeBC, SpecialCommentCodeBD, SpecialCommentCodeBE, SpecialCommentCodeBF,
+		SpecialCommentCodeBG, SpecialCommentCodeBH, SpecialCommentCodeBI, SpecialCommentCodeBJ, SpecialCommentCodeBK,
+		SpecialCommentCodeBL, SpecialCommentCodeBN, SpecialCommentCodeBO, SpecialCommentCodeBP, SpecialCommentCodeBS,
+		SpecialCommentCodeBT, SpecialCommentCodeCH, SpecialCommentCodeCI, SpecialCommentCodeCJ, SpecialCommentCodeCK,
+		SpecialCommentCodeCL, SpecialCommentCodeCM, SpecialCommentCodeCN, SpecialCommentCodeCO, SpecialCommentCodeCP,
+		SpecialCommentCodeCS, SpecialCommentCodeDE:
+
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("special comment", "base segment")
+}
+
 // Name returns name of packed base segment
 func (r *PackedBaseSegment) Name() string {
 	return PackedBaseSegmentName
@@ -1436,6 +1456,26 @@ func (r *PackedBaseSegment) ValidateAccountType() error {
 		return nil
 	}
 	return utils.NewErrInvalidValueOfField("account type", "packed base segment")
+}
+
+// validation of special comment
+func (r *PackedBaseSegment) ValidateSpecialComment() error {
+	switch r.SpecialComment {
+	case SpecialCommentCodeBlank, SpecialCommentCodeB, SpecialCommentCodeC, SpecialCommentCodeH, SpecialCommentCodeI,
+		SpecialCommentCodeM, SpecialCommentCodeO, SpecialCommentCodeS, SpecialCommentCodeV, SpecialCommentCodeAB,
+		SpecialCommentCodeAC, SpecialCommentCodeAH, SpecialCommentCodeAI, SpecialCommentCodeAM, SpecialCommentCodeAN,
+		SpecialCommentCodeAO, SpecialCommentCodeAP, SpecialCommentCodeAS, SpecialCommentCodeAT, SpecialCommentCodeAU,
+		SpecialCommentCodeAV, SpecialCommentCodeAW, SpecialCommentCodeAX, SpecialCommentCodeAZ, SpecialCommentCodeBA,
+		SpecialCommentCodeBB, SpecialCommentCodeBC, SpecialCommentCodeBD, SpecialCommentCodeBE, SpecialCommentCodeBF,
+		SpecialCommentCodeBG, SpecialCommentCodeBH, SpecialCommentCodeBI, SpecialCommentCodeBJ, SpecialCommentCodeBK,
+		SpecialCommentCodeBL, SpecialCommentCodeBN, SpecialCommentCodeBO, SpecialCommentCodeBP, SpecialCommentCodeBS,
+		SpecialCommentCodeBT, SpecialCommentCodeCH, SpecialCommentCodeCI, SpecialCommentCodeCJ, SpecialCommentCodeCK,
+		SpecialCommentCodeCL, SpecialCommentCodeCM, SpecialCommentCodeCN, SpecialCommentCodeCO, SpecialCommentCodeCP,
+		SpecialCommentCodeCS, SpecialCommentCodeDE:
+
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("special comment", "packed base segment")
 }
 
 func readApplicableSegments(record []byte, f Record) (int, error) {

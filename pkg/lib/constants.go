@@ -381,6 +381,110 @@ const (
 	AccountType9A = "9A"
 	// Account Type 9B
 	AccountType9B = "9B"
+	// Special Comment Code Blank
+	SpecialCommentCodeBlank = ""
+	// Special Comment Code B
+	SpecialCommentCodeB = "B"
+	// Special Comment Code C
+	SpecialCommentCodeC = "C"
+	// Special Comment Code H
+	SpecialCommentCodeH = "H"
+	// Special Comment Code I
+	SpecialCommentCodeI = "I"
+	// Special Comment Code M
+	SpecialCommentCodeM = "M"
+	// Special Comment Code O
+	SpecialCommentCodeO = "O"
+	// Special Comment Code S
+	SpecialCommentCodeS = "S"
+	// Special Comment Code V
+	SpecialCommentCodeV = "V"
+	// Special Comment Code AB
+	SpecialCommentCodeAB = "AB"
+	// Special Comment Code AC
+	SpecialCommentCodeAC = "AC"
+	// Special Comment Code AH
+	SpecialCommentCodeAH = "AH"
+	// Special Comment Code AI
+	SpecialCommentCodeAI = "AI"
+	// Special Comment Code AM
+	SpecialCommentCodeAM = "AM"
+	// Special Comment Code AN
+	SpecialCommentCodeAN = "AN"
+	// Special Comment Code AO
+	SpecialCommentCodeAO = "AO"
+	// Special Comment Code AP
+	SpecialCommentCodeAP = "AP"
+	// Special Comment Code AS
+	SpecialCommentCodeAS = "AS"
+	// Special Comment Code AT
+	SpecialCommentCodeAT = "AT"
+	// Special Comment Code AU
+	SpecialCommentCodeAU = "AU"
+	// Special Comment Code AV
+	SpecialCommentCodeAV = "AV"
+	// Special Comment Code AW
+	SpecialCommentCodeAW = "AW"
+	// Special Comment Code AX
+	SpecialCommentCodeAX = "AX"
+	// Special Comment Code AZ
+	SpecialCommentCodeAZ = "AZ"
+	// Special Comment Code BA
+	SpecialCommentCodeBA = "BA"
+	// Special Comment Code BB
+	SpecialCommentCodeBB = "BB"
+	// Special Comment Code BC
+	SpecialCommentCodeBC = "BC"
+	// Special Comment Code BD
+	SpecialCommentCodeBD = "BD"
+	// Special Comment Code BE
+	SpecialCommentCodeBE = "BE"
+	// Special Comment Code BF
+	SpecialCommentCodeBF = "BF"
+	// Special Comment Code BG
+	SpecialCommentCodeBG = "BG"
+	// Special Comment Code BH
+	SpecialCommentCodeBH = "BH"
+	// Special Comment Code BI
+	SpecialCommentCodeBI = "BI"
+	// Special Comment Code BJ
+	SpecialCommentCodeBJ = "BJ"
+	// Special Comment Code BK
+	SpecialCommentCodeBK = "BK"
+	// Special Comment Code BL
+	SpecialCommentCodeBL = "BL"
+	// Special Comment Code BN
+	SpecialCommentCodeBN = "BN"
+	// Special Comment Code BO
+	SpecialCommentCodeBO = "BO"
+	// Special Comment Code BP
+	SpecialCommentCodeBP = "BP"
+	// Special Comment Code BS
+	SpecialCommentCodeBS = "BS"
+	// Special Comment Code BT
+	SpecialCommentCodeBT = "BT"
+	// Special Comment Code CH
+	SpecialCommentCodeCH = "CH"
+	// Special Comment Code CI
+	SpecialCommentCodeCI = "CI"
+	// Special Comment Code CJ
+	SpecialCommentCodeCJ = "CJ"
+	// Special Comment Code CK
+	SpecialCommentCodeCK = "CK"
+	// Special Comment Code CL
+	SpecialCommentCodeCL = "CL"
+	// Special Comment Code CM
+	SpecialCommentCodeCM = "CM"
+	// Special Comment Code CN
+	SpecialCommentCodeCN = "CN"
+	// Special Comment Code CO
+	SpecialCommentCodeCO = "CO"
+	// Special Comment Code CP
+	SpecialCommentCodeCP = "CP"
+	// Special Comment Code CS
+	SpecialCommentCodeCS = "CS"
+	// Special Comment Code DE
+	SpecialCommentCodeDE = "DE"
 )
 
 // Internal Constants

@@ -466,3 +466,23 @@ func (t *SegmentTest) TestPackedBaseSegmentWithDateBirth(c *check.C) {
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
 }
+
+func (t *SegmentTest) TestBaseSegmentWithInvalidSpecialComment(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.SpecialComment = "FF"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "special comment in base segment has an invalid value")
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithInvalidSpecialComment(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.SpecialComment = "FF"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "special comment in packed base segment has an invalid value")
+}
