@@ -1,3 +1,17 @@
+## v0.9.0 (Released 2024-05-15)
+
+IMPROVEMENTS
+
+- feat: add validation for account status, account type, special comments
+- file: reduce allocations, add benchmark to start performance monitoring
+
+BUILD
+
+- chore(deps): update golang docker tag to v1.22
+- chore(deps): update dependency github-pages to v231
+- fix(deps): update module github.com/stretchr/testify to v1.9.0
+- fix(deps): update module github.com/moov-io/base to v0.49.3
+
 ## v0.8.2 (Released 2024-01-25)
 
 BUILD
