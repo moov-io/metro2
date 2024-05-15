@@ -399,6 +399,46 @@ func (t *SegmentTest) TestBaseSegmentWithDateBirth(c *check.C) {
 	c.Assert(err, check.Not(check.IsNil))
 }
 
+func (t *SegmentTest) TestBaseSegmentWithInvalidAccountStatus(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.AccountStatus = "FF"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "account status in base segment has an invalid value")
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithInvalidAccountStatus(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.AccountStatus = "FF"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "account status in packed base segment has an invalid value")
+}
+
+func (t *SegmentTest) TestBaseSegmentWithInvalidAccountType(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.AccountType = "FF"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "account type in base segment has an invalid value")
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithInvalidAccountType(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.AccountType = "FF"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "account type in packed base segment has an invalid value")
+}
+
 func (t *SegmentTest) TestPackedBaseSegmentWithSocialSecurityNumber(c *check.C) {
 	segment := &PackedBaseSegment{}
 	_, err := segment.Parse(t.samplePackedBaseSegment)
@@ -425,4 +465,24 @@ func (t *SegmentTest) TestPackedBaseSegmentWithDateBirth(c *check.C) {
 	segment.SocialSecurityNumber = 0
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
+}
+
+func (t *SegmentTest) TestBaseSegmentWithInvalidSpecialComment(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.SpecialComment = "FF"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "special comment in base segment has an invalid value")
+}
+
+func (t *SegmentTest) TestPackedBaseSegmentWithInvalidSpecialComment(c *check.C) {
+	segment := &PackedBaseSegment{}
+	_, err := segment.Parse(t.samplePackedBaseSegment)
+	c.Assert(err, check.IsNil)
+	segment.SpecialComment = "FF"
+	err = segment.Validate()
+	c.Assert(err, check.Not(check.IsNil))
+	c.Assert(err.Error(), check.DeepEquals, "special comment in packed base segment has an invalid value")
 }
