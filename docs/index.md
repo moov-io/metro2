@@ -14,6 +14,6 @@ Moov's mission is to give developers an easy way to create and integrate bank pr
 
 Metro2 implements a reader, writer, and validator for consumer credit history reports in an HTTP server and Go library. The HTTP server is available in a [Docker image](https://moov-io.github.io/metro2/usage-docker/) and the Go package `github.com/bloomcredit/moov-metro2` is available.
 
-**Note:** By design, Metro2 does not persist (save) any data about the files or entry details created. The only storage occurs in memory of the process and upon restart Metro2 will have no files or data saved. Also, no in-memory encryption of the data is performed.
+**Note:** By design, Metro2 does not persist (save) any data about the files or entry details created. The only storage occurs in memory of the process and upon restart Metro2 will have no files or data saved. Also, no in-memory encryption of the data is performed. 
 
 
