@@ -268,8 +268,6 @@ func (f *fileInstance) String(isNewLine bool) string {
 	pageSize := int(math.Ceil(float64(len(f.Bases)) / float64(10)))
 	basePages := [][]lib.Record{}
 	dataPages := make([]string, 10)
-	fmt.Println("here123")
-	fmt.Println(pageSize)
 	for i := 0; i < len(f.Bases); i += pageSize {
 		end := i + pageSize
 		if end > len(f.Bases) {
