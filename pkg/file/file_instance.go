@@ -9,8 +9,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"reflect"
 	"strings"
+	"sync"
 	"unicode"
 
 	"github.com/bloomcredit/moov-metro2/pkg/lib"
@@ -262,19 +264,40 @@ func (f *fileInstance) String(isNewLine bool) string {
 	header := f.Header.String() + newLine
 
 	// Data Block
-	data := ""
-	for _, base := range f.Bases {
-		data += base.String() + newLine
+	result := ""
+	pageSize := int(math.Ceil(float64(len(f.Bases)) / float64(10)))
+	basePages := [][]lib.Record{}
+	dataPages := make([]string, 10)
+	for i := 0; i < len(f.Bases); i += pageSize {
+		end := i + pageSize
+		if end > len(f.Bases) {
+			end = len(f.Bases)
+		}
+		basePages = append(basePages, f.Bases[i:end])
+	}
+	var wg sync.WaitGroup
+	for i, page := range basePages {
+		wg.Add(1)
+		go func(idx int, page []lib.Record) {
+			defer wg.Done()
+			result := ""
+			for _, base := range page {
+				result += base.String() + newLine
+			}
+			dataPages[idx] = result
+		}(i, page)
+	}
+	wg.Wait()
+	for _, page := range dataPages {
+		result += page
 	}
 
 	// Trailer Block
 	trailer := f.Trailer.String()
-
-	buf.Grow(len(header) + len(data) + len(trailer))
+	buf.Grow(len(header) + len(result) + len(trailer))
 	buf.WriteString(header)
-	buf.WriteString(data)
+	buf.WriteString(result)
 	buf.WriteString(trailer)
-
 	return buf.String()
 }
 
