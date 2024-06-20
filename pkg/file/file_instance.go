@@ -8,8 +8,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"reflect"
 	"strings"
+	"sync"
 	"unicode"
 
 	"github.com/moov-io/base/log"
@@ -254,6 +256,15 @@ func (f *fileInstance) Parse(record []byte) error {
 
 // String writes the File struct to raw string.
 func (f *fileInstance) String(isNewLine bool) string {
+	return f.StringWithConcurrency(isNewLine, 1)
+}
+
+// StringWithConcurrency augments String with a given number of concurrent goroutines.
+func (f *fileInstance) StringWithConcurrency(isNewLine bool, concurrency int) string {
+	if concurrency < 1 {
+		concurrency = 1
+	}
+
 	var buf strings.Builder
 
 	newLine := ""
@@ -266,18 +277,39 @@ func (f *fileInstance) String(isNewLine bool) string {
 
 	// Data Block
 	data := ""
-	for _, base := range f.Bases {
-		data += base.String() + newLine
+	pageSize := int(math.Ceil(float64(len(f.Bases)) / float64(concurrency)))
+	basePages := [][]lib.Record{}
+	dataPages := make([]string, concurrency)
+	for i := 0; i < len(f.Bases); i += pageSize {
+		end := i + pageSize
+		if end > len(f.Bases) {
+			end = len(f.Bases)
+		}
+		basePages = append(basePages, f.Bases[i:end])
+	}
+	var wg sync.WaitGroup
+	for i, page := range basePages {
+		wg.Add(1)
+		go func(idx int, page []lib.Record) {
+			defer wg.Done()
+			data := ""
+			for _, base := range page {
+				data += base.String() + newLine
+			}
+			dataPages[idx] = data
+		}(i, page)
+	}
+	wg.Wait()
+	for _, page := range dataPages {
+		data += page
 	}
 
 	// Trailer Block
 	trailer := f.Trailer.String()
-
 	buf.Grow(len(header) + len(data) + len(trailer))
 	buf.WriteString(header)
 	buf.WriteString(data)
 	buf.WriteString(trailer)
-
 	return buf.String()
 }
 
