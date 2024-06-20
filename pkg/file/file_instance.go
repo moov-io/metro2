@@ -306,10 +306,12 @@ func (f *fileInstance) StringWithConcurrency(isNewLine bool, concurrency int) st
 
 	// Trailer Block
 	trailer := f.Trailer.String()
+
 	buf.Grow(len(header) + len(data) + len(trailer))
 	buf.WriteString(header)
 	buf.WriteString(data)
 	buf.WriteString(trailer)
+
 	return buf.String()
 }
 
