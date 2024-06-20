@@ -33,7 +33,7 @@ type File interface {
 	Parse(record []byte) error
 	Bytes() []byte
 	String(newline bool) string
-	StringWithConcurrency(newline bool, concurrency int) string
+	ConcurrentString(newline bool, goroutines int) string
 	Validate() error
 }
 

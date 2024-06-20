@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"math"
 	"reflect"
+	"runtime"
 	"strings"
 	"sync"
 	"unicode"
@@ -254,15 +255,21 @@ func (f *fileInstance) Parse(record []byte) error {
 	return nil
 }
 
+var (
+	// defaultStringConcurrency is the default number of goroutines to use for File.String() calls,
+	// which is the number of CPUs detectable by Go.
+	defaultStringConcurrency = runtime.NumCPU()
+)
+
 // String writes the File struct to raw string.
 func (f *fileInstance) String(isNewLine bool) string {
-	return f.StringWithConcurrency(isNewLine, 1)
+	return f.ConcurrentString(isNewLine, defaultStringConcurrency)
 }
 
-// StringWithConcurrency augments String with a given number of concurrent goroutines.
-func (f *fileInstance) StringWithConcurrency(isNewLine bool, concurrency int) string {
-	if concurrency < 1 {
-		concurrency = 1
+// ConcurrentString writes the File struct to a string by concurrently generating rows.
+func (f *fileInstance) ConcurrentString(isNewLine bool, goroutines int) string {
+	if goroutines < 1 {
+		goroutines = 1
 	}
 
 	var buf strings.Builder
@@ -277,9 +284,9 @@ func (f *fileInstance) StringWithConcurrency(isNewLine bool, concurrency int) st
 
 	// Data Block
 	data := ""
-	pageSize := int(math.Ceil(float64(len(f.Bases)) / float64(concurrency)))
+	pageSize := int(math.Ceil(float64(len(f.Bases)) / float64(goroutines)))
 	basePages := [][]lib.Record{}
-	dataPages := make([]string, concurrency)
+	dataPages := make([]string, goroutines)
 	for i := 0; i < len(f.Bases); i += pageSize {
 		end := i + pageSize
 		if end > len(f.Bases) {

@@ -77,7 +77,7 @@ func (t *FileTest) TestJsonWithUnpackedVariableBlocked(c *check.C) {
 
 	rawStr := strings.ReplaceAll(string(raw), "\r\n", "\n")
 	c.Assert(strings.Compare(f.String(true), rawStr), check.Equals, 0)
-	c.Assert(strings.Compare(f.StringWithConcurrency(true, 2), rawStr), check.Equals, 0)
+	c.Assert(strings.Compare(f.ConcurrentString(true, 2), rawStr), check.Equals, 0)
 
 	buf, err := json.Marshal(f)
 	c.Assert(err, check.IsNil)
@@ -321,7 +321,7 @@ func (t *FileTest) TestCreateFile(c *check.C) {
 	c.Assert(err, check.IsNil)
 
 	c.Assert(strings.Compare(f.String(false), string(raw)), check.Equals, 0)
-	c.Assert(strings.Compare(f.StringWithConcurrency(false, 2), string(raw)), check.Equals, 0)
+	c.Assert(strings.Compare(f.ConcurrentString(false, 2), string(raw)), check.Equals, 0)
 }
 
 func (t *FileTest) TestNewFileFromReader(c *check.C) {
@@ -335,7 +335,7 @@ func (t *FileTest) TestNewFileFromReader(c *check.C) {
 	c.Assert(err, check.IsNil)
 
 	c.Assert(strings.Compare(f.String(false), string(raw)), check.Equals, 0)
-	c.Assert(strings.Compare(f.StringWithConcurrency(false, 2), string(raw)), check.Equals, 0)
+	c.Assert(strings.Compare(f.ConcurrentString(false, 2), string(raw)), check.Equals, 0)
 }
 
 func (t *FileTest) TestCreateFileFailed(c *check.C) {
