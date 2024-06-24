@@ -7,7 +7,7 @@ toolchain go1.22.4
 require (
 	github.com/KimMachineGun/automemlimit v0.6.1
 	github.com/gorilla/mux v1.8.1
-	github.com/moov-io/base v0.49.4
+	github.com/moov-io/base v0.50.0
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
