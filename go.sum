@@ -43,6 +43,8 @@ github.com/moov-io/base v0.49.3 h1:35/hhHCAr1K4+Ars2jLk7TNQ5I+G/lzfPVmeXkCHAl4=
 github.com/moov-io/base v0.49.3/go.mod h1:ri6h0lEraRhho1S7Qe9uZy3mH77fkXU4Vnt3KjAVzaw=
 github.com/moov-io/base v0.49.4 h1:vN80/CR4qLa9D3VZAv9qGYHHG6joXdvKy5YmOJ/9cB4=
 github.com/moov-io/base v0.49.4/go.mod h1:FeToCMJo5ynGkSsNvZJUNz753JCDhK04q+JLeaI/9NY=
+github.com/moov-io/base v0.50.0 h1:fsZCV/OE7ovDCHWdkAs0bKAwUnFWeCrTPMb50NHJwv8=
+github.com/moov-io/base v0.50.0/go.mod h1:jcQD47qZfnkxNtFm+195Qy8xtzjMCzd96vcJeyOY4SM=
 github.com/opencontainers/runtime-spec v1.0.2 h1:UfAcuLBJB9Coz72x1hgl8O5RVzTdNiaglX6v2DM6FI0=
 github.com/opencontainers/runtime-spec v1.0.2/go.mod h1:jwyrGlmzljRJv/Fgzds9SsS/C5hL+LL3ko9hs6T5lQ0=
 github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58 h1:onHthvaw9LFnH4t2DcNVpwGmV9E1BkGknEliJkfwQj0=
@@ -75,6 +77,8 @@ golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8 h1:LoYXNGAShUG3m/ehNk4iFctuh
 golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8/go.mod h1:jj3sYF3dwk5D+ghuXyeI3r5MFf+NT2An6/9dOA95KSI=
 golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 h1:yixxcjnhBmY0nkL253HFVIm0JsFHwrHdT3Yh6szTnfY=
 golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8/go.mod h1:jj3sYF3dwk5D+ghuXyeI3r5MFf+NT2An6/9dOA95KSI=
+golang.org/x/exp v0.0.0-20240707233637-46b078467d37 h1:uLDX+AfeFCct3a2C7uIWBKMJIR3CJMhcgfrUAqjRK6w=
+golang.org/x/exp v0.0.0-20240707233637-46b078467d37/go.mod h1:M4RDyNAINzryxdtnbRXRL/OHtkFuWGRjvuhBJpk2IlY=
 golang.org/x/sys v0.0.0-20191026070338-33540a1f6037/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.20.0 h1:Od9JTbYCk261bKm4M/mw7AklTlFYIa0bIp9BgSm1S8Y=
 golang.org/x/sys v0.20.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
