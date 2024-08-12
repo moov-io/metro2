@@ -2,7 +2,7 @@ module github.com/moov-io/metro2
 
 go 1.21
 
-toolchain go1.22.5
+toolchain go1.22.6
 
 require (
 	github.com/KimMachineGun/automemlimit v0.6.1
@@ -10,7 +10,7 @@ require (
 	github.com/moov-io/base v0.51.1
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
-	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
+	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 )
 
