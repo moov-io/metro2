@@ -1,3 +1,10 @@
+## v0.9.2 (Released 2024-09-20)
+
+BUILD
+
+- build: downgrade go (for openshift)
+- fuzz: remove automemlimit
+
 ## v0.9.1 (Released 2024-09-20)
 
 BUILD
