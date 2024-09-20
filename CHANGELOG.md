@@ -1,3 +1,10 @@
+## v0.9.1 (Released 2024-09-20)
+
+BUILD
+
+- fix(deps): update module github.com/moov-io/base to v0.51.1
+- fix(deps): update module github.com/kimmachinegun/automemlimit to v0.6.1
+
 ## v0.9.0 (Released 2024-05-15)
 
 IMPROVEMENTS
