@@ -1,13 +1,13 @@
 module github.com/moov-io/metro2
 
-go 1.22.7
+go 1.21
 
 require (
 	github.com/gorilla/mux v1.8.1
 	github.com/moov-io/base v0.51.1
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.9.0
-	golang.org/x/exp v0.0.0-20240909161429-701f63a606c0
+	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 )
 
