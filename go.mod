@@ -9,7 +9,7 @@ require (
 	github.com/moov-io/base v0.53.0
 	github.com/spf13/cobra v1.8.1
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/exp v0.0.0-20241210194714-1829a127f884
+	golang.org/x/exp v0.0.0-20241215155358-4a5509556b9e
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 )
 
