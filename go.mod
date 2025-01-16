@@ -2,7 +2,7 @@ module github.com/moov-io/metro2
 
 go 1.22.0
 
-toolchain go1.23.4
+toolchain go1.23.5
 
 require (
 	github.com/gorilla/mux v1.8.1
