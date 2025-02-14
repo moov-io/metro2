@@ -19,6 +19,10 @@ func (ct *Time) UnmarshalJSON(b []byte) (err error) {
 
 // MarshalJSON writes a quoted string in the custom format
 func (ct Time) MarshalJSON() ([]byte, error) {
+	if ct.IsZero() {
+		return []byte("\"\""), nil
+	}
+
 	return []byte(ct.String()), nil
 }
 
