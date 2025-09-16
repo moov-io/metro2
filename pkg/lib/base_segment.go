@@ -924,6 +924,56 @@ func (r *BaseSegment) ValidateDateBirth() error {
 	return nil
 }
 
+// validation of account status
+func (r *BaseSegment) ValidateAccountStatus() error {
+	switch r.AccountStatus {
+	case AccountStatusDF, AccountStatusDA, AccountStatus11, AccountStatus61, AccountStatus62,
+		AccountStatus63, AccountStatus64, AccountStatus71, AccountStatus78, AccountStatus80,
+		AccountStatus82, AccountStatus83, AccountStatus84, AccountStatus93, AccountStatus96,
+		AccountStatus97, AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88,
+		AccountStatus89, AccountStatus94, AccountStatus95:
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("account status", "base segment")
+}
+
+// validation of account type
+func (r *BaseSegment) ValidateAccountType() error {
+	switch r.AccountType {
+	case AccountType00, AccountType01, AccountType02, AccountType03, AccountType04, AccountType05, AccountType06,
+		AccountType07, AccountType08, AccountType0A, AccountType0C, AccountType0F, AccountType0G, AccountType10,
+		AccountType11, AccountType12, AccountType13, AccountType15, AccountType17, AccountType18, AccountType19,
+		AccountType20, AccountType25, AccountType26, AccountType29, AccountType2A, AccountType2C, AccountType37,
+		AccountType3A, AccountType43, AccountType47, AccountType48, AccountType4D, AccountType50, AccountType5A,
+		AccountType5B, AccountType65, AccountType66, AccountType67, AccountType68, AccountType69, AccountType6A,
+		AccountType6B, AccountType6D, AccountType70, AccountType71, AccountType72, AccountType73, AccountType74,
+		AccountType75, AccountType77, AccountType7A, AccountType7B, AccountType89, AccountType8A, AccountType8B,
+		AccountType90, AccountType91, AccountType92, AccountType93, AccountType95, AccountType9A, AccountType9B:
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("account type", "base segment")
+}
+
+// validation of special comment
+func (r *BaseSegment) ValidateSpecialComment() error {
+	switch r.SpecialComment {
+	case SpecialCommentCodeBlank, SpecialCommentCodeB, SpecialCommentCodeC, SpecialCommentCodeH, SpecialCommentCodeI,
+		SpecialCommentCodeM, SpecialCommentCodeO, SpecialCommentCodeS, SpecialCommentCodeV, SpecialCommentCodeAB,
+		SpecialCommentCodeAC, SpecialCommentCodeAH, SpecialCommentCodeAI, SpecialCommentCodeAM, SpecialCommentCodeAN,
+		SpecialCommentCodeAO, SpecialCommentCodeAP, SpecialCommentCodeAS, SpecialCommentCodeAT, SpecialCommentCodeAU,
+		SpecialCommentCodeAV, SpecialCommentCodeAW, SpecialCommentCodeAX, SpecialCommentCodeAZ, SpecialCommentCodeBA,
+		SpecialCommentCodeBB, SpecialCommentCodeBC, SpecialCommentCodeBD, SpecialCommentCodeBE, SpecialCommentCodeBF,
+		SpecialCommentCodeBG, SpecialCommentCodeBH, SpecialCommentCodeBI, SpecialCommentCodeBJ, SpecialCommentCodeBK,
+		SpecialCommentCodeBL, SpecialCommentCodeBN, SpecialCommentCodeBO, SpecialCommentCodeBP, SpecialCommentCodeBS,
+		SpecialCommentCodeBT, SpecialCommentCodeCH, SpecialCommentCodeCI, SpecialCommentCodeCJ, SpecialCommentCodeCK,
+		SpecialCommentCodeCL, SpecialCommentCodeCM, SpecialCommentCodeCN, SpecialCommentCodeCO, SpecialCommentCodeCP,
+		SpecialCommentCodeCS, SpecialCommentCodeDE:
+
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("special comment", "base segment")
+}
+
 // Name returns name of packed base segment
 func (r *PackedBaseSegment) Name() string {
 	return PackedBaseSegmentName
@@ -1376,6 +1426,56 @@ func (r *PackedBaseSegment) ValidateDateBirth() error {
 		return utils.NewErrInvalidValueOfField("date birth", "base segment")
 	}
 	return nil
+}
+
+// validation of account status
+func (r *PackedBaseSegment) ValidateAccountStatus() error {
+	switch r.AccountStatus {
+	case AccountStatusDF, AccountStatusDA, AccountStatus11, AccountStatus61, AccountStatus62,
+		AccountStatus63, AccountStatus64, AccountStatus71, AccountStatus78, AccountStatus80,
+		AccountStatus82, AccountStatus83, AccountStatus84, AccountStatus93, AccountStatus96,
+		AccountStatus97, AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88,
+		AccountStatus89, AccountStatus94, AccountStatus95:
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("account status", "packed base segment")
+}
+
+// validation of account type
+func (r *PackedBaseSegment) ValidateAccountType() error {
+	switch r.AccountType {
+	case AccountType00, AccountType01, AccountType02, AccountType03, AccountType04, AccountType05, AccountType06,
+		AccountType07, AccountType08, AccountType0A, AccountType0C, AccountType0F, AccountType0G, AccountType10,
+		AccountType11, AccountType12, AccountType13, AccountType15, AccountType17, AccountType18, AccountType19,
+		AccountType20, AccountType25, AccountType26, AccountType29, AccountType2A, AccountType2C, AccountType37,
+		AccountType3A, AccountType43, AccountType47, AccountType48, AccountType4D, AccountType50, AccountType5A,
+		AccountType5B, AccountType65, AccountType66, AccountType67, AccountType68, AccountType69, AccountType6A,
+		AccountType6B, AccountType6D, AccountType70, AccountType71, AccountType72, AccountType73, AccountType74,
+		AccountType75, AccountType77, AccountType7A, AccountType7B, AccountType89, AccountType8A, AccountType8B,
+		AccountType90, AccountType91, AccountType92, AccountType93, AccountType95, AccountType9A, AccountType9B:
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("account type", "packed base segment")
+}
+
+// validation of special comment
+func (r *PackedBaseSegment) ValidateSpecialComment() error {
+	switch r.SpecialComment {
+	case SpecialCommentCodeBlank, SpecialCommentCodeB, SpecialCommentCodeC, SpecialCommentCodeH, SpecialCommentCodeI,
+		SpecialCommentCodeM, SpecialCommentCodeO, SpecialCommentCodeS, SpecialCommentCodeV, SpecialCommentCodeAB,
+		SpecialCommentCodeAC, SpecialCommentCodeAH, SpecialCommentCodeAI, SpecialCommentCodeAM, SpecialCommentCodeAN,
+		SpecialCommentCodeAO, SpecialCommentCodeAP, SpecialCommentCodeAS, SpecialCommentCodeAT, SpecialCommentCodeAU,
+		SpecialCommentCodeAV, SpecialCommentCodeAW, SpecialCommentCodeAX, SpecialCommentCodeAZ, SpecialCommentCodeBA,
+		SpecialCommentCodeBB, SpecialCommentCodeBC, SpecialCommentCodeBD, SpecialCommentCodeBE, SpecialCommentCodeBF,
+		SpecialCommentCodeBG, SpecialCommentCodeBH, SpecialCommentCodeBI, SpecialCommentCodeBJ, SpecialCommentCodeBK,
+		SpecialCommentCodeBL, SpecialCommentCodeBN, SpecialCommentCodeBO, SpecialCommentCodeBP, SpecialCommentCodeBS,
+		SpecialCommentCodeBT, SpecialCommentCodeCH, SpecialCommentCodeCI, SpecialCommentCodeCJ, SpecialCommentCodeCK,
+		SpecialCommentCodeCL, SpecialCommentCodeCM, SpecialCommentCodeCN, SpecialCommentCodeCO, SpecialCommentCodeCP,
+		SpecialCommentCodeCS, SpecialCommentCodeDE:
+
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("special comment", "packed base segment")
 }
 
 func readApplicableSegments(record []byte, f Record) (int, error) {

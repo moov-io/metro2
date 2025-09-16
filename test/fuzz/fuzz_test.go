@@ -13,8 +13,6 @@ import (
 
 	"github.com/moov-io/metro2/pkg/file"
 	"github.com/moov-io/metro2/pkg/utils"
-
-	_ "github.com/KimMachineGun/automemlimit"
 )
 
 func FuzzReader(f *testing.F) {
