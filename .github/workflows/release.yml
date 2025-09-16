@@ -23,7 +23,9 @@ jobs:
       id: go
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Check
       run: make check
@@ -78,7 +80,6 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: release_url
-        path: release_url
 
     - name: Distribute
       run: make dist
@@ -87,7 +88,7 @@ jobs:
       id: get_release_info
       shell: bash
       run: |
-        value=`cat release_url/release_url.txt`
+        value=`cat release_url.txt`
         echo ::set-output name=upload_url::$value
       env:
         TAG_REF_NAME: ${{ github.ref }}
