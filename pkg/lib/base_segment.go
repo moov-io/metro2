@@ -1120,12 +1120,11 @@ func (r *PackedBaseSegment) Validate() error {
 		funcName := r.validateFuncName(fieldName)
 		method := reflect.ValueOf(r).MethodByName(funcName)
 		if method.IsValid() {
-			response := method.Call(nil)
+			response := method.Call(nil) //nolint:forbidigo
 			if len(response) == 0 {
 				continue
 			}
-
-			err := method.Call(nil)[0]
+			err := response[0]
 			if !err.IsNil() {
 				return err.Interface().(error) //nolint:forcetypeassert
 			}
