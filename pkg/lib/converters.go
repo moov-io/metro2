@@ -16,6 +16,8 @@ import (
 	"unicode"
 
 	"github.com/moov-io/metro2/pkg/utils"
+
+	"github.com/ccoveille/go-safecast"
 )
 
 type converter struct{}
@@ -45,7 +47,8 @@ func (c *converter) parseValue(elm field, data, fieldName, recordName string) (r
 		ret, err := timeFromPackedDateString(data)
 		return reflect.ValueOf(ret), err
 	} else if elm.Type&packedNumber > 0 {
-		return reflect.ValueOf(packedNumberFromString(data)), nil
+		ret, err := packedNumberFromString(data)
+		return reflect.ValueOf(ret), err
 	}
 
 	return reflect.Value{}, utils.NewErrInvalidValueOfField(fieldName, recordName)
@@ -187,7 +190,12 @@ func timeFromPackedTimestampString(date string) (utils.Time, error) {
 			in.WriteByte(0x00)
 		}
 		in.Write(bin[1 : packedTimestampSize-1])
-		value = int64(binary.BigEndian.Uint64(in.Bytes()))
+
+		var err error
+		value, err = safecast.ToInt64(binary.BigEndian.Uint64(in.Bytes()))
+		if err != nil {
+			return utils.Time{}, err
+		}
 	}
 
 	datestr := fmt.Sprintf("%0"+timestampSizeStr+"d", value)
@@ -204,14 +212,19 @@ func timeFromPackedDateString(date string) (utils.Time, error) {
 			in.WriteByte(0x00)
 		}
 		in.Write(bin[1 : packedDateSize-1])
-		value = int64(binary.BigEndian.Uint64(in.Bytes()))
+
+		var err error
+		value, err = safecast.ToInt64(binary.BigEndian.Uint64(in.Bytes()))
+		if err != nil {
+			return utils.Time{}, err
+		}
 	}
 
 	datestr := fmt.Sprintf("%0"+dateSizeStr+"d", value)
 	return timeFromDateString(datestr)
 }
 
-func packedNumberFromString(data string) int64 {
+func packedNumberFromString(data string) (int64, error) {
 	length := len(data)
 	var in bytes.Buffer
 
@@ -220,8 +233,12 @@ func packedNumberFromString(data string) int64 {
 		in.WriteByte(0x00)
 	}
 	in.WriteString(data)
-	value := int64(binary.BigEndian.Uint64(in.Bytes()))
-	return value
+
+	value, err := safecast.ToInt64(binary.BigEndian.Uint64(in.Bytes()))
+	if err != nil {
+		return 0, err
+	}
+	return value, nil
 }
 
 func packedTimeString(data reflect.Value, format string, length int, size int) string {
@@ -259,7 +276,7 @@ func packedNumberString(data reflect.Value, length int) string {
 	var out bytes.Buffer
 	out.Grow(length)
 	if data.Int() > 0 {
-		v := uint64(data.Int())
+		v, _ := safecast.ToUint64(data.Int())
 		for i := 0; i < length; i++ {
 			shift := 8 * (length - i - 1)
 			if shift > 0 {
@@ -278,6 +295,9 @@ func packedNumberString(data reflect.Value, length int) string {
 
 func descriptorString(data reflect.Value) string {
 	value := make([]byte, 4)
-	binary.BigEndian.PutUint16(value[0:], uint16(data.Int()))
+
+	n, _ := safecast.ToUint16(data.Int())
+	binary.BigEndian.PutUint16(value[0:], n)
+
 	return string(value)
 }

@@ -11,6 +11,7 @@ import (
 	"math"
 	"reflect"
 	"runtime"
+	"slices"
 	"strings"
 	"sync"
 	"unicode"
@@ -18,8 +19,6 @@ import (
 	"github.com/moov-io/base/log"
 	"github.com/moov-io/metro2/pkg/lib"
 	"github.com/moov-io/metro2/pkg/utils"
-
-	"golang.org/x/exp/slices"
 )
 
 var _ File = (*fileInstance)(nil)

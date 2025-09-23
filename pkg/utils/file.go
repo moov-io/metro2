@@ -32,7 +32,7 @@ func IsVariableLength(data []byte) bool {
 
 	// Checking base record field 4
 	//  Field formerly used for Correction Indicator.
-	if len(data) > 18 && data[17] == 0x30 {
+	if len(data) > 21 && data[20] == 0x30 {
 		return true
 	}
 
