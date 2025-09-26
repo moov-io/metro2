@@ -158,7 +158,7 @@ func (r *Reader) Read() (File, error) {
 	}
 
 	f.Bases = []lib.Record{}
-	isVariableLength := false
+	var isVariableLength bool
 	// read through the entire file
 	if r.scanner.Scan() {
 		r.line = r.scanner.Bytes()
