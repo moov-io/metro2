@@ -277,8 +277,6 @@ func scanRecord(data []byte, atEOF bool) (advance int, token []byte, err error) 
 	}
 
 	_, bdw, _ := getStripedData(4)
-    fmt.Printf("DEBUG: Raw BDW bytes: %v\n", bdw)
-    fmt.Printf("DEBUG: BDW as string: '%s'\n", string(bdw))
 	// trying to read for unpacked format
 	size, readErr := strconv.ParseInt(string(bdw), 10, 32)
 	if readErr == nil {
