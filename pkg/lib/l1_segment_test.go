@@ -6,12 +6,13 @@ package lib
 
 import (
 	"bytes"
+
 	"gopkg.in/check.v1"
 )
 
 func (t *SegmentTest) TestL1Segment(c *check.C) {
 	segment := NewL1Segment()
-	_, err := segment.Parse(t.sampleL1Segment)
+	_, err := segment.Parse(t.sampleL1Segment, false)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -22,13 +23,13 @@ func (t *SegmentTest) TestL1Segment(c *check.C) {
 
 func (t *SegmentTest) TestL1SegmentWithInvalidData(c *check.C) {
 	segment := NewL1Segment()
-	_, err := segment.Parse(append([]byte("ERROR"), t.sampleL1Segment...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleL1Segment...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
 func (t *SegmentTest) TestL1SegmentWithInvalidNewConsumerAccountNumber(c *check.C) {
 	segment := L1Segment{}
-	_, err := segment.Parse(t.sampleL1Segment)
+	_, err := segment.Parse(t.sampleL1Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.NewConsumerAccountNumber = "error"
 	segment.ChangeIndicator = ChangeIndicatorIdentificationNumber
@@ -39,7 +40,7 @@ func (t *SegmentTest) TestL1SegmentWithInvalidNewConsumerAccountNumber(c *check.
 
 func (t *SegmentTest) TestL1SegmentWithInvalidNewIdentificationNumber(c *check.C) {
 	segment := L1Segment{}
-	_, err := segment.Parse(t.sampleL1Segment)
+	_, err := segment.Parse(t.sampleL1Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.NewIdentificationNumber = "error"
 	segment.ChangeIndicator = ChangeIndicatorAccountNumber
@@ -50,7 +51,7 @@ func (t *SegmentTest) TestL1SegmentWithInvalidNewIdentificationNumber(c *check.C
 
 func (t *SegmentTest) TestL1SegmentWithInvalidChangeIndicator(c *check.C) {
 	segment := L1Segment{}
-	_, err := segment.Parse(t.sampleL1Segment)
+	_, err := segment.Parse(t.sampleL1Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.ChangeIndicator = 5
 	err = segment.Validate()
@@ -59,6 +60,6 @@ func (t *SegmentTest) TestL1SegmentWithInvalidChangeIndicator(c *check.C) {
 }
 
 func (t *SegmentTest) TestL1SegmentWithInvalidData2(c *check.C) {
-	_, err := NewL1Segment().Parse(t.sampleL1Segment[:16])
+	_, err := NewL1Segment().Parse(t.sampleL1Segment[:16], false)
 	c.Assert(err, check.Not(check.IsNil))
 }

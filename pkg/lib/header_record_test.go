@@ -13,14 +13,14 @@ import (
 
 func TestHeaderRecordErr(t *testing.T) {
 	record := &HeaderRecord{}
-	if _, err := record.Parse([]byte("12345")); err == nil {
+	if _, err := record.Parse([]byte("12345"), false); err == nil {
 		t.Error("expected error")
 	}
 }
 
 func (t *SegmentTest) TestHeaderRecord(c *check.C) {
 	segment := NewHeaderRecord()
-	_, err := segment.Parse(t.sampleHeaderRecord)
+	_, err := segment.Parse(t.sampleHeaderRecord, true)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -35,13 +35,13 @@ func (t *SegmentTest) TestHeaderRecord(c *check.C) {
 
 func (t *SegmentTest) TestHeaderRecordWithInvalidData(c *check.C) {
 	segment := NewHeaderRecord()
-	_, err := segment.Parse(append([]byte("ERROR"), t.sampleHeaderRecord...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleHeaderRecord...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
 func (t *SegmentTest) TestPackedHeaderRecord(c *check.C) {
 	segment := NewPackedHeaderRecord()
-	_, err := segment.Parse(t.samplePackedHeaderRecord)
+	_, err := segment.Parse(t.samplePackedHeaderRecord, false)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -56,6 +56,6 @@ func (t *SegmentTest) TestPackedHeaderRecord(c *check.C) {
 
 func (t *SegmentTest) TestPackedHeaderRecordWithInvalidData(c *check.C) {
 	segment := NewPackedHeaderRecord()
-	_, err := segment.Parse(append([]byte("ERROR"), t.samplePackedHeaderRecord...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.samplePackedHeaderRecord...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }

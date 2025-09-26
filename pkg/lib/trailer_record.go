@@ -172,13 +172,13 @@ func (r *TrailerRecord) Name() string {
 }
 
 // Parse takes the input record string and parses the trailer record values
-func (r *TrailerRecord) Parse(record []byte) (int, error) {
+func (r *TrailerRecord) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < UnpackedRecordLength {
 		return 0, utils.NewErrSegmentLength("trailer record")
 	}
 
 	fields := reflect.ValueOf(r).Elem()
-	length, err := r.parseRecordValues(fields, trailerRecordCharacterFormat, record, &r.validator, "trailer record")
+	length, err := r.parseRecordValues(fields, trailerRecordCharacterFormat, record, &r.validator, "trailer record", isVariableLength)
 	if err != nil {
 		return length, err
 	}
@@ -246,7 +246,7 @@ func (r *PackedTrailerRecord) Name() string {
 }
 
 // Parse takes the input record string and parses the packed trailer record values
-func (r *PackedTrailerRecord) Parse(record []byte) (int, error) {
+func (r *PackedTrailerRecord) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < PackedRecordLength {
 		return 0, utils.NewErrSegmentLength("packed trailer record")
 	}

@@ -1,9 +1,10 @@
 package lib
 
 import (
-	"github.com/moov-io/metro2/pkg/utils"
 	"reflect"
 	"strings"
+
+	"github.com/moov-io/metro2/pkg/utils"
 )
 
 var _ Segment = (*N1Segment)(nil)
@@ -47,13 +48,13 @@ func (s *N1Segment) Name() string {
 }
 
 // Parse takes the input record string and parses the n1 segment values
-func (s *N1Segment) Parse(record []byte) (int, error) {
+func (s *N1Segment) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < N1SegmentLength {
 		return 0, utils.NewErrSegmentLength("n1 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, n1SegmentFormat, record, &s.validator, "n1 segment")
+	length, err := s.parseRecordValues(fields, n1SegmentFormat, record, &s.validator, "n1 segment", isVariableLength)
 	if err != nil {
 		return length, err
 	}

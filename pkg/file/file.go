@@ -30,7 +30,7 @@ type File interface {
 	GetDataRecords() []lib.Record
 	GeneratorTrailer() (lib.Record, error)
 
-	Parse(record []byte) error
+	Parse(record []byte, isVariableLength bool) error
 	Bytes() []byte
 	String(newline bool) string
 	ConcurrentString(newline bool, goroutines int) string
@@ -158,7 +158,7 @@ func (r *Reader) Read() (File, error) {
 	}
 
 	f.Bases = []lib.Record{}
-
+	isVariableLength := false
 	// read through the entire file
 	if r.scanner.Scan() {
 		r.line = r.scanner.Bytes()
@@ -174,9 +174,10 @@ func (r *Reader) Read() (File, error) {
 		}
 
 		f.SetType(fileFormat)
-
+		// only need to set it once based on header record
+		isVariableLength = utils.IsVariableLength(r.line)
 		// Header Record
-		if _, err := f.Header.Parse(r.line); err != nil {
+		if _, err := f.Header.Parse(r.line, isVariableLength); err != nil {
 			return nil, err
 		}
 	} else {
@@ -194,7 +195,7 @@ func (r *Reader) Read() (File, error) {
 			base = lib.NewBaseSegment()
 		}
 
-		_, err := base.Parse(r.line)
+		_, err := base.Parse(r.line, isVariableLength)
 		if err != nil {
 			failedParse = true
 			break
@@ -211,7 +212,7 @@ func (r *Reader) Read() (File, error) {
 		}
 	}
 
-	_, err := f.Trailer.Parse(r.line)
+	_, err := f.Trailer.Parse(r.line, isVariableLength)
 	if err != nil {
 		return nil, err
 	}
@@ -276,6 +277,8 @@ func scanRecord(data []byte, atEOF bool) (advance int, token []byte, err error) 
 	}
 
 	_, bdw, _ := getStripedData(4)
+    fmt.Printf("DEBUG: Raw BDW bytes: %v\n", bdw)
+    fmt.Printf("DEBUG: BDW as string: '%s'\n", string(bdw))
 	// trying to read for unpacked format
 	size, readErr := strconv.ParseInt(string(bdw), 10, 32)
 	if readErr == nil {

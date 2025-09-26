@@ -112,13 +112,13 @@ func (s *J1Segment) Name() string {
 }
 
 // Parse takes the input record string and parses the j1 segment values
-func (s *J1Segment) Parse(record []byte) (int, error) {
+func (s *J1Segment) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < J1SegmentLength {
 		return 0, utils.NewErrSegmentLength("j1 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, j1SegmentFormat, record, &s.validator, "j1 segment")
+	length, err := s.parseRecordValues(fields, j1SegmentFormat, record, &s.validator, "j1 segment", isVariableLength)
 	if err != nil {
 		return length, err
 	}

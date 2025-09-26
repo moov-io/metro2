@@ -45,13 +45,13 @@ func (s *L1Segment) Name() string {
 }
 
 // Parse takes the input record string and parses the l1 segment values
-func (s *L1Segment) Parse(record []byte) (int, error) {
+func (s *L1Segment) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < L1SegmentLength {
 		return 0, utils.NewErrSegmentLength("l1 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, l1SegmentFormat, record, &s.validator, "l1 segment")
+	length, err := s.parseRecordValues(fields, l1SegmentFormat, record, &s.validator, "l1 segment", isVariableLength)
 	if err != nil {
 		return length, err
 	}
