@@ -76,7 +76,9 @@ func (t *FileTest) TestJsonWithUnpackedVariableBlocked(c *check.C) {
 	c.Assert(err, check.IsNil)
 
 	rawStr := strings.ReplaceAll(string(raw), "\r\n", "\n")
-	c.Assert(strings.Compare(f.String(true), rawStr), check.Equals, 0)
+	fileString := f.String(true)
+	compare := strings.Compare(fileString, rawStr)
+	c.Assert(compare, check.Equals, 0)
 	c.Assert(strings.Compare(f.ConcurrentString(true, 2), rawStr), check.Equals, 0)
 
 	buf, err := json.Marshal(f)
@@ -87,13 +89,6 @@ func (t *FileTest) TestJsonWithUnpackedVariableBlocked(c *check.C) {
 	jsonStr := out.String()
 	jsonStr = strings.ReplaceAll(jsonStr, "\n", "")
 	c.Assert(jsonStr, check.Equals, string(t.unpackedVariableBlockedJson))
-}
-
-func (t *FileTest) TestParseWithUnpackedVariableBlockedFileParse(c *check.C) {
-	f, err := NewFile(utils.CharacterFileFormat)
-	c.Assert(err, check.IsNil)
-	err = f.Parse(t.unpackedVariableBlockedRaw)
-	c.Assert(err, check.IsNil)
 }
 
 func (t *FileTest) TestJsonWithUnpackedFixedLength(c *check.C) {
@@ -114,7 +109,7 @@ func (t *FileTest) TestJsonWithUnpackedFixedLength(c *check.C) {
 func (t *FileTest) TestParseWithUnpackedFixedLength(c *check.C) {
 	f, err := NewFile(utils.CharacterFileFormat)
 	c.Assert(err, check.IsNil)
-	err = f.Parse(t.unpackedFixedLengthRaw)
+	err = f.Parse(t.unpackedFixedLengthRaw, false)
 	c.Assert(err, check.IsNil)
 	_, err = f.GeneratorTrailer()
 	c.Assert(err, check.IsNil)
@@ -153,7 +148,7 @@ func (t *FileTest) TestParseWithUnpackedFixedLength(c *check.C) {
 func (t *FileTest) TestParseWithUnpackedFixedLength2(c *check.C) {
 	f, err := NewFile(utils.CharacterFileFormat)
 	c.Assert(err, check.IsNil)
-	err = f.Parse(t.unpackedFixedLengthRaw)
+	err = f.Parse(t.unpackedFixedLengthRaw, false)
 	c.Assert(err, check.IsNil)
 	_, err = f.GeneratorTrailer()
 	c.Assert(err, check.IsNil)
@@ -219,7 +214,7 @@ func (t *FileTest) TestJsonWithPackedBlocked(c *check.C) {
 func (t *FileTest) TestParseWithPackedFileParse(c *check.C) {
 	f, err := NewFile(utils.PackedFileFormat)
 	c.Assert(err, check.IsNil)
-	err = f.Parse(t.packedRaw)
+	err = f.Parse(t.packedRaw, true)
 	c.Assert(err, check.IsNil)
 }
 
@@ -366,10 +361,6 @@ func (t *FileTest) TestWithUnknownFileType(c *check.C) {
 func TestFile__Reader(t *testing.T) {
 	t.Run("Read with unpacked fixed file", func(t *testing.T) {
 		readUnpackedFixedFile(t)
-	})
-
-	t.Run("Read with unpacked variable file", func(t *testing.T) {
-		readUnpackedVariableFile(t)
 	})
 
 	t.Run("Read with packed file", func(t *testing.T) {

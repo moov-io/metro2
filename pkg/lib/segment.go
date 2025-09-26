@@ -7,7 +7,7 @@ package lib
 // General segment interface
 type Segment interface {
 	Name() string
-	Parse([]byte) (int, error)
+	Parse([]byte, bool) (int, error)
 	String() string
 	Bytes() []byte
 	Validate() error

@@ -15,7 +15,7 @@ import (
 
 func (t *SegmentTest) TestJ1Segment(c *check.C) {
 	segment := NewJ1Segment()
-	_, err := segment.Parse(t.sampleJ1Segment)
+	_, err := segment.Parse(t.sampleJ1Segment, false)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -26,7 +26,7 @@ func (t *SegmentTest) TestJ1Segment(c *check.C) {
 
 func (t *SegmentTest) TestJ1SegmentWithInvalidData(c *check.C) {
 	segment := NewJ1Segment()
-	_, err := segment.Parse(append([]byte("ERROR"), t.sampleJ1Segment...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleJ1Segment...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
@@ -52,7 +52,7 @@ func (t *SegmentTest) TestJ1SegmentWithEmptyGenerationCode(c *check.C) {
 
 func (t *SegmentTest) TestJ1SegmentWithInvalidGenerationCode(c *check.C) {
 	segment := J1Segment{}
-	_, err := segment.Parse(t.sampleJ1Segment)
+	_, err := segment.Parse(t.sampleJ1Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.GenerationCode = "0"
 	err = segment.Validate()
@@ -62,7 +62,7 @@ func (t *SegmentTest) TestJ1SegmentWithInvalidGenerationCode(c *check.C) {
 
 func (t *SegmentTest) TestJ1SegmentWithInvalidTelephoneNumber(c *check.C) {
 	segment := &J1Segment{}
-	_, err := segment.Parse(t.sampleJ1Segment)
+	_, err := segment.Parse(t.sampleJ1Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.TelephoneNumber = 0
 	err = segment.Validate()
@@ -70,13 +70,13 @@ func (t *SegmentTest) TestJ1SegmentWithInvalidTelephoneNumber(c *check.C) {
 }
 
 func (t *SegmentTest) TestJ1SegmentWithInvalidData2(c *check.C) {
-	_, err := NewJ1Segment().Parse(t.sampleJ1Segment[:16])
+	_, err := NewJ1Segment().Parse(t.sampleJ1Segment[:16], false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
 func (t *SegmentTest) TestJ1SegmentWithSocialSecurityNumber(c *check.C) {
 	segment := &J1Segment{}
-	_, err := segment.Parse(t.sampleJ1Segment)
+	_, err := segment.Parse(t.sampleJ1Segment, false)
 	c.Assert(err, check.IsNil)
 
 	segment.SocialSecurityNumber = 0
@@ -90,7 +90,7 @@ func (t *SegmentTest) TestJ1SegmentWithSocialSecurityNumber(c *check.C) {
 
 func (t *SegmentTest) TestJ1SegmentWithDateBirth(c *check.C) {
 	segment := &J1Segment{}
-	_, err := segment.Parse(t.sampleJ1Segment)
+	_, err := segment.Parse(t.sampleJ1Segment, false)
 	c.Assert(err, check.IsNil)
 
 	segment.DateBirth = utils.Time{}

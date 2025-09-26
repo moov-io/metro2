@@ -528,13 +528,13 @@ func (r *BaseSegment) Name() string {
 }
 
 // Parse takes the input record string and parses the base segment values
-func (r *BaseSegment) Parse(record []byte) (int, error) {
+func (r *BaseSegment) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < UnpackedRecordLength {
 		return 0, utils.NewErrSegmentLength("base segment")
 	}
 
 	fields := reflect.ValueOf(r).Elem()
-	length, err := r.parseRecordValues(fields, baseSegmentCharacterFormat, record, &r.validator, "base segment")
+	length, err := r.parseRecordValues(fields, baseSegmentCharacterFormat, record, &r.validator, "base segment", isVariableLength)
 	if err != nil {
 		return length, err
 	}
@@ -549,7 +549,7 @@ func (r *BaseSegment) Parse(record []byte) (int, error) {
 	if len(record) < offset {
 		return 0, utils.NewErrSegmentLength("base segment")
 	}
-	read, err := readApplicableSegments(record[offset:], r)
+	read, err := readApplicableSegments(record[offset:], r, isVariableLength)
 	if err != nil {
 		return 0, err
 	}
@@ -573,9 +573,6 @@ func (r *BaseSegment) String() string {
 	specifications := r.toSpecifications(baseSegmentCharacterFormat)
 	fields := reflect.ValueOf(r).Elem()
 	blockSize := r.RecordDescriptorWord
-	if r.BlockDescriptorWord > 0 {
-		blockSize += 4
-	}
 	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
@@ -980,7 +977,7 @@ func (r *PackedBaseSegment) Name() string {
 }
 
 // Parse takes the input record string and parses the packed base segment values
-func (r *PackedBaseSegment) Parse(record []byte) (int, error) {
+func (r *PackedBaseSegment) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < PackedRecordLength {
 		return 0, utils.NewErrSegmentLength("packed base segment")
 	}
@@ -1016,7 +1013,7 @@ func (r *PackedBaseSegment) Parse(record []byte) (int, error) {
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !utils.IsVariableLength(record) {
+					if !isVariableLength {
 						return 0, utils.NewErrBlockDescriptorWord()
 					}
 					offset += 4
@@ -1037,7 +1034,7 @@ func (r *PackedBaseSegment) Parse(record []byte) (int, error) {
 	if len(record) < offset {
 		return 0, utils.NewErrSegmentLength("packed base segment")
 	}
-	read, err := readApplicableSegments(record[offset:], r)
+	read, err := readApplicableSegments(record[offset:], r, isVariableLength)
 	if err != nil {
 		return 0, err
 	}
@@ -1477,7 +1474,7 @@ func (r *PackedBaseSegment) ValidateSpecialComment() error {
 	return utils.NewErrInvalidValueOfField("special comment", "packed base segment")
 }
 
-func readApplicableSegments(record []byte, f Record) (int, error) {
+func readApplicableSegments(record []byte, f Record, isVariableLength bool) (int, error) {
 	var segment Segment
 	offset := 0
 
@@ -1502,7 +1499,7 @@ func readApplicableSegments(record []byte, f Record) (int, error) {
 		default:
 			return offset, nil
 		}
-		read, err := segment.Parse(record[offset:])
+		read, err := segment.Parse(record[offset:], isVariableLength)
 		if err != nil {
 			return 0, err
 		}

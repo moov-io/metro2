@@ -199,7 +199,7 @@ func (f *fileInstance) Validate() error {
 }
 
 // Parse attempts to initialize a *File object assuming the input is valid raw data.
-func (f *fileInstance) Parse(record []byte) error {
+func (f *fileInstance) Parse(record []byte, isVariableLength bool) error {
 
 	// remove new lines
 	record = slices.DeleteFunc(record, func(b byte) bool {
@@ -210,7 +210,7 @@ func (f *fileInstance) Parse(record []byte) error {
 	offset := 0
 
 	// Header Record
-	head, err := f.Header.Parse(record)
+	head, err := f.Header.Parse(record, isVariableLength)
 	if err != nil {
 		return err
 	}
@@ -229,7 +229,7 @@ func (f *fileInstance) Parse(record []byte) error {
 			return utils.NewErrSegmentLength("base record")
 		}
 
-		read, err := base.Parse(record[offset:])
+		read, err := base.Parse(record[offset:], isVariableLength)
 		if err != nil {
 			break
 		}
@@ -241,7 +241,7 @@ func (f *fileInstance) Parse(record []byte) error {
 	if offset <= 0 || len(record) <= offset {
 		return utils.NewErrSegmentLength("trailer record")
 	}
-	tread, err := f.Trailer.Parse(record[offset:])
+	tread, err := f.Trailer.Parse(record[offset:], isVariableLength)
 	if err != nil {
 		return err
 	}

@@ -13,18 +13,18 @@ import (
 
 func TestTrailerRecordErr(t *testing.T) {
 	record := &TrailerRecord{}
-	if _, err := record.Parse([]byte("12345")); err == nil {
+	if _, err := record.Parse([]byte("12345"), false); err == nil {
 		t.Error("expected error")
 	}
 	packedRecord := &PackedTrailerRecord{}
-	if _, err := packedRecord.Parse([]byte("12345")); err == nil {
+	if _, err := packedRecord.Parse([]byte("12345"), false); err == nil {
 		t.Error("expected error")
 	}
 }
 
 func (t *SegmentTest) TestTrailerRecord(c *check.C) {
 	segment := NewTrailerRecord()
-	_, err := segment.Parse(t.sampleTrailerRecord)
+	_, err := segment.Parse(t.sampleTrailerRecord, false)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -39,13 +39,13 @@ func (t *SegmentTest) TestTrailerRecord(c *check.C) {
 
 func (t *SegmentTest) TestTrailerRecordWithInvalidData(c *check.C) {
 	segment := NewTrailerRecord()
-	_, err := segment.Parse(append([]byte("ERROR"), t.sampleTrailerRecord...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleTrailerRecord...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
 func (t *SegmentTest) TestPackedTrailerRecord(c *check.C) {
 	segment := NewPackedTrailerRecord()
-	_, err := segment.Parse(t.samplePackedTrailerRecord)
+	_, err := segment.Parse(t.samplePackedTrailerRecord, false)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -60,6 +60,6 @@ func (t *SegmentTest) TestPackedTrailerRecord(c *check.C) {
 
 func (t *SegmentTest) TestPackedTrailerRecordWithInvalidData(c *check.C) {
 	segment := NewPackedTrailerRecord()
-	_, err := segment.Parse(append([]byte("ERROR"), t.samplePackedTrailerRecord...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.samplePackedTrailerRecord...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }

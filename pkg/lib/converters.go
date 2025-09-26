@@ -116,7 +116,7 @@ func (c *converter) toSpecifications(fieldsFormat map[string]field) []specificat
 }
 
 // parse field with string
-func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]field, record []byte, v *validator, recordName string) (int, error) {
+func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]field, record []byte, v *validator, recordName string, isVariableLength bool) (int, error) {
 	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
@@ -147,7 +147,7 @@ func (c *converter) parseRecordValues(fields reflect.Value, spec map[string]fiel
 			switch value.Interface().(type) {
 			case int, int64:
 				if fieldName == "BlockDescriptorWord" {
-					if !utils.IsVariableLength(record) {
+					if !isVariableLength {
 						continue
 					}
 					offset += 4

@@ -15,7 +15,7 @@ import (
 
 func (t *SegmentTest) TestJ2Segment(c *check.C) {
 	segment := NewJ2Segment()
-	_, err := segment.Parse(t.sampleJ2Segment)
+	_, err := segment.Parse(t.sampleJ2Segment, false)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -26,13 +26,13 @@ func (t *SegmentTest) TestJ2Segment(c *check.C) {
 
 func (t *SegmentTest) TestJ2SegmentWithInvalidData(c *check.C) {
 	segment := NewJ2Segment()
-	_, err := segment.Parse(append([]byte("ERROR"), t.sampleJ2Segment...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleJ2Segment...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
 func (t *SegmentTest) TestJ2SegmentWithInvalidGenerationCode(c *check.C) {
 	segment := J2Segment{}
-	_, err := segment.Parse(t.sampleJ2Segment)
+	_, err := segment.Parse(t.sampleJ2Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.GenerationCode = "0"
 	err = segment.Validate()
@@ -70,7 +70,7 @@ func (t *SegmentTest) TestJ2SegmentWithEmptyGenerationCode(c *check.C) {
 
 func (t *SegmentTest) TestJ2SegmentWithInvalidTelephoneNumber(c *check.C) {
 	segment := &J2Segment{}
-	_, err := segment.Parse(t.sampleJ2Segment)
+	_, err := segment.Parse(t.sampleJ2Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.TelephoneNumber = 0
 	err = segment.Validate()
@@ -79,7 +79,7 @@ func (t *SegmentTest) TestJ2SegmentWithInvalidTelephoneNumber(c *check.C) {
 
 func (t *SegmentTest) TestJ2SegmentWithInvalidAddressIndicator(c *check.C) {
 	segment := J2Segment{}
-	_, err := segment.Parse(t.sampleJ2Segment)
+	_, err := segment.Parse(t.sampleJ2Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.AddressIndicator = "0"
 	err = segment.Validate()
@@ -89,7 +89,7 @@ func (t *SegmentTest) TestJ2SegmentWithInvalidAddressIndicator(c *check.C) {
 
 func (t *SegmentTest) TestJ2SegmentWithInvalidResidenceCode(c *check.C) {
 	segment := J2Segment{}
-	_, err := segment.Parse(t.sampleJ2Segment)
+	_, err := segment.Parse(t.sampleJ2Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.ResidenceCode = "0"
 	err = segment.Validate()
@@ -98,13 +98,13 @@ func (t *SegmentTest) TestJ2SegmentWithInvalidResidenceCode(c *check.C) {
 }
 
 func (t *SegmentTest) TestJ2SegmentWithInvalidData2(c *check.C) {
-	_, err := NewJ2Segment().Parse(t.sampleJ2Segment[:16])
+	_, err := NewJ2Segment().Parse(t.sampleJ2Segment[:16], false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
 func (t *SegmentTest) TestJ2SegmentWithSocialSecurityNumber(c *check.C) {
 	segment := &J2Segment{}
-	_, err := segment.Parse(t.sampleJ2Segment)
+	_, err := segment.Parse(t.sampleJ2Segment, false)
 	c.Assert(err, check.IsNil)
 
 	segment.SocialSecurityNumber = 0
@@ -118,7 +118,7 @@ func (t *SegmentTest) TestJ2SegmentWithSocialSecurityNumber(c *check.C) {
 
 func (t *SegmentTest) TestJ2SegmentWithDateBirth(c *check.C) {
 	segment := &J2Segment{}
-	_, err := segment.Parse(t.sampleJ2Segment)
+	_, err := segment.Parse(t.sampleJ2Segment, false)
 	c.Assert(err, check.IsNil)
 
 	segment.DateBirth = utils.Time{}

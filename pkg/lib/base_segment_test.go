@@ -16,14 +16,14 @@ import (
 
 func TestBaseSegmentErr(t *testing.T) {
 	record := &BaseSegment{}
-	if _, err := record.Parse([]byte("12345")); err == nil {
+	if _, err := record.Parse([]byte("12345"), false); err == nil {
 		t.Error("expected error")
 	}
 }
 
 func (t *SegmentTest) TestBaseSegment(c *check.C) {
 	segment := NewBaseSegment()
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -66,13 +66,13 @@ func (t *SegmentTest) TestBaseSegment(c *check.C) {
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidData(c *check.C) {
 	segment := NewBaseSegment()
-	_, err := segment.Parse(append([]byte("ERROR"), t.sampleBaseSegment...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleBaseSegment...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
 func (t *SegmentTest) TestBaseSegmentWithIdentificationNumber(c *check.C) {
 	segment := &BaseSegment{}
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.IdentificationNumber = ""
 	err = segment.Validate()
@@ -81,7 +81,7 @@ func (t *SegmentTest) TestBaseSegmentWithIdentificationNumber(c *check.C) {
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidPortfolioType(c *check.C) {
 	segment := &BaseSegment{}
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.PortfolioType = "A"
 	err = segment.Validate()
@@ -91,7 +91,7 @@ func (t *SegmentTest) TestBaseSegmentWithInvalidPortfolioType(c *check.C) {
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidTermsDuration(c *check.C) {
 	segment := &BaseSegment{}
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.TermsDuration = "AAA"
 	err = segment.Validate()
@@ -101,7 +101,7 @@ func (t *SegmentTest) TestBaseSegmentWithInvalidTermsDuration(c *check.C) {
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidPaymentHistoryProfile(c *check.C) {
 	segment := &BaseSegment{}
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.PaymentHistoryProfile = "Z"
 	err = segment.Validate()
@@ -111,7 +111,7 @@ func (t *SegmentTest) TestBaseSegmentWithInvalidPaymentHistoryProfile(c *check.C
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidInterestTypeIndicator(c *check.C) {
 	segment := &BaseSegment{}
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.InterestTypeIndicator = "Z"
 	err = segment.Validate()
@@ -121,7 +121,7 @@ func (t *SegmentTest) TestBaseSegmentWithInvalidInterestTypeIndicator(c *check.C
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidTelephoneNumber(c *check.C) {
 	segment := &BaseSegment{}
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.TelephoneNumber = 0
 	err = segment.Validate()
@@ -130,7 +130,7 @@ func (t *SegmentTest) TestBaseSegmentWithInvalidTelephoneNumber(c *check.C) {
 
 func (t *SegmentTest) TestPackedBaseSegment(c *check.C) {
 	segment := NewPackedBaseSegment()
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -173,13 +173,13 @@ func (t *SegmentTest) TestPackedBaseSegment(c *check.C) {
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidData(c *check.C) {
 	segment := NewPackedBaseSegment()
-	_, err := segment.Parse(append([]byte("ERROR"), t.samplePackedBaseSegment...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.samplePackedBaseSegment...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
 func (t *SegmentTest) TestPackedBaseSegmentWithIdentificationNumber(c *check.C) {
 	segment := &PackedBaseSegment{}
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.IdentificationNumber = ""
 	err = segment.Validate()
@@ -188,7 +188,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithIdentificationNumber(c *check.C) 
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidPortfolioType(c *check.C) {
 	segment := &PackedBaseSegment{}
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.PortfolioType = "A"
 	err = segment.Validate()
@@ -198,7 +198,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidPortfolioType(c *check.C) 
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidTermsDuration(c *check.C) {
 	segment := &PackedBaseSegment{}
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.TermsDuration = "AAA"
 	err = segment.Validate()
@@ -208,7 +208,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidTermsDuration(c *check.C) 
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidPaymentHistoryProfile(c *check.C) {
 	segment := &PackedBaseSegment{}
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.PaymentHistoryProfile = "Z"
 	err = segment.Validate()
@@ -218,7 +218,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidPaymentHistoryProfile(c *c
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidInterestTypeIndicator(c *check.C) {
 	segment := &PackedBaseSegment{}
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.InterestTypeIndicator = "Z"
 	err = segment.Validate()
@@ -228,7 +228,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidInterestTypeIndicator(c *c
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidTelephoneNumber(c *check.C) {
 	segment := &PackedBaseSegment{}
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.TelephoneNumber = 0
 	err = segment.Validate()
@@ -294,7 +294,7 @@ func (t *SegmentTest) TestBaseRecordApplicableSingleSegment(c *check.C) {
 
 func (t *SegmentTest) TestBaseSegmentJson(c *check.C) {
 	segment := NewBaseSegment()
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -359,7 +359,7 @@ func (t *SegmentTest) TestPackedBaseRecordApplicableSingleSegment(c *check.C) {
 
 func (t *SegmentTest) TestPackedBaseSegmentJson(c *check.C) {
 	segment := NewPackedBaseSegment()
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -373,7 +373,7 @@ func (t *SegmentTest) TestPackedBaseSegmentJson(c *check.C) {
 
 func (t *SegmentTest) TestBaseSegmentWithSocialSecurityNumber(c *check.C) {
 	segment := &BaseSegment{}
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 
 	segment.SocialSecurityNumber = 0
@@ -387,7 +387,7 @@ func (t *SegmentTest) TestBaseSegmentWithSocialSecurityNumber(c *check.C) {
 
 func (t *SegmentTest) TestBaseSegmentWithDateBirth(c *check.C) {
 	segment := &BaseSegment{}
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 
 	segment.DateBirth = utils.Time{}
@@ -401,7 +401,7 @@ func (t *SegmentTest) TestBaseSegmentWithDateBirth(c *check.C) {
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidAccountStatus(c *check.C) {
 	segment := &BaseSegment{}
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.AccountStatus = "FF"
 	err = segment.Validate()
@@ -411,7 +411,7 @@ func (t *SegmentTest) TestBaseSegmentWithInvalidAccountStatus(c *check.C) {
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidAccountStatus(c *check.C) {
 	segment := &PackedBaseSegment{}
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.AccountStatus = "FF"
 	err = segment.Validate()
@@ -421,7 +421,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidAccountStatus(c *check.C) 
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidAccountType(c *check.C) {
 	segment := &BaseSegment{}
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.AccountType = "FF"
 	err = segment.Validate()
@@ -431,7 +431,7 @@ func (t *SegmentTest) TestBaseSegmentWithInvalidAccountType(c *check.C) {
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidAccountType(c *check.C) {
 	segment := &PackedBaseSegment{}
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.AccountType = "FF"
 	err = segment.Validate()
@@ -441,7 +441,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidAccountType(c *check.C) {
 
 func (t *SegmentTest) TestPackedBaseSegmentWithSocialSecurityNumber(c *check.C) {
 	segment := &PackedBaseSegment{}
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 
 	segment.SocialSecurityNumber = 0
@@ -455,7 +455,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithSocialSecurityNumber(c *check.C) 
 
 func (t *SegmentTest) TestPackedBaseSegmentWithDateBirth(c *check.C) {
 	segment := &PackedBaseSegment{}
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 
 	segment.DateBirth = utils.Time{}
@@ -469,7 +469,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithDateBirth(c *check.C) {
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidSpecialComment(c *check.C) {
 	segment := &BaseSegment{}
-	_, err := segment.Parse(t.sampleBaseSegment)
+	_, err := segment.Parse(t.sampleBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.SpecialComment = "FF"
 	err = segment.Validate()
@@ -479,7 +479,7 @@ func (t *SegmentTest) TestBaseSegmentWithInvalidSpecialComment(c *check.C) {
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidSpecialComment(c *check.C) {
 	segment := &PackedBaseSegment{}
-	_, err := segment.Parse(t.samplePackedBaseSegment)
+	_, err := segment.Parse(t.samplePackedBaseSegment, true)
 	c.Assert(err, check.IsNil)
 	segment.SpecialComment = "FF"
 	err = segment.Validate()

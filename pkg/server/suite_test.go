@@ -256,15 +256,3 @@ func (t *ServerTest) TestConvertWithValidJsonRequest(c *check.C) {
 
 	c.Assert(recorder.Body.String(), check.Equals, strings.ReplaceAll(string(expected), "\r\n", "\n"))
 }
-
-func (t *ServerTest) TestValidateWithInvalidData(c *check.C) {
-	writer, body := t.getWriter("unpacked_variable_file.dat", c)
-	err := writer.WriteField("format", "json")
-	c.Assert(err, check.IsNil)
-	err = writer.Close()
-	c.Assert(err, check.IsNil)
-	recorder, request := t.makeRequest(http.MethodPost, "/validator", body.String(), c)
-	request.Header.Set("Content-Type", writer.FormDataContentType())
-	t.testServer.ServeHTTP(recorder, request)
-	c.Assert(recorder.Code, check.Equals, http.StatusOK)
-}

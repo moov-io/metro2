@@ -109,13 +109,13 @@ func (r *HeaderRecord) Name() string {
 }
 
 // Parse takes the input record string and parses the header record values
-func (r *HeaderRecord) Parse(record []byte) (int, error) {
+func (r *HeaderRecord) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < UnpackedRecordLength {
 		return 0, utils.NewErrSegmentLength("header record")
 	}
 
 	fields := reflect.ValueOf(r).Elem()
-	length, err := r.parseRecordValues(fields, headerRecordCharacterFormat, record, &r.validator, "header record")
+	length, err := r.parseRecordValues(fields, headerRecordCharacterFormat, record, &r.validator, "header record", isVariableLength)
 	if err != nil {
 		return length, err
 	}
@@ -183,7 +183,7 @@ func (r *PackedHeaderRecord) Name() string {
 }
 
 // Parse takes the input record string and parses the packed header record values
-func (r *PackedHeaderRecord) Parse(record []byte) (int, error) {
+func (r *PackedHeaderRecord) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < PackedRecordLength {
 		return 0, utils.NewErrSegmentLength("packed header record")
 	}

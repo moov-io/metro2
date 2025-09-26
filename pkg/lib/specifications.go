@@ -276,7 +276,7 @@ var (
 		"SegmentIdentifier":            {0, 2, alphanumeric, required},
 		"Reserved1":                    {2, 1, alphanumeric, nullable},
 		"Surname":                      {3, 25, alphanumeric, required},
-		"FirstName":                    {28, 20, alphanumeric, required},
+		"FirstName":                    {28, 20, alphanumeric, nullable},
 		"MiddleName":                   {48, 20, alphanumeric, applicable},
 		"GenerationCode":               {68, 1, alphanumeric, applicable},
 		"SocialSecurityNumber":         {69, 9, numeric, nullable},

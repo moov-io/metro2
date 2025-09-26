@@ -2,12 +2,13 @@ package lib
 
 import (
 	"bytes"
+
 	"gopkg.in/check.v1"
 )
 
 func (t *SegmentTest) TestN1Segment(c *check.C) {
 	segment := NewN1Segment()
-	_, err := segment.Parse(t.sampleN1Segment)
+	_, err := segment.Parse(t.sampleN1Segment, false)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -18,9 +19,9 @@ func (t *SegmentTest) TestN1Segment(c *check.C) {
 
 func (t *SegmentTest) TestN1SegmentWithInvalidData(c *check.C) {
 	segment := NewN1Segment()
-	_, err := segment.Parse(t.sampleN1Segment[2:])
+	_, err := segment.Parse(t.sampleN1Segment[2:], false)
 	c.Assert(err, check.Not(check.IsNil))
 
-	_, err = segment.Parse(t.sampleN1Segment[:16])
+	_, err = segment.Parse(t.sampleN1Segment[:16], false)
 	c.Assert(err, check.Not(check.IsNil))
 }
