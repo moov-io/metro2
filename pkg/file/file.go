@@ -30,7 +30,7 @@ type File interface {
 	GetDataRecords() []lib.Record
 	GeneratorTrailer() (lib.Record, error)
 
-	Parse(record []byte) error
+	Parse(record []byte, isVariableLength bool) error
 	Bytes() []byte
 	String(newline bool) string
 	ConcurrentString(newline bool, goroutines int) string
@@ -158,7 +158,7 @@ func (r *Reader) Read() (File, error) {
 	}
 
 	f.Bases = []lib.Record{}
-
+	var isVariableLength bool
 	// read through the entire file
 	if r.scanner.Scan() {
 		r.line = r.scanner.Bytes()
@@ -174,9 +174,10 @@ func (r *Reader) Read() (File, error) {
 		}
 
 		f.SetType(fileFormat)
-
+		// only need to set it once based on header record
+		isVariableLength = utils.IsVariableLength(r.line)
 		// Header Record
-		if _, err := f.Header.Parse(r.line); err != nil {
+		if _, err := f.Header.Parse(r.line, isVariableLength); err != nil {
 			return nil, err
 		}
 	} else {
@@ -194,7 +195,7 @@ func (r *Reader) Read() (File, error) {
 			base = lib.NewBaseSegment()
 		}
 
-		_, err := base.Parse(r.line)
+		_, err := base.Parse(r.line, isVariableLength)
 		if err != nil {
 			failedParse = true
 			break
@@ -211,7 +212,7 @@ func (r *Reader) Read() (File, error) {
 		}
 	}
 
-	_, err := f.Trailer.Parse(r.line)
+	_, err := f.Trailer.Parse(r.line, isVariableLength)
 	if err != nil {
 		return nil, err
 	}

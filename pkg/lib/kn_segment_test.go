@@ -6,12 +6,13 @@ package lib
 
 import (
 	"bytes"
+
 	"gopkg.in/check.v1"
 )
 
 func (t *SegmentTest) TestK1Segment(c *check.C) {
 	segment := NewK1Segment()
-	_, err := segment.Parse(t.sampleK1Segment)
+	_, err := segment.Parse(t.sampleK1Segment, false)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -22,13 +23,13 @@ func (t *SegmentTest) TestK1Segment(c *check.C) {
 
 func (t *SegmentTest) TestK1SegmentWithInvalidData(c *check.C) {
 	segment := NewK1Segment()
-	_, err := segment.Parse(append([]byte("ERROR"), t.sampleK1Segment...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleK1Segment...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
 func (t *SegmentTest) TestPackedK1SegmentWithInvalidCreditorClassification(c *check.C) {
 	segment := &K1Segment{}
-	_, err := segment.Parse(t.sampleK1Segment)
+	_, err := segment.Parse(t.sampleK1Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.CreditorClassification = 22
 	err = segment.Validate()
@@ -38,7 +39,7 @@ func (t *SegmentTest) TestPackedK1SegmentWithInvalidCreditorClassification(c *ch
 
 func (t *SegmentTest) TestK2Segment(c *check.C) {
 	segment := NewK2Segment()
-	_, err := segment.Parse(t.sampleK2Segment)
+	_, err := segment.Parse(t.sampleK2Segment, false)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -49,13 +50,13 @@ func (t *SegmentTest) TestK2Segment(c *check.C) {
 
 func (t *SegmentTest) TestK2SegmentWithInvalidData(c *check.C) {
 	segment := NewK2Segment()
-	_, err := segment.Parse(append([]byte("ERROR"), t.sampleK2Segment...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleK2Segment...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
 func (t *SegmentTest) TestK2SegmentWithInvalidPurchasedIndicator(c *check.C) {
 	segment := &K2Segment{}
-	_, err := segment.Parse(t.sampleK2Segment)
+	_, err := segment.Parse(t.sampleK2Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.PurchasedIndicator = 3
 	err = segment.Validate()
@@ -65,7 +66,7 @@ func (t *SegmentTest) TestK2SegmentWithInvalidPurchasedIndicator(c *check.C) {
 
 func (t *SegmentTest) TestK2SegmentWithInvalidPurchasedName(c *check.C) {
 	segment := &K2Segment{}
-	_, err := segment.Parse(t.sampleK2Segment)
+	_, err := segment.Parse(t.sampleK2Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.PurchasedName = "err"
 	segment.PurchasedIndicator = PurchasedIndicatorRemove
@@ -76,7 +77,7 @@ func (t *SegmentTest) TestK2SegmentWithInvalidPurchasedName(c *check.C) {
 
 func (t *SegmentTest) TestK3Segment(c *check.C) {
 	segment := NewK3Segment()
-	_, err := segment.Parse(t.sampleK3Segment)
+	_, err := segment.Parse(t.sampleK3Segment, false)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -87,13 +88,13 @@ func (t *SegmentTest) TestK3Segment(c *check.C) {
 
 func (t *SegmentTest) TestK3SegmentWithInvalidData(c *check.C) {
 	segment := NewK3Segment()
-	_, err := segment.Parse(append([]byte("ERROR"), t.sampleK3Segment...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleK3Segment...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
 func (t *SegmentTest) TestK3SegmentWithInvalidAgencyIdentifier(c *check.C) {
 	segment := &K3Segment{}
-	_, err := segment.Parse(t.sampleK3Segment)
+	_, err := segment.Parse(t.sampleK3Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.AgencyIdentifier = 5
 	err = segment.Validate()
@@ -103,7 +104,7 @@ func (t *SegmentTest) TestK3SegmentWithInvalidAgencyIdentifier(c *check.C) {
 
 func (t *SegmentTest) TestK3SegmentWithInvalidAccountNumber(c *check.C) {
 	segment := &K3Segment{}
-	_, err := segment.Parse(t.sampleK3Segment)
+	_, err := segment.Parse(t.sampleK3Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.AccountNumber = "error"
 	segment.AgencyIdentifier = AgencyIdentifierNotApplicable
@@ -114,7 +115,7 @@ func (t *SegmentTest) TestK3SegmentWithInvalidAccountNumber(c *check.C) {
 
 func (t *SegmentTest) TestK4Segment(c *check.C) {
 	segment := NewK4Segment()
-	_, err := segment.Parse(t.sampleK4Segment)
+	_, err := segment.Parse(t.sampleK4Segment, false)
 	c.Assert(err, check.IsNil)
 	err = segment.Validate()
 	c.Assert(err, check.IsNil)
@@ -125,13 +126,13 @@ func (t *SegmentTest) TestK4Segment(c *check.C) {
 
 func (t *SegmentTest) TestK4SegmentWithInvalidData(c *check.C) {
 	segment := NewK4Segment()
-	_, err := segment.Parse(append([]byte("ERROR"), t.sampleK4Segment...))
+	_, err := segment.Parse(append([]byte("ERROR"), t.sampleK4Segment...), false)
 	c.Assert(err, check.Not(check.IsNil))
 }
 
 func (t *SegmentTest) TestK4SegmentWithInvalidSpecializedPaymentIndicator(c *check.C) {
 	segment := &K4Segment{}
-	_, err := segment.Parse(t.sampleK4Segment)
+	_, err := segment.Parse(t.sampleK4Segment, false)
 	c.Assert(err, check.IsNil)
 	segment.SpecializedPaymentIndicator = 3
 	err = segment.Validate()
@@ -140,12 +141,12 @@ func (t *SegmentTest) TestK4SegmentWithInvalidSpecializedPaymentIndicator(c *che
 }
 
 func (t *SegmentTest) TestNSegmentWithInvalidData(c *check.C) {
-	_, err := NewK1Segment().Parse(t.sampleK1Segment[:16])
+	_, err := NewK1Segment().Parse(t.sampleK1Segment[:16], false)
 	c.Assert(err, check.Not(check.IsNil))
-	_, err = NewK2Segment().Parse(t.sampleK2Segment[:16])
+	_, err = NewK2Segment().Parse(t.sampleK2Segment[:16], false)
 	c.Assert(err, check.Not(check.IsNil))
-	_, err = NewK3Segment().Parse(t.sampleK3Segment[:16])
+	_, err = NewK3Segment().Parse(t.sampleK3Segment[:16], false)
 	c.Assert(err, check.Not(check.IsNil))
-	_, err = NewK4Segment().Parse(t.sampleK4Segment[:16])
+	_, err = NewK4Segment().Parse(t.sampleK4Segment[:16], false)
 	c.Assert(err, check.Not(check.IsNil))
 }

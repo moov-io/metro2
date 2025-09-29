@@ -67,13 +67,13 @@ func (s *K1Segment) Name() string {
 }
 
 // Parse takes the input record string and parses the k1 segment values
-func (s *K1Segment) Parse(record []byte) (int, error) {
+func (s *K1Segment) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < K1SegmentLength {
 		return 0, utils.NewErrSegmentLength("k1 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, k1SegmentFormat, record, &s.validator, "k1 segment")
+	length, err := s.parseRecordValues(fields, k1SegmentFormat, record, &s.validator, "k1 segment", isVariableLength)
 	if err != nil {
 		return length, err
 	}
@@ -148,13 +148,13 @@ func (s *K2Segment) Name() string {
 }
 
 // Parse takes the input record string and parses the k2 segment values
-func (s *K2Segment) Parse(record []byte) (int, error) {
+func (s *K2Segment) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < K2SegmentLength {
 		return 0, utils.NewErrSegmentLength("k2 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, k2SegmentFormat, record, &s.validator, "k2 segment")
+	length, err := s.parseRecordValues(fields, k2SegmentFormat, record, &s.validator, "k2 segment", isVariableLength)
 	if err != nil {
 		return length, err
 	}
@@ -241,13 +241,13 @@ func (s *K3Segment) Name() string {
 }
 
 // Parse takes the input record string and parses the k3 segment values
-func (s *K3Segment) Parse(record []byte) (int, error) {
+func (s *K3Segment) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < K3SegmentLength {
 		return 0, utils.NewErrSegmentLength("k3 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, k3SegmentFormat, record, &s.validator, "k3 segment")
+	length, err := s.parseRecordValues(fields, k3SegmentFormat, record, &s.validator, "k3 segment", isVariableLength)
 	if err != nil {
 		return length, err
 	}
@@ -335,13 +335,13 @@ func (s *K4Segment) Name() string {
 }
 
 // Parse takes the input record string and parses the k4 segment values
-func (s *K4Segment) Parse(record []byte) (int, error) {
+func (s *K4Segment) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < K4SegmentLength {
 		return 0, utils.NewErrSegmentLength("k4 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, k4SegmentFormat, record, &s.validator, "k4 segment")
+	length, err := s.parseRecordValues(fields, k4SegmentFormat, record, &s.validator, "k4 segment", isVariableLength)
 	if err != nil {
 		return length, err
 	}

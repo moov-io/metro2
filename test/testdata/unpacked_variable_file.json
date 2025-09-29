@@ -15,6 +15,7 @@
   "data": [
     {
       "base": {
+        "blockDescriptorWord": 426,
         "recordDescriptorWord": 1000,
         "processingIndicator": 1,
         "timeStamp": "2020-01-01T01:11:22Z",

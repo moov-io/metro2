@@ -168,13 +168,13 @@ func (s *J2Segment) Name() string {
 }
 
 // Parse takes the input record string and parses the j2 segment values
-func (s *J2Segment) Parse(record []byte) (int, error) {
+func (s *J2Segment) Parse(record []byte, isVariableLength bool) (int, error) {
 	if len(record) < J2SegmentLength {
 		return 0, utils.NewErrSegmentLength("j2 segment")
 	}
 
 	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, j2SegmentFormat, record, &s.validator, "j2 segment")
+	length, err := s.parseRecordValues(fields, j2SegmentFormat, record, &s.validator, "j2 segment", isVariableLength)
 	if err != nil {
 		return length, err
 	}
@@ -234,7 +234,7 @@ func (s *J2Segment) ValidateAddressIndicator() error {
 	switch s.AddressIndicator {
 	case AddressIndicatorConfirmed, AddressIndicatorKnown, AddressIndicatorNotConfirmed, AddressIndicatorMilitary,
 		AddressIndicatorSecondary, AddressIndicatorBusiness, AddressIndicatorNonDeliverable,
-		AddressIndicatorData, AddressIndicatorBill, blankString:
+		AddressIndicatorData, AddressIndicatorBill, blankString, "":
 		return nil
 	}
 	return utils.NewErrInvalidValueOfField("address indicator", "j2 segment")
@@ -243,7 +243,7 @@ func (s *J2Segment) ValidateAddressIndicator() error {
 // validation of residence code
 func (s *J2Segment) ValidateResidenceCode() error {
 	switch s.ResidenceCode {
-	case ResidenceCodeOwns, ResidenceCodeRents, blankString:
+	case ResidenceCodeOwns, ResidenceCodeRents, blankString, "":
 		return nil
 	}
 	return utils.NewErrInvalidValueOfField("residence code", "j2 segment")
