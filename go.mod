@@ -5,7 +5,8 @@ go 1.23.0
 toolchain go1.25.1
 
 require (
-	github.com/ccoveille/go-safecast v1.6.1
+	github.com/ccoveille/go-safecast v1.8.2
+	github.com/ccoveille/go-safecast/v2 v2.0.0
 	github.com/gorilla/mux v1.8.1
 	github.com/moov-io/base v0.57.1
 	github.com/spf13/cobra v1.10.1
