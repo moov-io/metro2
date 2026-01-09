@@ -307,7 +307,8 @@ func (f *fileInstance) ConcurrentString(isNewLine bool, goroutines int) string {
 			var data strings.Builder
 			data.Grow(len(page) * recordLength)
 			for _, base := range page {
-				data.WriteString(base.String() + newLine)
+				data.WriteString(base.String())
+				data.WriteString(newLine)
 			}
 			dataPages[idx] = data.String()
 		}(i, page)
