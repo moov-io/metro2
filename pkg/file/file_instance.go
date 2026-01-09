@@ -271,8 +271,6 @@ func (f *fileInstance) ConcurrentString(isNewLine bool, goroutines int) string {
 		goroutines = 1
 	}
 
-	var buf strings.Builder
-
 	newLine := ""
 	if isNewLine {
 		newLine = "\n"
@@ -282,10 +280,8 @@ func (f *fileInstance) ConcurrentString(isNewLine bool, goroutines int) string {
 	header := f.Header.String() + newLine
 
 	// Data Block
-	data := ""
 	pageSize := int(math.Ceil(float64(len(f.Bases)) / float64(goroutines)))
 	basePages := [][]lib.Record{}
-	dataPages := make([]string, goroutines)
 	for i := 0; i < len(f.Bases); i += pageSize {
 		end := i + pageSize
 		if end > len(f.Bases) {
@@ -293,29 +289,46 @@ func (f *fileInstance) ConcurrentString(isNewLine bool, goroutines int) string {
 		}
 		basePages = append(basePages, f.Bases[i:end])
 	}
+
+	// Determine record length based on file format for better pre-allocation
+	recordLength := lib.UnpackedRecordLength
+	if f.format == utils.PackedFileFormat {
+		recordLength = lib.PackedRecordLength
+	}
+	recordLength += len(newLine)
+
+	dataPages := make([]string, len(basePages))
 	var wg sync.WaitGroup
 	for i, page := range basePages {
 		wg.Add(1)
 		go func(idx int, page []lib.Record) {
 			defer wg.Done()
-			data := ""
+			var data strings.Builder
+			data.Grow(len(page) * recordLength)
 			for _, base := range page {
-				data += base.String() + newLine
+				data.WriteString(base.String())
+				data.WriteString(newLine)
 			}
-			dataPages[idx] = data
+			dataPages[idx] = data.String()
 		}(i, page)
 	}
 	wg.Wait()
-	for _, page := range dataPages {
-		data += page
-	}
 
 	// Trailer Block
 	trailer := f.Trailer.String()
 
-	buf.Grow(len(header) + len(data) + len(trailer))
+	// Combine Blocks
+	var buf strings.Builder
+	dataLength := 0
+	for _, page := range dataPages {
+		dataLength += len(page)
+	}
+	buf.Grow(len(header) + dataLength + len(trailer))
+
 	buf.WriteString(header)
-	buf.WriteString(data)
+	for _, page := range dataPages {
+		buf.WriteString(page)
+	}
 	buf.WriteString(trailer)
 
 	return buf.String()
