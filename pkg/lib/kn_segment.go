@@ -5,9 +5,6 @@
 package lib
 
 import (
-	"reflect"
-	"strings"
-
 	"github.com/moov-io/metro2/pkg/utils"
 )
 
@@ -68,31 +65,12 @@ func (s *K1Segment) Name() string {
 
 // Parse takes the input record string and parses the k1 segment values
 func (s *K1Segment) Parse(record []byte, isVariableLength bool) (int, error) {
-	if len(record) < K1SegmentLength {
-		return 0, utils.NewErrSegmentLength("k1 segment")
-	}
-
-	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, k1SegmentFormat, record, &s.validator, "k1 segment", isVariableLength)
-	if err != nil {
-		return length, err
-	}
-
-	return K1SegmentLength, nil
+	return s.parseSegmentData(s, K1SegmentLength, k1SegmentFormat, record, &s.validator, "k1 segment", isVariableLength)
 }
 
 // String writes the k1 segment struct to a 34 character string.
 func (s *K1Segment) String() string {
-	var buf strings.Builder
-	specifications := s.toSpecifications(k1SegmentFormat)
-	fields := reflect.ValueOf(s).Elem()
-	buf.Grow(K1SegmentLength)
-	for _, spec := range specifications {
-		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
-		buf.WriteString(value)
-	}
-
-	return buf.String()
+	return s.stringSegmentData(s, K1SegmentLength, k1SegmentFormat)
 }
 
 // Bytes return raw byte array
@@ -149,31 +127,12 @@ func (s *K2Segment) Name() string {
 
 // Parse takes the input record string and parses the k2 segment values
 func (s *K2Segment) Parse(record []byte, isVariableLength bool) (int, error) {
-	if len(record) < K2SegmentLength {
-		return 0, utils.NewErrSegmentLength("k2 segment")
-	}
-
-	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, k2SegmentFormat, record, &s.validator, "k2 segment", isVariableLength)
-	if err != nil {
-		return length, err
-	}
-
-	return K2SegmentLength, nil
+	return s.parseSegmentData(s, K2SegmentLength, k2SegmentFormat, record, &s.validator, "k2 segment", isVariableLength)
 }
 
 // String writes the k2 segment struct to a 34 character string.
 func (s *K2Segment) String() string {
-	var buf strings.Builder
-	specifications := s.toSpecifications(k2SegmentFormat)
-	fields := reflect.ValueOf(s).Elem()
-	buf.Grow(K2SegmentLength)
-	for _, spec := range specifications {
-		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
-		buf.WriteString(value)
-	}
-
-	return buf.String()
+	return s.stringSegmentData(s, K2SegmentLength, k2SegmentFormat)
 }
 
 // Bytes return raw byte array
@@ -242,17 +201,7 @@ func (s *K3Segment) Name() string {
 
 // Parse takes the input record string and parses the k3 segment values
 func (s *K3Segment) Parse(record []byte, isVariableLength bool) (int, error) {
-	if len(record) < K3SegmentLength {
-		return 0, utils.NewErrSegmentLength("k3 segment")
-	}
-
-	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, k3SegmentFormat, record, &s.validator, "k3 segment", isVariableLength)
-	if err != nil {
-		return length, err
-	}
-
-	return K3SegmentLength, nil
+	return s.parseSegmentData(s, K3SegmentLength, k3SegmentFormat, record, &s.validator, "k3 segment", isVariableLength)
 }
 
 // Bytes return raw byte array
@@ -262,16 +211,7 @@ func (s *K3Segment) Bytes() []byte {
 
 // String writes the k3 segment struct to a 40 character string.
 func (s *K3Segment) String() string {
-	var buf strings.Builder
-	specifications := s.toSpecifications(k3SegmentFormat)
-	fields := reflect.ValueOf(s).Elem()
-	buf.Grow(K3SegmentLength)
-	for _, spec := range specifications {
-		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
-		buf.WriteString(value)
-	}
-
-	return buf.String()
+	return s.stringSegmentData(s, K3SegmentLength, k3SegmentFormat)
 }
 
 // Validate performs some checks on the record and returns an error if not Validated
@@ -336,17 +276,7 @@ func (s *K4Segment) Name() string {
 
 // Parse takes the input record string and parses the k4 segment values
 func (s *K4Segment) Parse(record []byte, isVariableLength bool) (int, error) {
-	if len(record) < K4SegmentLength {
-		return 0, utils.NewErrSegmentLength("k4 segment")
-	}
-
-	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, k4SegmentFormat, record, &s.validator, "k4 segment", isVariableLength)
-	if err != nil {
-		return length, err
-	}
-
-	return K4SegmentLength, nil
+	return s.parseSegmentData(s, K4SegmentLength, k4SegmentFormat, record, &s.validator, "k4 segment", isVariableLength)
 }
 
 // Bytes return raw byte array
@@ -356,16 +286,7 @@ func (s *K4Segment) Bytes() []byte {
 
 // String writes the k4 segment struct to a 30 character string.
 func (s *K4Segment) String() string {
-	var buf strings.Builder
-	specifications := s.toSpecifications(k4SegmentFormat)
-	fields := reflect.ValueOf(s).Elem()
-	buf.Grow(K4SegmentLength)
-	for _, spec := range specifications {
-		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
-		buf.WriteString(value)
-	}
-
-	return buf.String()
+	return s.stringSegmentData(s, K4SegmentLength, k4SegmentFormat)
 }
 
 // Validate performs some checks on the record and returns an error if not Validated

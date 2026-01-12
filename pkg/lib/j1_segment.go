@@ -5,9 +5,6 @@
 package lib
 
 import (
-	"reflect"
-	"strings"
-
 	"github.com/moov-io/metro2/pkg/utils"
 )
 
@@ -113,31 +110,12 @@ func (s *J1Segment) Name() string {
 
 // Parse takes the input record string and parses the j1 segment values
 func (s *J1Segment) Parse(record []byte, isVariableLength bool) (int, error) {
-	if len(record) < J1SegmentLength {
-		return 0, utils.NewErrSegmentLength("j1 segment")
-	}
-
-	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, j1SegmentFormat, record, &s.validator, "j1 segment", isVariableLength)
-	if err != nil {
-		return length, err
-	}
-
-	return J1SegmentLength, nil
+	return s.parseSegmentData(s, J1SegmentLength, j1SegmentFormat, record, &s.validator, "j1 segment", isVariableLength)
 }
 
 // String writes the j1 segment struct to a 100 character string.
 func (s *J1Segment) String() string {
-	var buf strings.Builder
-	specifications := s.toSpecifications(j1SegmentFormat)
-	fields := reflect.ValueOf(s).Elem()
-	buf.Grow(J1SegmentLength)
-	for _, spec := range specifications {
-		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
-		buf.WriteString(value)
-	}
-
-	return buf.String()
+	return s.stringSegmentData(s, J1SegmentLength, j1SegmentFormat)
 }
 
 // Bytes return raw byte array

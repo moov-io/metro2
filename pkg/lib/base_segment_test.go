@@ -193,7 +193,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidPortfolioType(c *check.C) 
 	segment.PortfolioType = "A"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "portfolio type in packed base segment has an invalid value")
+	c.Assert(err.Error(), check.DeepEquals, "portfolio type in base segment has an invalid value")
 }
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidTermsDuration(c *check.C) {
@@ -203,7 +203,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidTermsDuration(c *check.C) 
 	segment.TermsDuration = "AAA"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "terms duration in packed base segment has an invalid value")
+	c.Assert(err.Error(), check.DeepEquals, "terms duration in base segment has an invalid value")
 }
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidPaymentHistoryProfile(c *check.C) {
@@ -213,7 +213,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidPaymentHistoryProfile(c *c
 	segment.PaymentHistoryProfile = "Z"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "payment history profile in packed base segment has an invalid value")
+	c.Assert(err.Error(), check.DeepEquals, "payment history profile in base segment has an invalid value")
 }
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidInterestTypeIndicator(c *check.C) {
@@ -223,7 +223,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidInterestTypeIndicator(c *c
 	segment.InterestTypeIndicator = "Z"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "interest type indicator in packed base segment has an invalid value")
+	c.Assert(err.Error(), check.DeepEquals, "interest type indicator in base segment has an invalid value")
 }
 
 func (t *SegmentTest) TestPackedBaseSegmentWithInvalidTelephoneNumber(c *check.C) {
@@ -416,7 +416,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidAccountStatus(c *check.C) 
 	segment.AccountStatus = "FF"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "account status in packed base segment has an invalid value")
+	c.Assert(err.Error(), check.DeepEquals, "account status in base segment has an invalid value")
 }
 
 func (t *SegmentTest) TestBaseSegmentWithInvalidAccountType(c *check.C) {
@@ -436,7 +436,7 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidAccountType(c *check.C) {
 	segment.AccountType = "FF"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "account type in packed base segment has an invalid value")
+	c.Assert(err.Error(), check.DeepEquals, "account type in base segment has an invalid value")
 }
 
 func (t *SegmentTest) TestPackedBaseSegmentWithSocialSecurityNumber(c *check.C) {
@@ -484,5 +484,5 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidSpecialComment(c *check.C)
 	segment.SpecialComment = "FF"
 	err = segment.Validate()
 	c.Assert(err, check.Not(check.IsNil))
-	c.Assert(err.Error(), check.DeepEquals, "special comment in packed base segment has an invalid value")
+	c.Assert(err.Error(), check.DeepEquals, "special comment in base segment has an invalid value")
 }

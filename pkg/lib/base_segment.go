@@ -20,8 +20,10 @@ var _ Segment = (*BaseSegment)(nil)
 var _ Record = (*PackedBaseSegment)(nil)
 var _ Segment = (*PackedBaseSegment)(nil)
 
-// BaseSegment holds the base segment
-type BaseSegment struct {
+// baseSegmentCore contains all shared data fields and methods for both
+// character and packed base segment formats. This eliminates code duplication
+// between BaseSegment and PackedBaseSegment.
+type baseSegmentCore struct {
 	// Contains a value equal to the length of the block of data and must be reported when using the packed format or
 	// when reporting variable length records.  This value includes the four bytes reserved for this field.
 	// Report the standard IBM variable record length conventions.
@@ -505,10 +507,17 @@ type BaseSegment struct {
 	validator
 }
 
-// PackedBaseSegment holds the packed base segment
-type PackedBaseSegment BaseSegment
+// BaseSegment holds the base segment (character format)
+type BaseSegment struct {
+	baseSegmentCore
+}
 
-type baseJson BaseSegment
+// PackedBaseSegment holds the packed base segment
+type PackedBaseSegment struct {
+	baseSegmentCore
+}
+
+type baseJson baseSegmentCore
 
 type dataRecordJson struct {
 	Base       baseJson  `json:"base,omitempty"`
@@ -533,8 +542,8 @@ func (r *BaseSegment) Parse(record []byte, isVariableLength bool) (int, error) {
 		return 0, utils.NewErrSegmentLength("base segment")
 	}
 
-	fields := reflect.ValueOf(r).Elem()
-	length, err := r.parseRecordValues(fields, baseSegmentCharacterFormat, record, &r.validator, "base segment", isVariableLength)
+	fields := reflect.ValueOf(&r.baseSegmentCore).Elem()
+	length, err := r.parseRecordValues(fields, baseSegmentCharacterFormat, record, &r.baseSegmentCore.validator, "base segment", isVariableLength)
 	if err != nil {
 		return length, err
 	}
@@ -571,7 +580,7 @@ func (r *BaseSegment) Parse(record []byte, isVariableLength bool) (int, error) {
 func (r *BaseSegment) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(baseSegmentCharacterFormat)
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.baseSegmentCore).Elem()
 	blockSize := r.RecordDescriptorWord
 	buf.Grow(blockSize)
 	for _, spec := range specifications {
@@ -620,7 +629,7 @@ func (r *BaseSegment) Bytes() []byte {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (r *BaseSegment) Validate() error {
-	if err := r.validateRecord(r, baseSegmentCharacterFormat, "base segment"); err != nil {
+	if err := r.validateRecord(&r.baseSegmentCore, baseSegmentCharacterFormat, "base segment"); err != nil {
 		return err
 	}
 	return nil
@@ -637,7 +646,7 @@ func (r *BaseSegment) Length() int {
 }
 
 // GetSegments returns list of applicable segments by segment name
-func (r *BaseSegment) GetSegments(name string) []Segment {
+func (r *baseSegmentCore) GetSegments(name string) []Segment {
 	var ret []Segment
 	switch name {
 	case J1SegmentName:
@@ -681,7 +690,7 @@ func (r *BaseSegment) GetSegments(name string) []Segment {
 }
 
 // AddApplicableSegment will add new applicable segment into record
-func (r *BaseSegment) AddApplicableSegment(s Segment) error {
+func (r *baseSegmentCore) AddApplicableSegment(s Segment) error {
 	err := s.Validate()
 	if err != nil {
 		return err
@@ -709,7 +718,7 @@ func (r *BaseSegment) AddApplicableSegment(s Segment) error {
 }
 
 // MarshalJSON returns JSON blob
-func (r *BaseSegment) MarshalJSON() ([]byte, error) {
+func (r *baseSegmentCore) MarshalJSON() ([]byte, error) {
 	dummy := dataRecordJson{}
 	base := baseJson{}
 
@@ -738,8 +747,7 @@ func (r *BaseSegment) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON parses a JSON blob
-func (r *BaseSegment) UnmarshalJSON(data []byte) error {
-
+func (r *baseSegmentCore) UnmarshalJSON(data []byte) error {
 	dummy := make(map[string]interface{})
 	if err := json.Unmarshal(data, &dummy); err != nil {
 		return fmt.Errorf("invalid json format (%s)", err.Error())
@@ -782,13 +790,13 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 				if parseErr != nil {
 					return parseErr
 				}
-				parseErr = unmarshalApplicableSegments(key, subBuf, r)
+				parseErr = r.unmarshalApplicableSegment(key, subBuf)
 				if parseErr != nil {
 					return parseErr
 				}
 			}
 		default:
-			err = unmarshalApplicableSegments(key, buf, r)
+			err = r.unmarshalApplicableSegment(key, buf)
 		}
 
 		if err != nil {
@@ -799,11 +807,55 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// unmarshalApplicableSegment is a helper for UnmarshalJSON
+func (r *baseSegmentCore) unmarshalApplicableSegment(description string, data []byte) error {
+	var segment Segment
+
+	switch description {
+	case J1SegmentName:
+		segment = NewJ1Segment()
+	case J2SegmentName:
+		segment = NewJ2Segment()
+	case K1SegmentName:
+		segment = NewK1Segment()
+	case K2SegmentName:
+		segment = NewK2Segment()
+	case K3SegmentName:
+		segment = NewK3Segment()
+	case K4SegmentName:
+		segment = NewK4Segment()
+	case L1SegmentName:
+		segment = NewL1Segment()
+	case N1SegmentName:
+		segment = NewN1Segment()
+	default:
+		return nil
+	}
+
+	err := json.Unmarshal(data, segment)
+	if err != nil {
+		return fmt.Errorf("unabled to parse %s segment (%s)", description, err.Error())
+	}
+	return r.AddApplicableSegment(segment)
+}
+
+// Getter methods for baseSegmentCore fields.
+// These are used by external packages (like file) that need to access
+// base segment data through interfaces without knowing the concrete type.
+
+func (r *baseSegmentCore) GetSocialSecurityNumber() int    { return r.SocialSecurityNumber }
+func (r *baseSegmentCore) GetDateBirth() *utils.Time       { return &r.DateBirth }
+func (r *baseSegmentCore) GetECOACode() string             { return r.ECOACode }
+func (r *baseSegmentCore) GetTelephoneNumber() int64       { return r.TelephoneNumber }
+func (r *baseSegmentCore) GetAccountStatus() string        { return r.AccountStatus }
+
 // customized field validation functions
 // function name should be "Validate" + field name
+// These methods are defined on baseSegmentCore to be shared between
+// BaseSegment and PackedBaseSegment, eliminating code duplication.
 
 // validation of identification number
-func (r *BaseSegment) ValidateIdentificationNumber() error {
+func (r *baseSegmentCore) ValidateIdentificationNumber() error {
 	if validFilledString(r.IdentificationNumber) {
 		return utils.NewErrInvalidValueOfField("identification number", "base segment")
 	}
@@ -811,7 +863,7 @@ func (r *BaseSegment) ValidateIdentificationNumber() error {
 }
 
 // validation of portfolio type
-func (r *BaseSegment) ValidatePortfolioType() error {
+func (r *baseSegmentCore) ValidatePortfolioType() error {
 	switch r.PortfolioType {
 	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
 		return nil
@@ -820,7 +872,7 @@ func (r *BaseSegment) ValidatePortfolioType() error {
 }
 
 // validation of terms duration
-func (r *BaseSegment) ValidateTermsDuration() error {
+func (r *baseSegmentCore) ValidateTermsDuration() error {
 	switch r.TermsDuration {
 	case TermsDurationCredit, TermsDurationOpen, TermsDurationRevolving:
 		return nil
@@ -833,7 +885,7 @@ func (r *BaseSegment) ValidateTermsDuration() error {
 }
 
 // validation of terms frequency
-func (r *BaseSegment) ValidateTermsFrequency() error {
+func (r *baseSegmentCore) ValidateTermsFrequency() error {
 	switch r.TermsFrequency {
 	case TermsFrequencyDeferred, TermsFrequencyPayment, TermsFrequencyWeekly, TermsFrequencyBiweekly,
 		TermsFrequencySemimonthly, TermsFrequencyMonthly, TermsFrequencyBimonthly, TermsFrequencyQuarterly,
@@ -844,7 +896,7 @@ func (r *BaseSegment) ValidateTermsFrequency() error {
 }
 
 // validation of payment rating
-func (r *BaseSegment) ValidatePaymentRating() error {
+func (r *baseSegmentCore) ValidatePaymentRating() error {
 	switch r.AccountStatus {
 	case AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88, AccountStatus89, AccountStatus94, AccountStatus95:
 		switch r.PaymentRating {
@@ -862,7 +914,7 @@ func (r *BaseSegment) ValidatePaymentRating() error {
 }
 
 // validation of payment history profile
-func (r *BaseSegment) ValidatePaymentHistoryProfile() error {
+func (r *baseSegmentCore) ValidatePaymentHistoryProfile() error {
 	if len(r.PaymentHistoryProfile) != 24 {
 		return utils.NewErrInvalidValueOfField("payment history profile", "base segment")
 	}
@@ -881,7 +933,7 @@ func (r *BaseSegment) ValidatePaymentHistoryProfile() error {
 }
 
 // validation of interest type indicator
-func (r *BaseSegment) ValidateInterestTypeIndicator() error {
+func (r *baseSegmentCore) ValidateInterestTypeIndicator() error {
 	switch r.InterestTypeIndicator {
 	case InterestIndicatorFixed, InterestIndicatorVariable, "":
 		return nil
@@ -890,7 +942,7 @@ func (r *BaseSegment) ValidateInterestTypeIndicator() error {
 }
 
 // validation of telephone number
-func (r *BaseSegment) ValidateTelephoneNumber() error {
+func (r *baseSegmentCore) ValidateTelephoneNumber() error {
 	if err := r.isPhoneNumber(r.TelephoneNumber, "base segment"); err != nil {
 		return err
 	}
@@ -898,7 +950,7 @@ func (r *BaseSegment) ValidateTelephoneNumber() error {
 }
 
 // validation of social security number
-func (r *BaseSegment) ValidateSocialSecurityNumber() error {
+func (r *baseSegmentCore) ValidateSocialSecurityNumber() error {
 	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
 		// social security number and date birth may omit for business account
 		if r.ECOACode == "2" || r.ECOACode == "5" {
@@ -910,7 +962,7 @@ func (r *BaseSegment) ValidateSocialSecurityNumber() error {
 }
 
 // validation of date of birth
-func (r *BaseSegment) ValidateDateBirth() error {
+func (r *baseSegmentCore) ValidateDateBirth() error {
 	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
 		// social security number and date birth may omit for business account
 		if r.ECOACode == "2" || r.ECOACode == "5" {
@@ -922,7 +974,7 @@ func (r *BaseSegment) ValidateDateBirth() error {
 }
 
 // validation of account status
-func (r *BaseSegment) ValidateAccountStatus() error {
+func (r *baseSegmentCore) ValidateAccountStatus() error {
 	switch r.AccountStatus {
 	case AccountStatusDF, AccountStatusDA, AccountStatus11, AccountStatus61, AccountStatus62,
 		AccountStatus63, AccountStatus64, AccountStatus71, AccountStatus78, AccountStatus80,
@@ -935,7 +987,7 @@ func (r *BaseSegment) ValidateAccountStatus() error {
 }
 
 // validation of account type
-func (r *BaseSegment) ValidateAccountType() error {
+func (r *baseSegmentCore) ValidateAccountType() error {
 	switch r.AccountType {
 	case AccountType00, AccountType01, AccountType02, AccountType03, AccountType04, AccountType05, AccountType06,
 		AccountType07, AccountType08, AccountType0A, AccountType0C, AccountType0F, AccountType0G, AccountType10,
@@ -952,7 +1004,7 @@ func (r *BaseSegment) ValidateAccountType() error {
 }
 
 // validation of special comment
-func (r *BaseSegment) ValidateSpecialComment() error {
+func (r *baseSegmentCore) ValidateSpecialComment() error {
 	switch r.SpecialComment {
 	case SpecialCommentCodeBlank, SpecialCommentCodeB, SpecialCommentCodeC, SpecialCommentCodeH, SpecialCommentCodeI,
 		SpecialCommentCodeM, SpecialCommentCodeO, SpecialCommentCodeS, SpecialCommentCodeV, SpecialCommentCodeAB,
@@ -982,7 +1034,7 @@ func (r *PackedBaseSegment) Parse(record []byte, isVariableLength bool) (int, er
 		return 0, utils.NewErrSegmentLength("packed base segment")
 	}
 
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.baseSegmentCore).Elem()
 	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
@@ -1050,7 +1102,7 @@ func (r *PackedBaseSegment) Parse(record []byte, isVariableLength bool) (int, er
 func (r *PackedBaseSegment) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(baseSegmentPackedFormat)
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.baseSegmentCore).Elem()
 	blockSize := r.RecordDescriptorWord
 	if r.BlockDescriptorWord > 0 {
 		blockSize += 4
@@ -1102,7 +1154,7 @@ func (r *PackedBaseSegment) Bytes() []byte {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (r *PackedBaseSegment) Validate() error {
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.baseSegmentCore).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if spec, ok := baseSegmentPackedFormat[fieldName]; ok {
@@ -1115,7 +1167,7 @@ func (r *PackedBaseSegment) Validate() error {
 		}
 
 		funcName := r.validateFuncName(fieldName)
-		method := reflect.ValueOf(r).MethodByName(funcName)
+		method := reflect.ValueOf(&r.baseSegmentCore).MethodByName(funcName)
 		if method.IsValid() {
 			response := method.Call(nil) //nolint:forbidigo
 			if len(response) == 0 {
@@ -1141,338 +1193,8 @@ func (r *PackedBaseSegment) Length() int {
 	return r.RecordDescriptorWord
 }
 
-// GetSegments returns list of applicable segments by segment name
-func (r *PackedBaseSegment) GetSegments(name string) []Segment {
-	var ret []Segment
-	switch name {
-	case J1SegmentName:
-		return r.j1Segments
-	case J2SegmentName:
-		return r.j2Segments
-	case K1SegmentName:
-		if r.k1Segment == nil {
-			return nil
-		}
-		ret = append(ret, r.k1Segment)
-	case K2SegmentName:
-		if r.k2Segment == nil {
-			return nil
-		}
-		ret = append(ret, r.k2Segment)
-	case K3SegmentName:
-		if r.k3Segment == nil {
-			return nil
-		}
-		ret = append(ret, r.k3Segment)
-	case K4SegmentName:
-		if r.k4Segment == nil {
-			return nil
-		}
-		ret = append(ret, r.k4Segment)
-	case L1SegmentName:
-		if r.l1Segment == nil {
-			return nil
-		}
-		ret = append(ret, r.l1Segment)
-	case N1SegmentName:
-		if r.n1Segment == nil {
-			return nil
-		}
-		ret = append(ret, r.n1Segment)
-	default:
-		return nil
-	}
-	return ret
-}
-
-// AddApplicableSegment will add new applicable segment into record
-func (r *PackedBaseSegment) AddApplicableSegment(s Segment) error {
-	err := s.Validate()
-	if err != nil {
-		return err
-	}
-	switch s.Name() {
-	case J1SegmentName:
-		r.j1Segments = append(r.j1Segments, s)
-	case J2SegmentName:
-		r.j2Segments = append(r.j2Segments, s)
-	case K1SegmentName:
-		r.k1Segment = s
-	case K2SegmentName:
-		r.k2Segment = s
-	case K3SegmentName:
-		r.k3Segment = s
-	case K4SegmentName:
-		r.k4Segment = s
-	case L1SegmentName:
-		r.l1Segment = s
-	case N1SegmentName:
-		r.n1Segment = s
-	}
-
-	return nil
-}
-
-// MarshalJSON returns JSON blob
-func (r *PackedBaseSegment) MarshalJSON() ([]byte, error) {
-	dummy := dataRecordJson{}
-	base := baseJson{}
-
-	fromFields := reflect.ValueOf(r).Elem()
-	toFields := reflect.ValueOf(&base).Elem()
-	for i := 0; i < fromFields.NumField(); i++ {
-		fieldName := fromFields.Type().Field(i).Name
-		fromField := fromFields.FieldByName(fieldName)
-		toField := toFields.FieldByName(fieldName)
-		if fromField.IsValid() && toField.CanSet() {
-			toField.Set(fromField)
-		}
-	}
-
-	dummy.Base = base
-	dummy.J1Segments = r.j1Segments
-	dummy.J2Segments = r.j2Segments
-	dummy.K1Segment = r.k1Segment
-	dummy.K2Segment = r.k2Segment
-	dummy.K3Segment = r.k3Segment
-	dummy.K4Segment = r.k4Segment
-	dummy.L1Segment = r.l1Segment
-	dummy.N1Segment = r.n1Segment
-
-	return json.Marshal(dummy)
-}
-
-// UnmarshalJSON parses a JSON blob
-func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
-
-	dummy := make(map[string]interface{})
-	if err := json.Unmarshal(data, &dummy); err != nil {
-		return fmt.Errorf("invalid json format (%s)", err.Error())
-	}
-
-	r.j1Segments = []Segment{}
-	r.j2Segments = []Segment{}
-
-	for key, record := range dummy {
-		buf, err := json.Marshal(record)
-		if err != nil {
-			return fmt.Errorf("invalid %s segment (%s)", key, err.Error())
-		}
-
-		switch key {
-		case BaseSegmentName:
-			base := baseJson{}
-			if parseErr := json.Unmarshal(buf, &base); parseErr != nil {
-				return fmt.Errorf("unabled to parse %s segment (%s)", key, parseErr.Error())
-			}
-			fromFields := reflect.ValueOf(&base).Elem()
-			toFields := reflect.ValueOf(r).Elem()
-			for i := 0; i < fromFields.NumField(); i++ {
-				fieldName := fromFields.Type().Field(i).Name
-				fromField := fromFields.FieldByName(fieldName)
-				toField := toFields.FieldByName(fieldName)
-				if fromField.IsValid() && toField.CanSet() {
-					toField.Set(fromField)
-				}
-			}
-		case J1SegmentName, J2SegmentName:
-			var list []interface{}
-			if parseErr := json.Unmarshal(buf, &list); parseErr != nil {
-				return fmt.Errorf("unabled to parse %s segment (%s)", key, parseErr.Error())
-			}
-			for _, subSegment := range list {
-				subBuf, parseErr := json.Marshal(subSegment)
-				if parseErr != nil {
-					return parseErr
-				}
-				parseErr = unmarshalApplicableSegments(key, subBuf, r)
-				if parseErr != nil {
-					return parseErr
-				}
-			}
-		default:
-			err = unmarshalApplicableSegments(key, buf, r)
-		}
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// customized field validation functions
-// function name should be "Validate" + field name
-
-// validation of identification number
-func (r *PackedBaseSegment) ValidateIdentificationNumber() error {
-	if validFilledString(r.IdentificationNumber) {
-		return utils.NewErrInvalidValueOfField("identification number", "packed base segment")
-	}
-	return nil
-}
-
-// validation of portfolio type
-func (r *PackedBaseSegment) ValidatePortfolioType() error {
-	switch r.PortfolioType {
-	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
-		return nil
-	}
-	return utils.NewErrInvalidValueOfField("portfolio type", "packed base segment")
-}
-
-// validation of terms duration
-func (r *PackedBaseSegment) ValidateTermsDuration() error {
-	switch r.TermsDuration {
-	case TermsDurationCredit, TermsDurationOpen, TermsDurationRevolving:
-		return nil
-	}
-	_, err := strconv.Atoi(r.TermsDuration)
-	if err != nil {
-		return utils.NewErrInvalidValueOfField("terms duration", "packed base segment")
-	}
-	return nil
-}
-
-// validation of terms frequency
-func (r *PackedBaseSegment) ValidateTermsFrequency() error {
-	switch r.TermsFrequency {
-	case TermsFrequencyDeferred, TermsFrequencyPayment, TermsFrequencyWeekly, TermsFrequencyBiweekly,
-		TermsFrequencySemimonthly, TermsFrequencyMonthly, TermsFrequencyBimonthly, TermsFrequencyQuarterly,
-		TermsFrequencyTriAnnually, TermsFrequencySemiannually, TermsFrequencyAnnually, "":
-		return nil
-	}
-	return utils.NewErrInvalidValueOfField("terms frequency", "packed base segment")
-}
-
-// validation of payment rating
-func (r *PackedBaseSegment) ValidatePaymentRating() error {
-	switch r.AccountStatus {
-	case AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88, AccountStatus89, AccountStatus94, AccountStatus95:
-		switch r.PaymentRating {
-		case PaymentRatingCurrent, PaymentRatingPast30, PaymentRatingPast60, PaymentRatingPast90,
-			PaymentRatingPast120, PaymentRatingPast150, PaymentRatingPast180, PaymentRatingCollection, PaymentRatingChargeOff:
-			return nil
-		}
-		return utils.NewErrInvalidValueOfField("payment rating", "packed base segment")
-	}
-
-	if r.PaymentRating == "" {
-		return nil
-	}
-	return utils.NewErrInvalidValueOfField("payment rating", "packed base segment")
-}
-
-// validation of payment history profile
-func (r *PackedBaseSegment) ValidatePaymentHistoryProfile() error {
-	if len(r.PaymentHistoryProfile) != 24 {
-		return utils.NewErrInvalidValueOfField("payment history profile", "packed base segment")
-	}
-	for i := 0; i < len(r.PaymentHistoryProfile); i++ {
-		switch r.PaymentHistoryProfile[i] {
-		case PaymentHistoryPast0, PaymentHistoryPast30, PaymentHistoryPast60, PaymentHistoryPast90,
-			PaymentHistoryPast120, PaymentHistoryPast150, PaymentHistoryPast180, PaymentHistoryNoPayment,
-			PaymentHistoryNoPaymentMonth, PaymentHistoryZero, PaymentHistoryCollection,
-			PaymentHistoryForeclosureCompleted, PaymentHistoryVoluntarySurrender, PaymentHistoryRepossession,
-			PaymentHistoryChargeOff, PaymentHistoryNoHistory:
-			continue
-		}
-		return utils.NewErrInvalidValueOfField("payment history profile", "packed base segment")
-	}
-	return nil
-}
-
-// validation of interest type indicator
-func (r *PackedBaseSegment) ValidateInterestTypeIndicator() error {
-	switch r.InterestTypeIndicator {
-	case InterestIndicatorFixed, InterestIndicatorVariable, "":
-		return nil
-	}
-	return utils.NewErrInvalidValueOfField("interest type indicator", "packed base segment")
-}
-
-// validation of telephone number
-func (r *PackedBaseSegment) ValidateTelephoneNumber() error {
-	if err := r.isPhoneNumber(r.TelephoneNumber, "packed base segment"); err != nil {
-		return err
-	}
-	return nil
-}
-
-// validation of social security number
-func (r *PackedBaseSegment) ValidateSocialSecurityNumber() error {
-	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
-		// social security number and date birth may omit for business account
-		if r.ECOACode == "2" || r.ECOACode == "5" {
-			return nil
-		}
-		return utils.NewErrInvalidValueOfField("social security number", "base segment")
-	}
-	return nil
-}
-
-// validation of date of birth
-func (r *PackedBaseSegment) ValidateDateBirth() error {
-	if r.SocialSecurityNumber == 0 && r.DateBirth.IsZero() {
-		// social security number and date birth may omit for business account
-		if r.ECOACode == "2" || r.ECOACode == "5" {
-			return nil
-		}
-		return utils.NewErrInvalidValueOfField("date birth", "base segment")
-	}
-	return nil
-}
-
-// validation of account status
-func (r *PackedBaseSegment) ValidateAccountStatus() error {
-	switch r.AccountStatus {
-	case AccountStatusDF, AccountStatusDA, AccountStatus11, AccountStatus61, AccountStatus62,
-		AccountStatus63, AccountStatus64, AccountStatus71, AccountStatus78, AccountStatus80,
-		AccountStatus82, AccountStatus83, AccountStatus84, AccountStatus93, AccountStatus96,
-		AccountStatus97, AccountStatus05, AccountStatus13, AccountStatus65, AccountStatus88,
-		AccountStatus89, AccountStatus94, AccountStatus95:
-		return nil
-	}
-	return utils.NewErrInvalidValueOfField("account status", "packed base segment")
-}
-
-// validation of account type
-func (r *PackedBaseSegment) ValidateAccountType() error {
-	switch r.AccountType {
-	case AccountType00, AccountType01, AccountType02, AccountType03, AccountType04, AccountType05, AccountType06,
-		AccountType07, AccountType08, AccountType0A, AccountType0C, AccountType0F, AccountType0G, AccountType10,
-		AccountType11, AccountType12, AccountType13, AccountType15, AccountType17, AccountType18, AccountType19,
-		AccountType20, AccountType25, AccountType26, AccountType29, AccountType2A, AccountType2C, AccountType37,
-		AccountType3A, AccountType43, AccountType47, AccountType48, AccountType4D, AccountType50, AccountType5A,
-		AccountType5B, AccountType65, AccountType66, AccountType67, AccountType68, AccountType69, AccountType6A,
-		AccountType6B, AccountType6D, AccountType70, AccountType71, AccountType72, AccountType73, AccountType74,
-		AccountType75, AccountType77, AccountType7A, AccountType7B, AccountType89, AccountType8A, AccountType8B,
-		AccountType90, AccountType91, AccountType92, AccountType93, AccountType95, AccountType9A, AccountType9B:
-		return nil
-	}
-	return utils.NewErrInvalidValueOfField("account type", "packed base segment")
-}
-
-// validation of special comment
-func (r *PackedBaseSegment) ValidateSpecialComment() error {
-	switch r.SpecialComment {
-	case SpecialCommentCodeBlank, SpecialCommentCodeB, SpecialCommentCodeC, SpecialCommentCodeH, SpecialCommentCodeI,
-		SpecialCommentCodeM, SpecialCommentCodeO, SpecialCommentCodeS, SpecialCommentCodeV, SpecialCommentCodeAB,
-		SpecialCommentCodeAC, SpecialCommentCodeAH, SpecialCommentCodeAI, SpecialCommentCodeAM, SpecialCommentCodeAN,
-		SpecialCommentCodeAO, SpecialCommentCodeAP, SpecialCommentCodeAS, SpecialCommentCodeAT, SpecialCommentCodeAU,
-		SpecialCommentCodeAV, SpecialCommentCodeAW, SpecialCommentCodeAX, SpecialCommentCodeAZ, SpecialCommentCodeBA,
-		SpecialCommentCodeBB, SpecialCommentCodeBC, SpecialCommentCodeBD, SpecialCommentCodeBE, SpecialCommentCodeBF,
-		SpecialCommentCodeBG, SpecialCommentCodeBH, SpecialCommentCodeBI, SpecialCommentCodeBJ, SpecialCommentCodeBK,
-		SpecialCommentCodeBL, SpecialCommentCodeBN, SpecialCommentCodeBO, SpecialCommentCodeBP, SpecialCommentCodeBS,
-		SpecialCommentCodeBT, SpecialCommentCodeCH, SpecialCommentCodeCI, SpecialCommentCodeCJ, SpecialCommentCodeCK,
-		SpecialCommentCodeCL, SpecialCommentCodeCM, SpecialCommentCodeCN, SpecialCommentCodeCO, SpecialCommentCodeCP,
-		SpecialCommentCodeCS, SpecialCommentCodeDE:
-
-		return nil
-	}
-	return utils.NewErrInvalidValueOfField("special comment", "packed base segment")
-}
+// GetSegments, AddApplicableSegment, MarshalJSON, UnmarshalJSON and Validation methods
+// are inherited from baseSegmentCore
 
 func readApplicableSegments(record []byte, f Record, isVariableLength bool) (int, error) {
 	var segment Segment
@@ -1513,33 +1235,3 @@ func readApplicableSegments(record []byte, f Record, isVariableLength bool) (int
 	return offset, nil
 }
 
-func unmarshalApplicableSegments(description string, data []byte, r Record) error {
-	var segment Segment
-
-	switch description {
-	case J1SegmentName:
-		segment = NewJ1Segment()
-	case J2SegmentName:
-		segment = NewJ2Segment()
-	case K1SegmentName:
-		segment = NewK1Segment()
-	case K2SegmentName:
-		segment = NewK2Segment()
-	case K3SegmentName:
-		segment = NewK3Segment()
-	case K4SegmentName:
-		segment = NewK4Segment()
-	case L1SegmentName:
-		segment = NewL1Segment()
-	case N1SegmentName:
-		segment = NewN1Segment()
-	default:
-		return nil
-	}
-
-	err := json.Unmarshal(data, segment)
-	if err != nil {
-		return fmt.Errorf("unabled to parse %s segment (%s)", description, err.Error())
-	}
-	return r.AddApplicableSegment(segment)
-}
