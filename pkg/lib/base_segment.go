@@ -839,6 +839,16 @@ func (r *baseSegmentCore) unmarshalApplicableSegment(description string, data []
 	return r.AddApplicableSegment(segment)
 }
 
+// Getter methods for baseSegmentCore fields.
+// These are used by external packages (like file) that need to access
+// base segment data through interfaces without knowing the concrete type.
+
+func (r *baseSegmentCore) GetSocialSecurityNumber() int    { return r.SocialSecurityNumber }
+func (r *baseSegmentCore) GetDateBirth() *utils.Time       { return &r.DateBirth }
+func (r *baseSegmentCore) GetECOACode() string             { return r.ECOACode }
+func (r *baseSegmentCore) GetTelephoneNumber() int64       { return r.TelephoneNumber }
+func (r *baseSegmentCore) GetAccountStatus() string        { return r.AccountStatus }
+
 // customized field validation functions
 // function name should be "Validate" + field name
 // These methods are defined on baseSegmentCore to be shared between
