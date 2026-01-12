@@ -17,8 +17,10 @@ var _ Segment = (*HeaderRecord)(nil)
 var _ Record = (*PackedHeaderRecord)(nil)
 var _ Segment = (*PackedHeaderRecord)(nil)
 
-// HeaderRecord holds the header record
-type HeaderRecord struct {
+// headerRecordCore contains all shared data fields and methods for both
+// character and packed header record formats. This eliminates code duplication
+// between HeaderRecord and PackedHeaderRecord.
+type headerRecordCore struct {
 	// Contains a value equal to the length of the block of data and must be reported when using the packed format or
 	// when reporting variable length records.  This value includes the four bytes reserved for this field.
 	// Report the standard IBM variable record length conventions.
@@ -100,8 +102,15 @@ type HeaderRecord struct {
 	validator
 }
 
+// HeaderRecord holds the header record (character format)
+type HeaderRecord struct {
+	headerRecordCore
+}
+
 // PackedHeaderRecord holds the packed header record
-type PackedHeaderRecord HeaderRecord
+type PackedHeaderRecord struct {
+	headerRecordCore
+}
 
 // Name returns name of header record
 func (r *HeaderRecord) Name() string {
@@ -114,7 +123,7 @@ func (r *HeaderRecord) Parse(record []byte, isVariableLength bool) (int, error) 
 		return 0, utils.NewErrSegmentLength("header record")
 	}
 
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.headerRecordCore).Elem()
 	length, err := r.parseRecordValues(fields, headerRecordCharacterFormat, record, &r.validator, "header record", isVariableLength)
 	if err != nil {
 		return length, err
@@ -130,7 +139,7 @@ func (r *HeaderRecord) Parse(record []byte, isVariableLength bool) (int, error) 
 func (r *HeaderRecord) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(headerRecordCharacterFormat)
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.headerRecordCore).Elem()
 	blockSize := r.BlockDescriptorWord
 	if blockSize == 0 {
 		blockSize = r.RecordDescriptorWord
@@ -154,21 +163,21 @@ func (r *HeaderRecord) Bytes() []byte {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (r *HeaderRecord) Validate() error {
-	return r.validateRecord(r, headerRecordCharacterFormat, "header record")
+	return r.validateRecord(&r.headerRecordCore, headerRecordCharacterFormat, "header record")
 }
 
 // BlockSize returns size of block
-func (r *HeaderRecord) BlockSize() int {
+func (r *headerRecordCore) BlockSize() int {
 	return r.BlockDescriptorWord
 }
 
 // Length returns size of segment
-func (r *HeaderRecord) Length() int {
+func (r *headerRecordCore) Length() int {
 	return r.RecordDescriptorWord
 }
 
 // GetSegments returns list of applicable segments by segment name
-func (r *HeaderRecord) GetSegments(string) []Segment {
+func (r *headerRecordCore) GetSegments(string) []Segment {
 	return nil
 }
 
@@ -188,7 +197,7 @@ func (r *PackedHeaderRecord) Parse(record []byte, isVariableLength bool) (int, e
 		return 0, utils.NewErrSegmentLength("packed header record")
 	}
 
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.headerRecordCore).Elem()
 	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
@@ -243,7 +252,7 @@ func (r *PackedHeaderRecord) Parse(record []byte, isVariableLength bool) (int, e
 func (r *PackedHeaderRecord) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(headerRecordPackedFormat)
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.headerRecordCore).Elem()
 	blockSize := r.BlockDescriptorWord
 	if blockSize == 0 {
 		blockSize = r.RecordDescriptorWord
@@ -267,7 +276,7 @@ func (r *PackedHeaderRecord) Bytes() []byte {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (r *PackedHeaderRecord) Validate() error {
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.headerRecordCore).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if spec, ok := headerRecordPackedFormat[fieldName]; ok {
@@ -283,20 +292,7 @@ func (r *PackedHeaderRecord) Validate() error {
 	return nil
 }
 
-// BlockSize returns size of block
-func (r *PackedHeaderRecord) BlockSize() int {
-	return r.BlockDescriptorWord
-}
-
-// Length returns size of segment
-func (r *PackedHeaderRecord) Length() int {
-	return r.RecordDescriptorWord
-}
-
-// GetSegments returns list of applicable segments by segment name
-func (r *PackedHeaderRecord) GetSegments(string) []Segment {
-	return nil
-}
+// BlockSize, Length, and GetSegments are inherited from headerRecordCore
 
 // AddApplicableSegment will add new applicable segment into record
 func (r *PackedHeaderRecord) AddApplicableSegment(s Segment) error {

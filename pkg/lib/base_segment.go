@@ -718,11 +718,11 @@ func (r *baseSegmentCore) AddApplicableSegment(s Segment) error {
 }
 
 // MarshalJSON returns JSON blob
-func (r *BaseSegment) MarshalJSON() ([]byte, error) {
+func (r *baseSegmentCore) MarshalJSON() ([]byte, error) {
 	dummy := dataRecordJson{}
 	base := baseJson{}
 
-	fromFields := reflect.ValueOf(&r.baseSegmentCore).Elem()
+	fromFields := reflect.ValueOf(r).Elem()
 	toFields := reflect.ValueOf(&base).Elem()
 	for i := 0; i < fromFields.NumField(); i++ {
 		fieldName := fromFields.Type().Field(i).Name
@@ -747,8 +747,7 @@ func (r *BaseSegment) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON parses a JSON blob
-func (r *BaseSegment) UnmarshalJSON(data []byte) error {
-
+func (r *baseSegmentCore) UnmarshalJSON(data []byte) error {
 	dummy := make(map[string]interface{})
 	if err := json.Unmarshal(data, &dummy); err != nil {
 		return fmt.Errorf("invalid json format (%s)", err.Error())
@@ -771,7 +770,7 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 			}
 
 			fromFields := reflect.ValueOf(&base).Elem()
-			toFields := reflect.ValueOf(&r.baseSegmentCore).Elem()
+			toFields := reflect.ValueOf(r).Elem()
 			for i := 0; i < fromFields.NumField(); i++ {
 				fieldName := fromFields.Type().Field(i).Name
 				fromField := fromFields.FieldByName(fieldName)
@@ -791,13 +790,13 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 				if parseErr != nil {
 					return parseErr
 				}
-				parseErr = unmarshalApplicableSegments(key, subBuf, r)
+				parseErr = r.unmarshalApplicableSegment(key, subBuf)
 				if parseErr != nil {
 					return parseErr
 				}
 			}
 		default:
-			err = unmarshalApplicableSegments(key, buf, r)
+			err = r.unmarshalApplicableSegment(key, buf)
 		}
 
 		if err != nil {
@@ -806,6 +805,38 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 	}
 
 	return nil
+}
+
+// unmarshalApplicableSegment is a helper for UnmarshalJSON
+func (r *baseSegmentCore) unmarshalApplicableSegment(description string, data []byte) error {
+	var segment Segment
+
+	switch description {
+	case J1SegmentName:
+		segment = NewJ1Segment()
+	case J2SegmentName:
+		segment = NewJ2Segment()
+	case K1SegmentName:
+		segment = NewK1Segment()
+	case K2SegmentName:
+		segment = NewK2Segment()
+	case K3SegmentName:
+		segment = NewK3Segment()
+	case K4SegmentName:
+		segment = NewK4Segment()
+	case L1SegmentName:
+		segment = NewL1Segment()
+	case N1SegmentName:
+		segment = NewN1Segment()
+	default:
+		return nil
+	}
+
+	err := json.Unmarshal(data, segment)
+	if err != nil {
+		return fmt.Errorf("unabled to parse %s segment (%s)", description, err.Error())
+	}
+	return r.AddApplicableSegment(segment)
 }
 
 // customized field validation functions
@@ -1152,98 +1183,8 @@ func (r *PackedBaseSegment) Length() int {
 	return r.RecordDescriptorWord
 }
 
-// GetSegments and AddApplicableSegment are inherited from baseSegmentCore
-
-// MarshalJSON returns JSON blob
-func (r *PackedBaseSegment) MarshalJSON() ([]byte, error) {
-	dummy := dataRecordJson{}
-	base := baseJson{}
-
-	fromFields := reflect.ValueOf(&r.baseSegmentCore).Elem()
-	toFields := reflect.ValueOf(&base).Elem()
-	for i := 0; i < fromFields.NumField(); i++ {
-		fieldName := fromFields.Type().Field(i).Name
-		fromField := fromFields.FieldByName(fieldName)
-		toField := toFields.FieldByName(fieldName)
-		if fromField.IsValid() && toField.CanSet() {
-			toField.Set(fromField)
-		}
-	}
-
-	dummy.Base = base
-	dummy.J1Segments = r.j1Segments
-	dummy.J2Segments = r.j2Segments
-	dummy.K1Segment = r.k1Segment
-	dummy.K2Segment = r.k2Segment
-	dummy.K3Segment = r.k3Segment
-	dummy.K4Segment = r.k4Segment
-	dummy.L1Segment = r.l1Segment
-	dummy.N1Segment = r.n1Segment
-
-	return json.Marshal(dummy)
-}
-
-// UnmarshalJSON parses a JSON blob
-func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
-
-	dummy := make(map[string]interface{})
-	if err := json.Unmarshal(data, &dummy); err != nil {
-		return fmt.Errorf("invalid json format (%s)", err.Error())
-	}
-
-	r.j1Segments = []Segment{}
-	r.j2Segments = []Segment{}
-
-	for key, record := range dummy {
-		buf, err := json.Marshal(record)
-		if err != nil {
-			return fmt.Errorf("invalid %s segment (%s)", key, err.Error())
-		}
-
-		switch key {
-		case BaseSegmentName:
-			base := baseJson{}
-			if parseErr := json.Unmarshal(buf, &base); parseErr != nil {
-				return fmt.Errorf("unabled to parse %s segment (%s)", key, parseErr.Error())
-			}
-			fromFields := reflect.ValueOf(&base).Elem()
-			toFields := reflect.ValueOf(&r.baseSegmentCore).Elem()
-			for i := 0; i < fromFields.NumField(); i++ {
-				fieldName := fromFields.Type().Field(i).Name
-				fromField := fromFields.FieldByName(fieldName)
-				toField := toFields.FieldByName(fieldName)
-				if fromField.IsValid() && toField.CanSet() {
-					toField.Set(fromField)
-				}
-			}
-		case J1SegmentName, J2SegmentName:
-			var list []interface{}
-			if parseErr := json.Unmarshal(buf, &list); parseErr != nil {
-				return fmt.Errorf("unabled to parse %s segment (%s)", key, parseErr.Error())
-			}
-			for _, subSegment := range list {
-				subBuf, parseErr := json.Marshal(subSegment)
-				if parseErr != nil {
-					return parseErr
-				}
-				parseErr = unmarshalApplicableSegments(key, subBuf, r)
-				if parseErr != nil {
-					return parseErr
-				}
-			}
-		default:
-			err = unmarshalApplicableSegments(key, buf, r)
-		}
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// Validation methods are inherited from baseSegmentCore
+// GetSegments, AddApplicableSegment, MarshalJSON, UnmarshalJSON and Validation methods
+// are inherited from baseSegmentCore
 
 func readApplicableSegments(record []byte, f Record, isVariableLength bool) (int, error) {
 	var segment Segment
@@ -1284,33 +1225,3 @@ func readApplicableSegments(record []byte, f Record, isVariableLength bool) (int
 	return offset, nil
 }
 
-func unmarshalApplicableSegments(description string, data []byte, r Record) error {
-	var segment Segment
-
-	switch description {
-	case J1SegmentName:
-		segment = NewJ1Segment()
-	case J2SegmentName:
-		segment = NewJ2Segment()
-	case K1SegmentName:
-		segment = NewK1Segment()
-	case K2SegmentName:
-		segment = NewK2Segment()
-	case K3SegmentName:
-		segment = NewK3Segment()
-	case K4SegmentName:
-		segment = NewK4Segment()
-	case L1SegmentName:
-		segment = NewL1Segment()
-	case N1SegmentName:
-		segment = NewN1Segment()
-	default:
-		return nil
-	}
-
-	err := json.Unmarshal(data, segment)
-	if err != nil {
-		return fmt.Errorf("unabled to parse %s segment (%s)", description, err.Error())
-	}
-	return r.AddApplicableSegment(segment)
-}

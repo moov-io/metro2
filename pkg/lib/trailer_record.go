@@ -17,9 +17,10 @@ var _ Segment = (*TrailerRecord)(nil)
 var _ Record = (*PackedTrailerRecord)(nil)
 var _ Segment = (*PackedTrailerRecord)(nil)
 
-// TrailerRecord holds the trailer record
-type TrailerRecord struct {
-
+// trailerRecordCore contains all shared data fields and methods for both
+// character and packed trailer record formats. This eliminates code duplication
+// between TrailerRecord and PackedTrailerRecord.
+type trailerRecordCore struct {
 	// Contains a value equal to the length of the physical record. This value includes the four bytes reserved for this field.
 	// If fixed-length records are being reported, the Trailer Record should be the same length as all the data records.
 	// The Trailer Record should be padded with blanks to fill the needed number of positions.
@@ -164,7 +165,18 @@ type TrailerRecord struct {
 	validator
 }
 
-type TrailerInformation TrailerRecord
+// TrailerRecord holds the trailer record (character format)
+type TrailerRecord struct {
+	trailerRecordCore
+}
+
+// PackedTrailerRecord holds the packed trailer record
+type PackedTrailerRecord struct {
+	trailerRecordCore
+}
+
+// TrailerInformation is an alias for trailerRecordCore for backward compatibility
+type TrailerInformation trailerRecordCore
 
 // Name returns name of trailer record
 func (r *TrailerRecord) Name() string {
@@ -177,7 +189,7 @@ func (r *TrailerRecord) Parse(record []byte, isVariableLength bool) (int, error)
 		return 0, utils.NewErrSegmentLength("trailer record")
 	}
 
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.trailerRecordCore).Elem()
 	length, err := r.parseRecordValues(fields, trailerRecordCharacterFormat, record, &r.validator, "trailer record", isVariableLength)
 	if err != nil {
 		return length, err
@@ -190,7 +202,7 @@ func (r *TrailerRecord) Parse(record []byte, isVariableLength bool) (int, error)
 func (r *TrailerRecord) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(trailerRecordCharacterFormat)
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.trailerRecordCore).Elem()
 	blockSize := r.RecordDescriptorWord
 	if blockSize == 0 {
 		blockSize = r.RecordDescriptorWord
@@ -214,21 +226,21 @@ func (r *TrailerRecord) Bytes() []byte {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (r *TrailerRecord) Validate() error {
-	return r.validateRecord(r, trailerRecordCharacterFormat, "trailer record")
+	return r.validateRecord(&r.trailerRecordCore, trailerRecordCharacterFormat, "trailer record")
 }
 
 // BlockSize returns size of block
-func (r *TrailerRecord) BlockSize() int {
+func (r *trailerRecordCore) BlockSize() int {
 	return r.RecordDescriptorWord
 }
 
 // Length returns size of record
-func (r *TrailerRecord) Length() int {
+func (r *trailerRecordCore) Length() int {
 	return r.RecordDescriptorWord
 }
 
 // GetSegments returns list of applicable segments by segment name
-func (r *TrailerRecord) GetSegments(string) []Segment {
+func (r *trailerRecordCore) GetSegments(string) []Segment {
 	return nil
 }
 
@@ -236,9 +248,6 @@ func (r *TrailerRecord) GetSegments(string) []Segment {
 func (r *TrailerRecord) AddApplicableSegment(s Segment) error {
 	return utils.NewErrApplicableSegment("trailer record", s.Name())
 }
-
-// PackedTrailerRecord holds the packed trailer record
-type PackedTrailerRecord TrailerRecord
 
 // Name returns name of packed trailer record
 func (r *PackedTrailerRecord) Name() string {
@@ -251,7 +260,7 @@ func (r *PackedTrailerRecord) Parse(record []byte, isVariableLength bool) (int, 
 		return 0, utils.NewErrSegmentLength("packed trailer record")
 	}
 
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.trailerRecordCore).Elem()
 	offset := 0
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
@@ -290,7 +299,7 @@ func (r *PackedTrailerRecord) Parse(record []byte, isVariableLength bool) (int, 
 func (r *PackedTrailerRecord) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(trailerRecordPackedFormat)
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.trailerRecordCore).Elem()
 	blockSize := r.RecordDescriptorWord
 	if blockSize == 0 {
 		blockSize = r.RecordDescriptorWord
@@ -314,7 +323,7 @@ func (r *PackedTrailerRecord) Bytes() []byte {
 
 // Validate performs some checks on the record and returns an error if not Validated
 func (r *PackedTrailerRecord) Validate() error {
-	fields := reflect.ValueOf(r).Elem()
+	fields := reflect.ValueOf(&r.trailerRecordCore).Elem()
 	for i := 0; i < fields.NumField(); i++ {
 		fieldName := fields.Type().Field(i).Name
 		if spec, ok := trailerRecordPackedFormat[fieldName]; ok {
@@ -330,22 +339,9 @@ func (r *PackedTrailerRecord) Validate() error {
 	return nil
 }
 
-// BlockSize returns size of block
-func (r *PackedTrailerRecord) BlockSize() int {
-	return r.RecordDescriptorWord
-}
-
-// Length returns size of record
-func (r *PackedTrailerRecord) Length() int {
-	return r.RecordDescriptorWord
-}
-
-// GetSegments returns list of applicable segments by segment name
-func (r *PackedTrailerRecord) GetSegments(string) []Segment {
-	return nil
-}
+// BlockSize, Length, and GetSegments are inherited from trailerRecordCore
 
 // AddApplicableSegment will add new applicable segment into record
 func (r *PackedTrailerRecord) AddApplicableSegment(s Segment) error {
-	return utils.NewErrApplicableSegment("packed header record", s.Name())
+	return utils.NewErrApplicableSegment("packed trailer record", s.Name())
 }
