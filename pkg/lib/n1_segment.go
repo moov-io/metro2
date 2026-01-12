@@ -1,12 +1,5 @@
 package lib
 
-import (
-	"reflect"
-	"strings"
-
-	"github.com/moov-io/metro2/pkg/utils"
-)
-
 var _ Segment = (*N1Segment)(nil)
 
 // N1Segment holds the n1 segment
@@ -49,31 +42,12 @@ func (s *N1Segment) Name() string {
 
 // Parse takes the input record string and parses the n1 segment values
 func (s *N1Segment) Parse(record []byte, isVariableLength bool) (int, error) {
-	if len(record) < N1SegmentLength {
-		return 0, utils.NewErrSegmentLength("n1 segment")
-	}
-
-	fields := reflect.ValueOf(s).Elem()
-	length, err := s.parseRecordValues(fields, n1SegmentFormat, record, &s.validator, "n1 segment", isVariableLength)
-	if err != nil {
-		return length, err
-	}
-
-	return N1SegmentLength, nil
+	return s.parseSegmentData(s, N1SegmentLength, n1SegmentFormat, record, &s.validator, "n1 segment", isVariableLength)
 }
 
 // String writes the n1 segment struct to a 146 character string.
 func (s *N1Segment) String() string {
-	var buf strings.Builder
-	specifications := s.toSpecifications(n1SegmentFormat)
-	fields := reflect.ValueOf(s).Elem()
-	buf.Grow(N1SegmentLength)
-	for _, spec := range specifications {
-		value := s.toString(spec.Field, fields.FieldByName(spec.Name))
-		buf.WriteString(value)
-	}
-
-	return buf.String()
+	return s.stringSegmentData(s, N1SegmentLength, n1SegmentFormat)
 }
 
 // Bytes return raw byte array
