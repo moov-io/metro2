@@ -61,7 +61,7 @@ func TestConvertWithInvalidParam(t *testing.T) {
 func TestConvertJson(t *testing.T) {
 	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", utils.MessageJsonFormat)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err)
 	}
 	deleteFile()
 }
@@ -69,7 +69,7 @@ func TestConvertJson(t *testing.T) {
 func TestConvertMetro(t *testing.T) {
 	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", utils.MessageMetroFormat)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err)
 	}
 	deleteFile()
 }
@@ -85,7 +85,7 @@ func TestConvertUnknown(t *testing.T) {
 func TestConvertMetroWithGenerate(t *testing.T) {
 	_, err := executeCommand(rootCmd, "convert", "output", "--input", testJsonFilePath, "--format", utils.MessageMetroFormat, "--generate=true")
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err)
 	}
 	deleteFile()
 }
@@ -93,14 +93,14 @@ func TestConvertMetroWithGenerate(t *testing.T) {
 func TestPrintMetro(t *testing.T) {
 	_, err := executeCommand(rootCmd, "print", "--input", testJsonFilePath, "--format", utils.MessageMetroFormat)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err)
 	}
 }
 
 func TestPrintJson(t *testing.T) {
 	_, err := executeCommand(rootCmd, "print", "--input", testJsonFilePath, "--format", utils.MessageJsonFormat)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err)
 	}
 }
 
@@ -114,7 +114,7 @@ func TestPrintUnknown(t *testing.T) {
 func TestValidator(t *testing.T) {
 	_, err := executeCommand(rootCmd, "validator", "--input", testJsonFilePath)
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err)
 	}
 }
 
@@ -128,7 +128,7 @@ func TestUnknown(t *testing.T) {
 func TestWeb(t *testing.T) {
 	_, err := executeCommand(rootCmd, "web", "--test=true")
 	if err != nil {
-		t.Errorf(err.Error())
+		t.Error(err)
 	}
 }
 
