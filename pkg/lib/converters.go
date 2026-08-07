@@ -261,7 +261,7 @@ func packedTimeString(data reflect.Value, format string, length int, size int) s
 		out.WriteByte(0x00)
 		v := uint64(value)
 		for i := 0; i < size-2; i++ {
-			out.WriteByte(byte(v >> (8 * (size - 3 - i))))
+			out.WriteByte(byte((v >> (8 * (size - 3 - i))) & 0xff))
 		}
 		out.WriteByte(0x73)
 	} else {
@@ -280,9 +280,9 @@ func packedNumberString(data reflect.Value, length int) string {
 		for i := 0; i < length; i++ {
 			shift := 8 * (length - i - 1)
 			if shift > 0 {
-				out.WriteByte(byte(v >> shift))
+				out.WriteByte(byte((v >> shift) & 0xff))
 			} else {
-				out.WriteByte(byte(v))
+				out.WriteByte(byte(v & 0xff))
 			}
 		}
 	} else {
