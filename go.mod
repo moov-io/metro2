@@ -3,7 +3,7 @@ module github.com/moov-io/metro2
 go 1.25.8
 
 require (
-	github.com/ccoveille/go-safecast v1.8.2
+	github.com/ccoveille/go-safecast/v2 v2.0.1
 	github.com/ccoveille/go-safecast/v2 v2.0.1
 	github.com/gorilla/mux v1.8.1
 	github.com/moov-io/base v0.62.1
