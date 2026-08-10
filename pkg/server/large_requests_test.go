@@ -70,7 +70,7 @@ func TestServer__LargeRequests(t *testing.T) {
 			require.NoError(t, err)
 			req.Header.Set("Content-Type", w.FormDataContentType())
 
-			resp, err := http.DefaultClient.Do(req)
+			resp, err := (&http.Client{Timeout: 2 * time.Minute}).Do(req)
 			if resp != nil && resp.StatusCode != http.StatusOK {
 				if resp != nil && resp.Body != nil {
 					t.Cleanup(func() { resp.Body.Close() })
@@ -101,7 +101,7 @@ func TestServer__LargeRequests(t *testing.T) {
 			require.NoError(t, err)
 			req.Header.Set("Content-Type", w.FormDataContentType())
 
-			resp, err := http.DefaultClient.Do(req)
+			resp, err := (&http.Client{Timeout: 2 * time.Minute}).Do(req)
 			if resp != nil && resp.StatusCode != http.StatusOK {
 				if resp != nil && resp.Body != nil {
 					t.Cleanup(func() { resp.Body.Close() })
