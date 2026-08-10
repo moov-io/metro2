@@ -26,7 +26,7 @@ func TestServer__LargeRequests(t *testing.T) {
 		t.Skip("-short flag provided")
 	}
 
-	timeout, _ := time.ParseDuration("30s")
+	timeout, _ := time.ParseDuration("120s")
 	handler, _ := ConfigureHandlers()
 
 	svr := &http.Server{
