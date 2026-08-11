@@ -17,7 +17,7 @@ import (
 
 	"github.com/moov-io/metro2/pkg/utils"
 
-	"github.com/ccoveille/go-safecast"
+	"github.com/ccoveille/go-safecast/v2"
 )
 
 type converter struct{}
@@ -192,7 +192,7 @@ func timeFromPackedTimestampString(date string) (utils.Time, error) {
 		in.Write(bin[1 : packedTimestampSize-1])
 
 		var err error
-		value, err = safecast.ToInt64(binary.BigEndian.Uint64(in.Bytes()))
+		value, err = safecast.Convert[int64](binary.BigEndian.Uint64(in.Bytes()))
 		if err != nil {
 			return utils.Time{}, err
 		}
@@ -214,7 +214,7 @@ func timeFromPackedDateString(date string) (utils.Time, error) {
 		in.Write(bin[1 : packedDateSize-1])
 
 		var err error
-		value, err = safecast.ToInt64(binary.BigEndian.Uint64(in.Bytes()))
+		value, err = safecast.Convert[int64](binary.BigEndian.Uint64(in.Bytes()))
 		if err != nil {
 			return utils.Time{}, err
 		}
@@ -234,7 +234,7 @@ func packedNumberFromString(data string) (int64, error) {
 	}
 	in.WriteString(data)
 
-	value, err := safecast.ToInt64(binary.BigEndian.Uint64(in.Bytes()))
+	value, err := safecast.Convert[int64](binary.BigEndian.Uint64(in.Bytes()))
 	if err != nil {
 		return 0, err
 	}
@@ -276,7 +276,7 @@ func packedNumberString(data reflect.Value, length int) string {
 	var out bytes.Buffer
 	out.Grow(length)
 	if data.Int() > 0 {
-		v, _ := safecast.ToUint64(data.Int())
+		v, _ := safecast.Convert[uint64](data.Int())
 		for i := 0; i < length; i++ {
 			shift := 8 * (length - i - 1)
 			if shift > 0 {
@@ -296,7 +296,7 @@ func packedNumberString(data reflect.Value, length int) string {
 func descriptorString(data reflect.Value) string {
 	value := make([]byte, 4)
 
-	n, _ := safecast.ToUint16(data.Int())
+	n, _ := safecast.Convert[uint16](data.Int())
 	binary.BigEndian.PutUint16(value[0:], n)
 
 	return string(value)
