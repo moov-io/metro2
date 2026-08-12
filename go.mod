@@ -5,7 +5,7 @@ go 1.25.8
 require (
 	github.com/ccoveille/go-safecast/v2 v2.0.1
 	github.com/gorilla/mux v1.8.1
-	github.com/moov-io/base v0.63.0
+	github.com/moov-io/base v0.63.1
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
