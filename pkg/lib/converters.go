@@ -301,3 +301,29 @@ func descriptorString(data reflect.Value) string {
 
 	return string(value)
 }
+
+// parseSegmentData handles common segment parsing logic
+func (c *converter) parseSegmentData(s interface{}, segmentLength int, format map[string]field, record []byte, v *validator, segmentName string, isVariableLength bool) (int, error) {
+	if len(record) < segmentLength {
+		return 0, utils.NewErrSegmentLength(segmentName)
+	}
+	fields := reflect.ValueOf(s).Elem()
+	_, err := c.parseRecordValues(fields, format, record, v, segmentName, isVariableLength)
+	if err != nil {
+		return 0, err
+	}
+	return segmentLength, nil
+}
+
+// stringSegmentData handles common segment string conversion logic
+func (c *converter) stringSegmentData(s interface{}, segmentLength int, format map[string]field) string {
+	var buf strings.Builder
+	specifications := c.toSpecifications(format)
+	fields := reflect.ValueOf(s).Elem()
+	buf.Grow(segmentLength)
+	for _, spec := range specifications {
+		value := c.toString(spec.Field, fields.FieldByName(spec.Name))
+		buf.WriteString(value)
+	}
+	return buf.String()
+}

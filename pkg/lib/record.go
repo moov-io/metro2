@@ -44,28 +44,36 @@ const (
 // NewHeaderRecord returns a new header record
 func NewHeaderRecord() Record {
 	return &HeaderRecord{
-		RecordIdentifier: HeaderIdentifier,
+		headerRecordCore: headerRecordCore{
+			RecordIdentifier: HeaderIdentifier,
+		},
 	}
 }
 
 // NewPackedHeaderRecord returns a new packed header record
 func NewPackedHeaderRecord() Record {
 	return &PackedHeaderRecord{
-		RecordIdentifier: HeaderIdentifier,
+		headerRecordCore: headerRecordCore{
+			RecordIdentifier: HeaderIdentifier,
+		},
 	}
 }
 
 // NewTrailerRecord returns a new trailer record
 func NewTrailerRecord() Record {
 	return &TrailerRecord{
-		RecordIdentifier: TrailerIdentifier,
+		trailerRecordCore: trailerRecordCore{
+			RecordIdentifier: TrailerIdentifier,
+		},
 	}
 }
 
 // NewPackedTrailerRecord returns a new packed trailer record
 func NewPackedTrailerRecord() Record {
 	return &PackedTrailerRecord{
-		RecordIdentifier: TrailerIdentifier,
+		trailerRecordCore: trailerRecordCore{
+			RecordIdentifier: TrailerIdentifier,
+		},
 	}
 }
 
