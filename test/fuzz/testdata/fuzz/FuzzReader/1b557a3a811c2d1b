@@ -1,0 +1,2 @@
+go test fuzz v1
+string("{\n  \"header\": {\n    \"recordDescriptorWord\": 5175555555,\n    \"recordIdentifier\": \"HEADER\"\n  },\n  \"trailer\": {\n    \"recordDescriptorWord\": 426,\n    \"recordIdentifier\": \"TRAILER\"\n  }\n}")
