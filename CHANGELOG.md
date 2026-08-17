@@ -1,3 +1,20 @@
+## v0.9.3 (Released 2026-08-17)
+
+IMPROVEMENTS
+
+- fix: cap record padding so huge descriptor words cannot OOM
+- fix: marshal zero-value date fields as empty JSON string
+- perf: use strings.Builder instead of concatenation in ConcurrentString
+- test(fuzz): improve Metro2 reader fuzzer and add JSON fuzzer
+
+BUILD
+
+- ci: add scheduled Go fuzz testing workflow
+- chore(deps): update github artifact actions
+- chore(docs): bump Gemfile.lock gems for Dependabot alerts
+- fix(deps): update module github.com/moov-io/base to v0.63.1
+- fix: mask uint64 before byte cast for gosec G115
+
 ## v0.9.2 (Released 2024-09-20)
 
 BUILD
