@@ -135,7 +135,10 @@ func (r *HeaderRecord) String() string {
 	if blockSize == 0 {
 		blockSize = r.RecordDescriptorWord
 	}
-	buf.Grow(blockSize)
+	blockSize = clampedBlockSize(blockSize)
+	if blockSize > 0 {
+		buf.Grow(blockSize)
+	}
 	for _, spec := range specifications {
 		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
@@ -248,7 +251,10 @@ func (r *PackedHeaderRecord) String() string {
 	if blockSize == 0 {
 		blockSize = r.RecordDescriptorWord
 	}
-	buf.Grow(blockSize)
+	blockSize = clampedBlockSize(blockSize)
+	if blockSize > 0 {
+		buf.Grow(blockSize)
+	}
 	for _, spec := range specifications {
 		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)

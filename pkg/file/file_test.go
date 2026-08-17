@@ -20,6 +20,31 @@ import (
 	"github.com/moov-io/metro2/pkg/utils"
 )
 
+func TestFile_StringHugeRecordDescriptorWord(t *testing.T) {
+	// FuzzReader hung/OOM'd while minimizing JSON with recordDescriptorWord=5175555555.
+	const input = `{
+		"header": {
+			"recordDescriptorWord": 5175555555,
+			"recordIdentifier": "HEADER"
+		},
+		"trailer": {
+			"recordDescriptorWord": 426,
+			"recordIdentifier": "TRAILER"
+		}
+	}`
+
+	f, err := NewFileFromReader(strings.NewReader(input))
+	if err != nil {
+		// Parse failure is acceptable; the regression is that we must not hang or OOM.
+		return
+	}
+	out := f.String(false)
+	if len(out) > 1<<20 {
+		t.Fatalf("String() allocated %d bytes from huge descriptor word", len(out))
+	}
+	_ = f.Bytes()
+}
+
 func TestFile__Crashers(t *testing.T) {
 	paths := readCrasherInputFilePaths(t)
 	for i := range paths {

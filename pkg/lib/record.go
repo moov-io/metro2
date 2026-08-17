@@ -23,6 +23,13 @@ const (
 	// PackedSegmentLength indicates length of packed segment
 	PackedRecordLength = 366
 
+	// maxRecordPad is the largest descriptor word String() will honor when
+	// padding a record. Character-format RDW/BDW fields are 4 numeric digits
+	// (9999); packed-format fields are a 2-byte unsigned integer (65535).
+	// Values outside 1..maxRecordPad are ignored so serialization cannot
+	// allocate gigabytes or panic on malformed JSON.
+	maxRecordPad = 65535
+
 	// HeaderRecordName indicates name of header record
 	HeaderRecordName = "header"
 	// BaseSegmentName indicates name of base segment
@@ -40,6 +47,15 @@ const (
 	// HeaderIdentifier indicates record identifier of header record
 	HeaderIdentifier = "HEADER"
 )
+
+// clampedBlockSize returns a safe padding size for record serialization.
+// Non-positive and oversized descriptor words produce no extra padding.
+func clampedBlockSize(requested int) int {
+	if requested <= 0 || requested > maxRecordPad {
+		return 0
+	}
+	return requested
+}
 
 // NewHeaderRecord returns a new header record
 func NewHeaderRecord() Record {

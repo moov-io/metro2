@@ -11,13 +11,15 @@ jobs:
   fuzz:
     name: Fuzz
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
         command:
-          - "go test ./test/fuzz/... -fuzz FuzzReader -fuzztime 10m"
-          - "go test ./test/fuzz/... -fuzz FuzzJSON -fuzztime 10m"
+          # -timeout must exceed -fuzztime; the default 10m test timeout
+          # expires at the same time as fuzztime and fails the job.
+          - "go test ./test/fuzz/... -run=^$ -fuzz=^FuzzReader$ -fuzztime 10m -timeout 20m"
+          - "go test ./test/fuzz/... -run=^$ -fuzz=^FuzzJSON$ -fuzztime 10m -timeout 20m"
 
     steps:
     - name: Set up Go 1.x

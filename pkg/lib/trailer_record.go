@@ -191,11 +191,10 @@ func (r *TrailerRecord) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(trailerRecordCharacterFormat)
 	fields := reflect.ValueOf(r).Elem()
-	blockSize := r.RecordDescriptorWord
-	if blockSize == 0 {
-		blockSize = r.RecordDescriptorWord
+	blockSize := clampedBlockSize(r.RecordDescriptorWord)
+	if blockSize > 0 {
+		buf.Grow(blockSize)
 	}
-	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
@@ -291,11 +290,10 @@ func (r *PackedTrailerRecord) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(trailerRecordPackedFormat)
 	fields := reflect.ValueOf(r).Elem()
-	blockSize := r.RecordDescriptorWord
-	if blockSize == 0 {
-		blockSize = r.RecordDescriptorWord
+	blockSize := clampedBlockSize(r.RecordDescriptorWord)
+	if blockSize > 0 {
+		buf.Grow(blockSize)
 	}
-	buf.Grow(blockSize)
 	for _, spec := range specifications {
 		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)

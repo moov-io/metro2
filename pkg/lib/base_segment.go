@@ -572,8 +572,10 @@ func (r *BaseSegment) String() string {
 	var buf strings.Builder
 	specifications := r.toSpecifications(baseSegmentCharacterFormat)
 	fields := reflect.ValueOf(r).Elem()
-	blockSize := r.RecordDescriptorWord
-	buf.Grow(blockSize)
+	blockSize := clampedBlockSize(r.RecordDescriptorWord)
+	if blockSize > 0 {
+		buf.Grow(blockSize)
+	}
 	for _, spec := range specifications {
 		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
@@ -1055,7 +1057,10 @@ func (r *PackedBaseSegment) String() string {
 	if r.BlockDescriptorWord > 0 {
 		blockSize += 4
 	}
-	buf.Grow(blockSize)
+	blockSize = clampedBlockSize(blockSize)
+	if blockSize > 0 {
+		buf.Grow(blockSize)
+	}
 	for _, spec := range specifications {
 		value := r.toString(spec.Field, fields.FieldByName(spec.Name))
 		buf.WriteString(value)
