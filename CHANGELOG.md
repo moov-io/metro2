@@ -1,3 +1,7 @@
+## Future Releases
+
+Please refer to the [Github Releases](https://github.com/moov-io/metro2/releases) page for future updates.
+
 ## v0.9.3 (Released 2026-08-17)
 
 IMPROVEMENTS

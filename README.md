@@ -317,7 +317,7 @@ This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.1
 
 ### Releasing
 
-To make a release of metro2 simply open a pull request with `CHANGELOG.md` and `version.go` updated with the next version number and details. You'll also need to push the tag (i.e. `git push origin v1.0.0`) to origin in order for CI to make the release.
+To make a release of metro2 update `version.go` with the next version number and push a tag (i.e. `git push origin v1.0.0`) so CI can create the GitHub Release. Release notes live on [GitHub Releases](https://github.com/moov-io/metro2/releases); `CHANGELOG.md` is frozen for historical entries.
 
 ### Testing
 
