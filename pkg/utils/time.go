@@ -9,16 +9,29 @@ import (
 
 type Time time.Time
 
-// UnmarshalJSON Parses the json string in the custom format
+// UnmarshalJSON Parses the json string in the custom format. An empty string
+// (as written by MarshalJSON for a not-available date field) round trips back
+// into the zero value rather than an error.
 func (ct *Time) UnmarshalJSON(b []byte) (err error) {
 	s := strings.Trim(string(b), `"`)
+	if s == "" {
+		*ct = Time{}
+		return nil
+	}
 	nt, err := parseDate(s)
 	*ct = Time(nt)
 	return
 }
 
-// MarshalJSON writes a quoted string in the custom format
+// MarshalJSON writes a quoted string in the custom format. Per the CDIA
+// Metro2 spec, a numeric date field that is not available is zero-filled; a
+// zero-filled date parses to the zero value of time.Time, so it's written out
+// as an empty string instead of Go's zero time ("0001-01-01T00:00:00Z").
+// See: https://github.com/moov-io/metro2/issues/196
 func (ct Time) MarshalJSON() ([]byte, error) {
+	if ct.IsZero() {
+		return []byte(`""`), nil
+	}
 	return []byte(ct.String()), nil
 }
 
