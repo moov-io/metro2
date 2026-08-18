@@ -486,3 +486,11 @@ func (t *SegmentTest) TestPackedBaseSegmentWithInvalidSpecialComment(c *check.C)
 	c.Assert(err, check.Not(check.IsNil))
 	c.Assert(err.Error(), check.DeepEquals, "special comment in packed base segment has an invalid value")
 }
+
+func (t *SegmentTest) TestBaseSegmentPortfolioTypeLease(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment, true)
+	c.Assert(err, check.IsNil)
+	segment.PortfolioType = PortfolioTypeLease
+	c.Assert(segment.ValidatePortfolioType(), check.IsNil)
+}

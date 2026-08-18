@@ -20,6 +20,8 @@ const (
 	PortfolioTypeOpen = "O"
 	// type of portfolio, Revolving
 	PortfolioTypeRevolving = "R"
+	// type of portfolio, Lease
+	PortfolioTypeLease = "L"
 	// duration of credit extended, Line of Credit
 	TermsDurationCredit = "LOC"
 	// duration of credit extended, Open
