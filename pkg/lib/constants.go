@@ -22,6 +22,10 @@ const (
 	PortfolioTypeRevolving = "R"
 	// type of portfolio, Lease
 	PortfolioTypeLease = "L"
+	// Correction indicator, original (not a replacement)
+	CorrectionIndicatorOriginal = 0
+	// Correction indicator, replacement update
+	CorrectionIndicatorCorrection = 1
 	// duration of credit extended, Line of Credit
 	TermsDurationCredit = "LOC"
 	// duration of credit extended, Open

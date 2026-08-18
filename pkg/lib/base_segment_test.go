@@ -494,3 +494,17 @@ func (t *SegmentTest) TestBaseSegmentPortfolioTypeLease(c *check.C) {
 	segment.PortfolioType = PortfolioTypeLease
 	c.Assert(segment.ValidatePortfolioType(), check.IsNil)
 }
+
+func (t *SegmentTest) TestBaseSegmentCorrectionIndicator(c *check.C) {
+	segment := &BaseSegment{}
+	_, err := segment.Parse(t.sampleBaseSegment, true)
+	c.Assert(err, check.IsNil)
+	c.Assert(segment.CorrectionIndicator, check.Equals, CorrectionIndicatorOriginal)
+
+	segment.CorrectionIndicator = CorrectionIndicatorCorrection
+	c.Assert(segment.ValidateCorrectionIndicator(), check.IsNil)
+
+	segment.CorrectionIndicator = 2
+	err = segment.ValidateCorrectionIndicator()
+	c.Assert(err, check.Not(check.IsNil))
+}
