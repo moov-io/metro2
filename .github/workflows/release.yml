@@ -17,15 +17,17 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
     - name: Set up Go 1.x
-      uses: actions/setup-go@v7
+      uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
       with:
         go-version: stable
+        cache: false
       id: go
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 0
+        persist-credentials: false
 
     - name: Check
       run: make check
@@ -37,25 +39,21 @@ jobs:
     needs: [testing]
     runs-on: ubuntu-latest
     steps:
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
+    - name: Ensure GitHub Release
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        prerelease: true
-
-    - name: Output Release URL File
-      run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
-
-    - name: Save Release URL File for publish
-      uses: actions/upload-artifact@v7
-      with:
-        name: release_url
-        path: release_url.txt
-        retention-days: 1
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TAG: ${{ github.ref_name }}
+        REPO: ${{ github.repository }}
+      run: |
+        set -euo pipefail
+        if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+          echo "Release $TAG already exists — reusing"
+        else
+          gh release create "$TAG" \
+            --repo "$REPO" \
+            --title "Release $TAG" \
+            --prerelease
+        fi
 
   publish:
     permissions:
@@ -68,94 +66,62 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
     - name: Set up Go 1.x
-      uses: actions/setup-go@v7
+      uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
       with:
         go-version: stable
+        cache: false
       id: go
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v7
-
-    - name: Load Release URL File from release job
-      uses: actions/download-artifact@v8
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
-        name: release_url
+        persist-credentials: false
 
     - name: Distribute
       run: make dist
 
-    - name: Get Release File Name & Upload URL
-      id: get_release_info
+    - name: Upload release asset
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TAG: ${{ github.ref_name }}
+        REPO: ${{ github.repository }}
       shell: bash
       run: |
-        value=`cat release_url.txt`
-        echo ::set-output name=upload_url::$value
-      env:
-        TAG_REF_NAME: ${{ github.ref }}
-        REPOSITORY_NAME: ${{ github.repository }}
-
-    - name: Upload Linux Server Binary
-      if: runner.os == 'Linux'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.get_release_info.outputs.upload_url }}
-        asset_path: ./bin/metro2-linux-amd64
-        asset_name: metro2-linux-amd64
-        asset_content_type: application/octet-stream
-
-    - name: Upload macOS Server Binary
-      if: runner.os == 'macOS'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.get_release_info.outputs.upload_url }}
-        asset_path: ./bin/metro2-darwin-amd64
-        asset_name: metro2-darwin-amd64
-        asset_content_type: application/octet-stream
-
-    - name: Upload Windows Server Binary
-      if: runner.os == 'Windows'
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.get_release_info.outputs.upload_url }}
-        asset_path: ./bin/metro2.exe
-        asset_name: metro2.exe
-        asset_content_type: application/octet-stream
+        set -euo pipefail
+        if [ "$RUNNER_OS" = "Linux" ]; then
+          asset=./bin/metro2-linux-amd64
+        elif [ "$RUNNER_OS" = "macOS" ]; then
+          asset=./bin/metro2-darwin-amd64
+        else
+          asset=./bin/metro2.exe
+        fi
+        gh release upload "$TAG" "$asset" --repo "$REPO" --clobber
 
   docker:
     name: Docker
     needs: [testing, create_release]
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Go 1.x
-      uses: actions/setup-go@v7
-      with:
-        go-version: stable
-      id: go
-
     - name: Check out code into the Go module directory
-      uses: actions/checkout@v7
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - name: Docker
       run: make docker
 
     - name: Docker Push
-      run: |+
-          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-          make release-push
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        make release-push
 
     - name: Quay.io Push
-      run: |+
-          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin quay.io
-          make quay-push
       env:
         DOCKER_USERNAME: ${{ secrets.QUAY_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.QUAY_PASSWORD }}
+      run: |
+        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin quay.io
+        make quay-push
