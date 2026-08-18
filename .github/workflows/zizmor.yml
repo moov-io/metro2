@@ -4,6 +4,9 @@ name: zizmor
 on:
   push:
   pull_request:
+  schedule:
+    - cron: '47 6 * * 1'
+  workflow_dispatch:
 
 permissions: {}
 
