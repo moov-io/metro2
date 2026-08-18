@@ -51,6 +51,11 @@ type BaseSegment struct {
 	// Format is MMDDYYYYHHMMSS for character date.
 	TimeStamp utils.Time `json:"timeStamp"`
 
+	// Used to replace the most recently reported update for the same reporting time period.
+	// 0 = Not a replacement update (normal update)
+	// 1 = Replacement update (correction)
+	CorrectionIndicator int `json:"correctionIndicator,omitempty"`
+
 	// Used to uniquely identify a data furnisher.
 	// Report your internal code to identify each branch, office, and/or credit central where information is verified.
 	// For accounts reported by servicers, the Identification Number should refer to the current holder of the note.
@@ -805,6 +810,15 @@ func (r *BaseSegment) UnmarshalJSON(data []byte) error {
 // customized field validation functions
 // function name should be "Validate" + field name
 
+// validation of correction indicator
+func (r *BaseSegment) ValidateCorrectionIndicator() error {
+	switch r.CorrectionIndicator {
+	case CorrectionIndicatorOriginal, CorrectionIndicatorCorrection:
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("correction indicator", "base segment")
+}
+
 // validation of identification number
 func (r *BaseSegment) ValidateIdentificationNumber() error {
 	if validFilledString(r.IdentificationNumber) {
@@ -1310,6 +1324,14 @@ func (r *PackedBaseSegment) UnmarshalJSON(data []byte) error {
 
 // customized field validation functions
 // function name should be "Validate" + field name
+
+func (r *PackedBaseSegment) ValidateCorrectionIndicator() error {
+	switch r.CorrectionIndicator {
+	case CorrectionIndicatorOriginal, CorrectionIndicatorCorrection:
+		return nil
+	}
+	return utils.NewErrInvalidValueOfField("correction indicator", "packed base segment")
+}
 
 // validation of identification number
 func (r *PackedBaseSegment) ValidateIdentificationNumber() error {
