@@ -82,6 +82,7 @@ type BaseSegment struct {
 	//  M = Mortgage
 	//  O = Open
 	//  R = Revolving
+	//  L = Lease
 	//
 	// Refer to the Glossary of Terms for definitions of each Portfolio Type.
 	PortfolioType string `json:"portfolioType"`
@@ -815,7 +816,7 @@ func (r *BaseSegment) ValidateIdentificationNumber() error {
 // validation of portfolio type
 func (r *BaseSegment) ValidatePortfolioType() error {
 	switch r.PortfolioType {
-	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
+	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving, PortfolioTypeLease:
 		return nil
 	}
 	return utils.NewErrInvalidValueOfField("portfolio type", "base segment")
@@ -1321,7 +1322,7 @@ func (r *PackedBaseSegment) ValidateIdentificationNumber() error {
 // validation of portfolio type
 func (r *PackedBaseSegment) ValidatePortfolioType() error {
 	switch r.PortfolioType {
-	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving:
+	case PortfolioTypeCredit, PortfolioTypeInstallment, PortfolioTypeMortgage, PortfolioTypeOpen, PortfolioTypeRevolving, PortfolioTypeLease:
 		return nil
 	}
 	return utils.NewErrInvalidValueOfField("portfolio type", "packed base segment")
