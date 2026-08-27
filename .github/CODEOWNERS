@@ -1,0 +1,17 @@
+# This is a comment.
+# Each line is a file pattern followed by one or more owners.
+
+# These owners will be the default owners for everything in
+# the repo. Unless a later match takes precedence,
+*             @adamdecaf
+
+# Lockfiles have no owners so dependency-only PRs skip code-owner review.
+go.mod
+go.sum
+**/go.mod
+**/go.sum
+Gemfile.lock
+**/Gemfile.lock
+
+# GitHub Actions workflows have no owners so action-only PRs skip code-owner review.
+.github/workflows/**
