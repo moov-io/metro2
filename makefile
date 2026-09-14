@@ -87,3 +87,7 @@ release-push:
 quay-push:
 	docker push quay.io/moov/metro2:$(VERSION)
 	docker push quay.io/moov/metro2:latest
+
+.PHONY: bench
+bench:
+	go test ./pkg/file -count=1 -run '^$$' -bench 'BenchmarkFile/Read_with_(unpacked_fixed|packed)_file' -benchmem | tee output.txt
