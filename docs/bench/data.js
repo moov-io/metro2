@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789411733739,
+  "lastUpdate": 1789451728820,
   "repoUrl": "https://github.com/moov-io/metro2",
   "entries": {
     "moov-io/metro2": [
@@ -70,6 +70,76 @@ window.BENCHMARK_DATA = {
             "value": 774,
             "unit": "allocs/op",
             "extra": "5830 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Adam Shannon",
+            "username": "adamdecaf",
+            "email": "adamkshannon@gmail.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "95b574af35f5bbfddf4fdaa79fe49036476651e7",
+          "message": "ci: run file-read Go benchmarks in this repository (#275)",
+          "timestamp": "2026-09-14T18:43:34Z",
+          "url": "https://github.com/moov-io/metro2/commit/95b574af35f5bbfddf4fdaa79fe49036476651e7"
+        },
+        "date": 1789451727884,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file",
+            "value": 190987,
+            "unit": "ns/op\t   24428 B/op\t     604 allocs/op",
+            "extra": "6200 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - ns/op",
+            "value": 190987,
+            "unit": "ns/op",
+            "extra": "6200 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - B/op",
+            "value": 24428,
+            "unit": "B/op",
+            "extra": "6200 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - allocs/op",
+            "value": 604,
+            "unit": "allocs/op",
+            "extra": "6200 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file",
+            "value": 192669,
+            "unit": "ns/op\t   29289 B/op\t     774 allocs/op",
+            "extra": "5682 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - ns/op",
+            "value": 192669,
+            "unit": "ns/op",
+            "extra": "5682 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - B/op",
+            "value": 29289,
+            "unit": "B/op",
+            "extra": "5682 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - allocs/op",
+            "value": 774,
+            "unit": "allocs/op",
+            "extra": "5682 times\n4 procs"
           }
         ]
       }
