@@ -17,3 +17,7 @@ Gemfile.lock
 .github/workflows/**
 .github/workflows/*
 **/.github/workflows/*
+
+# Dockerfiles have no owners so image-pin PRs skip code-owner review.
+Dockerfile
+Dockerfile-*
