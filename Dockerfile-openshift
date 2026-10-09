@@ -1,4 +1,7 @@
 FROM registry.access.redhat.com/ubi9/go-toolset as builder
+# Keep the module outside $HOME/go so `go fmt ./...` does not walk the
+# FIPS 140 snapshot that UBI go-toolset unpacks into GOMODCACHE.
+WORKDIR /opt/app-root/src/metro2
 COPY go.mod go.mod
 COPY go.sum go.sum
 COPY *.go ./
@@ -14,7 +17,7 @@ LABEL maintainer="Moov <oss@moov.io>"
 LABEL name="metro2"
 LABEL version=$VERSION
 
-COPY --from=builder /opt/app-root/src/bin/metro2 /bin/metro2
+COPY --from=builder /opt/app-root/src/metro2/bin/metro2 /bin/metro2
 
 ENTRYPOINT ["/bin/metro2"]
 CMD ["web"]

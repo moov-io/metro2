@@ -357,20 +357,20 @@ func (f *fileInstance) UnmarshalJSON(data []byte) error {
 		case utils.HeaderRecordName:
 			err = json.Unmarshal(buf, f.Header)
 			if err != nil {
-				f.logger.Error().LogErrorf(err.Error())
+				f.logger.Error().LogError(err)
 				return errors.New("Unable to parse input json file")
 			}
 		case utils.TrailerRecordName:
 			err = json.Unmarshal(buf, f.Trailer)
 			if err != nil {
-				f.logger.Error().LogErrorf(err.Error())
+				f.logger.Error().LogError(err)
 				return errors.New("Unable to parse input json file")
 			}
 		case utils.DataRecordName:
 			var list []interface{}
 			err = json.Unmarshal(buf, &list)
 			if err != nil {
-				f.logger.Error().LogErrorf(err.Error())
+				f.logger.Error().LogError(err)
 				return errors.New("Unable to parse input json file")
 			}
 			for _, subSegment := range list {
@@ -382,7 +382,7 @@ func (f *fileInstance) UnmarshalJSON(data []byte) error {
 					base := lib.NewBaseSegment()
 					err = json.Unmarshal(subBuf, base)
 					if err != nil {
-						f.logger.Error().LogErrorf(err.Error())
+						f.logger.Error().LogError(err)
 						return errors.New("Unable to parse input json file")
 					}
 					f.Bases = append(f.Bases, base)
@@ -390,7 +390,7 @@ func (f *fileInstance) UnmarshalJSON(data []byte) error {
 					base := lib.NewPackedBaseSegment()
 					err = json.Unmarshal(subBuf, base)
 					if err != nil {
-						f.logger.Error().LogErrorf(err.Error())
+						f.logger.Error().LogError(err)
 						return errors.New("Unable to parse input json file")
 					}
 					f.Bases = append(f.Bases, base)
