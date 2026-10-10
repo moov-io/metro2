@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1791529842564,
+  "lastUpdate": 1791614657973,
   "repoUrl": "https://github.com/moov-io/metro2",
   "entries": {
     "moov-io/metro2": [
@@ -1820,6 +1820,76 @@ window.BENCHMARK_DATA = {
             "value": 774,
             "unit": "allocs/op",
             "extra": "5805 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "renovate[bot]",
+            "username": "renovate[bot]",
+            "email": "29139614+renovate[bot]@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "790ed416e177e9ee4399e358c7e5f06b357a723f",
+          "message": "fix(deps): update all (#280)\n\n* fix(deps): update all\n\n* fix: use LogError and keep UBI GOPATH outside the module\n\nLogErrorf treats its first argument as a format string, so err.Error()\nfails Go's non-constant format check after the moov-io/base v0.64.0 bump.\n\nBuild the OpenShift image from a subdirectory of $HOME so GOPATH\n($HOME/go) stays outside the module. Otherwise go fmt ./... walks the\nFIPS 140 snapshot UBI go-toolset unpacks into GOMODCACHE.\n\n---------\n\nCo-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>\nCo-authored-by: Adam Shannon <adamkshannon@gmail.com>",
+          "timestamp": "2026-10-09T19:26:27Z",
+          "url": "https://github.com/moov-io/metro2/commit/790ed416e177e9ee4399e358c7e5f06b357a723f"
+        },
+        "date": 1791614657301,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file",
+            "value": 143032,
+            "unit": "ns/op\t   24456 B/op\t     604 allocs/op",
+            "extra": "7951 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - ns/op",
+            "value": 143032,
+            "unit": "ns/op",
+            "extra": "7951 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - B/op",
+            "value": 24456,
+            "unit": "B/op",
+            "extra": "7951 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - allocs/op",
+            "value": 604,
+            "unit": "allocs/op",
+            "extra": "7951 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file",
+            "value": 144733,
+            "unit": "ns/op\t   29275 B/op\t     774 allocs/op",
+            "extra": "7669 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - ns/op",
+            "value": 144733,
+            "unit": "ns/op",
+            "extra": "7669 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - B/op",
+            "value": 29275,
+            "unit": "B/op",
+            "extra": "7669 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - allocs/op",
+            "value": 774,
+            "unit": "allocs/op",
+            "extra": "7669 times\n4 procs"
           }
         ]
       }
