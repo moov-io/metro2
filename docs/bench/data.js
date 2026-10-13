@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1791788480389,
+  "lastUpdate": 1791876340761,
   "repoUrl": "https://github.com/moov-io/metro2",
   "entries": {
     "moov-io/metro2": [
@@ -2030,6 +2030,76 @@ window.BENCHMARK_DATA = {
             "value": 774,
             "unit": "allocs/op",
             "extra": "6042 times\n4 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "renovate[bot]",
+            "username": "renovate[bot]",
+            "email": "29139614+renovate[bot]@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "f55e08339ecb1a65c8e4491be13e44710467fe16",
+          "message": "chore(deps): update registry.access.redhat.com/ubi9/ubi-minimal docker tag to v9.8-1791808450 (#282)\n\nCo-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>",
+          "timestamp": "2026-10-12T15:47:56Z",
+          "url": "https://github.com/moov-io/metro2/commit/f55e08339ecb1a65c8e4491be13e44710467fe16"
+        },
+        "date": 1791876339988,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file",
+            "value": 142769,
+            "unit": "ns/op\t   24463 B/op\t     604 allocs/op",
+            "extra": "7826 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - ns/op",
+            "value": 142769,
+            "unit": "ns/op",
+            "extra": "7826 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - B/op",
+            "value": 24463,
+            "unit": "B/op",
+            "extra": "7826 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - allocs/op",
+            "value": 604,
+            "unit": "allocs/op",
+            "extra": "7826 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file",
+            "value": 146746,
+            "unit": "ns/op\t   29255 B/op\t     774 allocs/op",
+            "extra": "8013 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - ns/op",
+            "value": 146746,
+            "unit": "ns/op",
+            "extra": "8013 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - B/op",
+            "value": 29255,
+            "unit": "B/op",
+            "extra": "8013 times\n4 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - allocs/op",
+            "value": 774,
+            "unit": "allocs/op",
+            "extra": "8013 times\n4 procs"
           }
         ]
       }
