@@ -11,7 +11,7 @@ COPY ./test ./test
 COPY makefile makefile
 RUN make build
 
-FROM registry.access.redhat.com/ubi9/ubi-minimal:9.8-1791808450
+FROM registry.access.redhat.com/ubi9/ubi-minimal:9.8-1791898448
 ARG VERSION=unknown
 LABEL maintainer="Moov <oss@moov.io>"
 LABEL name="metro2"
