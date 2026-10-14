@@ -394,23 +394,27 @@ func TestFile__Reader(t *testing.T) {
 }
 
 func BenchmarkFile(b *testing.B) {
-	b.Run("Read with unpacked fixed file", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
-			readUnpackedFixedFile(b)
-		}
-	})
+	cases := []struct {
+		name string
+		file string
+	}{
+		{"Read with unpacked fixed file", "unpacked_fixed_file.dat"},
+		{"Read with unpacked variable file", "unpacked_variable_file.dat"},
+		{"Read with packed file", "packed_file.dat"},
+	}
+	for _, tc := range cases {
+		b.Run(tc.name, func(b *testing.B) {
+			data, err := os.ReadFile(filepath.Join("..", "..", "test", "testdata", tc.file))
+			require.NoError(b, err)
 
-	b.Run("Read with unpacked variable file", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
-			readUnpackedVariableFile(b)
-		}
-	})
-
-	b.Run("Read with packed file", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
-			readPackedFile(b)
-		}
-	})
+			b.ReportAllocs()
+			for b.Loop() {
+				f, err := NewReader(bytes.NewReader(data)).Read()
+				require.NoError(b, err)
+				require.NoError(b, f.Validate())
+			}
+		})
+	}
 }
 
 func readUnpackedFixedFile(tb testing.TB) {
