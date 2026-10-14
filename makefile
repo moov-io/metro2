@@ -90,4 +90,5 @@ quay-push:
 
 .PHONY: bench
 bench:
-	go test ./pkg/file -count=1 -run '^$$' -bench 'BenchmarkFile/Read_with_(unpacked_fixed|packed)_file' -benchmem | tee output.txt
+	go test ./pkg/file -count=6 -cpu=2 -run '^$$' -bench 'BenchmarkFile/Read_with_(unpacked_fixed|packed)_file' -benchmem > output.raw.txt
+	python3 scripts/bench-median.py output.raw.txt | tee output.txt
