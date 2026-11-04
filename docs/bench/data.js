@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793691543237,
+  "lastUpdate": 1793776699281,
   "repoUrl": "https://github.com/moov-io/metro2",
   "entries": {
     "moov-io/metro2": [
@@ -3850,6 +3850,76 @@ window.BENCHMARK_DATA = {
             "value": 771,
             "unit": "allocs/op",
             "extra": "6784 times\n2 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "renovate[bot]",
+            "username": "renovate[bot]",
+            "email": "29139614+renovate[bot]@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "03f546e6141d0ce71fc0f60008bedc964ca9cbb2",
+          "message": "chore(deps): update github/codeql-action action to v4.39.2 (#294)\n\nCo-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>",
+          "timestamp": "2026-11-03T12:10:04Z",
+          "url": "https://github.com/moov-io/metro2/commit/03f546e6141d0ce71fc0f60008bedc964ca9cbb2"
+        },
+        "date": 1793776698127,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file",
+            "value": 173441.5,
+            "unit": "ns/op\t24174 B/op\t601 allocs/op",
+            "extra": "6598 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - ns/op",
+            "value": 173441.5,
+            "unit": "ns/op",
+            "extra": "6598 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - B/op",
+            "value": 24174,
+            "unit": "B/op",
+            "extra": "6598 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - allocs/op",
+            "value": 601,
+            "unit": "allocs/op",
+            "extra": "6598 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file",
+            "value": 180852.5,
+            "unit": "ns/op\t28949 B/op\t771 allocs/op",
+            "extra": "6498 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - ns/op",
+            "value": 180852.5,
+            "unit": "ns/op",
+            "extra": "6498 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - B/op",
+            "value": 28949,
+            "unit": "B/op",
+            "extra": "6498 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - allocs/op",
+            "value": 771,
+            "unit": "allocs/op",
+            "extra": "6498 times\n2 procs"
           }
         ]
       }
