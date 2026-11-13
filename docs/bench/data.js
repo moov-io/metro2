@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794470372458,
+  "lastUpdate": 1794555541334,
   "repoUrl": "https://github.com/moov-io/metro2",
   "entries": {
     "moov-io/metro2": [
@@ -4480,6 +4480,76 @@ window.BENCHMARK_DATA = {
             "value": 771,
             "unit": "allocs/op",
             "extra": "9036 times\n2 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Adam Shannon",
+            "username": "adamdecaf",
+            "email": "adamkshannon@gmail.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "24396e465990d5effe736f5a867a38eec4df528b",
+          "message": "docs: drop unused activesupport and nokogiri pins (#303)\n\nNothing in the docs bundle depends on activesupport or nokogiri; they were only listed as direct pins. Removing them (and their now-orphaned deps) clears Dependabot alerts GHSA-8474-xrp6-wh69 (high, no 7.2 fix) and the three low nokogiri advisories.",
+          "timestamp": "2026-11-12T19:25:32Z",
+          "url": "https://github.com/moov-io/metro2/commit/24396e465990d5effe736f5a867a38eec4df528b"
+        },
+        "date": 1794555540942,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file",
+            "value": 171123.5,
+            "unit": "ns/op\t24176 B/op\t601 allocs/op",
+            "extra": "6841 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - ns/op",
+            "value": 171123.5,
+            "unit": "ns/op",
+            "extra": "6841 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - B/op",
+            "value": 24176,
+            "unit": "B/op",
+            "extra": "6841 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - allocs/op",
+            "value": 601,
+            "unit": "allocs/op",
+            "extra": "6841 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file",
+            "value": 177782,
+            "unit": "ns/op\t28950 B/op\t771 allocs/op",
+            "extra": "6673 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - ns/op",
+            "value": 177782,
+            "unit": "ns/op",
+            "extra": "6673 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - B/op",
+            "value": 28950,
+            "unit": "B/op",
+            "extra": "6673 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - allocs/op",
+            "value": 771,
+            "unit": "allocs/op",
+            "extra": "6673 times\n2 procs"
           }
         ]
       }
