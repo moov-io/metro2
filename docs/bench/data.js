@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794555541334,
+  "lastUpdate": 1794641105384,
   "repoUrl": "https://github.com/moov-io/metro2",
   "entries": {
     "moov-io/metro2": [
@@ -4550,6 +4550,76 @@ window.BENCHMARK_DATA = {
             "value": 771,
             "unit": "allocs/op",
             "extra": "6673 times\n2 procs"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "name": "Adam Shannon",
+            "username": "adamdecaf",
+            "email": "adamkshannon@gmail.com"
+          },
+          "committer": {
+            "name": "GitHub",
+            "username": "web-flow",
+            "email": "noreply@github.com"
+          },
+          "id": "2c5baa13480dfde506a914524e66fb44cdae2583",
+          "message": "docs: bump addressable to 2.9.2 (#304)\n\nFixes Dependabot alerts 82-87 (GHSA-8gmh-2hhj-2hv9, GHSA-9f42-57jx-vpp3,\nGHSA-j82w-28jv-3pmj, GHSA-qq38-m9mg-xjj5, GHSA-9crm-g4mf-wc5j,\nGHSA-539f-xcgw-2gjg), all patched in addressable 2.9.1.",
+          "timestamp": "2026-11-13T19:19:39Z",
+          "url": "https://github.com/moov-io/metro2/commit/2c5baa13480dfde506a914524e66fb44cdae2583"
+        },
+        "date": 1794641104943,
+        "tool": "go",
+        "benches": [
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file",
+            "value": 172458,
+            "unit": "ns/op\t24192 B/op\t601 allocs/op",
+            "extra": "7028 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - ns/op",
+            "value": 172458,
+            "unit": "ns/op",
+            "extra": "7028 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - B/op",
+            "value": 24192,
+            "unit": "B/op",
+            "extra": "7028 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_unpacked_fixed_file - allocs/op",
+            "value": 601,
+            "unit": "allocs/op",
+            "extra": "7028 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file",
+            "value": 179282.5,
+            "unit": "ns/op\t28949 B/op\t771 allocs/op",
+            "extra": "6580 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - ns/op",
+            "value": 179282.5,
+            "unit": "ns/op",
+            "extra": "6580 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - B/op",
+            "value": 28949,
+            "unit": "B/op",
+            "extra": "6580 times\n2 procs"
+          },
+          {
+            "name": "BenchmarkFile/Read_with_packed_file - allocs/op",
+            "value": 771,
+            "unit": "allocs/op",
+            "extra": "6580 times\n2 procs"
           }
         ]
       }
