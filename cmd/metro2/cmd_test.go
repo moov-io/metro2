@@ -6,10 +6,14 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/moov-io/metro2"
 	"github.com/moov-io/metro2/pkg/utils"
 	"github.com/spf13/cobra"
 )
@@ -137,4 +141,73 @@ func TestWebWithInvalidPort(t *testing.T) {
 	if err == nil {
 		t.Errorf("Starting web server with unknown port")
 	}
+}
+
+func TestVersion(t *testing.T) {
+	output, err := executeCommand(rootCmd, "version")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(output, metro2.Version) {
+		t.Errorf("expected version %q in output, got %q", metro2.Version, output)
+	}
+}
+
+func TestHelpProgramName(t *testing.T) {
+	output, err := executeCommand(rootCmd, "--help")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(output, "metro2 [command]") {
+		t.Errorf("expected program name in usage, got %q", output)
+	}
+}
+
+func TestCLIExitCodes(t *testing.T) {
+	bin := filepath.Join(t.TempDir(), "metro2")
+	build := exec.Command("go", "build", "-o", bin, ".")
+	if out, err := build.CombinedOutput(); err != nil {
+		t.Fatalf("go build: %v\n%s", err, out)
+	}
+
+	testdata := filepath.Join("..", "..", "test", "testdata", "packed_file.json")
+
+	t.Run("validator missing input", func(t *testing.T) {
+		cmd := exec.Command(bin, "validator", "--input", "nope.dat")
+		out, err := cmd.CombinedOutput()
+		if err == nil {
+			t.Fatalf("expected non-zero exit, got 0, output %s", out)
+		}
+		var ee *exec.ExitError
+		if !errors.As(err, &ee) || ee.ExitCode() != 1 {
+			t.Fatalf("expected exit 1, got err=%v out=%s", err, out)
+		}
+		if !strings.Contains(string(out), "invalid input file") {
+			t.Fatalf("unexpected output %s", out)
+		}
+	})
+
+	t.Run("convert missing directory", func(t *testing.T) {
+		outPath := filepath.Join(t.TempDir(), "missing", "output.json")
+		cmd := exec.Command(bin, "convert", outPath, "--input", testdata, "--format", "json")
+		out, err := cmd.CombinedOutput()
+		if err == nil {
+			t.Fatalf("expected non-zero exit, got 0, output %s", out)
+		}
+		var ee *exec.ExitError
+		if !errors.As(err, &ee) || ee.ExitCode() != 1 {
+			t.Fatalf("expected exit 1, got err=%v out=%s", err, out)
+		}
+	})
+
+	t.Run("validator success", func(t *testing.T) {
+		cmd := exec.Command(bin, "validator", "--input", testdata)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("expected exit 0, got %v out=%s", err, out)
+		}
+		if !strings.Contains(string(out), "the file is valid") {
+			t.Fatalf("unexpected output %s", out)
+		}
+	})
 }

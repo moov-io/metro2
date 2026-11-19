@@ -17,6 +17,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/moov-io/metro2"
 	"github.com/moov-io/metro2/pkg/file"
 	"github.com/moov-io/metro2/pkg/server"
 	"github.com/moov-io/metro2/pkg/utils"
@@ -247,7 +248,18 @@ var convert = &cobra.Command{
 	},
 }
 
-var rootCmd = &cobra.Command{}
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Print the version of metro2",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Fprintln(cmd.OutOrStdout(), metro2.Version)
+	},
+}
+
+var rootCmd = &cobra.Command{
+	Use:   "metro2",
+	Short: "Moov Metro 2 file reader, writer, and validator",
+}
 
 func initRootCmd() {
 	webCmd.Flags().String("port", "8080", "port of the web server")
@@ -268,10 +280,12 @@ func initRootCmd() {
 	rootCmd.AddCommand(convert)
 	rootCmd.AddCommand(print)
 	rootCmd.AddCommand(validate)
+	rootCmd.AddCommand(versionCmd)
 }
 
 func main() {
 	initRootCmd()
-
-	rootCmd.Execute()
+	if err := rootCmd.Execute(); err != nil {
+		os.Exit(1)
+	}
 }
