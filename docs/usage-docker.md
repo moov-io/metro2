@@ -30,17 +30,15 @@ Upload a file and validate it:
 curl -X POST --form "file=@./test/testdata/packed_file.json" http://localhost:8080/validator
 ```
 ```
-valid file
+{"status":"valid file"}
 ```
 
 Convert a file from JSON to raw Metro format:
 ```
 curl -X POST --form "file=@./test/testdata/packed_file.json" --form "format=metro" http://localhost:8080/convert
 ```
-```
-0480HEADER                           555555555508202002051019990510199905101999YOUR BUSINESS NAME HERE                 LINE ONE OF YOUR ADDRESS LINE TWO OF YOUR ADDRESS LINE THERE OF YOUR ADDRESS                    1234567890
-...
-```
+The response is a packed Metro 2 file (`Content-Type: application/octet-stream`) that starts with binary block and record descriptor words (`01 72 00 00 01 6e 00 00`, then `HEADER`), not ASCII text. To get character-encoded records, add `--form "type=character"`.
+
 
 Convert a file from raw Metro format to JSON:
 ```
