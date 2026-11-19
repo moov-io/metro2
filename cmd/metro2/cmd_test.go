@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -165,6 +166,9 @@ func TestHelpProgramName(t *testing.T) {
 
 func TestCLIExitCodes(t *testing.T) {
 	bin := filepath.Join(t.TempDir(), "metro2")
+	if runtime.GOOS == "windows" {
+		bin += ".exe"
+	}
 	build := exec.Command("go", "build", "-o", bin, ".")
 	if out, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("go build: %v\n%s", err, out)
