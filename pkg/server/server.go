@@ -6,6 +6,7 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -20,6 +21,9 @@ func parseInputFromRequest(r *http.Request) (file.File, error) {
 	if strings.HasPrefix(contentType, "multipart/") {
 		src, _, err := r.FormFile("file")
 		if err != nil {
+			if errors.Is(err, http.ErrMissingFile) {
+				return nil, errors.New(`missing form file field "file"`)
+			}
 			return nil, fmt.Errorf("reading multipart request: %w", err)
 		}
 		defer src.Close()
@@ -39,16 +43,16 @@ func parseInputFromRequest(r *http.Request) (file.File, error) {
 }
 
 func outputError(w http.ResponseWriter, code int, err error) {
-	w.WriteHeader(code)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(code)
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"error": err.Error(),
 	})
 }
 
 func outputSuccess(w http.ResponseWriter, output string) {
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"status": output,
 	})
@@ -69,13 +73,14 @@ func messageToBuf(format string, metroFile file.File, newline bool) ([]byte, err
 }
 
 func outputBufferToWriter(w http.ResponseWriter, metroFile file.File, format string, newline bool) {
-	w.WriteHeader(http.StatusOK)
 	switch format {
 	case utils.MessageJsonFormat:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(metroFile)
 	case utils.MessageMetroFormat:
 		w.Header().Set("Content-Type", "application/octet-stream; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(metroFile.String(newline)))
 	}
 }
