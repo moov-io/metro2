@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  description: Moov Metro2 ([Automated Clearing House](https://en.wikipedia.org/wiki/Automated_Clearing_House)) implements an HTTP API for creating, parsing and validating Metro2 files. Metro2 is an open-source consumer credit history report for credit report file creation and validation.
+  description: Moov Metro2 implements an HTTP API for creating, parsing and validating Metro 2 consumer credit history report files.
   version: v1
   title: METRO2 API
   contact:
@@ -30,10 +30,14 @@ paths:
         '200':
           description: successful operation
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: 'health: true'
+                type: object
+                properties:
+                  status:
+                    type: string
+                example:
+                  status: alive
   /print:
     post:
       tags: ['Metro2 Files']
@@ -106,10 +110,14 @@ paths:
         '200':
           description: successful operation
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: valid file
+                type: object
+                properties:
+                  status:
+                    type: string
+                example:
+                  status: valid file
         '400':
           description: bad request
           content:

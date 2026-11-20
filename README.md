@@ -5,7 +5,7 @@
   ·
   <a href="https://moov-io.github.io/metro2/api/#overview">API Endpoints</a>
   ·
-  <a href="https://moov.io/blog/education/metro2-api-guide/">API Guide</a>
+  <a href="https://moov.io/blog/craft/metro2-api-guide/">API Guide</a>
   ·
   <a href="https://slack.moov.io/">Community</a>
   ·
@@ -20,7 +20,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/moov-io/metro2)](https://goreportcard.com/report/github.com/moov-io/metro2)
 [![Repo Size](https://img.shields.io/github/languages/code-size/moov-io/metro2?label=project%20size)](https://github.com/moov-io/metro2)
 [![Apache 2 License](https://img.shields.io/badge/license-Apache2-blue.svg)](https://raw.githubusercontent.com/moov-io/metro2/master/LICENSE)
-[![Slack Channel](https://slack.moov.io/badge.svg?bg=e01563&fgColor=fffff)](https://slack.moov.io/)
+[![Slack Channel](https://img.shields.io/badge/Slack-Moov-e01563?logo=slack&logoColor=white)](https://slack.moov.io/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/moov/metro2)](https://hub.docker.com/r/moov/metro2)
 [![GitHub Stars](https://img.shields.io/github/stars/moov-io/metro2)](https://github.com/moov-io/metro2)
 [![Twitter](https://img.shields.io/twitter/follow/moov?style=social)](https://twitter.com/moov?lang=en)
@@ -74,17 +74,15 @@ Upload a file and validate it:
 curl -X POST --form "file=@./test/testdata/packed_file.json" http://localhost:8080/validator
 ```
 ```
-valid file
+{"status":"valid file"}
 ```
 
 Convert a file from JSON to raw Metro format:
 ```
 curl -X POST --form "file=@./test/testdata/packed_file.json" --form "format=metro" http://localhost:8080/convert
 ```
-```
-0480HEADER                           555555555508202002051019990510199905101999YOUR BUSINESS NAME HERE                 LINE ONE OF YOUR ADDRESS LINE TWO OF YOUR ADDRESS LINE THERE OF YOUR ADDRESS                    1234567890
-...
-```
+The response is a packed Metro 2 file (`Content-Type: application/octet-stream`) that starts with binary block and record descriptor words (`01 72 00 00 01 6e 00 00`, then `HEADER`), not ASCII text. To get character-encoded records, add `--form "type=character"`.
+
 
 Convert a file from raw Metro format to JSON:
 ```
@@ -103,20 +101,26 @@ From your [Google Cloud dashboard](https://console.cloud.google.com/home/dashboa
 moov-metro2-demo
 ```
 
-Enable the [Container Registry](https://cloud.google.com/container-registry) API for your project and associate a [billing account](https://cloud.google.com/billing/docs/how-to/manage-billing-account) if needed. Then, open the Cloud Shell terminal and run the following Docker commands, substituting your unique project ID:
+Enable the [Artifact Registry](https://cloud.google.com/artifact-registry/docs/docker/store-docker-container-images) and Cloud Run APIs for your project and associate a [billing account](https://cloud.google.com/billing/docs/how-to/manage-billing-account) if needed. Then, open the Cloud Shell terminal and run the following commands, substituting your unique project ID and a region close to you (for example `us-central1`):
 
 ```
+gcloud services enable artifactregistry.googleapis.com run.googleapis.com
+
+gcloud artifacts repositories create moov   --repository-format=docker   --location=us-central1   --description="Docker images"
+
+gcloud auth configure-docker us-central1-docker.pkg.dev
+
 docker pull moov/metro2
-docker tag moov/metro2 gcr.io/<PROJECT-ID>/metro2
-docker push gcr.io/<PROJECT-ID>/metro2
+docker tag moov/metro2 us-central1-docker.pkg.dev/<PROJECT-ID>/moov/metro2
+docker push us-central1-docker.pkg.dev/<PROJECT-ID>/moov/metro2
 ```
 
 Deploy the container to Cloud Run:
 ```
-gcloud run deploy --image gcr.io/<PROJECT-ID>/metro2 --port 8080
+gcloud run deploy metro2 --image us-central1-docker.pkg.dev/<PROJECT-ID>/moov/metro2 --port 8080 --region us-central1
 ```
 
-Select your target platform to `1`, service name to `metro2`, and region to the one closest to you (enable Google API service if a prompt appears). Upon a successful build you will be given a URL where the API has been deployed:
+You can also deploy the public image directly with `gcloud run deploy metro2 --image moov/metro2:latest --port 8080 --region us-central1`. Upon a successful deploy you will be given a URL where the API has been deployed:
 
 ```
 https://YOUR-METRO2-APP-URL.a.run.app
@@ -138,25 +142,46 @@ By design, Metro2  **does not persist** (save) any data about the files or entry
 
 Metro2 has a command line interface to manage Metro 2 files and launch a web service.
 
+Download a release binary from the [latest GitHub release](https://github.com/moov-io/metro2/releases/latest). Assets are named `metro2-linux-amd64`, `metro2-darwin-amd64`, and `metro2.exe` (Windows):
+
+```
+curl -sSL -o metro2 "https://github.com/moov-io/metro2/releases/download/v0.10.0/metro2-linux-amd64"
+chmod +x metro2
+```
+
+Or install with Go 1.26 or newer:
+
+```
+go install github.com/moov-io/metro2/cmd/metro2@latest
+```
+
+From a source checkout, `make build` writes `./bin/metro2`.
+
 ```
 metro2 --help
 
+Moov Metro 2 file reader, writer, and validator
+
 Usage:
-   [command]
+  metro2 [command]
 
 Available Commands:
+  completion  Generate the autocompletion script for the specified shell
   convert     Convert metro file format
   help        Help about any command
   print       Print metro file
   validator   Validate metro file
+  version     Print the version of metro2
   web         Launches web server
 
 Flags:
-  -h, --help           help for this command
+  -h, --help           help for metro2
       --input string   input file (default is $PWD/metro.json)
 
-Use " [command] --help" for more information about a command.
+Use "metro2 [command] --help" for more information about a command.
 ```
+
+The CLI exits `0` on success and `1` on error (missing input, validation failure, or a convert path whose parent directory does not exist). `convert` supports `--format json|metro`, `--type character|packed`, `-n`/`--newline`, and `-g`/`--generate`. See the [command line documentation](https://moov-io.github.io/metro2/usage-command-line/) for packed versus character format, sample output, and exit codes.
 
 Each interaction that the library supports is exposed in a command-line option:
 
@@ -165,31 +190,34 @@ Each interaction that the library supports is exposed in a command-line option:
 `convert` | The convert command allows users to convert a metro file to a specified file format (json, metro). The result will create a new file.
 `print` | The print command allows users to print a metro file in a specified file format (json, metro).
 `validator` | The validator command allows users to validate a metro file.
+`version` | Print the library version.
 `web` | The web command will launch a web server with endpoints to manage metro files.
 
 
 ### Go library
 
-This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.18 or newer. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
+This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.26 or newer. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
 
 ### Package Installation
 ```
-$ git@github.com:moov-io/metro2.git
+# Clone the repository
+git clone git@github.com:moov-io/metro2.git
 
-# Pull down into the Go Module cache
-$ go get -u github.com/moov-io/metro2
+# Add a tagged package to your Go module (avoid go get -u; it can bump
+# the Go version in go.mod and leave missing go.sum entries)
+go get github.com/moov-io/metro2/pkg/file@v0.10.0
 
-$ go doc github.com/moov-io/metro2
+go doc github.com/moov-io/metro2/pkg/file
 ```
 
 ### Package Overview
 
-Package file defines main interfaces to a metro file.
+The Go API lives in [`pkg/file`](https://pkg.go.dev/github.com/moov-io/metro2/pkg/file), [`pkg/lib`](https://pkg.go.dev/github.com/moov-io/metro2/pkg/lib), and [`pkg/utils`](https://pkg.go.dev/github.com/moov-io/metro2/pkg/utils). `file.File` is the main entry point:
 
 ```
 func NewFile(format string) (File, error)
-
 func NewFileFromReader(r io.Reader) (File, error)
+func CreateFile(buf []byte) (File, error)
 
 type File
 	GetType() string
@@ -199,99 +227,38 @@ type File
 	GetRecord(string) (lib.Record, error)
 	GetDataRecords() []lib.Record
 	GeneratorTrailer() (lib.Record, error)
-	Parse(record string) error
+	Parse(record []byte, isVariableLength bool) error
+	Bytes() []byte
 	String(newline bool) string
+	ConcurrentString(newline bool, goroutines int) string
 	Validate() error
 ```
 
-File has some records for header, body, trailer
-
-Records have distinguished by file type
-
-```
-type Record
-	Name() string
-	Parse(string) (int, error)
-	String() string
-	Validate() error
-	Length() int
-	BlockSize() int
-	AddApplicableSegment(Segment) error
-	GetSegments(string) []Segment
-
-type BaseSegment        // for character file format
-
-type PackedBaseSegment  // for packed file format
-
-type HeaderRecord       // for character file format
-
-type PackedHeaderRecord // for packed file format
-
-type TrailerRecord      // for character file format
-
-type PackedTrailerRecord // for packed file format
-```
-
-Record has some segments to describe special form
-
-Base Record can use correctly the features of appendable segments
-
-```
-type Record
-	Name() string
-	Parse(string) (int, error)
-	String() string
-	Validate() error
-	Length() int
-	BlockSize() int
-	AddApplicableSegment(Segment) error
-	GetSegments(string) []Segment
-
-type J1Segment
-
-type J2Segment
-
-type K1Segment
-
-type K2Segment
-
-type K3Segment
-
-type K4Segment
-
-type L1Segment
-
-type N1Segment
-```
+Use `utils.CharacterFileFormat` or `utils.PackedFileFormat` with `NewFile`. Records (`lib.HeaderRecord`, `lib.BaseSegment`, `lib.TrailerRecord`, and the packed variants) implement `Parse([]byte, bool)`, `String()`, `Bytes()`, and `Validate()`. Optional J1, J2, K1–K4, L1, and N1 segments attach to a base record with `AddApplicableSegment`. See the [Go library docs](https://moov-io.github.io/metro2/usage-go/) for details and a from-scratch example.
 
 ### Package Examples
 
-File object has type for metro packed file and metro character file, should specify file type when creating new file
-```
-f, err := file.NewFile(utils.PackedFileFormat)
-err = json.Unmarshal([]byte(buf), f)
-```
+Read a Metro 2 file, validate it, and write it back out:
 
-File object will create from metro file buffer directly, CreateFile function will create new file and will set file type based on metro file body
-```
-r, _ = os.Open(filepath.Join("...))
+```go
+r, err := os.Open("test/testdata/unpacked_fixed_file.dat")
+if err != nil {
+	log.Fatal(err)
+}
+defer r.Close()
+
 f, err := file.NewFileFromReader(r)
+if err != nil {
+	log.Fatal(err)
+}
+if err := f.Validate(); err != nil {
+	log.Fatal(err)
+}
+
+fmt.Print(f.String(true))
 ```
 
-File object will manage records using member functions
-
-Please use exact record object that has same type (header, base, trailer)
-
-```
-f, err := file.NewFile(utils.CharacterFileFormat)
-newHeader := lib.HeaderRecord{}
-err = f.SetRecord(&newSegment)
-exsitedHeader, err := f.GetRecord(utils.HeaderRecordName)
-newBase := lib.HeaderRecord{}
-...
-```
-
-Similarly, Record can manage the appendable segments
+To build a file from scratch, create a `file.File`, `SetRecord` a header, `AddDataRecord` one or more base segments (with optional J1/K segments), then `GeneratorTrailer` / `SetRecord` and `Validate`. A complete, tested example is in the [Go library docs](https://moov-io.github.io/metro2/usage-go/) and as `ExampleNewFileFromReader` / `Example_createFile` in `pkg/file`.
 
 ## Learn about Metro 2
 - [Intro to Metro 2](https://www.cdiaonline.org/resources/furnishers-of-data-overview/metro2-information/)
@@ -302,7 +269,7 @@ Similarly, Record can manage the appendable segments
  channel | info
  ------- | -------
 Twitter [@moov](https://twitter.com/moov)	| You can follow Moov.io's Twitter feed to get updates on our project(s). You can also tweet us questions or just share blogs or stories.
-[GitHub Issue](https://github.com/moov-io) | If you are able to reproduce a problem please open a GitHub Issue under the specific project that caused the error.
+[GitHub Issue](https://github.com/moov-io/metro2/issues) | If you are able to reproduce a problem please open a GitHub Issue under the specific project that caused the error.
 [moov-io slack](https://slack.moov.io/) | Join our slack channel to have an interactive discussion about the development of the project.
 
 ## Supported and tested platforms
@@ -311,9 +278,9 @@ Twitter [@moov](https://twitter.com/moov)	| You can follow Moov.io's Twitter fee
 
 ## Contributing
 
-Yes please! Please review our [Contributing guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) to get started!
+Yes please! Please review our [Contributing guide](CONTRIBUTING.md) and [Code of Conduct](https://github.com/moov-io/ach/blob/master/CODE_OF_CONDUCT.md) to get started!
 
-This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.18 or newer. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
+This project uses [Go Modules](https://go.dev/blog/using-go-modules) and Go v1.26 or newer. See [Golang's install instructions](https://golang.org/doc/install) for help setting up Go. You can download the source code and we offer [tagged and released versions](https://github.com/moov-io/metro2/releases/latest) as well. We highly recommend you use a tagged release for production.
 
 ### Releasing
 
@@ -325,7 +292,7 @@ We maintain a comprehensive suite of unit tests and recommend table-driven testi
 
 ### Fuzzing
 
-We currently run fuzzing over ACH in the form of a [Github Action](https://github.com/moov-io/metro2/actions/workflows/fuzz.yml). Please report crashes examples to [`oss@moov.io`](mailto:oss@moov.io). Thanks!
+We currently run fuzzing over Metro 2 in the form of a [Github Action](https://github.com/moov-io/metro2/actions/workflows/fuzz.yml). Please report crash examples to [`oss@moov.io`](mailto:oss@moov.io). Thanks!
 
 ## Related projects
 

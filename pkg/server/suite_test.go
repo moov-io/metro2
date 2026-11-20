@@ -94,6 +94,8 @@ func (t *ServerTest) TestHealth(c *check.C) {
 	recorder, request := t.makeRequest(http.MethodGet, "/health", "", c)
 	t.testServer.ServeHTTP(recorder, request)
 	c.Assert(recorder.Code, check.Equals, http.StatusOK)
+	c.Assert(recorder.Header().Get("Content-Type"), check.Equals, "application/json; charset=utf-8")
+	c.Assert(strings.TrimSpace(recorder.Body.String()), check.Equals, `{"status":"alive"}`)
 }
 
 func (t *ServerTest) TestJsonPrint(c *check.C) {
@@ -216,6 +218,7 @@ func (t *ServerTest) TestWithInvalidForm(c *check.C) {
 	request.Header.Set("Content-Type", writer.FormDataContentType())
 	t.testServer.ServeHTTP(recorder, request)
 	c.Assert(recorder.Code, check.Equals, http.StatusBadRequest)
+	c.Assert(strings.Contains(recorder.Body.String(), `missing form file field "file"`), check.Equals, true)
 }
 
 func (t *ServerTest) TestPrintWithoutContentType(c *check.C) {
